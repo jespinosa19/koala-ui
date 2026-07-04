@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 import { InputRoot, InputField, InputLabel } from "@/components/ui/input"
-import { AvatarRoot, AvatarFallback, AvatarStatus } from "@/components/ui/avatar"
+import { AvatarRoot, AvatarImage, AvatarFallback, AvatarStatus } from "@/components/ui/avatar"
 
 // Basic: title + description.
 export function PopoverBasicDemo() {
@@ -41,7 +41,7 @@ export function PopoverFormDemo() {
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline">
-          <Gear /> Dimensions
+          <Gear weight="bold" /> Dimensions
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80">
@@ -86,7 +86,7 @@ export function PopoverArrowDemo() {
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline" iconOnly aria-label="About">
-          <Info />
+          <Info weight="bold" />
         </Button>
       </PopoverTrigger>
       <PopoverContent showArrow className="w-64">
@@ -148,7 +148,7 @@ export function PopoverConfirmDemo() {
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline">
-          <Trash /> Delete project
+          <Trash weight="bold" /> Delete project
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-72">
@@ -190,6 +190,7 @@ export function PopoverProfileDemo() {
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3">
             <AvatarRoot size="lg">
+              <AvatarImage src="https://i.pravatar.cc/160?img=5" alt="Katie Park" />
               <AvatarFallback>KP</AvatarFallback>
               <AvatarStatus variant="online" />
             </AvatarRoot>
@@ -236,7 +237,7 @@ export function PopoverShareDemo() {
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline">
-          <LinkSimple /> Share
+          <LinkSimple weight="bold" /> Share
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80">
@@ -252,11 +253,11 @@ export function PopoverShareDemo() {
             <Button size="sm" className="shrink-0" onClick={copy}>
               {copied ? (
                 <>
-                  <Check /> Copied
+                  <Check weight="bold" /> Copied
                 </>
               ) : (
                 <>
-                  <Copy /> Copy
+                  <Copy weight="bold" /> Copy
                 </>
               )}
             </Button>

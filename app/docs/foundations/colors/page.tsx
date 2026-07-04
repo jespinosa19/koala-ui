@@ -75,6 +75,17 @@ oklch(0.205 0 0)
             <Swatch surface="bg-card-foreground" token="text-card-foreground" variable="--card-foreground" description="Text on cards" />
           </SwatchGroup>
         </div>
+        <p className="mt-8 text-pretty text-muted-foreground">
+          Inline text links use one role, <code>text-link</code> (a blue, themed per mode), kept
+          distinct from <code>text-info</code> (a status hue) and <code>bg-brand</code> (the accent
+          action color) so a link still reads as a link under any accent. Links carry an underline at
+          rest and turn <code>text-link</code> on hover.
+        </p>
+        <div className="mt-6">
+          <SwatchGroup title="Links">
+            <Swatch surface="bg-link" token="text-link" variable="--link" description="Inline text links" />
+          </SwatchGroup>
+        </div>
       </DocSection>
 
       <DocSection title="Brand & state">

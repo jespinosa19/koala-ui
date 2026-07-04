@@ -89,6 +89,20 @@ export function Example() {
             <code className="font-mono">thumbnails</code> node array indexed to the slides. A single
             brand ring glides from tile to tile rather than toggling per preview.
           </li>
+          <li>
+            <code className="font-mono">tabs</code>: one text label per slide; pass a{" "}
+            <code className="font-mono">labels</code> array indexed to the slides. A single underline
+            glides to the active tab rather than toggling per label.
+          </li>
+          <li>
+            <code className="font-mono">numbers</code>: a numbered chip per slide; the active one
+            fills like a numbered pager. Good for short, countable sets.
+          </li>
+          <li>
+            <code className="font-mono">progress</code>: a single continuous bar that fills with
+            position (<span className="tabular-nums">25%</span> on slide 1 of 4). A readout, not
+            per-slide clickable; navigate with arrows, drag, or the arrow keys.
+          </li>
         </ul>
         <ComponentPreview
           code={`{/* one component, pick the form with \`variant\` */}
@@ -98,7 +112,10 @@ export function Example() {
 <CarouselIndicators
   variant="thumbnails"
   thumbnails={slides.map((s) => <img key={s.id} src={s.thumb} alt="" />)}
-/>`}
+/>
+<CarouselIndicators variant="tabs" labels={["Photo", "Stats", "Map", "Camera"]} />
+<CarouselIndicators variant="numbers" />
+<CarouselIndicators variant="progress" />`}
         >
           <IndicatorVariantsDemo />
         </ComponentPreview>

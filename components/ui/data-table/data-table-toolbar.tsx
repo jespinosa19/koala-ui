@@ -81,7 +81,7 @@ export function DataTableSearch({
   return (
     <InputRoot size={size} className={cn("w-full sm:w-72", rootClassName)}>
       <InputPrefix>
-        <MagnifyingGlass />
+        <MagnifyingGlass weight="bold" />
       </InputPrefix>
       <InputField type="search" placeholder={placeholder} className={className} {...props} />
       {shortcut !== false && (

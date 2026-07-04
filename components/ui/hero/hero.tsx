@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Slot } from "radix-ui"
-import { Checks } from "@phosphor-icons/react"
+import { CheckCircle } from "@phosphor-icons/react"
 
 import { createContext } from "@/lib/create-context"
 import { cn } from "@/lib/utils"
@@ -17,7 +17,7 @@ import { Rating } from "@/components/ui/rating"
  * It is pure layout composed from existing Koala parts: drop our `Button`s into `HeroActions`, an
  * `AvatarGroup` into `HeroSocialProof`, a product window or logo wall into `HeroMedia`. The root is
  * a full-bleed `<section>` wrapping a `HeroContent` column. `HeroFeature` carries its own
- * double-check glyph; `HeroRating` renders the star row; `HeroHighlight` marks a keyword in the
+ * check-circle glyph; `HeroRating` renders the star row; `HeroHighlight` marks a keyword in the
  * title.
  *
  * `layout` is the single knob that flips the whole composition (set once on `<Hero>`): `centered`
@@ -33,10 +33,15 @@ export const heroVariants = tv({
     // rhythm is asymmetric: a lighter top and a generous bottom that opens into the next section.
     // The Hero owns this `py` itself (added per-layout below), so compose it WITHOUT a band that
     // also pads (see components/ui/section: wrap in `padding="none"`), or override here.
-    content: "mx-auto w-full px-6",
+    content: "mx-auto w-full px-5 sm:px-8",
     // The copy stack for `split` (eyebrow → title → subtitle → actions). Harmless in `centered`,
     // where `content` is already the flex column, but available if a composer wants to group copy.
-    column: "flex w-full flex-col gap-6",
+    // `min-w-0` is load-bearing: as a grid/flex item the column defaults to `min-width:auto`, so a
+    // single non-wrapping child (a `whitespace-nowrap` eyebrow Badge, a long unbroken word) would set
+    // the track's min-content wider than the viewport and drag the whole column, title included, past
+    // the hero's `overflow-hidden` edge on a narrow frame. `min-w-0` lets the column shrink to its
+    // track so the copy wraps instead of overflowing. See memory `scroll-viewport-flex-min-h`.
+    column: "flex w-full min-w-0 flex-col gap-6",
     // Pill above the title; reads on any surface, hairline + soft shadow for depth.
     // `[&>svg]` (direct child only) sizes a bare leading glyph; a nested Badge keeps control of
     // its own icon, so the eyebrow doesn't reach in and fight the Badge's `[&>svg]` sizing.
@@ -50,24 +55,46 @@ export const heroVariants = tv({
     // four themes. `box-decoration-clone` keeps the rounded wash intact when the word wraps a line.
     highlight: "box-decoration-clone rounded-lg bg-brand/10 px-2 text-brand",
     subtitle: "max-w-2xl text-lg text-balance text-muted-foreground",
-    actions: "flex flex-wrap items-center gap-3",
+    // On a phone the CTAs stack one under the other (`flex-col`) and take the row's full width, the
+    // standard mobile CTA layout, so a pair never sits cramped side by side or wraps awkwardly; from
+    // `sm` up they return to a wrapping row and the layout's `justify-*` takes over (gated behind
+    // `sm:`). `self-stretch` (dropped at `sm:self-auto`) is load-bearing, NOT redundant with
+    // `items-stretch`: every layout centers or left-aligns the content column (`items-center` in
+    // centered/background, `items-start` in split), so this actions box, a child of that column, would
+    // otherwise shrink to its buttons' content width and the inner `items-stretch` would only fill
+    // *that*. `self-stretch` overrides the column's cross-axis alignment so the row spans the full
+    // column width and the stacked buttons truly hit 100% on mobile. It's `self-*` (not `w-full`) so a
+    // per-instance width cap like `max-w-sm` still wins (explicit width beats `align-self`). Mirrors the
+    // SectionHeader actions recipe so section CTAs stack the same way everywhere.
+    actions:
+      "flex flex-col items-stretch gap-3 self-stretch sm:flex-row sm:flex-wrap sm:items-center sm:self-auto",
     features: "flex flex-wrap items-center gap-x-6 gap-y-3",
     feature:
-      "inline-flex items-center gap-2 text-sm text-muted-foreground [&_svg]:size-4 [&_svg]:shrink-0",
-    // The double-check mark: green reads as "done/included" on every theme.
+      "inline-flex items-center gap-1.5 text-sm font-medium text-foreground [&_svg]:size-4 [&_svg]:shrink-0",
+    // The check-circle mark: green reads as "done/included" on every theme.
     featureIcon: "text-success",
     socialProof: "flex flex-col gap-3 sm:flex-row sm:gap-4",
     rating: "flex items-center gap-2 text-sm text-muted-foreground",
     // The visual region: a product window, screenshot, or logo wall. Fills its grid cell in `split`;
     // sits below the copy in `centered`. Composers size it (max-w / mt) per slab.
     media: "relative w-full",
+    // The full-bleed media layer for a `background` hero: an absolute bottom layer holding a cover
+    // image or video. Any child `<img>`/`<video>` is stretched to fill; `HeroBackground` lays the
+    // scrim over them so the section's own `overflow-hidden` + rounded corners clip the media too.
+    background:
+      "absolute inset-0 overflow-hidden [&>img]:size-full [&>img]:object-cover [&>video]:size-full [&>video]:object-cover",
+    // Legibility scrim over the media: a vertical gradient, darker at top and bottom so the centered
+    // copy and a trailing logo row stay readable on any photo. Literal `black/` (not a token) is the
+    // right call here, the same documented exception as an image overlay: a scrim over a photo is
+    // inherently dark and must not re-theme.
+    scrim: "absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/70",
   },
   variants: {
     layout: {
       centered: {
         content: "flex max-w-3xl flex-col items-center gap-6 pt-10 pb-16 text-center sm:pt-14 sm:pb-24",
         column: "items-center text-center",
-        actions: "justify-center",
+        actions: "sm:justify-center",
         features: "justify-center",
         socialProof: "items-center",
       },
@@ -75,9 +102,26 @@ export const heroVariants = tv({
         content:
           "grid max-w-6xl grid-cols-1 items-center gap-x-16 gap-y-12 pt-10 pb-16 sm:pt-14 sm:pb-24 lg:grid-cols-2",
         column: "items-start text-left",
-        actions: "justify-start",
+        actions: "sm:justify-start",
         features: "justify-start",
         socialProof: "items-start sm:items-center",
+      },
+      // Full-bleed media hero: the root becomes a min-height band that centers a single copy column
+      // over a `HeroBackground` (photo or video). The base text flips to white and the eyebrow goes
+      // glassy so the copy reads on the scrimmed media; `HeroContent` lifts above it with `z-10`.
+      // The min-height is a single fixed value (not responsive) so a docs PreviewFrame can floor its
+      // iframe at the same height and never strand the slab scrolling while the media still loads.
+      background: {
+        root: "grid min-h-[40rem] place-items-center text-white",
+        content:
+          "relative z-10 flex max-w-3xl flex-col items-center gap-6 py-20 text-center sm:py-28",
+        column: "items-center text-center",
+        eyebrow: "border-white/20 bg-white/10 text-white shadow-none backdrop-blur-sm",
+        subtitle: "text-white/75",
+        actions: "sm:justify-center",
+        features: "justify-center",
+        feature: "text-white/80",
+        socialProof: "items-center",
       },
     },
   },
@@ -89,10 +133,12 @@ const [HeroProvider, useHeroContext] = createContext<{ slots: HeroSlots }>("Hero
 
 export interface HeroProps extends React.ComponentProps<"section"> {
   /**
-   * Composition: a single centered column (default) or a two-column split where a `HeroColumn` of
-   * copy sits beside a `HeroMedia` visual. Set once here; every part reads it from context.
+   * Composition: a single centered column (`centered`, default); a two-column `split` where a
+   * `HeroColumn` of copy sits beside a `HeroMedia` visual; or `background`, a full-bleed band that
+   * centers one copy column over a `HeroBackground` photo or video (light copy on a scrim). Set once
+   * here; every part reads it from context.
    */
-  layout?: "centered" | "split"
+  layout?: "centered" | "split" | "background"
 }
 
 /**
@@ -327,12 +373,12 @@ export function HeroFeatures({ className, ...props }: React.ComponentProps<"ul">
   return <ul data-slot="hero-features" className={slots.features({ className })} {...props} />
 }
 
-/** One checklist item: carries its own green double-check glyph. */
+/** One checklist item: carries its own green check-circle glyph. */
 export function HeroFeature({ className, children, ...props }: React.ComponentProps<"li">) {
   const { slots } = useHeroContext("HeroFeature")
   return (
     <li data-slot="hero-feature" className={slots.feature({ className })} {...props}>
-      <Checks aria-hidden className={slots.featureIcon()} />
+      <CheckCircle weight="fill" aria-hidden className={slots.featureIcon()} />
       {children}
     </li>
   )
@@ -368,4 +414,21 @@ export function HeroRating({ value = 5, max = 5, className, children, ...props }
 export function HeroMedia({ className, ...props }: React.ComponentProps<"div">) {
   const { slots } = useHeroContext("HeroMedia")
   return <div data-slot="hero-media" className={slots.media({ className })} {...props} />
+}
+
+/**
+ * The full-bleed media layer for a `layout="background"` hero. Renders an absolutely-positioned
+ * bottom layer that stretches its child to cover the section, then lays a gradient scrim over it so
+ * the light copy stays legible on any photo. Drop a plain `<img src=… alt="" />` or an autoplay,
+ * muted, looping `<video>` (or a next `<Image fill>`) inside; sits behind `HeroContent`, which lifts
+ * above it. The section's `overflow-hidden` (plus any rounded corners) clips the media to the band.
+ */
+export function HeroBackground({ className, children, ...props }: React.ComponentProps<"div">) {
+  const { slots } = useHeroContext("HeroBackground")
+  return (
+    <div data-slot="hero-background" className={slots.background({ className })} {...props}>
+      {children}
+      <div data-slot="hero-scrim" aria-hidden className={slots.scrim()} />
+    </div>
+  )
 }

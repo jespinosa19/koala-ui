@@ -22,8 +22,12 @@ export const carouselVariants = tv({
     // `group` lets the overlay arrows reveal on hover of the whole carousel; `relative`
     // anchors the overlay arrows and (when `overlay`) the indicators to the image bounds.
     root: "group relative flex flex-col gap-3",
-    // Concentric with the surface it sits on; clips the sliding track.
-    viewport: "overflow-hidden rounded-lg",
+    // Concentric with the surface it sits on; clips the sliding track. `translateZ(0)` promotes
+    // the viewport to its own compositing layer so the rounded `overflow-hidden` clip is applied
+    // to the track too: while dragging, the track uses `translate3d` (a GPU layer), and Chromium
+    // otherwise skips an un-composited ancestor's border-radius clip on a composited child, letting
+    // the slides' square corners poke past the rounded frame mid-drag.
+    viewport: "overflow-hidden rounded-lg [transform:translateZ(0)]",
     // Specific transition (never `transition: all`); honors reduced-motion.
     track: "flex transition-transform duration-base ease-out motion-reduce:transition-none",
     slide: "min-w-0 shrink-0 grow-0 basis-full",
@@ -70,6 +74,42 @@ export const carouselVariants = tv({
     // so selection reads as one moving frame. Sits above the tiles and ignores pointer events.
     thumbRing:
       "pointer-events-none absolute left-0 top-0 z-10 h-10 w-14 rounded-md ring-2 ring-brand transition-transform duration-base ease-out motion-reduce:transition-none",
+    // A text-label tab per slide (variant="tabs"). `z-10` keeps the label above the sliding
+    // underline; the label carries the color, the underline does the "which one" lifting.
+    tab: [
+      "relative z-10 inline-flex shrink-0 cursor-pointer items-center justify-center whitespace-nowrap rounded-md",
+      "px-3 py-2 text-sm font-medium tracking-tight text-muted-foreground",
+      "transition-colors duration-fast ease-out hover:text-foreground",
+      "active:scale-[0.96]",
+      "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+      // polish: ≥40px vertical hit target. `inset-x-0` so it never overlaps a horizontally
+      // adjacent tab (the whole label is clickable with no dead zone between tabs).
+      "before:absolute before:inset-x-0 before:top-1/2 before:h-10 before:-translate-y-1/2 before:content-['']",
+    ],
+    // The single underline that GLIDES to the active tab; positioned/sized in JS (see
+    // useTabIndicator) and inset to the label's content box so it hugs the text, not the padded
+    // hit area. The transition switches on one frame AFTER the first placement so it never
+    // slides in from the origin on load (polish: skip-animation-on-load).
+    tabIndicator: "pointer-events-none absolute left-0 top-0 z-0 h-0.5 rounded-full bg-foreground",
+    // A numbered chip per slide (variant="numbers"). Fixed-size square so a wider digit (9 -> 10)
+    // never shifts the row; the active chip fills (bg-foreground) via a compound, the rest stay
+    // muted numerals. bg + text transition together on the SAME element, so no cross-chip flash.
+    number: [
+      "relative inline-flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md",
+      "text-xs font-semibold tabular-nums text-muted-foreground",
+      "transition-[background-color,color] duration-base ease-out hover:bg-muted hover:text-foreground",
+      "active:scale-[0.96]",
+      "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+      // polish: ≥40px-tall hit target; fills horizontally only to the gap midpoint (gap-1 = 4px)
+      // so the row is fully clickable and adjacent chips never overlap.
+      "before:absolute before:-inset-x-[2px] before:top-1/2 before:h-10 before:-translate-y-1/2 before:content-['']",
+    ],
+    // A single continuous progress track + fill (variant="progress"). The fill width tracks
+    // (index+1)/count so slide 1 already reads as progress instead of an empty bar. A readout like
+    // `fraction` (not per-slide clickable); navigate with arrows/drag/keys.
+    progressTrack: "relative h-1 w-24 overflow-hidden rounded-full bg-border",
+    progressFill:
+      "absolute inset-y-0 left-0 rounded-full bg-foreground transition-[width] duration-base ease-out motion-reduce:transition-none",
     // Overlay-only overrides layered onto an icon-only <Button>: position it on the image edge,
     // make it a circle, and swap the variant fill for a translucent blurred surface that stays
     // legible on any photo. Behavior (press scale, focus ring, 40px hit, icon sizing) all comes
@@ -96,6 +136,14 @@ export const carouselVariants = tv({
       // `relative` anchors the gliding thumbRing; `mx-auto w-max` shrinks the row to its tiles and
       // centers it, so the ring's left-0 origin lines up with the first tile.
       thumbnails: { indicators: "relative mx-auto w-max gap-2" },
+      // `relative` anchors the gliding underline; `mx-auto w-max` shrinks the row to its labels so
+      // the bottom rule hugs the tab cluster, and the underline's left-0 origin lines up with the
+      // first tab. `items-stretch` lets each tab own the full row height for the hit target.
+      tabs: { indicators: "relative mx-auto w-max items-stretch gap-1 border-b border-border pb-2" },
+      // Tight gap between numbered chips; the row still centers via the base `justify-center`.
+      numbers: { indicators: "gap-1" },
+      // Single continuous bar; the base flex row centers it.
+      progress: {},
     },
     side: {
       left: { arrow: "left-2" },
@@ -141,6 +189,31 @@ export const carouselVariants = tv({
     // Active is full opacity; the brand frame is the gliding thumbRing, not a per-tile ring.
     { variant: "thumbnails", active: true, class: { thumb: "opacity-100" } },
     { variant: "thumbnails", active: false, class: { thumb: "opacity-60 hover:opacity-100" } },
+    // Tabs: the active label goes full ink; the sliding underline does the rest.
+    { variant: "tabs", active: true, class: { tab: "text-foreground" } },
+    // Tabs over a photo: white ink + white underline + hairline white rule (theme tokens can
+    // vanish over an image, same rationale as the overlay dots).
+    {
+      variant: "tabs",
+      overlay: true,
+      class: { indicators: "border-white/25", tab: "text-white/60 hover:text-white", tabIndicator: "bg-white" },
+    },
+    { variant: "tabs", overlay: true, active: true, class: { tab: "text-white" } },
+    // Numbers: the active chip fills bold (like a numbered pager); the rest stay muted numerals.
+    {
+      variant: "numbers",
+      active: true,
+      class: { number: "bg-foreground text-background hover:bg-foreground hover:text-background" },
+    },
+    // Numbers/progress over a photo go white the same way the dots do.
+    { variant: "numbers", overlay: true, class: { number: "text-white/60 hover:bg-white/10 hover:text-white" } },
+    {
+      variant: "numbers",
+      overlay: true,
+      active: true,
+      class: { number: "bg-white text-black hover:bg-white hover:text-black" },
+    },
+    { variant: "progress", overlay: true, class: { progressTrack: "bg-white/30", progressFill: "bg-white" } },
     // Fraction over a photo goes white the same way the dots do.
     {
       variant: "fraction",
@@ -165,13 +238,24 @@ type CarouselContextValue = {
 const [CarouselProvider, useCarouselContext] =
   createContext<CarouselContextValue>("Carousel")
 
-/** Count the slides by finding the CarouselContent child and measuring its children. */
+/**
+ * Count the slides by finding the CarouselContent among the children and measuring its own
+ * children. Recurses through wrapper elements so a composition can NEST the viewport (e.g. box it
+ * with flanking arrows in a `relative` div) without zeroing the count. A zero count would silently
+ * disable drag (the `count <= 1` guard in CarouselContent) and hide the indicators, while arrows
+ * driven by external state still worked, so the carousel looked half-broken. Stops at the first
+ * CarouselContent found.
+ */
 function countSlides(children: React.ReactNode): number {
   let count = 0
   React.Children.forEach(children, (child) => {
-    if (React.isValidElement(child) && child.type === CarouselContent) {
+    if (count > 0 || !React.isValidElement(child)) return
+    if (child.type === CarouselContent) {
       const content = child as React.ReactElement<CarouselContentProps>
       count = React.Children.toArray(content.props.children).length
+    } else {
+      const nested = (child.props as { children?: React.ReactNode }).children
+      if (nested != null) count = countSlides(nested)
     }
   })
   return count
@@ -408,7 +492,7 @@ export function CarouselPrevious({ className, ...props }: CarouselArrowProps) {
       className={slots.arrow({ side: "left", className: cn(arrowReveal(disabled), className) })}
       {...props}
     >
-      <CaretLeft />
+      <CaretLeft weight="bold" />
     </Button>
   )
 }
@@ -429,12 +513,74 @@ export function CarouselNext({ className, ...props }: CarouselArrowProps) {
       className={slots.arrow({ side: "right", className: cn(arrowReveal(disabled), className) })}
       {...props}
     >
-      <CaretRight />
+      <CaretRight weight="bold" />
     </Button>
   )
 }
 
-// ─── CarouselIndicators: dots / lines / fraction / thumbnails ────────────────────
+// ─── useTabIndicator: sliding underline for variant="tabs" ──────────────────────
+
+/**
+ * Measures the active tab's box and returns the underline's transform/size. Re-measures on
+ * selection change (`index`) and on resize/font-shifts (ResizeObserver), never polls. The
+ * underline is inset to the label's content box so it hugs the text, not the padded hit area.
+ * `ready` gates visibility so it never paints at the origin; `animate` turns the transition on
+ * one frame *after* the first placement, so it snaps into position on load and only slides on
+ * later changes. Mirrors Tabs' `useActiveIndicator` (the sanctioned set-state-in-effect pattern:
+ * the linter doesn't trace setState into the nested `measure`).
+ */
+function useTabIndicator(
+  rowRef: React.RefObject<HTMLDivElement | null>,
+  index: number,
+  enabled: boolean,
+) {
+  const [style, setStyle] = React.useState<React.CSSProperties>()
+  const [ready, setReady] = React.useState(false)
+  const [animate, setAnimate] = React.useState(false)
+
+  React.useLayoutEffect(() => {
+    const row = rowRef.current
+    if (!row || !enabled) return
+
+    const measure = () => {
+      const active = row.querySelector<HTMLElement>("[data-active]")
+      if (!active) {
+        setReady(false)
+        return
+      }
+      // Inset by the label's horizontal padding so the bar underlines the text, not the full
+      // padded cell (otherwise it spills past the label and reads misaligned).
+      const cs = getComputedStyle(active)
+      const padL = parseFloat(cs.paddingLeft) || 0
+      const padR = parseFloat(cs.paddingRight) || 0
+      setStyle({
+        // Straddle the bottom rule (clientHeight = content + pb-2; the border sits just below it).
+        transform: `translate(${active.offsetLeft + padL}px, ${row.clientHeight - 1}px)`,
+        width: active.offsetWidth - padL - padR,
+      })
+      setReady(true)
+    }
+
+    measure()
+
+    // Enable the slide only after the first placement has painted (skip-animation-on-load).
+    const raf = requestAnimationFrame(() => setAnimate(true))
+
+    // Label widths/positions shift without an index change (resize, late-loading fonts).
+    const ro = new ResizeObserver(measure)
+    ro.observe(row)
+    for (const child of row.children) ro.observe(child)
+
+    return () => {
+      cancelAnimationFrame(raf)
+      ro.disconnect()
+    }
+  }, [rowRef, index, enabled])
+
+  return { style, ready, animate }
+}
+
+// ─── CarouselIndicators: dots / lines / fraction / thumbnails / tabs ─────────────
 
 export interface CarouselIndicatorsProps extends React.ComponentProps<"div"> {
   /**
@@ -443,9 +589,12 @@ export interface CarouselIndicatorsProps extends React.ComponentProps<"div"> {
    * - `lines`: thin fixed-width ticks.
    * - `fraction`: a contained "2 / 5" readout (not per-slide clickable).
    * - `thumbnails`: one slide preview per slide (pass `thumbnails`).
+   * - `tabs`: one text label per slide with a sliding underline (pass `labels`).
+   * - `numbers`: a numbered chip per slide; the active one fills.
+   * - `progress`: a single continuous bar that fills with position (not per-slide clickable).
    * @default "dots"
    */
-  variant?: "dots" | "lines" | "fraction" | "thumbnails"
+  variant?: "dots" | "lines" | "fraction" | "thumbnails" | "tabs" | "numbers" | "progress"
   /** Builds each item's accessible label. @default i => `Go to slide ${i + 1}` */
   dotLabel?: (index: number) => string
   /** Float the indicator over the image (white treatment) instead of below it. */
@@ -461,6 +610,12 @@ export interface CarouselIndicatorsProps extends React.ComponentProps<"div"> {
    * used for - `variant="thumbnails"`; index it to match the slide order.
    */
   thumbnails?: React.ReactNode[]
+  /**
+   * One short label per slide, rendered inside each tab button. Required by - and only used for -
+   * `variant="tabs"`; index it to match the slide order. Falls back to the slide number when a
+   * label is missing.
+   */
+  labels?: React.ReactNode[]
 }
 
 export function CarouselIndicators({
@@ -470,9 +625,13 @@ export function CarouselIndicators({
   overlay = false,
   align = "end",
   thumbnails,
+  labels,
   ...props
 }: CarouselIndicatorsProps) {
   const { slots, count, index, setIndex } = useCarouselContext("CarouselIndicators")
+  // Hooks must run before the `count <= 1` bailout; the ref only attaches on the tabs branch.
+  const tabRowRef = React.useRef<HTMLDivElement>(null)
+  const tab = useTabIndicator(tabRowRef, index, variant === "tabs")
   if (count <= 1) return null
 
   // Fraction is a single readout, not one control per slide.
@@ -516,6 +675,74 @@ export function CarouselIndicators({
     )
   }
 
+  // Tabs: one text label per slide with a single underline that glides to the active tab.
+  if (variant === "tabs") {
+    return (
+      <div
+        ref={tabRowRef}
+        data-slot="carousel-indicators"
+        className={slots.indicators({ variant, overlay, align, className })}
+        {...props}
+      >
+        <span
+          aria-hidden
+          className={cn(
+            slots.tabIndicator({ variant, overlay }),
+            // Hidden until the first measure; the slide only switches on after that placement
+            // has painted, so it never slides in from the origin on load.
+            tab.ready ? "opacity-100" : "opacity-0",
+            tab.animate && "transition-[transform,width] duration-base ease-out motion-reduce:transition-none",
+          )}
+          style={tab.style}
+        />
+        {Array.from({ length: count }, (_, i) => {
+          const active = i === index
+          return (
+            <button
+              key={i}
+              type="button"
+              data-active={active || undefined}
+              aria-current={active || undefined}
+              aria-label={dotLabel(i)}
+              onClick={() => setIndex(i)}
+              className={slots.tab({ variant, active, overlay })}
+            >
+              {labels?.[i] ?? i + 1}
+            </button>
+          )
+        })}
+      </div>
+    )
+  }
+
+  // Progress: one continuous bar whose fill tracks position. A readout (like fraction), not
+  // per-slide clickable; role=progressbar carries the state for assistive tech.
+  if (variant === "progress") {
+    return (
+      <div
+        data-slot="carousel-indicators"
+        className={slots.indicators({ variant, overlay, align, className })}
+        {...props}
+      >
+        <span
+          className={slots.progressTrack({ variant, overlay })}
+          role="progressbar"
+          aria-valuemin={1}
+          aria-valuemax={count}
+          aria-valuenow={index + 1}
+          aria-label={`Slide ${index + 1} of ${count}`}
+        >
+          <span
+            aria-hidden
+            className={slots.progressFill({ variant, overlay })}
+            // (index+1)/count so slide 1 already shows a quarter (never an empty bar).
+            style={{ width: `${((index + 1) / count) * 100}%` }}
+          />
+        </span>
+      </div>
+    )
+  }
+
   return (
     <div
       data-slot="carousel-indicators"
@@ -545,6 +772,22 @@ export function CarouselIndicators({
               className={slots.thumb({ variant, active })}
             >
               {thumbnails?.[i]}
+            </button>
+          )
+        }
+
+        // numbers: a numbered chip per slide; the active one fills.
+        if (variant === "numbers") {
+          return (
+            <button
+              key={i}
+              type="button"
+              aria-label={label}
+              aria-current={active || undefined}
+              onClick={() => setIndex(i)}
+              className={slots.number({ variant, active, overlay })}
+            >
+              {i + 1}
             </button>
           )
         }

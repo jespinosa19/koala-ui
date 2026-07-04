@@ -69,7 +69,7 @@ export function ShowcaseDemo() {
         <ActivityItem>
           <ActivityMarker>
             <ActivityIcon tone="purple">
-              <At />
+              <At weight="bold" />
             </ActivityIcon>
           </ActivityMarker>
           <ActivityContent>
@@ -86,7 +86,7 @@ export function ShowcaseDemo() {
         <ActivityItem>
           <ActivityMarker>
             <ActivityIcon tone="teal">
-              <UploadSimple />
+              <UploadSimple weight="bold" />
             </ActivityIcon>
           </ActivityMarker>
           <ActivityContent>
@@ -117,7 +117,7 @@ export function ShowcaseDemo() {
         <ActivityItem>
           <ActivityMarker>
             <ActivityIcon tone="success">
-              <CheckCircle />
+              <CheckCircle weight="bold" />
             </ActivityIcon>
           </ActivityMarker>
           <ActivityContent>
@@ -173,7 +173,7 @@ export function SimpleDemo() {
         <ActivityItem>
           <ActivityMarker>
             <ActivityIcon tone="info">
-              <ChatCircle />
+              <ChatCircle weight="bold" />
             </ActivityIcon>
           </ActivityMarker>
           <ActivityContent>
@@ -187,7 +187,7 @@ export function SimpleDemo() {
         <ActivityItem>
           <ActivityMarker>
             <ActivityIcon tone="success">
-              <GitMerge />
+              <GitMerge weight="bold" />
             </ActivityIcon>
           </ActivityMarker>
           <ActivityContent>
@@ -227,7 +227,7 @@ export function MarkersDemo() {
         <ActivityItem>
           <ActivityMarker>
             <ActivityIcon tone="orange">
-              <UserPlus />
+              <UserPlus weight="bold" />
             </ActivityIcon>
           </ActivityMarker>
           <ActivityContent>
@@ -264,7 +264,7 @@ export function AttachmentsDemo() {
         <ActivityItem>
           <ActivityMarker>
             <ActivityIcon tone="teal">
-              <UploadSimple />
+              <UploadSimple weight="bold" />
             </ActivityIcon>
           </ActivityMarker>
           <ActivityContent>
@@ -337,7 +337,7 @@ function DensitySample({ density }: { density: "comfortable" | "compact" }) {
       <ActivityItem>
         <ActivityMarker>
           <ActivityIcon tone="info">
-            <PencilSimple />
+            <PencilSimple weight="bold" />
           </ActivityIcon>
         </ActivityMarker>
         <ActivityContent>
@@ -350,7 +350,7 @@ function DensitySample({ density }: { density: "comfortable" | "compact" }) {
       <ActivityItem>
         <ActivityMarker>
           <ActivityIcon tone="success">
-            <DownloadSimple />
+            <DownloadSimple weight="bold" />
           </ActivityIcon>
         </ActivityMarker>
         <ActivityContent>

@@ -5,6 +5,7 @@ import {
   FaqsHeader,
   FaqsTitle,
   FaqsDescription,
+  FaqsGroup,
   FaqsList,
   FaqsItem,
   FaqsFooter,
@@ -37,6 +38,50 @@ const PLAN_FAQS = [
   {
     q: "Which payment methods do you accept?",
     a: "All major cards through our payment processor, plus invoicing on annual Enterprise plans.",
+  },
+]
+
+// Data-driven source for the "Grouped by topic" example: each entry becomes a FaqsGroup,
+// its questions mapped into FaqsItems. The categorized / help-center FAQ.
+const TOPIC_FAQS = [
+  {
+    topic: "Most asked",
+    questions: [
+      {
+        q: "How is Koala UI different from other UI kits or design systems?",
+        a: "Koala UI ships finished, production-ready React components built on semantic tokens and Radix primitives, not a starter you have to assemble. Every component is themeable, accessible, and documented out of the box.",
+      },
+      {
+        q: "Who is it made for?",
+        a: "Product teams, founders, and freelancers who want a polished design system they can drop into a real app and a marketing site, without rebuilding the basics each time.",
+      },
+    ],
+  },
+  {
+    topic: "The product",
+    questions: [
+      {
+        q: "How many themes are in the design system? Are you planning to add more?",
+        a: "Four ship today: light, dark, cream, and moonlight, all driven by one set of semantic tokens. More are on the roadmap, and you can author your own by overriding the token layer.",
+      },
+      {
+        q: "How often is Koala UI updated?",
+        a: "Regularly. New components and sections land continuously; re-run the CLI to pull the latest source for anything you have installed.",
+      },
+    ],
+  },
+  {
+    topic: "Money and payments",
+    questions: [
+      {
+        q: "Is it a one-time payment or a subscription?",
+        a: "The PRO tier is a one-time payment that includes a year of updates. Your installed components keep working forever, with no runtime lock-in.",
+      },
+      {
+        q: "Do you offer refunds?",
+        a: "Yes. If Koala UI is not the right fit, reach out within 14 days of purchase for a full refund.",
+      },
+    ],
   },
 ]
 
@@ -269,11 +314,95 @@ export function Example() {
               Still have questions?
               <Button size="sm" asChild>
                 <a href="#">
-                  <ChatCircleDots />
+                  <ChatCircleDots weight="bold" />
                   Contact support
                 </a>
               </Button>
             </FaqsFooter>
+          </Faqs>
+        </ComponentPreview>
+      </DocSection>
+
+      <DocSection title="Grouped by topic">
+        <p className="mt-4 text-pretty text-muted-foreground">
+          For a long, categorized help center, slot{" "}
+          <code className="font-mono text-sm">FaqsGroup</code>s between the header and footer.
+          Each takes a <code className="font-mono text-sm">title</code> (an{" "}
+          <code className="font-mono text-sm">&lt;h3&gt;</code> under the section{" "}
+          <code className="font-mono text-sm">&lt;h2&gt;</code>) and an optional{" "}
+          <code className="font-mono text-sm">description</code>, then wraps its own questions,
+          so the page reads header → topic → questions → topic. Each group owns its own list, so
+          single-expand is scoped to the topic and the hairline dividers reset at every
+          boundary. It defaults to the borderless{" "}
+          <code className="font-mono text-sm">minimal</code> list, and still forwards every{" "}
+          <code className="font-mono text-sm">FaqsList</code> prop (
+          <code className="font-mono text-sm">variant</code>,{" "}
+          <code className="font-mono text-sm">defaultValue</code>,{" "}
+          <code className="font-mono text-sm">iconPosition</code>, …).
+        </p>
+        <ComponentPreview
+          previewClassName="flex-col items-stretch p-8"
+          code={`const TOPIC_FAQS = [
+  {
+    topic: "Most asked",
+    questions: [
+      { q: "How is Koala UI different from other UI kits?", a: "…" },
+      { q: "Who is it made for?", a: "…" },
+    ],
+  },
+  {
+    topic: "The product",
+    questions: [
+      { q: "How many themes ship with the design system?", a: "…" },
+      { q: "How often is Koala UI updated?", a: "…" },
+    ],
+  },
+  // …
+]
+
+<Faqs>
+  <FaqsHeader>
+    <FaqsTitle>Have any questions? We&apos;ve got answers</FaqsTitle>
+    <FaqsDescription>
+      The questions we hear most, grouped by topic so you can jump straight to the one you need.
+    </FaqsDescription>
+  </FaqsHeader>
+  {TOPIC_FAQS.map((group, gi) => (
+    <FaqsGroup
+      key={group.topic}
+      title={group.topic}
+      defaultValue={gi === 0 ? \`\${group.topic}-0\` : undefined}
+    >
+      {group.questions.map((item, i) => (
+        <FaqsItem key={i} value={\`\${group.topic}-\${i}\`} question={item.q}>
+          {item.a}
+        </FaqsItem>
+      ))}
+    </FaqsGroup>
+  ))}
+</Faqs>`}
+        >
+          <Faqs>
+            <FaqsHeader>
+              <FaqsTitle>Have any questions? We&apos;ve got answers</FaqsTitle>
+              <FaqsDescription>
+                The questions we hear most, grouped by topic so you can jump straight to the one
+                you need.
+              </FaqsDescription>
+            </FaqsHeader>
+            {TOPIC_FAQS.map((group, gi) => (
+              <FaqsGroup
+                key={group.topic}
+                title={group.topic}
+                defaultValue={gi === 0 ? `${group.topic}-0` : undefined}
+              >
+                {group.questions.map((item, i) => (
+                  <FaqsItem key={i} value={`${group.topic}-${i}`} question={item.q}>
+                    {item.a}
+                  </FaqsItem>
+                ))}
+              </FaqsGroup>
+            ))}
           </Faqs>
         </ComponentPreview>
       </DocSection>
@@ -443,7 +572,7 @@ export function Example() {
               Can&apos;t find what you&apos;re looking for?
               <Button size="sm" variant="secondary" asChild>
                 <a href="#">
-                  <ChatCircleDots />
+                  <ChatCircleDots weight="bold" />
                   Talk to us
                 </a>
               </Button>
@@ -565,6 +694,30 @@ export function Example() {
                 </td>
               </tr>
               <tr>
+                <td className="font-mono">FaqsGroup.title</td>
+                <td className="font-mono text-muted-foreground">ReactNode</td>
+                <td className="font-mono text-muted-foreground">-</td>
+                <td className="text-muted-foreground">
+                  Topic heading (an &lt;h3&gt;) above the group&apos;s questions.
+                </td>
+              </tr>
+              <tr>
+                <td className="font-mono">FaqsGroup.description</td>
+                <td className="font-mono text-muted-foreground">ReactNode</td>
+                <td className="font-mono text-muted-foreground">-</td>
+                <td className="text-muted-foreground">
+                  Optional supporting copy under the topic heading.
+                </td>
+              </tr>
+              <tr>
+                <td className="font-mono">FaqsGroup.*</td>
+                <td className="font-mono text-muted-foreground">FaqsList props</td>
+                <td className="font-mono text-muted-foreground">variant=&quot;minimal&quot;</td>
+                <td className="text-muted-foreground">
+                  Forwarded to the group&apos;s own FaqsList (variant, defaultValue, …).
+                </td>
+              </tr>
+              <tr>
                 <td className="font-mono">FaqsItem.question</td>
                 <td className="font-mono text-muted-foreground">ReactNode</td>
                 <td className="font-mono text-muted-foreground">-</td>
@@ -610,6 +763,7 @@ export function Example() {
           <code className="font-mono text-sm">FaqsHeader</code>,{" "}
           <code className="font-mono text-sm">FaqsTitle</code>,{" "}
           <code className="font-mono text-sm">FaqsDescription</code>,{" "}
+          <code className="font-mono text-sm">FaqsGroup</code>,{" "}
           <code className="font-mono text-sm">FaqsList</code>,{" "}
           <code className="font-mono text-sm">FaqsItem</code>,{" "}
           <code className="font-mono text-sm">FaqsFeedback</code>,{" "}
@@ -634,6 +788,10 @@ export function Example() {
             {
               q: "Can more than one answer be open at once?",
               a: "Yes. FaqsList forwards to Accordion, so set type=\"multiple\" (and drop collapsible, which only applies to single) to let several answers stay open together.",
+            },
+            {
+              q: "How do I split a long FAQ into topic sections?",
+              a: "Use FaqsGroup. Drop one per topic between FaqsHeader and FaqsFooter, give it a title (and optional description), and nest its FaqsItems inside. Each group is its own list, so single-expand is scoped to the topic. That is the grouped / help-center variant: header → topic → questions → topic.",
             },
             {
               q: "How do I make the contact prompt live in the header instead of the footer?",

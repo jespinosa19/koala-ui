@@ -36,21 +36,21 @@ export const contextMenuVariants = tv({
       "transition-colors duration-fast ease-out",
       "focus:bg-accent focus:text-accent-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+      "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
     ],
     checkboxItem: [
       "relative flex cursor-pointer select-none items-center gap-2 text-sm font-medium outline-none",
       "transition-colors duration-fast ease-out",
       "focus:bg-accent focus:text-accent-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+      "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
     ],
     radioItem: [
       "relative flex cursor-pointer select-none items-center gap-2 text-sm font-medium outline-none",
       "transition-colors duration-fast ease-out",
       "focus:bg-accent focus:text-accent-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+      "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
     ],
     // `group` lets the caret nudge on sub-menu open.
     subTrigger: [
@@ -58,7 +58,7 @@ export const contextMenuVariants = tv({
       "transition-colors duration-fast ease-out",
       "focus:bg-accent focus:text-accent-foreground",
       "data-[state=open]:bg-accent data-[state=open]:text-accent-foreground",
-      "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+      "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
     ],
     subContent: [
       "z-50 min-w-[8rem] overflow-hidden rounded-md border border-border bg-popover",
@@ -69,7 +69,9 @@ export const contextMenuVariants = tv({
       "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
       "duration-base ease-out",
     ],
-    itemIndicator: "absolute right-2 flex size-4 items-center justify-center",
+    // Brand-colored check: a selected checkbox/radio row reads as an on-brand confirmation
+    // (matching Select + DropdownMenu), not a muted glyph. The leading icon stays muted.
+    itemIndicator: "absolute right-2 flex size-4 items-center justify-center text-brand",
     label: "font-medium text-muted-foreground",
     separator: "-mx-1 h-px bg-border",
     subCaret: "ml-auto size-4 text-muted-foreground",
@@ -198,7 +200,7 @@ export function ContextMenuCheckboxItem({
     >
       <span className={slots.itemIndicator()}>
         <ContextMenuPrimitive.ItemIndicator>
-          <Check className="size-4" />
+          <Check weight="bold" className="size-4" />
         </ContextMenuPrimitive.ItemIndicator>
       </span>
       {children}
@@ -228,7 +230,7 @@ export function ContextMenuRadioItem({
           semantics still live in the role (`menuitemradio`) and the section grouping, not the glyph. */}
       <span className={slots.itemIndicator()}>
         <ContextMenuPrimitive.ItemIndicator>
-          <Check className="size-4" />
+          <Check weight="bold" className="size-4" />
         </ContextMenuPrimitive.ItemIndicator>
       </span>
       {children}
@@ -307,7 +309,7 @@ export function ContextMenuSubTrigger({
       {...props}
     >
       {children}
-      <CaretRight className={slots.subCaret()} />
+      <CaretRight weight="bold" className={slots.subCaret()} />
     </ContextMenuPrimitive.SubTrigger>
   )
 }

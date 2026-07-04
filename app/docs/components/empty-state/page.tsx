@@ -53,7 +53,7 @@ export default function EmptyStateDocsPage() {
       >
         <EmptyState>
           <EmptyStateMedia>
-            <FolderOpen />
+            <FolderOpen weight="bold" />
           </EmptyStateMedia>
           <EmptyStateTitle>No projects yet</EmptyStateTitle>
           <EmptyStateDescription>
@@ -62,10 +62,10 @@ export default function EmptyStateDocsPage() {
           </EmptyStateDescription>
           <EmptyStateActions>
             <Button variant="outline">
-              <UploadSimple /> Import
+              <UploadSimple weight="bold" /> Import
             </Button>
             <Button>
-              <Plus /> New project
+              <Plus weight="bold" /> New project
             </Button>
           </EmptyStateActions>
         </EmptyState>
@@ -112,7 +112,7 @@ export function Example() {
         <p className="mt-4 text-pretty text-muted-foreground">
           The <code>variant</code> prop tints the media surface from a single semantic
           token via opacity (the same soft pattern as Badge) so a search, error, or
-          success state stays legible across all three themes. Set it on the root and every
+          success state stays legible across all four themes. Set it on the root and every
           part picks it up through context.
         </p>
         <ComponentPreview
@@ -140,26 +140,26 @@ export function Example() {
         >
           <EmptyState variant="info">
             <EmptyStateMedia>
-              <MagnifyingGlass />
+              <MagnifyingGlass weight="bold" />
             </EmptyStateMedia>
             <EmptyStateTitle>No results</EmptyStateTitle>
             <EmptyStateDescription>Nothing matched that search.</EmptyStateDescription>
           </EmptyState>
           <EmptyState variant="destructive">
             <EmptyStateMedia>
-              <WarningCircle />
+              <WarningCircle weight="bold" />
             </EmptyStateMedia>
             <EmptyStateTitle>Couldn&apos;t load data</EmptyStateTitle>
             <EmptyStateDescription>Something went wrong on our end.</EmptyStateDescription>
             <EmptyStateActions>
               <Button variant="outline">
-                <ArrowClockwise /> Retry
+                <ArrowClockwise weight="bold" /> Retry
               </Button>
             </EmptyStateActions>
           </EmptyState>
           <EmptyState variant="success">
             <EmptyStateMedia>
-              <CheckCircle />
+              <CheckCircle weight="bold" />
             </EmptyStateMedia>
             <EmptyStateTitle>All caught up</EmptyStateTitle>
             <EmptyStateDescription>You&apos;ve cleared your inbox.</EmptyStateDescription>
@@ -191,7 +191,7 @@ export function Example() {
         >
           <EmptyState density="comfortable" className="rounded-xl border border-border">
             <EmptyStateMedia>
-              <Bell />
+              <Bell weight="bold" />
             </EmptyStateMedia>
             <EmptyStateTitle>No notifications</EmptyStateTitle>
             <EmptyStateDescription>
@@ -200,7 +200,7 @@ export function Example() {
           </EmptyState>
           <EmptyState density="compact" className="rounded-xl border border-border">
             <EmptyStateMedia>
-              <Bell />
+              <Bell weight="bold" />
             </EmptyStateMedia>
             <EmptyStateTitle>No notifications</EmptyStateTitle>
             <EmptyStateDescription>
@@ -216,7 +216,7 @@ export function Example() {
           informational placeholder.
         </p>
         <ComponentPreview
-          code={`<EmptyState variant="primary">
+          code={`<EmptyState>
   <EmptyStateMedia><Users /></EmptyStateMedia>
   <EmptyStateTitle>No team members</EmptyStateTitle>
   <EmptyStateDescription>
@@ -224,9 +224,9 @@ export function Example() {
   </EmptyStateDescription>
 </EmptyState>`}
         >
-          <EmptyState variant="primary">
+          <EmptyState>
             <EmptyStateMedia>
-              <Users />
+              <Users weight="bold" />
             </EmptyStateMedia>
             <EmptyStateTitle>No team members</EmptyStateTitle>
             <EmptyStateDescription>

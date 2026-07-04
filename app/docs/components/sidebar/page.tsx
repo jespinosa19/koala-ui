@@ -8,6 +8,7 @@ import {
   SidebarSwitcherDemo,
   SidebarSwitcherVariantDemo,
   SidebarItemDemo,
+  SidebarTilesDemo,
   SidebarDensityDemo,
   SidebarVariantsDemo,
   SidebarNestedDemo,
@@ -24,7 +25,7 @@ const heroCode = `<Sidebar aria-label="Main">
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         {/* compact by default; pass variant="full" + a subtitle for the roomy identity row */}
-        <SidebarSwitcher leading={<Logo />} title="Acme Inc" />
+        <SidebarSwitcher leading={<BrandMark wordmark={false} />} title="Koala" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">…</DropdownMenuContent>
     </DropdownMenu>
@@ -139,10 +140,10 @@ export function AppSidebar() {
           code={`<DropdownMenu>
   <DropdownMenuTrigger asChild>
     {/* compact by default, no variant needed */}
-    <SidebarSwitcher leading={<Logo />} title="Acme Inc" />
+    <SidebarSwitcher leading={<BrandMark wordmark={false} />} title="Koala" />
   </DropdownMenuTrigger>
   <DropdownMenuContent align="start">
-    <DropdownMenuItem><Buildings /> Acme Inc <Check className="ml-auto" /></DropdownMenuItem>
+    <DropdownMenuItem><BrandMark wordmark={false} /> Koala <Check className="ml-auto" /></DropdownMenuItem>
     <DropdownMenuItem><Rocket /> Skunkworks</DropdownMenuItem>
     <DropdownMenuSeparator />
     <DropdownMenuItem><Plus /> Create workspace</DropdownMenuItem>
@@ -170,13 +171,13 @@ export function AppSidebar() {
         <ComponentPreview
           previewClassName="block p-6"
           code={`{/* compact: the default, no variant needed */}
-<SidebarSwitcher leading={<Avatar size="xs" />} title="Acme Inc" />
+<SidebarSwitcher leading={<Avatar size="xs" />} title="Koala" />
 
 {/* full: a larger leading + a subtitle reads as the roomy identity row */}
 <SidebarSwitcher
   variant="full"
   leading={<Avatar size="md" />}
-  title="Acme Inc"
+  title="Koala"
   subtitle="Enterprise plan"
 />`}
         >
@@ -211,6 +212,59 @@ export function AppSidebar() {
 </SidebarItem>`}
         >
           <SidebarItemDemo />
+        </ComponentPreview>
+      </DocSection>
+
+      <DocSection title="Colored icon tiles">
+        <p className="mt-4 text-pretty text-muted-foreground">
+          Swap the bare leading glyph for a{" "}
+          <code className="font-mono text-sm">SidebarItemIcon</code>: a soft, hue-tinted rounded
+          square that gives each destination its own color, the &ldquo;colored spaces&rdquo; rail
+          you see in Productboard or Linear. Wrap a single icon and pass a{" "}
+          <code className="font-mono text-sm">tone</code> (decorative:{" "}
+          <code className="font-mono text-sm">purple</code>,{" "}
+          <code className="font-mono text-sm">pink</code>,{" "}
+          <code className="font-mono text-sm">teal</code>,{" "}
+          <code className="font-mono text-sm">orange</code>; status:{" "}
+          <code className="font-mono text-sm">green</code>,{" "}
+          <code className="font-mono text-sm">blue</code>,{" "}
+          <code className="font-mono text-sm">red</code>,{" "}
+          <code className="font-mono text-sm">amber</code>, plus{" "}
+          <code className="font-mono text-sm">brand</code>). The tile scales with density and
+          becomes the centered chip in the collapsed rail. The active row still reads through the
+          neutral chip and brand bar, the tiles decorate, they don&rsquo;t signal selection.
+        </p>
+        <ComponentPreview
+          previewClassName="block p-6"
+          code={`<SidebarGroup aria-label="Spaces">
+  <SidebarGroupLabel>Spaces</SidebarGroupLabel>
+  <SidebarItem active asChild>
+    <a href="/portfolio">
+      <SidebarItemIcon tone="purple"><Cube /></SidebarItemIcon>
+      Product Portfolio
+    </a>
+  </SidebarItem>
+  <SidebarItem asChild>
+    <a href="/strategy">
+      <SidebarItemIcon tone="orange"><Target /></SidebarItemIcon>
+      Strategy
+    </a>
+  </SidebarItem>
+  <SidebarItem asChild>
+    <a href="/feedback">
+      <SidebarItemIcon tone="green"><Gift /></SidebarItemIcon>
+      Customer Feedback
+    </a>
+  </SidebarItem>
+  <SidebarItem asChild>
+    <a href="/roadmap">
+      <SidebarItemIcon tone="pink"><Signpost /></SidebarItemIcon>
+      Roadmapping
+    </a>
+  </SidebarItem>
+</SidebarGroup>`}
+        >
+          <SidebarTilesDemo />
         </ComponentPreview>
       </DocSection>
 
@@ -394,6 +448,7 @@ export function AppSidebar() {
             { q: "What is the difference between SidebarCollapsible and a collapsible SidebarGroup?", a: "`SidebarCollapsible` folds a sub-list of routes under a parent row, revealing nested navigation with a guide rail. Passing `collapsible` to a `SidebarGroup` turns its `SidebarGroupLabel` into a toggle that folds a whole flat section (wrap the rows in `SidebarGroupContent`). Use the first for sub-routes, the second to collapse a section." },
             { q: "How do I mark the current page?", a: "Set `active` on the `SidebarItem`: it fills the row and sets `aria-current=\"page\"`. On a `SidebarCollapsible` parent, set `active` when one of its child routes is current." },
             { q: "Should a SidebarItem be a button or a link?", a: "It is a `<button>` by default; pass `asChild` and wrap an `<a>` or a Next `<Link>` to make it a real navigation link while keeping the row styling." },
+            { q: "How do I get the colored icon tiles?", a: "Replace the row's bare leading glyph with a `SidebarItemIcon` wrapping a single icon, and pass a `tone` (`purple`, `pink`, `teal`, `orange`, `green`, `blue`, `red`, `amber`, or `brand`). It renders a soft hue-tinted rounded square that scales with density and becomes the centered chip when the rail is collapsed. It's decorative, so the active row still reads through the neutral chip and brand bar." },
             { q: "What do I need for the collapsed icon rail?", a: "Pass `collapsed` to the `Sidebar` to shrink it to a 48px icon-only column. Give every `SidebarItem` a `label` so the collapsed row gets a hover tooltip and an accessible name, and mark secondary sections with `<SidebarGroup hideWhenCollapsed>` so they drop out rather than reducing to bare glyphs." },
             { q: "What do floating and side='right' change?", a: "`floating` detaches the rail into an inset card with a full outline, concentric radius, and a lifted shadow (pair it with container padding). `side=\"right\"` docks the rail to the right edge and flips the separating hairline to its left so it reads as an inspector panel." },
           ]}

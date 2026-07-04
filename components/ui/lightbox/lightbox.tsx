@@ -36,19 +36,27 @@ export const lightboxVariants = tv({
       "duration-base ease-out",
     ],
     // Full-screen click-to-close layer. The image + thumbnail rail are centered together as a
-    // group (gap-3 between them) so the rail sits just under the image, not pinned to the floor.
+    // group (gap between them) so the rail sits just under the image, not pinned to the floor.
+    // Tighter gap on mobile so the small landscape image + rail keep their vertical breathing room.
     content: [
-      "fixed inset-0 z-50 flex flex-col items-center justify-center gap-6 px-4 py-4 cursor-zoom-out outline-none",
+      "fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 px-4 py-4 sm:gap-6 cursor-zoom-out outline-none",
       "data-[state=open]:animate-in data-[state=open]:fade-in-0",
       "data-[state=closed]:animate-out data-[state=closed]:fade-out-0",
       "duration-base ease-out",
     ],
     // The active image: sized to its own pixels (no letterbox bars), with a faint outline so a
-    // light photo doesn't bleed into the black. Soft zoom-in on enter / per-image crossfade.
+    // light photo doesn't bleed into the black. Soft zoom-in on enter / per-image crossfade. The
+    // height cap is set by the `hasRail` variant (see below); `dvh` (not `vh`) so mobile browser
+    // chrome showing/hiding never pushes the image under the fold.
     image: [
-      "h-auto w-auto max-h-[78vh] max-w-[90vw] min-h-0 rounded-lg object-contain shadow-2xl ring-1 ring-inset ring-white/10",
+      "h-auto w-auto max-w-[90vw] min-h-0 rounded-lg object-contain shadow-2xl ring-1 ring-inset ring-white/10",
       "motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-95 motion-safe:duration-base motion-safe:ease-out",
     ],
+    // Swipe frame around the image. Follows the finger 1:1 while dragging (inline transform set
+    // straight on the node, so a drag never re-renders the rail), then this `transition-transform`
+    // springs it back to center on release, or the image swaps and glides in from the swipe side on
+    // commit. Kept separate from the image so the drag translate never fights the enter zoom.
+    imageFrame: "relative flex min-h-0 transition-transform duration-base ease-out motion-reduce:transition-none",
     // Shared round, dark control (close + arrows): ≥40px, tactile press.
     control: [
       "inline-flex size-10 cursor-pointer items-center justify-center rounded-full",
@@ -61,9 +69,19 @@ export const lightboxVariants = tv({
     counter:
       "absolute left-4 top-4 z-10 rounded-full bg-white/10 px-3 py-1.5 text-sm font-medium text-white tabular-nums backdrop-blur-sm",
     arrow: "absolute top-1/2 z-10 -translate-y-1/2",
-    // Thumbnail rail. `relative w-max gap-2` so the gliding ring's left-0 origin lines up with
-    // the first tile (equal-width tiles separated by gap-2), mirroring the Carousel.
-    thumbs: "relative flex w-max shrink-0 items-center gap-2",
+    // Scroll viewport that BOUNDS the rail to the screen. Without it the `w-max` rail (wider than a
+    // phone once there are more than a few images) overflows both edges with no way to reach the
+    // off-screen tiles and no guarantee the active one is visible. Capped at the image width, it
+    // scrolls horizontally instead, and the effect keeps the active thumb centered. Scrollbar hidden
+    // (the gliding ring already signals position); smooth scroll respects reduced motion.
+    thumbsViewport: [
+      "w-full max-w-[90vw] shrink-0 overflow-x-auto overscroll-x-contain",
+      "scroll-smooth motion-reduce:scroll-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+    ],
+    // Thumbnail rail. `relative w-max gap-2` so the gliding ring's left-0 origin lines up with the
+    // first tile (equal-width tiles separated by gap-2), mirroring the Carousel. `mx-auto` centers
+    // the rail inside the viewport when it fits and collapses to a scrollable start when it overflows.
+    thumbs: "relative mx-auto flex w-max shrink-0 items-center gap-2",
     thumb: [
       "relative h-14 w-20 shrink-0 cursor-pointer overflow-hidden rounded-md",
       "opacity-50 transition-[opacity] duration-fast ease-out hover:opacity-100",
@@ -93,6 +111,17 @@ export const lightboxVariants = tv({
       "[&_svg]:size-3.5 [&_svg]:shrink-0",
     ],
   },
+  variants: {
+    // Whether the thumbnail rail is showing (more than one image). When it is, the image must leave
+    // room for the rail + gaps + padding (~8rem) so short/landscape viewports don't clip the image
+    // top or push the rail off the bottom; the `min()` still caps it at 78dvh on tall screens so it
+    // never dominates. A lone image (no rail) keeps a taller cap.
+    hasRail: {
+      true: { image: "max-h-[min(78dvh,calc(100dvh_-_8rem))]" },
+      false: { image: "max-h-[85dvh]" },
+    },
+  },
+  defaultVariants: { hasRail: false },
 })
 
 type LightboxSlots = ReturnType<typeof lightboxVariants>
@@ -120,7 +149,7 @@ export interface LightboxProps {
 export function Lightbox({ images, children, open: openProp, onOpenChange, defaultIndex = 0 }: LightboxProps) {
   const [openState, setOpenState] = React.useState(false)
   const [index, setIndex] = React.useState(defaultIndex)
-  const slots = lightboxVariants()
+  const slots = lightboxVariants({ hasRail: images.length > 1 })
 
   const open = openProp ?? openState
   const setOpen = React.useCallback(
@@ -232,6 +261,55 @@ function LightboxViewport() {
   const image = images[index]
   const multiple = images.length > 1
 
+  // ── Swipe to navigate ─────────────────────────────────────────────────────────────────────
+  // The frame follows the finger 1:1 during the drag by writing `transform` straight onto the node
+  // (a ref, never state) so a swipe never re-renders the image or the thumbnail rail. On release we
+  // hand styling back to the CSS class: past a distance OR velocity threshold (and mostly
+  // horizontal) it commits `go(±1)` — the image swaps and glides in from the swipe side — otherwise
+  // the `transition-transform` class springs it back to center. Pointer events cover touch, pen, and
+  // mouse-drag alike; the keys/arrows/thumbs still work untouched.
+  const frameRef = React.useRef<HTMLDivElement>(null)
+  const gesture = React.useRef<{ x: number; y: number; t: number; id: number } | null>(null)
+
+  function onFramePointerDown(event: React.PointerEvent<HTMLDivElement>) {
+    if (!multiple || (event.pointerType === "mouse" && event.button !== 0)) return
+    const frame = frameRef.current
+    if (!frame) return
+    gesture.current = { x: event.clientX, y: event.clientY, t: Date.now(), id: event.pointerId }
+    frame.setPointerCapture(event.pointerId)
+    frame.style.transition = "none" // 1:1 follow while dragging
+  }
+
+  function onFramePointerMove(event: React.PointerEvent<HTMLDivElement>) {
+    const g = gesture.current
+    const frame = frameRef.current
+    if (!g || g.id !== event.pointerId || !frame) return
+    frame.style.transform = `translateX(${event.clientX - g.x}px)`
+  }
+
+  function onFramePointerEnd(event: React.PointerEvent<HTMLDivElement>) {
+    const g = gesture.current
+    const frame = frameRef.current
+    if (!g || g.id !== event.pointerId || !frame) return
+    gesture.current = null
+    try {
+      frame.releasePointerCapture(event.pointerId)
+    } catch {
+      // Pointer was never captured (cancel before move): nothing to release.
+    }
+    const dx = event.clientX - g.x
+    const dy = event.clientY - g.y
+    const velocity = Math.abs(dx) / Math.max(1, Date.now() - g.t) // px per ms
+    const width = frame.getBoundingClientRect().width || 1
+    const horizontal = Math.abs(dx) > Math.abs(dy)
+    const passed = Math.abs(dx) > Math.min(120, Math.max(48, width * 0.2)) || velocity > 0.5
+    // Hand transform/transition back to the class: cleared inline transform → springs to center (or,
+    // on commit, carries the incoming image in from the swipe side as it swaps + crossfades).
+    frame.style.transition = ""
+    frame.style.transform = ""
+    if (horizontal && passed) go(dx < 0 ? 1 : -1)
+  }
+
   return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay className={slots.overlay()} />
@@ -264,7 +342,7 @@ function LightboxViewport() {
         )}
 
         <DialogPrimitive.Close aria-label="Close" className={slots.close({ className: slots.control() })}>
-          <X />
+          <X weight="bold" />
         </DialogPrimitive.Close>
 
         {multiple && (
@@ -277,20 +355,33 @@ function LightboxViewport() {
               go(-1)
             }}
           >
-            <CaretLeft />
+            <CaretLeft weight="bold" />
           </button>
         )}
 
         {image && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            key={image.src}
-            src={image.src}
-            alt={image.alt ?? ""}
-            draggable={false}
-            className={slots.image()}
+          <div
+            ref={frameRef}
+            className={slots.imageFrame({
+              // Only a browsable set is draggable; the grab cursor and touch-none hint that.
+              className: multiple ? "cursor-grab touch-none active:cursor-grabbing" : undefined,
+            })}
+            // Tap/drag on the image never closes (only the surrounding scrim does).
             onClick={(event) => event.stopPropagation()}
-          />
+            onPointerDown={onFramePointerDown}
+            onPointerMove={onFramePointerMove}
+            onPointerUp={onFramePointerEnd}
+            onPointerCancel={onFramePointerEnd}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              key={image.src}
+              src={image.src}
+              alt={image.alt ?? ""}
+              draggable={false}
+              className={slots.image()}
+            />
+          </div>
         )}
 
         {multiple && (
@@ -303,41 +394,74 @@ function LightboxViewport() {
               go(1)
             }}
           >
-            <CaretRight />
+            <CaretRight weight="bold" />
           </button>
         )}
 
-        {multiple && (
-          <div className={slots.thumbs()} onClick={(event) => event.stopPropagation()}>
-            {/* Single white ring that glides to the active tile: tile width (100%) + gap-2 per step. */}
-            <span
-              aria-hidden
-              className={slots.thumbRing()}
-              style={{ transform: `translateX(calc((100% + 0.5rem) * ${index}))` }}
-            />
-            {images.map((thumb, i) => (
-              <button
-                key={thumb.src}
-                type="button"
-                data-active={i === index}
-                aria-label={`Go to image ${i + 1}`}
-                aria-current={i === index}
-                className={slots.thumb()}
-                onClick={() => goTo(i)}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={thumb.src}
-                  alt=""
-                  draggable={false}
-                  loading="lazy"
-                  className={slots.thumbImage()}
-                />
-              </button>
-            ))}
-          </div>
-        )}
+        {multiple && <LightboxThumbs images={images} index={index} goTo={goTo} slots={slots} />}
       </DialogPrimitive.Content>
     </DialogPrimitive.Portal>
+  )
+}
+
+/**
+ * The bounded, horizontally-scrollable thumbnail rail. Split out from the viewport so it
+ * mounts/unmounts with the (portaled) dialog content: its mount effect therefore re-centers the
+ * active tile on EVERY open (even reopening at the same index), and the effect stays colocated with
+ * the DOM it scrolls. `block: "nearest"` never nudges the page vertically; the viewport's own
+ * `scroll-smooth` (reduce-aware) drives the horizontal glide.
+ */
+function LightboxThumbs({
+  images,
+  index,
+  goTo,
+  slots,
+}: {
+  images: LightboxImage[]
+  index: number
+  goTo: (index: number) => void
+  slots: LightboxSlots
+}) {
+  const railRef = React.useRef<HTMLDivElement>(null)
+  React.useEffect(() => {
+    const active = railRef.current?.querySelector<HTMLElement>('[data-active="true"]')
+    active?.scrollIntoView({ block: "nearest", inline: "center" })
+  }, [index])
+
+  return (
+    <div
+      ref={railRef}
+      className={slots.thumbsViewport()}
+      onClick={(event) => event.stopPropagation()}
+    >
+      <div className={slots.thumbs()}>
+        {/* Single white ring that glides to the active tile: tile width (100%) + gap-2 per step. */}
+        <span
+          aria-hidden
+          className={slots.thumbRing()}
+          style={{ transform: `translateX(calc((100% + 0.5rem) * ${index}))` }}
+        />
+        {images.map((thumb, i) => (
+          <button
+            key={thumb.src}
+            type="button"
+            data-active={i === index}
+            aria-label={`Go to image ${i + 1}`}
+            aria-current={i === index}
+            className={slots.thumb()}
+            onClick={() => goTo(i)}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={thumb.src}
+              alt=""
+              draggable={false}
+              loading="lazy"
+              className={slots.thumbImage()}
+            />
+          </button>
+        ))}
+      </div>
+    </div>
   )
 }

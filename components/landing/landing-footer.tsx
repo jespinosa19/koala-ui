@@ -38,17 +38,17 @@ export function LandingFooter() {
           <FooterSocial>
             <FooterSocialLink asChild aria-label="GitHub">
               <Link href="#">
-                <GithubLogo />
+                <GithubLogo weight="bold" />
               </Link>
             </FooterSocialLink>
             <FooterSocialLink asChild aria-label="X">
               <Link href="#">
-                <XLogo />
+                <XLogo weight="bold" />
               </Link>
             </FooterSocialLink>
             <FooterSocialLink asChild aria-label="Discord">
               <Link href="#">
-                <DiscordLogo />
+                <DiscordLogo weight="bold" />
               </Link>
             </FooterSocialLink>
           </FooterSocial>

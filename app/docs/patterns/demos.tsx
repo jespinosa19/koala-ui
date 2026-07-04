@@ -70,19 +70,19 @@ export function DropdownActionsDemo() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
-            <UserCircle /> Profile
+            <UserCircle weight="bold" /> Profile
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Gear /> Settings
+            <Gear weight="bold" /> Settings
             <DropdownMenuShortcut>⌘,</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <BellSimple /> Notifications
+            <BellSimple weight="bold" /> Notifications
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem variant="destructive">
-          <SignOut /> Log out
+          <SignOut weight="bold" /> Log out
           <DropdownMenuShortcut>⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -151,19 +151,19 @@ export function TooltipToolbarDemo() {
     <TooltipGroup>
       <div className="flex items-center gap-0.5 rounded-lg border border-border p-1">
         <Button variant="ghost" size="sm" iconOnly aria-label="New file">
-          <FilePlus />
+          <FilePlus weight="bold" />
         </Button>
         <Button variant="ghost" size="sm" iconOnly aria-label="Rename">
-          <PencilSimple />
+          <PencilSimple weight="bold" />
         </Button>
         <Button variant="ghost" size="sm" iconOnly aria-label="Share">
-          <ShareNetwork />
+          <ShareNetwork weight="bold" />
         </Button>
         <Button variant="ghost" size="sm" iconOnly aria-label="Settings">
-          <Gear />
+          <Gear weight="bold" />
         </Button>
         <Button variant="ghost" size="sm" iconOnly aria-label="Delete">
-          <Trash />
+          <Trash weight="bold" />
         </Button>
       </div>
     </TooltipGroup>
@@ -227,6 +227,7 @@ export function IconAnimationDemo() {
         <button className="group flex items-center gap-1.5 rounded-lg border border-border bg-background px-3.5 py-2 text-sm font-medium transition-colors hover:bg-muted">
           Edit
           <PencilSimple
+            weight="bold"
             size={14}
             className="opacity-0 group-hover:opacity-100"
           />
@@ -237,6 +238,7 @@ export function IconAnimationDemo() {
         <button className="group flex items-center gap-1.5 rounded-lg border border-border bg-background px-3.5 py-2 text-sm font-medium transition-colors hover:bg-muted">
           Edit
           <PencilSimple
+            weight="bold"
             size={14}
             className="opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-[opacity,transform] duration-200"
           />
@@ -416,7 +418,7 @@ export function OpticalAlignmentDemo() {
           {showPadding && `${pl}px`}
         </div>
         <div className="flex items-center gap-1.5 whitespace-nowrap">
-          Button <ArrowRight size={14} />
+          Button <ArrowRight weight="bold" size={14} />
         </div>
         <div
           className={cn(

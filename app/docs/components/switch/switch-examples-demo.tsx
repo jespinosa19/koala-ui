@@ -60,7 +60,7 @@ export function SettingsRowDemo() {
           htmlFor={id}
           className="flex cursor-pointer items-start gap-3 p-4"
         >
-          <Icon className="mt-0.5 size-5 shrink-0 text-muted-foreground" aria-hidden />
+          <Icon weight="bold" className="mt-0.5 size-5 shrink-0 text-muted-foreground" aria-hidden />
           <div className="flex flex-1 flex-col gap-0.5">
             <span className="text-sm font-medium leading-none">{title}</span>
             <span className="text-sm text-muted-foreground">{description}</span>

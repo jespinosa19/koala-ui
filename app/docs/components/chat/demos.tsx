@@ -40,16 +40,16 @@ function AssistantActions() {
   return (
     <MessageActions>
       <MessageAction aria-label="Copy">
-        <Copy />
+        <Copy weight="bold" />
       </MessageAction>
       <MessageAction aria-label="Regenerate">
-        <ArrowsClockwise />
+        <ArrowsClockwise weight="bold" />
       </MessageAction>
       <MessageAction aria-label="Good response">
-        <ThumbsUp />
+        <ThumbsUp weight="bold" />
       </MessageAction>
       <MessageAction aria-label="Bad response">
-        <ThumbsDown />
+        <ThumbsDown weight="bold" />
       </MessageAction>
     </MessageActions>
   )
@@ -245,7 +245,7 @@ export function ReasoningDemo() {
     <div className="flex w-full max-w-xl flex-col gap-3">
       <div>
         <Button variant="outline" size="sm" onClick={investigate} disabled={running}>
-          <ArrowsClockwise /> {running ? "Investigating…" : "Ask again"}
+          <ArrowsClockwise weight="bold" /> {running ? "Investigating…" : "Ask again"}
         </Button>
       </div>
       <Conversation variant="bubble">

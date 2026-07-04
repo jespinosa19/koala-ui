@@ -20,7 +20,7 @@ const labelVariants = tv({
     requiredMark: "text-destructive",
     // Helper text below the control. `text-pretty` keeps short messages off a lonely last line.
     // the color transition lets the error tone fade in (interruptible) rather than jump.
-    hint: "text-sm text-pretty text-muted-foreground transition-colors duration-fast ease-out",
+    hint: "text-xs text-pretty text-muted-foreground transition-colors duration-fast ease-out",
   },
   variants: {
     disabled: {

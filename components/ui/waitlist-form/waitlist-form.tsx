@@ -158,7 +158,7 @@ export function WaitlistForm({
           className="shrink-0 max-sm:w-full"
         >
           {action}
-          <ArrowRight />
+          <ArrowRight weight="bold" />
         </Button>
       </form>
 

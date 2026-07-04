@@ -200,8 +200,9 @@ export function Example() {
           </a>{" "}
           into the <code className="font-mono text-sm">BreadcrumbItem</code> so the ellipsis
           opens a menu of the hidden ancestors - full keyboard navigation and focus management
-          come from the underlying Radix primitive. The trigger keeps the tight ellipsis
-          footprint with a 40px tap target.
+          come from the underlying Radix primitive. The dots sit in a container that reveals its
+          surface on hover and while open, so the collapsed crumb reads as a tappable control,
+          with a 40px tap target.
         </p>
         <ComponentPreview
           code={`import { DotsThree } from "@phosphor-icons/react"
@@ -290,7 +291,7 @@ import {
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink href="#" className="inline-flex items-center gap-1.5">
-                  <House className="size-4" /> Home
+                  <House weight="bold" className="size-4" /> Home
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />

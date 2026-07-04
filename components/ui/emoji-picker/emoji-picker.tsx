@@ -525,7 +525,7 @@ export function EmojiPicker({
         <div className={slots.searchRow()}>
           <InputRoot size="sm">
             <InputPrefix>
-              <MagnifyingGlass />
+              <MagnifyingGlass weight="bold" />
             </InputPrefix>
             <InputField
               value={query}
@@ -543,7 +543,7 @@ export function EmojiPicker({
             />
             {query && (
               <InputSuffixButton aria-label="Clear search" onClick={() => setQuery("")}>
-                <X />
+                <X weight="bold" />
               </InputSuffixButton>
             )}
           </InputRoot>
@@ -561,7 +561,7 @@ export function EmojiPicker({
               className={slots.navItem()}
               onClick={() => handleNavClick(id)}
             >
-              <Icon />
+              <Icon weight="bold" />
             </button>
           ))}
         </div>
@@ -587,7 +587,7 @@ export function EmojiPicker({
             </>
           ) : (
             <div data-slot="emoji-picker-empty" className={slots.empty()}>
-              <Smiley className="size-6 opacity-60" />
+              <Smiley weight="bold" className="size-6 opacity-60" />
               <p>
                 No emoji for <span className="font-medium text-foreground">“{query}”</span>
               </p>

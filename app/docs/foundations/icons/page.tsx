@@ -76,12 +76,12 @@ import * as Icons from "@phosphor-icons/react"`}
         <p className="mt-2 text-sm text-pretty text-muted-foreground">
           Every Phosphor icon ships in six weights. Pass the{" "}
           <code className="font-mono text-sm">weight</code> prop - no separate import
-          per style. <code className="font-mono text-sm">regular</code> is the default.
-          Prefer <code className="font-mono text-sm">bold</code> for icons at{" "}
-          <code className="font-mono text-sm">size-3</code>–
-          <code className="font-mono text-sm">size-3.5</code> where thin strokes
-          disappear; prefer <code className="font-mono text-sm">fill</code> for selected /
-          active states.
+          per style. <code className="font-mono text-sm">bold</code> is the default in
+          Koala UI - it holds its weight at small sizes and reads as deliberate next to
+          our type. Use <code className="font-mono text-sm">fill</code> for selected /
+          active states, and drop to <code className="font-mono text-sm">regular</code> or{" "}
+          <code className="font-mono text-sm">light</code> when you want a softer, more
+          delicate mark.
         </p>
         <div className="mt-6 grid grid-cols-3 gap-x-6 gap-y-8 sm:grid-cols-6">
           <Specimen label="thin">
@@ -107,9 +107,9 @@ import * as Icons from "@phosphor-icons/react"`}
           filename="example.tsx"
           className="mt-6"
           code={`// Pass weight directly - no separate import
-<Star weight="regular" />   {/* default */}
-<Star weight="bold" />      {/* small sizes */}
-<Star weight="fill" />      {/* selected state */}`}
+<Star weight="bold" />      {/* default */}
+<Star weight="fill" />      {/* selected state */}
+<Star weight="regular" />   {/* softer, lighter mark */}`}
         />
       </DocSection>
 

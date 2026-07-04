@@ -46,13 +46,13 @@ export default function BadgeDocsPage() {
           Online
         </Badge>
         <Badge variant="purple" pill>
-          <Lightning /> Beta
+          <Lightning weight="bold" /> Beta
         </Badge>
         <Badge variant="info" pill>
           v2.4.0
         </Badge>
         <Badge variant="outline">
-          <GitBranch /> main
+          <GitBranch weight="bold" /> main
         </Badge>
       </ComponentPreview>
 
@@ -88,11 +88,13 @@ export function Example() {
 
       <DocSection title="Status">
         <p className="mt-4 text-pretty text-muted-foreground">
-          Soft status variants tint a background and text from a single semantic token
-          (<code className="font-mono text-sm">--success</code>,{" "}
+          Soft status variants pair a tinted background (the status hue at{" "}
+          <code className="font-mono text-sm">/10</code>) with a darker text counterpart and
+          no border, so the fill carries the color while the label stays legible. Both derive
+          from one semantic token (<code className="font-mono text-sm">--success</code>,{" "}
           <code className="font-mono text-sm">--warning</code>,{" "}
-          <code className="font-mono text-sm">--info</code>), so they stay legible across
-          all three themes.
+          <code className="font-mono text-sm">--info</code>), so they re-theme across all
+          four themes.
         </p>
         <ComponentPreview
           code={`<Badge variant="success"><CheckCircle weight="fill" /> Approved</Badge>
@@ -107,22 +109,22 @@ export function Example() {
             <CheckCircle weight="fill" /> Approved
           </Badge>
           <Badge variant="success">
-            <Confetti /> Merged
+            <Confetti weight="bold" /> Merged
           </Badge>
           <Badge variant="info">
-            <GitPullRequest /> In review
+            <GitPullRequest weight="bold" /> In review
           </Badge>
           <Badge variant="warning">
-            <Clock /> Pending
+            <Clock weight="bold" /> Pending
           </Badge>
           <Badge variant="destructive">
-            <X /> Failed
+            <X weight="bold" /> Failed
           </Badge>
           <Badge variant="secondary">
-            <CircleNotch className="animate-spin motion-reduce:animate-none" /> Running
+            <CircleNotch weight="bold" className="animate-spin motion-reduce:animate-none" /> Running
           </Badge>
           <Badge variant="default">
-            <Minus /> Skipped
+            <Minus weight="bold" /> Skipped
           </Badge>
         </ComponentPreview>
       </DocSection>
@@ -130,7 +132,7 @@ export function Example() {
       <DocSection title="Categorical">
         <p className="mt-4 text-pretty text-muted-foreground">
           Four extra hues for labeling categories, feature flags, and tags. All follow the
-          same soft-tint pattern and re-theme across all three themes.
+          same soft-tint pattern and re-theme across all four themes.
         </p>
         <ComponentPreview
           code={`<Badge variant="purple"><Lightning /> Beta</Badge>
@@ -143,22 +145,22 @@ export function Example() {
 <Badge variant="orange"><Package /> v1 Legacy</Badge>`}
         >
           <Badge variant="purple">
-            <Lightning /> Beta
+            <Lightning weight="bold" /> Beta
           </Badge>
           <Badge variant="purple">
-            <Rocket /> New
+            <Rocket weight="bold" /> New
           </Badge>
           <Badge variant="pink">
-            <Star /> Featured
+            <Star weight="bold" /> Featured
           </Badge>
           <Badge variant="pink">
-            <Tag /> Design
+            <Tag weight="bold" /> Design
           </Badge>
           <Badge variant="teal">Engineering</Badge>
           <Badge variant="teal">Frontend</Badge>
           <Badge variant="orange">Deprecated</Badge>
           <Badge variant="orange">
-            <Package /> v1 Legacy
+            <Package weight="bold" /> v1 Legacy
           </Badge>
         </ComponentPreview>
       </DocSection>
@@ -224,7 +226,7 @@ export function Example() {
             Online
           </Badge>
           <Badge variant="purple" pill>
-            <Lightning /> Beta
+            <Lightning weight="bold" /> Beta
           </Badge>
           <Badge variant="info" pill>
             v2.4.0
@@ -242,22 +244,22 @@ export function Example() {
 <Badge variant="outline"><GitBranch /> feature/auth</Badge>`}
         >
           <Badge variant="success">
-            <Check /> Verified
+            <Check weight="bold" /> Verified
           </Badge>
           <Badge variant="purple">
-            <Lightning /> Beta
+            <Lightning weight="bold" /> Beta
           </Badge>
           <Badge variant="orange">
-            <Rocket /> New
+            <Rocket weight="bold" /> New
           </Badge>
           <Badge variant="info">
-            <Star /> Featured
+            <Star weight="bold" /> Featured
           </Badge>
           <Badge variant="outline">
-            <Lock /> Private
+            <Lock weight="bold" /> Private
           </Badge>
           <Badge variant="outline">
-            <GitBranch /> feature/auth
+            <GitBranch weight="bold" /> feature/auth
           </Badge>
         </ComponentPreview>
       </DocSection>

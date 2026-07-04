@@ -41,10 +41,28 @@ export function DensityProvider({
 
 /**
  * Resolve the effective density. Precedence: explicit prop > nearest provider >
- * `"compact"`. Components call `useDensity(props.density)` and feed the result into
- * their `tv` recipe.
+ * `"compact"`. Content/layout components (List, Card, tables, app-shell padding) call
+ * `useDensity(props.density)` and feed the result into their `tv` recipe.
  */
 export function useDensity(density?: Density): Density {
   const context = React.useContext(DensityContext)
   return density ?? context
+}
+
+/** The one height axis every form control shares: sm 32 · md 36 · lg 40px. */
+export type ControlSize = "sm" | "md" | "lg"
+
+/**
+ * Resolve a form control's size. In Koala, control HEIGHT comes from `size` alone, so any two
+ * controls with the same size are the same height. Density does NOT tier-shift height; it only
+ * picks the DEFAULT size when none is given (compact → "sm", comfortable → "md"), the way Ant
+ * Design's `componentSize` and Chakra's theme default work. Precedence: explicit `size` >
+ * density-derived default; an explicit `density` arg overrides the provider for that default.
+ * So a bare control in a compact app shell is "sm", while an explicit `size="md"` is always md,
+ * in any density. Button, Input, InputGroup, and Select all call this.
+ */
+export function useControlSize(size?: ControlSize, density?: Density): ControlSize {
+  const context = React.useContext(DensityContext)
+  if (size) return size
+  return (density ?? context) === "compact" ? "sm" : "md"
 }

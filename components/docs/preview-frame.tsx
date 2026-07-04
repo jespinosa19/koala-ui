@@ -6,6 +6,7 @@ import {
   DeviceMobile,
   DeviceTablet,
   Monitor,
+  ArrowsOutLineHorizontal,
   Eye,
   Code,
   Copy,
@@ -15,6 +16,7 @@ import {
 
 import { Button } from "@/components/ui/button"
 import { ButtonGroup, ButtonGroupItem } from "@/components/ui/button-group"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CodeSnippet } from "@/components/docs/code-snippet"
 import { PremiumCode } from "@/components/docs/premium-code"
 import { THEMES, type Theme } from "@/components/theme-provider"
@@ -36,8 +38,19 @@ import { cn } from "@/lib/utils"
  */
 
 interface PreviewFrameProps {
-  /** Section slug; the key into the sections registry and the render-target route. */
-  slug: string
+  /**
+   * Section slug; the key into the sections registry and the render-target route
+   * (`/preview/sections/<slug>`). Provide this OR {@link src} (a one-off isolated route, e.g. a
+   * component doc that wants the same drag-to-resize responsive frame without registering a section).
+   */
+  slug?: string
+  /**
+   * Override the iframe's base path (without query). When set, the frame points here instead of the
+   * sections render-target, so any isolated `/preview/*` route can borrow the breakpoint toolbar and
+   * drag handle. The route must render a same-origin `[data-preview-content]` wrapper (for
+   * auto-height) and read `?theme=`/`?accent=` like `app/preview/sections/[slug]`.
+   */
+  src?: string
   /**
    * Anchor id for the frame's root, so a page that stacks several variants can be deep-linked to
    * one of them (e.g. the ⌘K palette routing to `…/banner#banner-countdown`). Adds a scroll margin
@@ -62,11 +75,17 @@ interface PreviewFrameProps {
   className?: string
 }
 
-/** Frame width presets. `"fill"` tracks the available column width. */
+/**
+ * Frame width presets. `"fill"` tracks the available column width; `"wide"` (1280) forces a real
+ * desktop viewport EVEN WHEN the docs column is narrower, so a slab whose two-column layout only
+ * unlocks at `lg` (auth splits, checkout) can be seen without an ultra-wide monitor: the frame
+ * renders at 1280 and is scaled down to fit the column (see the `scale` math below).
+ */
 const PRESETS = [
   { id: "mobile", label: "Mobile", icon: DeviceMobile, width: 375 as number | "fill" },
   { id: "tablet", label: "Tablet", icon: DeviceTablet, width: 768 as number | "fill" },
   { id: "desktop", label: "Desktop", icon: Monitor, width: "fill" as number | "fill" },
+  { id: "wide", label: "Wide (1280px)", icon: ArrowsOutLineHorizontal, width: 1280 as number | "fill" },
 ] as const
 
 const MIN_WIDTH = 320
@@ -79,6 +98,7 @@ function clamp(value: number, lo: number, hi: number) {
 
 export function PreviewFrame({
   slug,
+  src: srcOverride,
   id,
   code,
   locked = false,
@@ -114,13 +134,33 @@ export function PreviewFrame({
   const contentObserver = React.useRef<ResizeObserver | null>(null)
   const dragActive = React.useRef(false)
 
-  const src = `/preview/sections/${slug}?theme=${theme}&accent=${DEFAULT_ACCENT}`
+  const basePath = srcOverride ?? `/preview/sections/${slug}`
+  const src = `${basePath}?theme=${theme}&accent=${DEFAULT_ACCENT}`
 
-  // The width the frame actually renders at, clamped to what the column can hold.
+  // The frame emulates a viewport `logicalWidth` px wide. Presets/drag can request a width WIDER
+  // than the docs column (the 1280 "Wide" preset), so a slab's `lg:` breakpoint fires even when the
+  // column is narrower than `lg`. When the request exceeds the column the iframe renders at its true
+  // logical width and is scaled DOWN to fit, so the child viewport (and its media queries) still see
+  // the full width. `fill` and any width the column can hold stay at scale 1 (untouched).
+  const logicalWidth = width === "fill" ? stageWidth : width
+  const scale = stageWidth > 0 && logicalWidth > stageWidth ? stageWidth / logicalWidth : 1
+  const scaled = scale !== 1
+  // The visual footprint the column flow reserves once scaled.
+  const footprintWidth = logicalWidth * scale
+  const footprintHeight = frameHeight * scale
+  // The physical width the resize handle / aria range operate over (drag stays within the column).
   const renderedWidth =
-    width === "fill" ? stageWidth : Math.min(width, stageWidth || width)
+    width === "fill" ? stageWidth : Math.min(logicalWidth, stageWidth || logicalWidth)
   const activePreset =
-    width === "fill" ? "desktop" : width === 375 ? "mobile" : width === 768 ? "tablet" : "custom"
+    width === "fill"
+      ? "desktop"
+      : width === 375
+        ? "mobile"
+        : width === 768
+          ? "tablet"
+          : width === 1280
+            ? "wide"
+            : "custom"
 
   // Measure the available column so "fill" knows its width and the drag/keys can clamp to it.
   // Ignore 0-width reports: the stage is `display:none` while the Code tab is open (we hide it
@@ -146,7 +186,7 @@ export function PreviewFrame({
   // slab reflows when the frame width changes. We measure `[data-preview-content]`, not the
   // document, because the root layout pins html to the iframe height (`h-full`), which would
   // feed back into the measurement.
-  function measureHeight() {
+  const measureHeight = React.useCallback(() => {
     const iframe = iframeRef.current
     const content = iframe?.contentDocument?.querySelector<HTMLElement>("[data-preview-content]")
     if (!iframe || !content) return
@@ -162,9 +202,9 @@ export function PreviewFrame({
     const chrome = iframe.offsetHeight - iframe.clientHeight
     const h = Math.ceil(contentH + chrome)
     if (h > 0) setFrameHeight(h)
-  }
+  }, [])
 
-  function handleLoad() {
+  const handleLoad = React.useCallback(() => {
     const iframe = iframeRef.current
     const win = iframe?.contentWindow as (Window & typeof globalThis) | null
     const doc = iframe?.contentDocument
@@ -188,7 +228,34 @@ export function PreviewFrame({
     contentObserver.current = ro
     // A web-font swap after load nudges text height; re-measure once fonts settle.
     doc.fonts.ready.then(measureHeight, () => {})
-  }
+  }, [measureHeight])
+
+  // Auto-height must also survive a MISSED `load` event. With `loading="lazy"` on a page full of
+  // stacked frames, a lazy iframe can finish loading BEFORE React hydrates this component and wires
+  // up `onLoad`, so the `load` fires into a handler that isn't attached yet, is lost, and
+  // `handleLoad` never runs: the frame is stranded at `minHeight` and reads as a cropped slab, as if
+  // it had a `max-height`. Poll a few frames until the child's content wrapper exists, then run the
+  // same setup `onLoad` would have. Idempotent with `onLoad` (it re-measures and swaps the observer),
+  // and keyed on `src` so a theme/accent change re-arms it. setState only ever fires from the rAF
+  // callback, never the effect body, per the strict react-hooks rules.
+  React.useEffect(() => {
+    const iframe = iframeRef.current
+    if (!iframe) return
+    let raf = 0
+    let frames = 0
+    const tick = () => {
+      const content = iframe.contentDocument?.querySelector("[data-preview-content]")
+      if (content) {
+        handleLoad()
+        return
+      }
+      // ~4s of frames covers the pre-hydration race window; a load that lands later is caught by
+      // `onLoad`, whose handler is attached by then, so we can stop polling.
+      if (frames++ < 240) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [src, handleLoad])
 
   // Drag handle: left-anchored (Tailwind-style), so the frame's left edge stays pinned and only
   // the right edge follows the pointer as you size it. Pointer capture keeps the gesture alive
@@ -248,7 +315,9 @@ export function PreviewFrame({
   }
 
   const widthLabel =
-    activePreset === "desktop" && !stageWidth ? "Fill" : `${Math.round(renderedWidth)}px`
+    activePreset === "desktop" && !stageWidth
+      ? "Fill"
+      : `${Math.round(logicalWidth)}px${scaled ? ` · ${Math.round(scale * 100)}%` : ""}`
 
   return (
     <div id={id} className={cn("my-6 flex flex-col gap-3", id && "scroll-mt-24", className)}>
@@ -271,7 +340,7 @@ export function PreviewFrame({
                   variant={active ? "secondary" : "outline"}
                   onClick={() => setWidth(preset.width)}
                 >
-                  <Icon />
+                  <Icon weight="bold" />
                 </ButtonGroupItem>
               )
             })}
@@ -282,24 +351,21 @@ export function PreviewFrame({
         </div>
 
         <div className="flex items-center gap-2">
-          <ButtonGroup size="sm" variant="outline" attached>
-            <ButtonGroupItem
-              aria-pressed={view === "preview"}
-              variant={view === "preview" ? "secondary" : "outline"}
-              onClick={() => setView("preview")}
-            >
-              <Eye />
-              Preview
-            </ButtonGroupItem>
-            <ButtonGroupItem
-              aria-pressed={view === "code"}
-              variant={view === "code" ? "secondary" : "outline"}
-              onClick={() => setView("code")}
-            >
-              <Code />
-              Code
-            </ButtonGroupItem>
-          </ButtonGroup>
+          {/* Preview/Code is a controlled segmented control: the canonical Tabs (default
+              pill variant) drives `view`, but the panels live OUTSIDE the Tabs root (the
+              always-mounted iframe stage + the code block), so there's no TabsContent. */}
+          <Tabs value={view} onValueChange={(value) => setView(value as "preview" | "code")}>
+            <TabsList>
+              <TabsTrigger value="preview">
+                <Eye weight="bold" />
+                Preview
+              </TabsTrigger>
+              <TabsTrigger value="code">
+                <Code weight="bold" />
+                Code
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
 
           <Button
             iconOnly
@@ -308,12 +374,12 @@ export function PreviewFrame({
             aria-label={copied ? "Copied" : "Copy code"}
             onClick={handleCopy}
           >
-            {copied ? <Check /> : <Copy />}
+            {copied ? <Check weight="bold" /> : <Copy weight="bold" />}
           </Button>
 
           <Button asChild iconOnly variant="ghost" size="sm" aria-label="Open preview in a new tab">
             <a href={src} target="_blank" rel="noopener noreferrer">
-              <ArrowSquareOut />
+              <ArrowSquareOut weight="bold" />
             </a>
           </Button>
         </div>
@@ -332,30 +398,60 @@ export function PreviewFrame({
       <div
         ref={stageRef}
         className={cn("relative flex justify-start", view === "code" && "hidden")}
-        style={{ minHeight }}
+        // `minHeight` is a PRE-MEASUREMENT placeholder only: it keeps a not-yet-loaded frame a roomy
+        // slab so it doesn't flash tiny, but the moment we have a real `frameHeight` the frame hugs
+        // its content EXACTLY. Keeping the floor after measurement made short slabs float in a too-tall
+        // box (dead space) and, when scaled, let the footprint (computed from the un-floored height)
+        // clip a few px off the iframe (which the floor had made taller). Drop it once measured or
+        // scaling (the scaled footprint already hugs the shrunk height).
+        style={{ minHeight: scaled || frameHeight ? undefined : minHeight }}
       >
         <div
           className={cn(
-            "relative w-full",
+            "relative",
             // 1:1 finger-follow while dragging; glide only for preset jumps.
             !dragging && "transition-[width] duration-base ease-out",
           )}
-          style={{
-            width: width === "fill" ? "100%" : `${Math.min(width, stageWidth || width)}px`,
-          }}
+          style={{ width: width === "fill" ? "100%" : `${footprintWidth}px` }}
         >
-          <iframe
-            ref={iframeRef}
-            src={src}
-            title="Section preview"
-            loading="lazy"
-            onLoad={handleLoad}
-            style={{ height: frameHeight ? `${frameHeight}px` : undefined, minHeight }}
-            className={cn(
-              "w-full rounded-xl border border-border bg-background shadow-xs",
-              dragging && "pointer-events-none select-none",
-            )}
-          />
+          {/* Footprint box: reserves the SCALED size in the column flow and clips the larger,
+              untransformed iframe layout box whenever we emulate a viewport wider than the column.
+              At scale 1 (fill, or any width the column holds) it's a transparent passthrough that
+              lets the iframe drive its own height and keep its drop shadow. */}
+          <div
+            className={cn("relative", scaled && "overflow-hidden")}
+            // Scaled: reserve the footprint (the scaled height once measured, else the placeholder).
+            // Unscaled: let the iframe drive its own height once measured; only floor it beforehand.
+            style={
+              scaled
+                ? { height: frameHeight ? `${footprintHeight}px` : minHeight }
+                : frameHeight
+                  ? undefined
+                  : { minHeight }
+            }
+          >
+            <iframe
+              ref={iframeRef}
+              src={src}
+              title="Section preview"
+              loading="lazy"
+              onLoad={handleLoad}
+              style={{
+                width: width === "fill" ? "100%" : `${logicalWidth}px`,
+                height: frameHeight ? `${frameHeight}px` : undefined,
+                // Floor only until measured: once we know the real height the iframe is exactly that
+                // tall, so a short slab neither pads out to dead space nor (when scaled) gets clipped
+                // by the footprint box that hugs the un-floored height.
+                minHeight: frameHeight ? undefined : minHeight,
+                transform: scaled ? `scale(${scale})` : undefined,
+                transformOrigin: "top left",
+              }}
+              className={cn(
+                "block rounded-xl border border-border bg-background shadow-xs",
+                dragging && "pointer-events-none select-none",
+              )}
+            />
+          </div>
 
           {/* Left-anchored resize handle on the frame's right edge: drag it to size the width
               while the frame's left edge stays pinned (Tailwind / Untitled-style). */}

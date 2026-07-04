@@ -52,9 +52,11 @@ export const treeVariants = tv({
     group:
       "relative flex flex-col gap-0.5 overflow-hidden duration-base ease-out data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up",
     // Optional vertical guide rail, positioned under the parent caret's optical center
-    // (base inset + level·indent + half the caret box).
+    // (base inset + level·indent + half the caret box). `before:z-[1]` lifts the rail above the
+    // rows' selected/hover `bg-accent` fill (rows are `position:relative` with auto z-index, so any
+    // positive z wins the paint order) — the nesting lines read *over* the card, not under it.
     guide:
-      "before:pointer-events-none before:absolute before:inset-y-0 before:w-px before:bg-border before:content-[''] before:start-[calc(var(--tree-level,0)*var(--tree-indent)+var(--spacing)*4)]",
+      "before:pointer-events-none before:absolute before:inset-y-0 before:z-[1] before:w-px before:bg-border before:content-[''] before:start-[calc(var(--tree-level,0)*var(--tree-indent)+var(--spacing)*4)]",
     // The interactive row carries role="treeitem". Inset = base + depth·indent, pure CSS.
     // No press-scale: a full-width row shrinking on click reads as a layout jump (same call the
     // Accordion makes); the caret flip and panel tween carry the feedback instead.
@@ -77,8 +79,9 @@ export const treeVariants = tv({
     // as one gesture. Reads the row's data-expanded, not Collapsible's data-state.
     caretIcon:
       "size-3.5 transition-transform duration-base ease-out group-data-[expanded=true]/row:rotate-90",
-    // Leading content glyph (folder/file). Sized to a 1rem box like the caret.
-    icon: "flex size-4 shrink-0 items-center justify-center text-muted-foreground [&_svg]:size-4",
+    // Leading content glyph (folder/file). 20px like every text-label row (sidebar/menu/list):
+    // a bare `<Icon />` gets `size-5`, while an explicitly-sized glyph keeps its own size.
+    icon: "flex size-5 shrink-0 items-center justify-center text-muted-foreground [&_svg:not([class*='size-'])]:size-5",
     label: "min-w-0 flex-1 truncate",
     // Trailing slot (count badge, row menu). Muted so it sits behind the label in the hierarchy.
     actions: "ms-auto flex shrink-0 items-center gap-1 ps-2 text-muted-foreground",
@@ -474,7 +477,7 @@ export function TreeItem({
         <span aria-hidden data-slot="tree-drop-line" data-edge="top" className={slots.dropLine()} />
       )}
       <span data-slot="tree-caret" aria-hidden className={slots.caret()}>
-        {isBranch && <CaretRight className={slots.caretIcon()} />}
+        {isBranch && <CaretRight weight="bold" className={slots.caretIcon()} />}
       </span>
       {(expanded ? (expandedIcon ?? icon) : icon) && (
         <span data-slot="tree-icon" className={slots.icon()}>

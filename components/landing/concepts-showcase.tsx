@@ -47,7 +47,7 @@ const TABS: ConceptTab[] = [
   {
     value: "home",
     label: "Home",
-    icon: <House />,
+    icon: <House weight="bold" />,
     previews: [
       { src: img("1486312338219-ce68d2c6f44d"), alt: "Landing page concept on a laptop" },
       { src: img("1498050108023-c5249f4df085"), alt: "Code-forward product homepage" },
@@ -58,7 +58,7 @@ const TABS: ConceptTab[] = [
   {
     value: "blog",
     label: "Blog article",
-    icon: <PencilSimpleLine />,
+    icon: <PencilSimpleLine weight="bold" />,
     previews: [
       { src: img("1455390582262-044cdead277a"), alt: "Long-form article writing setup" },
       { src: img("1481277542470-605612bd2d61"), alt: "Editorial reading layout" },
@@ -69,7 +69,7 @@ const TABS: ConceptTab[] = [
   {
     value: "about",
     label: "About",
-    icon: <UsersThree />,
+    icon: <UsersThree weight="bold" />,
     previews: [
       { src: img("1522202176988-66273c2fd55f"), alt: "Team collaborating in an office" },
       { src: img("1556761175-5973dc0f32e7"), alt: "Company team portrait" },
@@ -80,7 +80,7 @@ const TABS: ConceptTab[] = [
   {
     value: "pricing",
     label: "Pricing",
-    icon: <Tag />,
+    icon: <Tag weight="bold" />,
     previews: [
       { src: img("1460925895917-afdab827c52f"), alt: "Analytics dashboard layout" },
       { src: img("1454165804606-c3d57bc86b40"), alt: "Plan comparison metrics" },
@@ -91,7 +91,7 @@ const TABS: ConceptTab[] = [
   {
     value: "careers",
     label: "Careers",
-    icon: <Briefcase />,
+    icon: <Briefcase weight="bold" />,
     previews: [
       { src: img("1497032628192-86f99bcd76bc"), alt: "Open office careers page" },
       { src: img("1517245386807-bb43f82c33c4"), alt: "Hiring desk setup" },
@@ -114,8 +114,11 @@ export function ConceptsShowcase() {
             </GalleryDescription>
           </Reveal>
 
-          <Reveal delay={75} className="mt-5">
-            <TabsList className="flex-wrap justify-center gap-1.5">
+          {/* Full-width wrapper so the rail has a definite container to cap against: `w-fit` centers
+              it under the lede when the tabs fit, then fills + scrolls as a single row (edge fade)
+              once they outgrow the frame, instead of wrapping. */}
+          <Reveal delay={75} className="mt-5 w-full">
+            <TabsList className="mx-auto flex w-fit gap-1.5">
               {TABS.map((tab) => (
                 <TabsTrigger key={tab.value} value={tab.value} className="gap-1.5">
                   {tab.icon}

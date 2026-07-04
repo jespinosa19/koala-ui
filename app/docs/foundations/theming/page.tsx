@@ -75,7 +75,7 @@ export default function RootLayout({ children }) {
         />
         <p className="mt-4 text-pretty text-muted-foreground">
           Theme and accent are <strong>orthogonal axes</strong>: any of the eight accents
-          works under any of the three themes, because the themes deliberately never redefine{" "}
+          works under any of the four themes, because the themes deliberately never redefine{" "}
           <code>--brand</code>.
         </p>
       </DocSection>

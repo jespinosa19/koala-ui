@@ -8,7 +8,6 @@ import {
   MagnifyingGlass,
   UsersThree,
   GearSix,
-  Buildings,
   Rocket,
   Check,
   Plus,
@@ -16,6 +15,13 @@ import {
   UserCircle,
   SignOut,
   Sparkle,
+  Cube,
+  Target,
+  Gift,
+  Signpost,
+  SmileySad,
+  Globe,
+  IdentificationBadge,
 } from "@phosphor-icons/react"
 
 import {
@@ -27,6 +33,7 @@ import {
   SidebarGroupLabel,
   SidebarGroupContent,
   SidebarItem,
+  SidebarItemIcon,
   SidebarCollapsible,
   SidebarSwitcher,
 } from "@/components/ui/sidebar"
@@ -38,9 +45,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
-import { AvatarRoot, AvatarFallback } from "@/components/ui/avatar"
+import { AvatarRoot, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Kbd } from "@/components/ui/kbd"
+import { BrandMark } from "@/components/landing/brand-mark"
 import type { Density } from "@/lib/density"
 
 type SwitcherVariant = "default" | "full"
@@ -56,32 +64,29 @@ function WorkspaceSwitcher({ variant }: { variant?: SwitcherVariant }) {
         <SidebarSwitcher
           variant={variant}
           leading={
-            <span
-              className={`grid shrink-0 place-items-center rounded-md bg-primary text-primary-foreground ${
-                full ? "size-10" : "size-7"
-              }`}
-            >
-              <Buildings className={full ? "size-5" : "size-4"} />
-            </span>
+            <BrandMark
+              wordmark={false}
+              className={full ? "shrink-0 [&>img]:size-10" : "shrink-0"}
+            />
           }
-          title="Acme Inc"
+          title="Koala"
           subtitle={full ? "Enterprise plan" : undefined}
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-60">
         <DropdownMenuLabel>Workspaces</DropdownMenuLabel>
         <DropdownMenuItem>
-          <Buildings />
-          Acme Inc
-          <Check className="ml-auto" />
+          <BrandMark wordmark={false} className="[&>img]:size-5" />
+          Koala
+          <Check weight="bold" className="ml-auto" />
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Rocket />
+          <Rocket weight="bold" />
           Skunkworks
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <Plus />
+          <Plus weight="bold" />
           Create workspace
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -99,30 +104,31 @@ function ProfileSwitcher({ variant }: { variant?: SwitcherVariant }) {
           variant={variant}
           leading={
             <AvatarRoot size={full ? "md" : "xs"} className="shrink-0">
+              <AvatarImage src="https://i.pravatar.cc/160?img=47" alt="Mara Okonkwo" />
               <AvatarFallback>MO</AvatarFallback>
             </AvatarRoot>
           }
           title="Mara Okonkwo"
-          subtitle={full ? "mara@acme.io" : undefined}
+          subtitle={full ? "mara@koala.io" : undefined}
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent side="top" align="start" className="w-56">
         <DropdownMenuLabel>My account</DropdownMenuLabel>
         <DropdownMenuItem>
-          <UserCircle />
+          <UserCircle weight="bold" />
           Profile
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <CreditCard />
+          <CreditCard weight="bold" />
           Billing
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Sparkle />
+          <Sparkle weight="bold" />
           Upgrade plan
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <SignOut />
+          <SignOut weight="bold" />
           Sign out
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -172,29 +178,29 @@ function AppSidebar({
         {/* Primary pages: first, unlabeled, the spine of the app. */}
         <SidebarGroup aria-label="Primary">
           <SidebarItem label="Search">
-            <MagnifyingGlass />
+            <MagnifyingGlass weight="bold" />
             Search
             <Kbd size="sm" className="ml-auto">
               ⌘K
             </Kbd>
           </SidebarItem>
           <SidebarItem active label="Dashboard">
-            <SquaresFour />
+            <SquaresFour weight="bold" />
             Dashboard
           </SidebarItem>
           <SidebarItem label="Inbox">
-            <Tray />
+            <Tray weight="bold" />
             Inbox
             <Badge variant="secondary" size="sm" className="ml-auto tabular-nums">
               8
             </Badge>
           </SidebarItem>
           <SidebarItem label="Projects">
-            <Stack />
+            <Stack weight="bold" />
             Projects
           </SidebarItem>
           <SidebarItem label="Calendar">
-            <CalendarBlank />
+            <CalendarBlank weight="bold" />
             Calendar
           </SidebarItem>
         </SidebarGroup>
@@ -221,11 +227,11 @@ function AppSidebar({
         <SidebarGroup aria-label="Workspace">
           <SidebarGroupLabel>Workspace</SidebarGroupLabel>
           <SidebarItem label="Members">
-            <UsersThree />
+            <UsersThree weight="bold" />
             Members
           </SidebarItem>
           <SidebarItem label="Settings">
-            <GearSix />
+            <GearSix weight="bold" />
             Settings
           </SidebarItem>
         </SidebarGroup>
@@ -323,33 +329,74 @@ export function SidebarItemDemo() {
       <SidebarContent>
         <SidebarGroup aria-label="States">
           <SidebarItem active>
-            <SquaresFour />
+            <SquaresFour weight="bold" />
             Active page
           </SidebarItem>
           <SidebarItem>
-            <Stack />
+            <Stack weight="bold" />
             Default page
           </SidebarItem>
           <SidebarItem>
-            <Tray />
+            <Tray weight="bold" />
             With a count
             <Badge variant="secondary" size="sm" className="ml-auto tabular-nums">
               12
             </Badge>
           </SidebarItem>
           <SidebarItem disabled>
-            <GearSix />
+            <GearSix weight="bold" />
             Disabled page
           </SidebarItem>
           <SidebarItem asChild>
             <a href="#">
-              <CalendarBlank />
+              <CalendarBlank weight="bold" />
               A real link (asChild)
             </a>
           </SidebarItem>
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
+  )
+}
+
+// ── Colored icon tiles: each "space" carries a soft, hue-tinted tile (SidebarItemIcon) ──
+// The Productboard/Linear "colored spaces" look: the icon becomes a rounded, tinted square so
+// each destination reads by color at a glance. The active row still gets the neutral chip + brand
+// bar; the tiles are the decoration, not the selection state.
+export function SidebarTilesDemo() {
+  const spaces = [
+    { icon: <Cube weight="bold" />, tone: "purple" as const, label: "Product Portfolio", active: true },
+    { icon: <Target weight="bold" />, tone: "orange" as const, label: "Strategy" },
+    { icon: <Gift weight="bold" />, tone: "green" as const, label: "Customer Feedback" },
+    { icon: <Signpost weight="bold" />, tone: "pink" as const, label: "Roadmapping" },
+    { icon: <SmileySad weight="bold" />, tone: "red" as const, label: "Problems" },
+    { icon: <Globe weight="bold" />, tone: "teal" as const, label: "Customers" },
+    { icon: <IdentificationBadge weight="bold" />, tone: "blue" as const, label: "People" },
+  ]
+  return (
+    <div className="flex w-full justify-center">
+      <Sidebar aria-label="Colored spaces" className="h-[560px] w-64">
+        <SidebarHeader>
+          <WorkspaceSwitcher />
+        </SidebarHeader>
+        <SidebarContent>
+          <SidebarGroup aria-label="Spaces">
+            <SidebarGroupLabel>Spaces</SidebarGroupLabel>
+            {spaces.map((s) => (
+              <SidebarItem key={s.label} active={s.active} label={s.label} asChild>
+                <a href="#">
+                  <SidebarItemIcon tone={s.tone}>{s.icon}</SidebarItemIcon>
+                  {s.label}
+                </a>
+              </SidebarItem>
+            ))}
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarFooter>
+          <ProfileSwitcher />
+        </SidebarFooter>
+      </Sidebar>
+    </div>
   )
 }
 
@@ -364,18 +411,18 @@ export function SidebarNestedDemo() {
         <SidebarContent>
           <SidebarGroup aria-label="Primary">
             <SidebarItem active>
-              <SquaresFour />
+              <SquaresFour weight="bold" />
               Dashboard
             </SidebarItem>
             <SidebarItem>
-              <Tray />
+              <Tray weight="bold" />
               Inbox
               <Badge variant="secondary" size="sm" className="ml-auto tabular-nums">
                 8
               </Badge>
             </SidebarItem>
             {/* A section that's also the current page: the parent lights up while a child is open. */}
-            <SidebarCollapsible icon={<GearSix />} label="Settings" active defaultOpen>
+            <SidebarCollapsible icon={<GearSix weight="bold" />} label="Settings" active defaultOpen>
               <SidebarItem active asChild>
                 <a href="#">General</a>
               </SidebarItem>
@@ -387,7 +434,7 @@ export function SidebarNestedDemo() {
               </SidebarItem>
             </SidebarCollapsible>
             <SidebarCollapsible
-              icon={<Stack />}
+              icon={<Stack weight="bold" />}
               label="Projects"
               actions={
                 <Badge variant="secondary" size="sm" className="tabular-nums">
@@ -424,11 +471,11 @@ export function SidebarCollapsibleGroupDemo() {
           {/* Primary pages stay pinned and open. */}
           <SidebarGroup aria-label="Primary">
             <SidebarItem active>
-              <SquaresFour />
+              <SquaresFour weight="bold" />
               Dashboard
             </SidebarItem>
             <SidebarItem>
-              <Tray />
+              <Tray weight="bold" />
               Inbox
             </SidebarItem>
           </SidebarGroup>
@@ -457,11 +504,11 @@ export function SidebarCollapsibleGroupDemo() {
             <SidebarGroupLabel>Workspace</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarItem>
-                <UsersThree />
+                <UsersThree weight="bold" />
                 Members
               </SidebarItem>
               <SidebarItem>
-                <GearSix />
+                <GearSix weight="bold" />
                 Settings
               </SidebarItem>
             </SidebarGroupContent>

@@ -54,7 +54,7 @@ const PLACEMENTS = ["top", "right", "bottom", "left"] as const
 export function HeroDemo() {
   return (
     <Button iconOnly aria-label="Save changes">
-      <FloppyDisk />
+      <FloppyDisk weight="bold" />
     </Button>
   )
 }
@@ -66,7 +66,7 @@ export function PlacementDemo() {
         <Specimen key={placement} label={placement}>
           <Tooltip content="Tooltip" placement={placement}>
             <Button variant="outline" iconOnly tooltip={false} aria-label={placement}>
-              <Info />
+              <Info weight="bold" />
             </Button>
           </Tooltip>
         </Specimen>
@@ -81,7 +81,7 @@ export function VariantsDemo() {
       <Specimen label="text">
         <Tooltip content="Save changes" variant="text">
           <Button variant="outline" iconOnly tooltip={false} aria-label="Save changes">
-            <FloppyDisk />
+            <FloppyDisk weight="bold" />
           </Button>
         </Tooltip>
       </Specimen>
@@ -97,7 +97,7 @@ export function VariantsDemo() {
           }
         >
           <Button variant="outline" iconOnly tooltip={false} aria-label="Product stats">
-            <ChartBar />
+            <ChartBar weight="bold" />
           </Button>
         </Tooltip>
       </Specimen>
@@ -132,7 +132,7 @@ export function CapacityTooltipDemo() {
       }
     >
       <Button variant="outline" iconOnly tooltip={false} aria-label="Day capacity">
-        <Clock />
+        <Clock weight="bold" />
       </Button>
     </Tooltip>
   )
@@ -166,7 +166,7 @@ export function ToneTooltipDemo() {
       }
     >
       <Button variant="outline" iconOnly tooltip={false} aria-label="Storage breakdown">
-        <ChartPieSlice />
+        <ChartPieSlice weight="bold" />
       </Button>
     </Tooltip>
   )
@@ -177,12 +177,12 @@ export function IconContentDemo() {
     <Tooltip
       content={
         <>
-          <Copy className="size-3.5" /> Copy to clipboard
+          <Copy weight="bold" className="size-3.5" /> Copy to clipboard
         </>
       }
     >
       <Button variant="ghost" iconOnly tooltip={false} aria-label="Copy">
-        <Copy />
+        <Copy weight="bold" />
       </Button>
     </Tooltip>
   )
@@ -203,7 +203,7 @@ export function InteractiveDemo() {
       }
     >
       <Button variant="outline" iconOnly tooltip={false} aria-label="More info">
-        <Info />
+        <Info weight="bold" />
       </Button>
     </Tooltip>
   )
@@ -214,22 +214,22 @@ export function GroupDemo() {
     <TooltipGroup>
       <Tooltip content="Edit" placement="top">
         <Button variant="ghost" iconOnly tooltip={false} aria-label="Edit">
-          <PencilSimple />
+          <PencilSimple weight="bold" />
         </Button>
       </Tooltip>
       <Tooltip content="Copy" placement="top">
         <Button variant="ghost" iconOnly tooltip={false} aria-label="Copy">
-          <Copy />
+          <Copy weight="bold" />
         </Button>
       </Tooltip>
       <Tooltip content="Save" placement="top">
         <Button variant="ghost" iconOnly tooltip={false} aria-label="Save">
-          <FloppyDisk />
+          <FloppyDisk weight="bold" />
         </Button>
       </Tooltip>
       <Tooltip content="Delete" placement="top">
         <Button variant="ghost" iconOnly tooltip={false} aria-label="Delete">
-          <Trash />
+          <Trash weight="bold" />
         </Button>
       </Tooltip>
     </TooltipGroup>
@@ -245,7 +245,7 @@ export function FormInputDemo() {
           <InputField placeholder="sk-…" />
           <Tooltip content="Your secret key - never share this publicly">
             <InputSuffixButton aria-label="API key help">
-              <Question />
+              <Question weight="bold" />
             </InputSuffixButton>
           </Tooltip>
         </InputRoot>
@@ -256,7 +256,7 @@ export function FormInputDemo() {
           <InputField placeholder="https://…" />
           <Tooltip content="Must be HTTPS and return 200 within 5 s" placement="right">
             <InputSuffixButton aria-label="Webhook URL requirements">
-              <Info />
+              <Info weight="bold" />
             </InputSuffixButton>
           </Tooltip>
         </InputRoot>
@@ -288,7 +288,7 @@ export function DialogDemo() {
                   aria-label="Endpoint URL help"
                   className="rounded text-muted-foreground transition-colors duration-fast ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand"
                 >
-                  <Info className="size-3.5" />
+                  <Info weight="bold" className="size-3.5" />
                 </button>
               </Tooltip>
             </div>
@@ -309,7 +309,7 @@ export function DialogDemo() {
                   aria-label="Secret help"
                   className="rounded text-muted-foreground transition-colors duration-fast ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand"
                 >
-                  <Lock className="size-3.5" />
+                  <Lock weight="bold" className="size-3.5" />
                 </button>
               </Tooltip>
             </div>
@@ -341,7 +341,7 @@ export function KeyboardShortcutDemo() {
         }
       >
         <Button variant="ghost" iconOnly tooltip={false} aria-label="New file">
-          <FilePlus />
+          <FilePlus weight="bold" />
         </Button>
       </Tooltip>
       <Tooltip
@@ -353,7 +353,7 @@ export function KeyboardShortcutDemo() {
         }
       >
         <Button variant="ghost" iconOnly tooltip={false} aria-label="Search">
-          <MagnifyingGlass />
+          <MagnifyingGlass weight="bold" />
         </Button>
       </Tooltip>
       <Tooltip
@@ -365,7 +365,7 @@ export function KeyboardShortcutDemo() {
         }
       >
         <Button variant="ghost" iconOnly tooltip={false} aria-label="Settings">
-          <GearSix />
+          <GearSix weight="bold" />
         </Button>
       </Tooltip>
     </TooltipGroup>
@@ -376,7 +376,7 @@ export function ShiftAwayDemo() {
   return (
     <Tooltip content="Shift-away on exit" placement="top">
       <Button variant="outline" iconOnly tooltip={false} aria-label="Info">
-        <Info />
+        <Info weight="bold" />
       </Button>
     </Tooltip>
   )
@@ -387,17 +387,17 @@ export function GlideDemo() {
     <TooltipGroup>
       <Tooltip content="Edit" placement="top">
         <Button variant="ghost" iconOnly tooltip={false} aria-label="Edit">
-          <PencilSimple />
+          <PencilSimple weight="bold" />
         </Button>
       </Tooltip>
       <Tooltip content="Copy" placement="top">
         <Button variant="ghost" iconOnly tooltip={false} aria-label="Copy">
-          <Copy />
+          <Copy weight="bold" />
         </Button>
       </Tooltip>
       <Tooltip content="Save" placement="top">
         <Button variant="ghost" iconOnly tooltip={false} aria-label="Save">
-          <FloppyDisk />
+          <FloppyDisk weight="bold" />
         </Button>
       </Tooltip>
     </TooltipGroup>

@@ -98,11 +98,22 @@ const [PricingComparisonProvider, usePricingComparisonContext] = createContext<{
   featured: number | null
 }>("PricingComparison")
 
+// The featured overlay (frame + tint) is inset from the shell on every side by this many pixels,
+// so the brand ring floats inside the `rounded-2xl` (24px) shell instead of colliding with its
+// edge. 4px is also the concentric gap: 24px shell − 4px = the frame's own `rounded-xl` (20px),
+// so the two radii nest cleanly. Kept in sync with the header tint's `after:inset-x-1`/`top-1`
+// (both 4px) below.
+const FEATURED_INSET = 4
+
 // The featured plan's header cell. The continuous brand outline + body tint are drawn by the
 // measured overlays (frame/tint); the header is opaque (sticky `bg-card`), so the tint overlay
-// behind it would be hidden. It carries its own matching tint via an `after` overlay, with a
-// concentric rounded top so it lines up under the frame's rounded corner.
-const FEATURED_PLAN = "after:pointer-events-none after:absolute after:inset-0 after:rounded-t-xl after:bg-brand/[0.05] after:content-['']"
+// behind it would be hidden. It carries its own matching tint via an `after` overlay, inset 4px on
+// the sides and top to sit under the frame (bottom flush, so it meets the body tint at the
+// header/body seam), with a concentric rounded top that lines up under the frame's rounded corner.
+// `pt-7` (over the base `p-5`) gives the name/badge headroom below that rounded top corner so it
+// never crowds the ceiling; the cells are `align-bottom`, so the extra height only lifts this
+// column's top and leaves the CTAs aligned across every plan.
+const FEATURED_PLAN = "pt-7 after:pointer-events-none after:absolute after:inset-x-1 after:top-1 after:bottom-0 after:rounded-t-xl after:bg-brand/[0.05] after:content-['']"
 
 /**
  * Measures the highlighted plan column and returns the box for the `tint`/`frame` overlays:
@@ -135,7 +146,14 @@ function useFeaturedColumn(
         setReady(false)
         return
       }
-      setStyle({ transform: `translateX(${cell.offsetLeft}px)`, width: cell.offsetWidth, height: table.offsetHeight })
+      // Inset by FEATURED_INSET on every side so the ring floats off the shell edge (and nests
+      // concentrically inside it), rather than running flush against it.
+      setStyle({
+        transform: `translateX(${cell.offsetLeft + FEATURED_INSET}px)`,
+        top: FEATURED_INSET,
+        width: cell.offsetWidth - FEATURED_INSET * 2,
+        height: table.offsetHeight - FEATURED_INSET * 2,
+      })
       setReady(true)
     }
 
@@ -335,7 +353,7 @@ export function PricingComparisonRow({
           {hint != null && (
             <Tooltip content={hint}>
               <button type="button" aria-label={hintLabel} className={slots.hint()}>
-                <Info />
+                <Info weight="bold" />
               </button>
             </Tooltip>
           )}
@@ -377,7 +395,7 @@ export function PricingComparisonCell({
           aria-hidden
           className={slots.cellIcon({ className: included ? "text-success" : "text-muted-foreground/40" })}
         >
-          {included ? <Check /> : <Minus />}
+          {included ? <Check weight="bold" /> : <Minus weight="bold" />}
         </span>
       )}
       {children == null && <span className="sr-only">{included ? "Included" : "Not included"}</span>}

@@ -13,7 +13,7 @@ import { tv, type VariantProps } from "@/lib/tv"
  * around a label so the a11y tree still exposes exactly one separator.
  *
  * Stroke styles (`solid`/`dashed`/`dotted`) ride the `border-*` utilities so they
- * track `--border` across all three themes; `gradient` fades a hairline out at both
+ * track `--border` across all four themes; `gradient` fades a hairline out at both
  * ends via the theme's border color. No raw hex / px, all tokens.
  *
  * Smart by default: a divider only earns its space when it actually separates two

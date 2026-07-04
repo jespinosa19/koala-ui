@@ -27,14 +27,15 @@ export const galleryVariants = tv({
     root: "relative isolate w-full overflow-hidden bg-background text-foreground",
     // Centered lede column for title + description + the tab rail.
     header:
-      "mx-auto flex w-full max-w-2xl flex-col items-center gap-5 px-6 pt-20 text-center sm:pt-28",
+      "mx-auto flex w-full max-w-2xl flex-col items-center gap-5 px-5 pt-16 text-center sm:px-8 sm:pt-24",
     // Shares the canonical `section-heading` size utility (app/globals.css) with SectionHeader and
     // FAQs, so the Gallery lede follows the one section-H2 scale and never drifts.
     title: "section-heading font-semibold tracking-tight text-balance",
     description: "text-base text-pretty text-muted-foreground sm:text-lg",
     // The fake-masonry wall: wider than the gutter so the outer columns clip at the section edges.
+    // Sides use the canonical section gutter (px-5 sm:px-8); the wide max-w is the intentional bleed.
     masonry:
-      "mx-auto mt-12 w-full max-w-[110rem] columns-2 gap-4 px-6 pb-20 sm:columns-3 sm:pb-28 lg:columns-4",
+      "mx-auto mt-12 w-full max-w-[110rem] columns-2 gap-4 px-5 pb-16 sm:columns-3 sm:px-8 sm:pb-24 lg:columns-4",
     // One framed tile. Concentric radius + hairline frame + a faint inset ring (the image-outline
     // polish principle). Hover deepens the shadow only — never a position change.
     item: [

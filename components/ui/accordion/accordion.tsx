@@ -166,7 +166,7 @@ export function AccordionTrigger({
   const { slots, iconPosition } = useAccordionContext("AccordionTrigger")
   // Same glyph either way; only the DOM order flips so a `leading` caret reads before the
   // label. The flip is in markup (not CSS `order`) so the tab/read order stays caret→label.
-  const icon = <CaretDown data-slot="accordion-icon" aria-hidden className={slots.icon()} />
+  const icon = <CaretDown weight="bold" data-slot="accordion-icon" aria-hidden className={slots.icon()} />
   return (
     <AccordionPrimitive.Header data-slot="accordion-header" className={slots.header()}>
       <AccordionPrimitive.Trigger

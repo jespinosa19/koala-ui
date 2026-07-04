@@ -39,11 +39,15 @@ const SIBLINGS = [
   { label: "Card", href: "#" },
 ]
 
-// Shared ellipsis trigger: glyph-width visual, 40px tap target via a centered pseudo-element
-// (polish), with hover + open-state color feedback.
+// Shared ellipsis trigger: a 28px container that stays transparent at rest, revealing its
+// surface only on hover/open so the collapsed crumb reads as a tappable control. The box still
+// keeps a 40px tap target via a centered pseudo-element (polish).
 const ellipsisTriggerClass = cn(
-  "relative flex items-center justify-center rounded-sm text-muted-foreground",
-  "transition-colors duration-fast ease-out hover:text-foreground data-[state=open]:text-foreground",
+  "relative flex size-7 cursor-pointer items-center justify-center rounded-md",
+  "bg-transparent text-muted-foreground",
+  "transition-colors duration-fast ease-out",
+  "hover:bg-secondary hover:text-foreground",
+  "data-[state=open]:bg-secondary data-[state=open]:text-foreground",
   "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
   "before:absolute before:inset-1/2 before:size-10 before:-translate-x-1/2 before:-translate-y-1/2 before:content-['']",
 )
@@ -104,13 +108,14 @@ export function BreadcrumbSiblingDemo() {
           <DropdownMenu>
             <DropdownMenuTrigger
               className={cn(
-                "group flex items-center gap-1 rounded-sm font-medium text-foreground outline-none",
+                "group flex cursor-pointer items-center gap-1 rounded-sm font-medium text-foreground outline-none",
                 "transition-colors duration-fast ease-out",
                 "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
               )}
             >
               Breadcrumb
               <CaretDown
+                weight="bold"
                 aria-hidden
                 className="size-3.5 text-muted-foreground transition-transform duration-fast ease-out group-data-[state=open]:rotate-180"
               />
@@ -150,18 +155,18 @@ export function BreadcrumbGroupedDemo() {
               <DropdownMenuLabel>Jump to</DropdownMenuLabel>
               <DropdownMenuItem asChild>
                 <a href="#">
-                  <House /> Home
+                  <House weight="bold" /> Home
                 </a>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <a href="#">
-                  <Folder /> Documentation
+                  <Folder weight="bold" /> Documentation
                 </a>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <a href="#">
-                  <FileText /> Components
+                  <FileText weight="bold" /> Components
                 </a>
               </DropdownMenuItem>
             </DropdownMenuContent>

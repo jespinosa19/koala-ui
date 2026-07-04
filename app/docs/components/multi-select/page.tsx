@@ -120,12 +120,17 @@ export function Example() {
         </p>
         <ComponentPreview
           code={`import { EnvelopeSimple, DeviceMobile, ChatCircle, Desktop } from "@phosphor-icons/react"
+import { AnimatedNumber } from "@/components/ui/animated-number"
 
 <MultiSelect defaultValue={["email", "push"]}>
   <MultiSelectTrigger className="w-64">
     <MultiSelectValue
       placeholder="Notification channels"
-      renderValue={(value) => \`\${value.length} channels on\`}
+      renderValue={(value) => (
+        <>
+          <AnimatedNumber value={value.length} /> channels on
+        </>
+      )}
     />
   </MultiSelectTrigger>
   <MultiSelectContent>
@@ -144,10 +149,16 @@ export function Example() {
         <p className="mt-4 text-pretty text-muted-foreground">
           By default <code className="font-mono text-sm">MultiSelectValue</code> shows a count
           (&ldquo;3 selected&rdquo;), robust because the trigger has no access to the row labels
-          while the panel is closed. Pass{" "}
+          while the panel is closed. The number rolls as you toggle rows (&ldquo;3 selected&rdquo; →
+          &ldquo;4 selected&rdquo;) via{" "}
+          <a href="/docs/components/animated-number" className="underline underline-offset-4">
+            AnimatedNumber
+          </a>
+          , so the change registers instead of hard-swapping. Pass{" "}
           <code className="font-mono text-sm">renderValue</code> to draw the selection yourself, e.g.
           as <a href="/docs/components/badge" className="underline underline-offset-4">Badge</a> chips
-          mapped from your own data.
+          mapped from your own data. The chips carry that same on-change polish: each one zoom + fades
+          in when selected and out when removed, so the row never hard-swaps.
         </p>
         <ComponentPreview
           code={`const CATEGORY_LABELS = {
@@ -156,18 +167,47 @@ export function Example() {
 }
 
 const [value, setValue] = useState(["engineering", "product"])
+// Keep a chip mounted through its exit so a deselected one can animate out,
+// not just vanish. A chip is "leaving" once it's no longer in \`value\`.
+const [display, setDisplay] = useState(value)
 
-<MultiSelect value={value} onValueChange={setValue}>
+function handleChange(next) {
+  setValue(next)
+  setDisplay((prev) =>
+    next.length === 0 ? [] : [...prev, ...next.filter((v) => !prev.includes(v))],
+  )
+}
+
+<MultiSelect value={value} onValueChange={handleChange}>
   <MultiSelectTrigger className="w-72">
     <MultiSelectValue
       placeholder="Select categories"
-      renderValue={(values) => (
+      renderValue={() => (
         <span className="flex gap-1 overflow-hidden">
-          {values.map((v) => (
-            <Badge key={v} variant="secondary" size="sm" pill>
-              {CATEGORY_LABELS[v] ?? v}
-            </Badge>
-          ))}
+          {display.map((v) => {
+            const leaving = !value.includes(v)
+            return (
+              <Badge
+                key={v}
+                variant="secondary"
+                size="sm"
+                pill
+                className={cn(
+                  "duration-fast ease-out",
+                  leaving
+                    // fill-mode-forwards holds opacity-0 after the exit finishes, so the chip
+                    // never flashes back to full for a frame before it unmounts.
+                    ? "animate-out fade-out-0 zoom-out-95 fill-mode-forwards"
+                    : "animate-in fade-in-0 zoom-in-95",
+                )}
+                onAnimationEnd={() => {
+                  if (leaving) setDisplay((d) => d.filter((x) => x !== v))
+                }}
+              >
+                {CATEGORY_LABELS[v] ?? v}
+              </Badge>
+            )
+          })}
         </span>
       )}
     />
@@ -191,11 +231,13 @@ const [value, setValue] = useState(["engineering", "product"])
 
       <DocSection title="Density">
         <p className="mt-4 text-pretty text-muted-foreground">
-          <code className="font-mono text-sm">density</code> on{" "}
-          <code className="font-mono text-sm">MultiSelect</code> switches between{" "}
-          <code className="font-mono text-sm">comfortable</code> (h-10 trigger) and{" "}
-          <code className="font-mono text-sm">compact</code> (h-8 trigger) and flows to every part
-          through context, or drive it from a parent{" "}
+          Trigger height comes from <code className="font-mono text-sm">size</code> on{" "}
+          <code className="font-mono text-sm">MultiSelect</code> (sm/md/lg = 32/36/40px, the same
+          scale as Button, Input, and Select). <code className="font-mono text-sm">density</code>{" "}
+          no longer sets the height; it picks the default size when you do not pass one (compact →{" "}
+          <code className="font-mono text-sm">sm</code>, comfortable →{" "}
+          <code className="font-mono text-sm">md</code>) and tightens the menu rows - flowing to
+          every part through context, or from a parent{" "}
           <code className="font-mono text-sm">DensityProvider</code>.
         </p>
         <ComponentPreview

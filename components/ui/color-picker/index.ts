@@ -1,30 +1,40 @@
+export { ColorPicker, type ColorPickerProps } from "./color-picker"
+
 export {
-  ColorPicker,
-  ColorPickerArea,
+  colorPickerVariants,
+  defaultColorPresets,
+  type ColorPickerMode,
+  type ColorPickerImageFit,
+  type ColorPickerImageValue,
+} from "./context"
+
+export { ColorPickerArea } from "./area"
+
+export {
   ColorPickerControls,
   ColorPickerPreview,
   ColorPickerHueSlider,
   ColorPickerAlphaSlider,
-  ColorPickerHexInput,
-  ColorPickerEyeDropper,
-  ColorPickerSwatches,
-  ColorPickerModes,
-  ColorPickerGradient,
-  ColorPickerImage,
+} from "./rails"
+
+export { ColorPickerHexInput, ColorPickerEyeDropper } from "./hex-input"
+
+export { ColorPickerSwatches, type ColorPickerSwatchesProps } from "./swatches"
+
+export { ColorPickerModes } from "./modes"
+
+export { ColorPickerGradient } from "./gradient"
+
+export { ColorPickerImage } from "./image"
+
+export {
   ColorPickerPopover,
   ColorPickerTrigger,
   ColorPickerTriggerSwatch,
   ColorPickerContent,
-  colorPickerVariants,
-  defaultColorPresets,
-  type ColorPickerProps,
-  type ColorPickerMode,
-  type ColorPickerImageFit,
-  type ColorPickerImageValue,
-  type ColorPickerSwatchesProps,
   type ColorPickerTriggerSwatchProps,
   type ColorPickerContentProps,
-} from "./color-picker"
+} from "./popover"
 
 export {
   hexToHsva,

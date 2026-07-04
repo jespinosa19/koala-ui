@@ -24,12 +24,12 @@ import {
  */
 const PRESETS = {
   empty: {
-    icon: <Tray />,
+    icon: <Tray weight="bold" />,
     title: "No data yet",
     description: "There's nothing here yet. New records will show up in this table.",
   },
   search: {
-    icon: <MagnifyingGlass />,
+    icon: <MagnifyingGlass weight="bold" />,
     title: "No results found",
     description: "No records matched your search or filters. Try broadening them.",
   },

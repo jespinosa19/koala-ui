@@ -1,18 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { ArrowLeft, ArrowRight } from "@phosphor-icons/react"
+import { ArrowLeft, ArrowRight, FolderPlus } from "@phosphor-icons/react"
 
 import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
-  DialogDescription,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import { dialogVariants } from "@/components/ui/dialog"
+import { DensityProvider } from "@/lib/density"
 import { InputRoot, InputField, InputLabel } from "@/components/ui/input"
 import { Stagger } from "@/lib/stagger"
 import {
@@ -22,6 +15,7 @@ import {
   StepperIndicator,
   StepperTitle,
 } from "@/components/ui/stepper"
+import { InlineClose } from "./inline-close"
 
 const STEPS = [
   { title: "Details", description: "Name your project" },
@@ -30,11 +24,16 @@ const STEPS = [
 ] as const
 
 /**
- * A multi-step create flow with a vertical step rail (title + description per step) on the
- * left and the active step's form on the right: the larger-wizard pattern (Upwork-style).
+ * A multi-step create flow with a vertical step rail (title + description per step) on the left
+ * and the active step's form on the right: the larger-wizard pattern (Upwork-style).
+ *
+ * Rendered inline (the real `dialogVariants` slots, no Radix Root/Portal) so the whole flow is
+ * visible without a trigger to click; stepping forward/back, the Stagger cascade, and the loading
+ * submit all stay live. `DensityProvider` mirrors what a `density="compact"` DialogContent gives
+ * its children, so the inputs/buttons sit as tightly as the real dialog. The Code tab shows the
+ * openable `Dialog` version.
  */
 export function WizardDialogDemo() {
-  const [open, setOpen] = React.useState(false)
   const [step, setStep] = React.useState(1)
   const [submitting, setSubmitting] = React.useState(false)
   // The flow carries its own values through to the Review step, like Upwork/Squarespace's
@@ -44,40 +43,35 @@ export function WizardDialogDemo() {
   const [email, setEmail] = React.useState("")
   const isLast = step === STEPS.length
   const timer = React.useRef<ReturnType<typeof setTimeout>>(undefined)
+  const slots = dialogVariants({ size: "lg", density: "compact", bordered: true })
 
   React.useEffect(() => () => clearTimeout(timer.current), [])
 
-  function handleOpenChange(next: boolean) {
-    setOpen(next)
-    if (!next) {
-      // Reset once the close animation has settled, so the body doesn't flash back mid-exit.
-      timer.current = setTimeout(() => {
-        setStep(1)
-        setSubmitting(false)
-        setName("")
-        setProjectKey("")
-        setEmail("")
-      }, 200)
-    }
-  }
-
   function create() {
     setSubmitting(true)
-    timer.current = setTimeout(() => handleOpenChange(false), 1200)
+    // Simulate the request, then loop back to the first step (an inline preview never closes).
+    timer.current = setTimeout(() => {
+      setSubmitting(false)
+      setStep(1)
+      setName("")
+      setProjectKey("")
+      setEmail("")
+    }, 1200)
   }
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button>Create project</Button>
-      </DialogTrigger>
-      <DialogContent size="lg" density="compact">
-        <DialogHeader>
-          <DialogTitle>Create project</DialogTitle>
-          <DialogDescription>Set up your workspace in a few steps.</DialogDescription>
-        </DialogHeader>
+    <div className={slots.content()}>
+      <DensityProvider density="compact">
+        <div className={slots.icon()}>
+          <FolderPlus weight="bold" />
+        </div>
+        <div className={slots.header()}>
+          <h2 className={slots.title()}>Create project</h2>
+          <p className={slots.description()}>Set up your workspace in a few steps.</p>
+        </div>
 
-        <div className="grid grid-cols-[auto_1fr] items-start gap-8">
+        {/* Tighter gap on a phone so the form column keeps a usable width beside the rail. */}
+        <div className="grid grid-cols-[auto_1fr] items-start gap-4 sm:gap-8">
           {/* Step rail: vertical Stepper with solid, brand-filled indicators (check when done) and
               no connectors, the bolder Calendly-style rail. Runs at comfortable density so the
               circles and labels read larger than the compact form on the right. */}
@@ -124,7 +118,6 @@ export function WizardDialogDemo() {
                   <InputField
                     id="wz-name"
                     placeholder="Apollo"
-                    autoFocus
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
@@ -152,7 +145,6 @@ export function WizardDialogDemo() {
                     id="wz-invite"
                     type="email"
                     placeholder="teammate@acme.com"
-                    autoFocus
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
@@ -177,13 +169,13 @@ export function WizardDialogDemo() {
           </Stagger>
         </div>
 
-        <DialogFooter bordered className="sm:justify-between">
+        <div className={slots.footer({ className: "sm:justify-between" })}>
           <Button
             variant="ghost"
             disabled={step === 1 || submitting}
             onClick={() => setStep((s) => Math.max(1, s - 1))}
           >
-            <ArrowLeft /> Back
+            <ArrowLeft weight="bold" /> Back
           </Button>
           {isLast ? (
             <Button onClick={create} loading={submitting}>
@@ -191,12 +183,13 @@ export function WizardDialogDemo() {
             </Button>
           ) : (
             <Button onClick={() => setStep((s) => s + 1)}>
-              Next <ArrowRight />
+              Next <ArrowRight weight="bold" />
             </Button>
           )}
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </DensityProvider>
+      <InlineClose density="compact" />
+    </div>
   )
 }
 

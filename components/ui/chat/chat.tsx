@@ -34,10 +34,11 @@ const chatVariants = tv({
     header: "flex items-center gap-2 px-1",
     name: "text-sm font-medium text-foreground",
     time: "text-xs tabular-nums text-muted-foreground",
-    // The bubble. A larger radius with one tightened corner reads as a tail pointing to its
-    // side. Light prose so dropped-in markdown (p/lists/code/pre/links) looks finished.
+    // The bubble. A soft, uniform radius on all four corners (Messenger/iMessage style); the
+    // medium weight gives short chat lines presence (the plain document resets to normal, below).
+    // Light prose so dropped-in markdown (p/lists/code/pre/links) looks finished.
     bubble: [
-      "w-fit rounded-2xl px-4 py-2.5 text-sm leading-relaxed text-pretty [overflow-wrap:anywhere]",
+      "w-fit rounded-xl px-3.5 py-2 text-sm font-medium leading-relaxed text-pretty [overflow-wrap:anywhere]",
       "[&_p]:m-0 [&_p+p]:mt-2 [&_:first-child]:mt-0",
       "[&_ul]:my-1 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:my-1 [&_ol]:list-decimal [&_ol]:pl-5 [&_ul_ul]:list-[circle]",
       // Headings, so a document-style (plain variant) answer reads like a page, not a wall of text.
@@ -122,13 +123,13 @@ const chatVariants = tv({
       assistant: {
         message: "justify-start",
         body: "items-start",
-        bubble: "rounded-tl-md bg-muted text-foreground",
+        bubble: "bg-muted text-foreground",
       },
       user: {
         // No avatar by default: the body claims the right edge and its content right-aligns.
         message: "justify-end",
         body: "items-end",
-        bubble: "rounded-tr-md bg-primary text-primary-foreground",
+        bubble: "bg-chat-sent text-white",
       },
     },
     // `plain` (default) is the Notion/ChatGPT document style: the assistant answer has no
@@ -145,9 +146,10 @@ const chatVariants = tv({
       role: "assistant",
       variant: "plain",
       className: {
-        // Full-bleed document: drop the bubble surface, radius, padding, and width cap.
+        // Full-bleed document: drop the bubble surface, radius, padding, width cap, and the
+        // bubble's medium weight (long-form body reads at normal weight).
         body: "max-w-full",
-        bubble: "w-full max-w-full rounded-none bg-transparent px-0 py-0 text-foreground",
+        bubble: "w-full max-w-full rounded-none bg-transparent px-0 py-0 font-normal text-foreground",
       },
     },
   ],
@@ -394,7 +396,7 @@ export function MessageReasoningTrigger({
       className={slots.reasoningTrigger({ className })}
       {...props}
     >
-      <Brain
+      <Brain weight="bold"
         aria-hidden
         className={cn(
           slots.reasoningIcon(),
@@ -404,7 +406,7 @@ export function MessageReasoningTrigger({
         )}
       />
       <span>{children ?? (streaming ? "Thinking…" : "Reasoning")}</span>
-      <CaretDown aria-hidden className={slots.reasoningChevron()} />
+      <CaretDown weight="bold" aria-hidden className={slots.reasoningChevron()} />
     </Collapsible.Trigger>
   )
 }
@@ -518,7 +520,7 @@ export function MessageReasoningQuery({
   const { slots } = useReasoningContext("MessageReasoningQuery")
   return (
     <span data-slot="message-reasoning-query" className={slots.reasoningQuery({ className })} {...props}>
-      <MagnifyingGlass aria-hidden className={slots.reasoningQueryIcon()} />
+      <MagnifyingGlass weight="bold" aria-hidden className={slots.reasoningQueryIcon()} />
       <span className="truncate">{children}</span>
     </span>
   )
@@ -561,7 +563,7 @@ function SourceFavicon({ src, slots }: { src?: string; slots: ChatSlots }) {
         // Decorative: the link's accessible name already carries the source title/domain.
         <img src={src} alt="" aria-hidden loading="lazy" onError={handleError} className={slots.reasoningSourceFaviconImg()} />
       ) : (
-        <Globe aria-hidden weight="regular" className={slots.reasoningSourceFaviconFallback()} />
+        <Globe aria-hidden weight="bold" className={slots.reasoningSourceFaviconFallback()} />
       )}
     </span>
   )

@@ -16,7 +16,7 @@ export default function TreeDocsPage() {
         description="A nesting tree view for file explorers, category browsers, and any hierarchy. Built on Radix Collapsible for each branch's expand/collapse, with single-selection, full keyboard navigation (arrows to move, expand, and collapse), and CSS guide rails that trace every level of nesting."
       />
 
-      <ComponentPreview code={HERO_CODE}>
+      <ComponentPreview code={HERO_CODE} previewClassName="min-h-[32rem]">
         <TreeDemo />
       </ComponentPreview>
 
@@ -60,7 +60,7 @@ export function Example() {
           <code className="font-mono text-sm">disabled</code> to take it out of selection, expansion,
           and the keyboard order.
         </p>
-        <ComponentPreview code={SELECTION_CODE}>
+        <ComponentPreview code={SELECTION_CODE} previewClassName="min-h-[21rem]">
           <SelectionDemo />
         </ComponentPreview>
       </DocSection>
@@ -72,7 +72,7 @@ export function Example() {
           <code className="font-mono text-sm">guides={`{false}`}</code> when the icons alone carry the
           hierarchy.
         </p>
-        <ComponentPreview code={CATEGORY_CODE}>
+        <ComponentPreview code={CATEGORY_CODE} previewClassName="min-h-[15rem]">
           <CategoryDemo />
         </ComponentPreview>
       </DocSection>
@@ -88,7 +88,7 @@ export function Example() {
           <code className="font-mono text-sm">Alt</code> + <code className="font-mono text-sm">↑</code>{" "}
           / <code className="font-mono text-sm">↓</code> reorders siblings from the keyboard.
         </p>
-        <ComponentPreview code={REORDER_CODE}>
+        <ComponentPreview code={REORDER_CODE} previewClassName="min-h-[23rem]">
           <ReorderDemo />
         </ComponentPreview>
       </DocSection>
@@ -191,14 +191,20 @@ export function Example() {
   )
 }
 
-const HERO_CODE = `<Tree defaultValue="button.tsx" defaultExpandedValues={["src", "components"]}>
+const HERO_CODE = `<Tree defaultValue="button.tsx" defaultExpandedValues={["src", "components", "lib", "public"]}>
   <TreeItem value="src" label="src" icon={<Folder />} expandedIcon={<FolderOpen />}>
     <TreeItem value="components" label="components" icon={<Folder />} expandedIcon={<FolderOpen />}>
       <TreeItem value="button.tsx" label="button.tsx" icon={<FileCode />} />
       <TreeItem value="card.tsx" label="card.tsx" icon={<FileCode />} />
       <TreeItem value="tree.tsx" label="tree.tsx" icon={<FileCode />} />
     </TreeItem>
+    <TreeItem value="lib" label="lib" icon={<Folder />} expandedIcon={<FolderOpen />}>
+      <TreeItem value="utils.ts" label="utils.ts" icon={<FileCode />} />
+    </TreeItem>
     <TreeItem value="globals.css" label="globals.css" icon={<FileText />} />
+  </TreeItem>
+  <TreeItem value="public" label="public" icon={<Folder />} expandedIcon={<FolderOpen />}>
+    <TreeItem value="logo.svg" label="logo.svg" icon={<FileImage />} />
   </TreeItem>
   <TreeItem value="package.json" label="package.json" icon={<FileText />} />
   <TreeItem value="README.md" label="README.md" icon={<FileText />} />
@@ -206,7 +212,7 @@ const HERO_CODE = `<Tree defaultValue="button.tsx" defaultExpandedValues={["src"
 
 const SELECTION_CODE = `const [selected, setSelected] = useState("getting-started")
 
-<Tree value={selected} onValueChange={setSelected} defaultExpandedValues={["guides"]}>
+<Tree value={selected} onValueChange={setSelected} defaultExpandedValues={["guides", "components"]}>
   <TreeItem value="guides" label="Guides" icon={<Folder />} expandedIcon={<FolderOpen />}>
     <TreeItem value="getting-started" label="Getting started" icon={<FileText />} />
     <TreeItem value="installation" label="Installation" icon={<FileText />} />

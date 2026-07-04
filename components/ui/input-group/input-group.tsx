@@ -4,6 +4,7 @@ import * as React from "react"
 
 import { tv, type VariantProps } from "@/lib/tv"
 import { createContext } from "@/lib/create-context"
+import { useControlSize, type Density } from "@/lib/density"
 import { useFieldContext } from "@/lib/field-context"
 
 // ─── Variants ─────────────────────────────────────────────────────────────────
@@ -22,9 +23,12 @@ import { useFieldContext } from "@/lib/field-context"
 // the shell. Interior seams are drawn as a single 1px `border-l` per segment. Height is
 // governed by the shell (`items-stretch`), so children no longer fight over it.
 //
-// Buttons are the deliberate exception: they keep their fill (a trailing "Search" action
-// should still read as a button), losing only their radius / shadow / own ring / press
-// scale so they sit flush inside the shell.
+// Buttons are the deliberate exception, and a narrow one: only a *small icon-only* action
+// (copy, clear, a submit arrow) melts into the shell - it keeps its fill and hover, losing
+// only its radius / shadow / own ring / press scale so it sits flush. A prominent *text*
+// action (Subscribe, Invite, Search) does NOT belong inside: crammed in, it reads as a
+// button trapped in a field. Keep it a detached Button beside the group, in a flex row at
+// the same size, so the heights line up and it reads as a real button.
 
 export const inputGroupVariants = tv({
   slots: {
@@ -123,6 +127,12 @@ const [InputGroupProvider, useInputGroupContext] =
 export interface InputGroupProps extends React.ComponentProps<"div"> {
   /** Shell height + affix sizing. Give the inner controls the same size. @default "md" */
   size?: Size
+  /**
+   * Spacing tier. Height comes from `size`, not density; this only sets the DEFAULT `size` when
+   * none is given (compact → "sm", comfortable → "md"). Resolves prop > DensityProvider >
+   * "compact". An explicit `size` always wins.
+   */
+  density?: Density
   /** Paint the shell in the error state (red border + ring). */
   hasError?: boolean
   /** Dim and lock the whole group. Also disable the inner control for form semantics. */
@@ -130,7 +140,8 @@ export interface InputGroupProps extends React.ComponentProps<"div"> {
 }
 
 function InputGroup({
-  size = "md",
+  size,
+  density,
   hasError,
   disabled,
   className,
@@ -142,14 +153,17 @@ function InputGroup({
   const field = useFieldContext()
   const resolvedError = hasError ?? field?.hasError ?? false
   const resolvedDisabled = disabled ?? field?.disabled ?? false
+  // Height comes from `size`; density only picks the DEFAULT size (compact → sm, comfortable →
+  // md) so a bare group keeps step with the inner field and a detached Button.
+  const resolvedSize = useControlSize(size, density)
   const slots = inputGroupVariants({
-    size,
+    size: resolvedSize,
     hasError: resolvedError,
     disabled: resolvedDisabled,
   })
   return (
     <InputGroupProvider
-      size={size}
+      size={resolvedSize}
       hasError={resolvedError}
       disabled={resolvedDisabled}
       slots={slots}

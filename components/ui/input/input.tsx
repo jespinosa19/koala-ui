@@ -4,6 +4,7 @@ import * as React from "react"
 import { Eye, EyeSlash } from "@phosphor-icons/react"
 import { tv, type VariantProps } from "@/lib/tv"
 import { createContext } from "@/lib/create-context"
+import { useControlSize, type Density } from "@/lib/density"
 import { useFieldContext } from "@/lib/field-context"
 
 // ─── Variants ─────────────────────────────────────────────────────────────────
@@ -135,13 +136,20 @@ export interface InputRootProps extends React.ComponentPropsWithoutRef<"div"> {
   variant?: Variant
   hasError?: boolean
   disabled?: boolean
+  /**
+   * Spacing tier. Height comes from `size`, not density; this only sets the DEFAULT `size`
+   * when none is given (compact → "sm", comfortable → "md"). Resolves prop > DensityProvider >
+   * "compact". An explicit `size` always wins.
+   */
+  density?: Density
 }
 
 function InputRoot({
-  size = "md",
+  size,
   variant = "default",
   hasError,
   disabled,
+  density,
   className,
   children,
   ...props
@@ -151,15 +159,18 @@ function InputRoot({
   const field = useFieldContext()
   const resolvedError = hasError ?? field?.hasError ?? false
   const resolvedDisabled = disabled ?? field?.disabled ?? false
+  // Height comes from `size`; density only picks the DEFAULT size (compact → sm, comfortable →
+  // md) so a bare field in a compact app shell keeps step with a same-defaulted Button.
+  const resolvedSize = useControlSize(size, density)
   const slots = inputVariants({
-    size,
+    size: resolvedSize,
     variant,
     hasError: resolvedError,
     disabled: resolvedDisabled,
   })
   return (
     <InputProvider
-      size={size}
+      size={resolvedSize}
       variant={variant}
       disabled={resolvedDisabled}
       hasError={resolvedError}
@@ -277,6 +288,7 @@ export interface PasswordInputProps extends InputFieldProps {
   size?: Size
   variant?: Variant
   hasError?: boolean
+  density?: Density
 }
 
 function PasswordInput({
@@ -285,6 +297,7 @@ function PasswordInput({
   variant,
   hasError,
   disabled,
+  density,
   className,
   ...fieldProps
 }: PasswordInputProps) {
@@ -296,6 +309,7 @@ function PasswordInput({
       variant={variant}
       hasError={hasError}
       disabled={disabled}
+      density={density}
       className={rootClassName}
     >
       <InputField
@@ -309,10 +323,12 @@ function PasswordInput({
       >
         <span className="relative flex size-4 items-center justify-center">
           <Eye
+            weight="bold"
             className={`absolute size-4 transition-[opacity,scale,filter] duration-fast ease-out ${visible ? "opacity-0 scale-[0.25] blur-[4px]" : "opacity-100 scale-100 blur-[0px]"}`}
             aria-hidden="true"
           />
           <EyeSlash
+            weight="bold"
             className={`absolute size-4 transition-[opacity,scale,filter] duration-fast ease-out ${visible ? "opacity-100 scale-100 blur-[0px]" : "opacity-0 scale-[0.25] blur-[4px]"}`}
             aria-hidden="true"
           />

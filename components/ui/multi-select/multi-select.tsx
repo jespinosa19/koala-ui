@@ -6,10 +6,11 @@ import { CaretDown } from "@phosphor-icons/react"
 
 import { tv, type VariantProps } from "@/lib/tv"
 import { cn } from "@/lib/utils"
-import { useDensity, type Density } from "@/lib/density"
+import { useControlSize, useDensity, type Density } from "@/lib/density"
 import { createContext } from "@/lib/create-context"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Switch } from "@/components/ui/switch"
+import { AnimatedNumber } from "@/components/ui/animated-number"
 
 /**
  * MultiSelect: a select that picks *many* values and stays open while you toggle them.
@@ -39,9 +40,10 @@ export const multiSelectVariants = tv({
       "bg-[var(--surface,var(--background))] px-3 text-sm text-left text-foreground shadow-xs",
       "transition-[border-color,box-shadow] duration-fast ease-out",
       "hover:border-ring/50",
-      "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:border-transparent",
-      // Held open, the trigger keeps the focus ring so the relationship to the panel reads.
-      "data-[state=open]:ring-2 data-[state=open]:ring-brand data-[state=open]:border-transparent",
+      // Focus + open read like an Input/Select: brand border + soft `brand-ring` halo, not a
+      // hard 2px ring. Held open, the trigger keeps the halo so the link to the panel reads.
+      "outline-none focus-visible:border-brand focus-visible:brand-ring",
+      "data-[state=open]:border-brand data-[state=open]:brand-ring",
       "active:scale-[0.99]",
       "disabled:cursor-not-allowed disabled:opacity-50",
     ],
@@ -84,24 +86,31 @@ export const multiSelectVariants = tv({
     separator: "-mx-1 h-px bg-border",
   },
   variants: {
+    // Trigger height comes from `size`, the one axis every control shares (sm 32 · md 36 · lg
+    // 40px), matching Button + Input + Select. Density only picks the default size (see
+    // MultiSelect root). The base trigger carries px-3 + text-sm; sm/lg override.
+    size: {
+      sm: { trigger: "h-8 px-2.5" },
+      md: { trigger: "h-9" },
+      lg: { trigger: "h-10 px-3.5 text-base" },
+    },
+    // The dropdown's own row spacing stays on `density` (content, not a control).
     density: {
       comfortable: {
         // content rounded-md (~10px) − viewport p-1.5 (6px) ≈ 4px → rounded-sm keeps items concentric
-        trigger: "h-10",
         item: "py-2 rounded-sm",
         label: "py-1.5 text-xs",
         separator: "my-1.5",
       },
       compact: {
         // content rounded-md (~10px) − viewport p-1 (4px) ≈ 6px → rounded-sm keeps items concentric
-        trigger: "h-8",
         item: "py-1.5 rounded-sm",
         label: "py-1 text-xs",
         separator: "my-1",
       },
     },
   },
-  defaultVariants: { density: "comfortable" },
+  defaultVariants: { size: "md", density: "comfortable" },
 })
 
 // Viewport padding is applied inline (position-conditional), matching Select.
@@ -135,12 +144,15 @@ export function MultiSelect({
   value,
   defaultValue,
   onValueChange,
+  size,
   density,
   children,
   ...props
 }: MultiSelectProps) {
   const d = useDensity(density)
-  const slots = multiSelectVariants({ density: d })
+  // Trigger height comes from `size`; density only picks the DEFAULT size (compact → sm,
+  // comfortable → md) so a bare MultiSelect keeps step with a same-defaulted Button/Select.
+  const slots = multiSelectVariants({ size: useControlSize(size, density), density: d })
 
   // Controlled/uncontrolled value, hand-rolled to keep the lint-strict rules happy.
   const isControlled = value !== undefined
@@ -175,7 +187,7 @@ export function MultiSelectTrigger({ className, children, ...props }: MultiSelec
       {...props}
     >
       {children}
-      <CaretDown className={slots.chevron()} />
+      <CaretDown weight="bold" className={slots.chevron()} />
     </PopoverPrimitive.Trigger>
   )
 }
@@ -183,7 +195,7 @@ export function MultiSelectTrigger({ className, children, ...props }: MultiSelec
 export interface MultiSelectValueProps extends React.ComponentProps<"span"> {
   /** Shown when nothing is selected. */
   placeholder?: string
-  /** Render the selected values yourself (e.g. chips with your own labels). Defaults to a count. */
+  /** Render the selected values yourself (e.g. chips with your own labels). Defaults to a rolling count. */
   renderValue?: (value: string[]) => React.ReactNode
 }
 
@@ -201,11 +213,18 @@ export function MultiSelectValue({
       className={slots.value({ className: cn(isEmpty && "text-muted-foreground", className) })}
       {...props}
     >
-      {isEmpty
-        ? placeholder
-        : renderValue
-          ? renderValue(value)
-          : `${value.length} selected`}
+      {isEmpty ? (
+        placeholder
+      ) : renderValue ? (
+        renderValue(value)
+      ) : (
+        // Default read-out. The count rolls (old digit up + out, new up from below) via the
+        // canonical AnimatedNumber, so "3 selected" → "4 selected" reads as a change, not a
+        // hard swap. Holds still under reduced-motion.
+        <>
+          <AnimatedNumber value={value.length} /> selected
+        </>
+      )}
     </span>
   )
 }

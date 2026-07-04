@@ -6,14 +6,18 @@ import { SECTIONS } from "@/components/docs/sections-registry"
 
 export const metadata = { title: "Testimonials sections" }
 
-const VARIANTS = ["testimonials-section-1"] as const
+const VARIANTS = [
+  "testimonials-section-1",
+  "testimonials-section-2",
+  "testimonials-section-3",
+] as const
 
 export default function TestimonialsSectionsPage() {
   return (
     <>
       <DocHeader
         title="Testimonials"
-        description="A social-proof wall of quote cards: the quote, an author row, and an optional company logo, laid out as a responsive grid that collapses from three columns to one."
+        description="Finished testimonial sections: a minimal author-led row (byline on top, then headline and body), a logo-led row (company logo on top, headline, body, and author byline), and a spotlight carousel that features one quote at a time with a portrait beside it. The grids collapse from three columns to one; the carousel swipes."
       />
 
       <div className="flex flex-col gap-8">

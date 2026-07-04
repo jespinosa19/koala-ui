@@ -7,6 +7,7 @@ import { Faq } from "@/components/docs/faq"
 import {
   PricingDemo,
   PricingFeatureStatesDemo,
+  PricingFeatureGroupsDemo,
   PricingBillingDemo,
   PricingTonesDemo,
   PricingActionPositionDemo,
@@ -282,6 +283,65 @@ import { Button } from "@/components/ui/button"
 </PricingFeatures>`}
         >
           <PricingFeatureStatesDemo />
+        </ComponentPreview>
+      </DocSection>
+
+      <DocSection title="Features with icons">
+        <p className="mt-4 text-pretty text-muted-foreground">
+          For a lifetime or all-in bundle, the value isn&apos;t a have vs. have-not checklist, it&apos;s
+          a long, categorised inventory. Swap the flat{" "}
+          <code className="font-mono text-sm">PricingFeatures</code> for stacked{" "}
+          <code className="font-mono text-sm">PricingFeatureGroup</code> sections: each is a centered{" "}
+          <code className="font-mono text-sm">Divider</code> header (with an optional{" "}
+          <code className="font-mono text-sm">icon</code>) over its own list, and every{" "}
+          <code className="font-mono text-sm">PricingFeature</code> carries a contextual{" "}
+          <code className="font-mono text-sm">icon</code> that reads neutral (the success-check tint
+          stays reserved for the default checklist). The rows sit at full text strength because the
+          icon, not a dimmed weight, marks the line, and any row can wrap a link. Here the CTA floats
+          under the price with <code className="font-mono text-sm">actionPosition=&quot;top&quot;</code>{" "}
+          so the inventory reads beneath it.
+        </p>
+        <ComponentPreview
+          previewClassName="block"
+          code={`<PricingTier featured actionPosition="top" className="max-w-sm">
+  <PricingTierHeader>
+    <PricingTierName>Lifetime</PricingTierName>
+    <PricingTierDescription>One payment. Every Koala UI asset, yours forever.</PricingTierDescription>
+  </PricingTierHeader>
+  <PricingPrice>
+    <PricingAmount>$199</PricingAmount>
+    <PricingPeriod>once · no subscription</PricingPeriod>
+  </PricingPrice>
+  <PricingTierAction>
+    <Button>Buy now &amp; use forever</Button>
+  </PricingTierAction>
+
+  {/* Each group is a labelled Divider header over its own icon list. */}
+  <PricingFeatureGroup label="What's inside">
+    <PricingFeature icon={<FigmaLogo weight="bold" />}>
+      <a href="#" className="font-medium underline decoration-border underline-offset-4 hover:text-link hover:decoration-link">
+        Desktop · Marketing &amp; Product Apps
+      </a>
+    </PricingFeature>
+    <PricingFeature icon={<Package weight="bold" />}>Product Application</PricingFeature>
+  </PricingFeatureGroup>
+
+  <PricingFeatureGroup label="All features">
+    <PricingFeature icon={<UserCircle weight="bold" />}>
+      Up to <strong className="font-semibold text-foreground">1</strong> designer
+    </PricingFeature>
+    <PricingFeature icon={<Cube weight="bold" />}>
+      Access to <strong className="font-semibold text-foreground">5000+</strong> Components
+    </PricingFeature>
+  </PricingFeatureGroup>
+
+  {/* The label takes a leading icon of its own. */}
+  <PricingFeatureGroup label="Some gifts included" icon={<Gift weight="bold" />}>
+    <PricingFeature icon={<DiscordLogo weight="bold" />}>Exclusive access to Discord Server</PricingFeature>
+  </PricingFeatureGroup>
+</PricingTier>`}
+        >
+          <PricingFeatureGroupsDemo />
         </ComponentPreview>
       </DocSection>
 
@@ -581,6 +641,22 @@ function ConfigurablePlan() {
             </p>
           </div>
           <div>
+            <h3 className="font-mono font-semibold">PricingFeatureGroup</h3>
+            <p className="mt-1 text-pretty text-muted-foreground">
+              A labelled section of features for the &quot;features with icons&quot; layout: a
+              centered <code className="font-mono text-sm">Divider</code> header (its{" "}
+              <code className="font-mono text-sm">label</code>, plus an optional leading{" "}
+              <code className="font-mono text-sm">icon</code>) over a{" "}
+              <code className="font-mono text-sm">&lt;ul&gt;</code> of{" "}
+              <code className="font-mono text-sm">PricingFeature</code> rows. Stack several inside a
+              tier in place of a single flat <code className="font-mono text-sm">PricingFeatures</code>{" "}
+              when the value is a long, categorised inventory rather than a have/have-not checklist.
+              Rows in a group read at full text strength, and each one&apos;s contextual{" "}
+              <code className="font-mono text-sm">icon</code> renders neutral (the success-check tint
+              is reserved for the default checklist).
+            </p>
+          </div>
+          <div>
             <h3 className="font-mono font-semibold">PricingTierAction</h3>
             <p className="mt-1 text-pretty text-muted-foreground">
               The CTA wrapper. By default it is bottom-pinned (
@@ -615,6 +691,10 @@ function ConfigurablePlan() {
             {
               q: "How do I show included vs not-included features?",
               a: "Use one PricingFeatures list and mark the unavailable rows with `included={false}`. Included rows get a filled success check; excluded rows get a filled cross and a dimmed label, so the difference is obvious at a glance.",
+            },
+            {
+              q: "How do I group features under headings, with an icon per row?",
+              a: "Reach for PricingFeatureGroup instead of a single flat PricingFeatures. Stack one group per section (each takes a `label`, and an optional `icon` beside it); it renders a centered Divider header over its own list. Give each PricingFeature its own `icon` for the contextual glyph. Grouped rows render at full text strength and their custom icons read neutral (the green check tint stays for the default checklist). See the Features with icons example.",
             },
             {
               q: "How do I add a monthly/annual toggle?",

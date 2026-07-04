@@ -39,16 +39,16 @@ function prefersReducedMotion() {
  * to every part through React Context. Tones are "soft" - a tinted background with the icon,
  * message, and action all carrying the hue - so the whole bar reads as one tone and re-themes
  * across all four themes. Dismissal is built in (uncontrolled by default). `appearance="festive"`
- * adds a playful, slowly drifting gradient bar (themeable via the `--banner-festive-*` palette);
- * `confetti` makes it interactive (a burst on mount and on every click, with the icon popping); and
- * `BannerOrnament` peeks a decorative flag/mascot in from an edge, clipped to the bar.
+ * paints a flat, saturated celebration bar (themeable via the `--banner-festive-via` token);
+ * `confetti` makes it interactive (a burst on mount and on every click); and `BannerOrnament`
+ * peeks a decorative flag/mascot in from an edge, clipped to the bar.
  *
  * polish applied:
- *   #4  - the festive drift + confetti + icon pop are keyframes (token layer), not transitions.
+ *   #4  - the confetti burst + the mount icon pop are keyframes (token layer), not transitions.
  *   #12 - the close button uses active:scale-[0.96]
  *   #14 - transitions name exact properties, never "all"
  *   #15 - confetti pieces carry will-change:transform (GPU-composited transform/opacity only).
- *   Reduced motion - the drift holds static and confetti never fires under prefers-reduced-motion.
+ *   Reduced motion - confetti never fires under prefers-reduced-motion.
  *   Hit area - the close button extends its tap target with a before pseudo-element.
  */
 export const bannerVariants = tv({
@@ -121,20 +121,18 @@ export const bannerVariants = tv({
     // only `default` (a theme-flipping inverse bar) and `brand` (a theme-constant accent bar)
     // are supported, because the hue tokens change lightness per theme and would lose contrast
     // against fixed text. See the solid compoundVariants below. `festive` is the playful bar: a
-    // slowly drifting multi-stop gradient (the `--banner-festive-*` palette) under white text,
-    // independent of the tone `variant`. Override the three CSS vars to theme it (brand / flag
-    // colors); the defaults live in the token layer (globals.css) and hold white text across themes.
+    // flat, saturated fill (the deep `--banner-festive-via` stop) under white text, independent of
+    // the tone `variant`. Override the CSS var to theme it (brand / flag colors); the default lives
+    // in the token layer (globals.css) and is deep enough to hold white text across every theme.
     appearance: {
       soft: {},
       solid: {},
       festive: {
         root: [
           "text-white",
-          // Oversized so the drift has room to travel; the keyframe sweeps background-position.
-          "bg-[length:200%_200%]",
-          // Palindromic stop list (…to, via, from) so the 0%↔100% loop has no seam.
-          "bg-[linear-gradient(100deg,var(--banner-festive-from),var(--banner-festive-via),var(--banner-festive-to),var(--banner-festive-via),var(--banner-festive-from))]",
-          "animate-banner-festive",
+          // Flat, saturated fill (no gradient): the deep `via` stop, kept dark enough that white
+          // text holds contrast across every theme and any custom `--banner-festive-*` palette.
+          "bg-[var(--banner-festive-via)]",
         ],
         // Slightly heavier weight buys readability on the saturated fill without a scrim.
         content: "text-white font-medium",
@@ -223,8 +221,8 @@ export interface BannerProps
   /** Accessible label for the dismiss button. Defaults to "Dismiss". */
   dismissLabel?: string
   /**
-   * Playful confetti: bursts once on mount and again on every click of the bar, with the icon
-   * giving a little pop. Decorative (pointer enhancement on top of the mount burst), themed by the
+   * Playful confetti: bursts once on mount (the icon gives a little pop) and again on every click
+   * of the bar (confetti only - the icon stays still). Decorative, themed by the
    * `--banner-confetti-*` tokens. Designed to pair with `appearance="festive"`. Honors reduced-motion.
    */
   confetti?: boolean
@@ -262,7 +260,7 @@ export function Banner({
 
   // Spawn one confetti burst from (x, y) within the layer; defaults to its center (the mount burst).
   // Stable across renders (reads only the ref + module constants), so it's a safe effect dependency.
-  const fireConfetti = React.useCallback((originX?: number, originY?: number) => {
+  const fireConfetti = React.useCallback((originX?: number, originY?: number, popIcon = false) => {
     const layer = confettiRef.current
     if (!layer || prefersReducedMotion()) return
     const { width, height } = layer.getBoundingClientRect()
@@ -283,6 +281,8 @@ export function Banner({
       layer.appendChild(piece)
     }
 
+    // The icon pops only on the mount burst; a click showers confetti but leaves the icon still.
+    if (!popIcon) return
     // Re-arm the icon pop: a CSS animation only replays if removed, reflowed, then re-added.
     const icon = layer.parentElement?.querySelector<HTMLElement>('[data-slot="banner-icon"]')
     if (icon) {
@@ -296,7 +296,7 @@ export function Banner({
   // (and out of the strict "no setState in effect" path — this only touches the DOM, never state).
   React.useEffect(() => {
     if (!confetti) return
-    const raf = requestAnimationFrame(() => fireConfetti())
+    const raf = requestAnimationFrame(() => fireConfetti(undefined, undefined, true))
     return () => cancelAnimationFrame(raf)
   }, [confetti, fireConfetti])
 

@@ -1,6 +1,27 @@
 "use client"
 
 import * as React from "react"
+import {
+  Browsers,
+  CalendarCheck,
+  Clock,
+  Crown,
+  Cube,
+  DeviceMobile,
+  DiscordLogo,
+  FigmaLogo,
+  Gift,
+  GraduationCap,
+  Lightning,
+  MoonStars,
+  Package,
+  SealPercent,
+  SquaresFour,
+  Stack,
+  Storefront,
+  UserCircle,
+  Wrench,
+} from "@phosphor-icons/react"
 
 import { cn } from "@/lib/utils"
 import { duration } from "@/lib/motion"
@@ -19,6 +40,7 @@ import {
   PricingPeriod,
   PricingFeatures,
   PricingFeature,
+  PricingFeatureGroup,
   PricingTierAction,
   PricingTierBanner,
   type PricingTierProps,
@@ -317,6 +339,170 @@ export function PricingFeatureStatesDemo() {
       <PricingTierAction>
         <Button>Start free trial</Button>
       </PricingTierAction>
+    </PricingTier>
+  )
+}
+
+/* A "features with icons" inventory, grouped the way a lifetime / all-in bundle reads: not a
+ * have/have-not checklist but a long, categorised list where every line carries a contextual
+ * glyph. Each row's `icon` reads neutral (the success-check tint is reserved for the default
+ * checklist), and rows sit at full text strength because the icon, not a dimmed weight, marks
+ * the line. A handful are links: a quiet underline at rest that turns the link blue (text +
+ * underline) on hover, via the `--link` role (see /docs/foundations/colors). */
+const featureLink =
+  "font-medium underline decoration-border underline-offset-4 transition-colors duration-fast ease-out hover:text-link hover:decoration-link"
+
+type GroupFeature = { icon: React.ReactNode; label: React.ReactNode; href?: string }
+
+const LIFETIME_GROUPS: Array<{
+  label: string
+  icon?: React.ReactNode
+  items: GroupFeature[]
+}> = [
+  {
+    label: "What's inside",
+    items: [
+      { icon: <FigmaLogo weight="bold" />, label: "Desktop · Marketing & Product Apps", href: "#" },
+      { icon: <DeviceMobile weight="bold" />, label: "Mobile · iOS / Android Apps", href: "#" },
+      { icon: <Package weight="bold" />, label: "Marketing", href: "#" },
+      { icon: <Package weight="bold" />, label: "Product Application", href: "#" },
+      { icon: <Storefront weight="bold" />, label: "Ecommerce", href: "#" },
+    ],
+  },
+  {
+    label: "All features",
+    items: [
+      {
+        icon: <UserCircle weight="bold" />,
+        label: (
+          <>
+            Up to <strong className="font-semibold text-foreground">1</strong> designer
+          </>
+        ),
+      },
+      {
+        icon: <SquaresFour weight="bold" />,
+        label: (
+          <>
+            Access to <strong className="font-semibold text-foreground">210+</strong> Marketing
+            Sections
+          </>
+        ),
+      },
+      {
+        icon: <Browsers weight="bold" />,
+        label: (
+          <>
+            Access to <strong className="font-semibold text-foreground">30+</strong> Dashboard /
+            SaaS Templates
+          </>
+        ),
+      },
+      {
+        icon: <Stack weight="bold" />,
+        label: (
+          <>
+            <strong className="font-semibold text-foreground">110+</strong> Styles
+          </>
+        ),
+      },
+      { icon: <CalendarCheck weight="bold" />, label: "Free lifetime updates" },
+      {
+        icon: <MoonStars weight="bold" />,
+        label: (
+          <>
+            <strong className="font-semibold text-foreground">4</strong> Themes Available
+          </>
+        ),
+      },
+      { icon: <Lightning weight="bold" />, label: "Auto Layout 5.0" },
+      {
+        icon: <Wrench weight="bold" />,
+        label: (
+          <>
+            <strong className="font-semibold text-foreground">4</strong> Styles &amp; Modes
+          </>
+        ),
+      },
+      {
+        icon: <Cube weight="bold" />,
+        label: (
+          <>
+            Access to <strong className="font-semibold text-foreground">5000+</strong> Components
+          </>
+        ),
+      },
+    ],
+  },
+  {
+    label: "Some gifts included",
+    icon: <Gift weight="bold" />,
+    items: [
+      { icon: <DiscordLogo weight="bold" />, label: "Exclusive access to Discord Server" },
+      {
+        icon: <SealPercent weight="bold" />,
+        label: (
+          <>
+            Exclusive discounts with our{" "}
+            <span className="font-medium text-brand">Partner Program</span>
+          </>
+        ),
+      },
+      { icon: <Gift weight="bold" />, label: "Freelance Notion Bundle", href: "#" },
+      { icon: <Crown weight="bold" />, label: "Pro membership at Branding Website", href: "#" },
+    ],
+  },
+  {
+    label: "Coming soon",
+    icon: <Clock weight="bold" />,
+    items: [{ icon: <GraduationCap weight="bold" />, label: "Koala University" }],
+  },
+]
+
+/**
+ * The "features with icons" layout: instead of one flat `PricingFeatures` checklist, the value is
+ * split into labelled `PricingFeatureGroup` sections (a centred Divider header over an icon list),
+ * the shape a lifetime / all-in bundle wants. Every `PricingFeature` carries its own contextual
+ * `icon` (rendered neutral, never the success-check green), some rows are links, and the CTA floats
+ * under the price via `actionPosition="top"` so the long inventory reads beneath it.
+ */
+export function PricingFeatureGroupsDemo() {
+  return (
+    <PricingTier featured actionPosition="top" className="mx-auto w-full max-w-sm">
+      <PricingTierHeader>
+        <div className="flex flex-wrap items-center gap-2">
+          <PricingTierName>Lifetime</PricingTierName>
+          <Badge variant="orange" dot pill>
+            Best value
+          </Badge>
+        </div>
+        <PricingTierDescription>One payment. Every Koala UI asset, yours forever.</PricingTierDescription>
+      </PricingTierHeader>
+
+      <PricingPrice>
+        <PricingAmount>$199</PricingAmount>
+        <PricingPeriod>once · no subscription</PricingPeriod>
+      </PricingPrice>
+
+      <PricingTierAction>
+        <Button>Buy now &amp; use forever</Button>
+      </PricingTierAction>
+
+      {LIFETIME_GROUPS.map((group) => (
+        <PricingFeatureGroup key={group.label} label={group.label} icon={group.icon}>
+          {group.items.map((item, i) => (
+            <PricingFeature key={i} icon={item.icon}>
+              {item.href ? (
+                <a href={item.href} className={featureLink}>
+                  {item.label}
+                </a>
+              ) : (
+                item.label
+              )}
+            </PricingFeature>
+          ))}
+        </PricingFeatureGroup>
+      ))}
     </PricingTier>
   )
 }

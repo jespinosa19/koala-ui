@@ -105,7 +105,7 @@ function RatingStar({
 }) {
   return (
     <span className={slots.star()} aria-hidden>
-      <IconComp className={slots.starEmpty()} />
+      <IconComp weight="bold" className={slots.starEmpty()} />
       <span className={slots.fillClip()} style={{ width: `${pct}%` }}>
         <IconComp className={slots.starFull()} weight={fullWeight} />
       </span>

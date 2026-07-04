@@ -50,7 +50,7 @@ export function BadgeGroupWrapDemo() {
     <BadgeGroup wrap className="max-w-xs">
       {SKILLS.map((skill) => (
         <Badge key={skill} variant="outline" size="sm">
-          <Tag /> {skill}
+          <Tag weight="bold" /> {skill}
         </Badge>
       ))}
     </BadgeGroup>
@@ -72,7 +72,7 @@ export function BadgeGroupOverflowChipDemo() {
       <BadgeGroup max={2} overflowVariant="purple" overflowSize="md">
         {SKILLS.map((skill) => (
           <Badge key={skill} variant="purple" size="md">
-            <Lightning /> {skill}
+            <Lightning weight="bold" /> {skill}
           </Badge>
         ))}
       </BadgeGroup>

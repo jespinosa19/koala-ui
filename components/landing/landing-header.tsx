@@ -40,13 +40,18 @@ export function LandingHeader() {
     <>
       <AnnouncementBar />
       <Navbar
-        variant="floating"
+        variant="full"
         elevateOnScroll
         open={open}
         onOpenChange={setOpen}
-        className="sticky top-0 z-50 pt-3"
+        // Normal full-bleed bar: the translucent blurred background spans the viewport (blur on
+        // the full-width root so it covers the whole bar). It rests flat over the hero and brings
+        // only its bottom stroke in once the page scrolls under it (elevateOnScroll); no shadow.
+        className="sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-background/80"
       >
-        <NavbarInner className="mx-auto max-w-7xl backdrop-blur supports-[backdrop-filter]:bg-background/80">
+        {/* Match SectionContainer's gutter (max-w-8xl + px-5/sm:px-8) so the brand and actions
+            land on the section content edges below. */}
+        <NavbarInner className="px-5 sm:px-8">
           <NavbarBrand asChild>
             <Link href="/" aria-label="Koala UI home">
               <BrandMark />
@@ -63,7 +68,7 @@ export function LandingHeader() {
                     <NavbarLink asChild>
                       <button type="button">
                         {entry.label}
-                        <CaretDown />
+                        <CaretDown weight="bold" />
                       </button>
                     </NavbarLink>
                   </DropdownMenuTrigger>
@@ -103,22 +108,22 @@ export function LandingHeader() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="hidden sm:inline-flex">
-                  <FigmaLogo />
+                  <FigmaLogo weight="bold" />
                   Preview
-                  <CaretDown />
+                  <CaretDown weight="bold" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem asChild>
                   <Link href="/docs">
-                    <Desktop />
-                    Preview Desktop
+                    <Desktop weight="bold" />
+                    Live components
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/docs">
-                    <DeviceMobile />
-                    Preview Mobile
+                  <Link href="/marketing/sections/hero">
+                    <DeviceMobile weight="bold" />
+                    Marketing sections
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -127,7 +132,7 @@ export function LandingHeader() {
           </NavbarActions>
         </NavbarInner>
 
-        <NavbarMobileMenu className="mx-3 mt-2 rounded-2xl border border-border bg-background shadow-sm">
+        <NavbarMobileMenu className="bg-background">
           {NAV.map((entry) =>
             entry.items ? (
               <div key={entry.label} className="flex flex-col">

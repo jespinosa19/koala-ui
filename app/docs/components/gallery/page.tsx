@@ -27,7 +27,7 @@ export default function GalleryDocsPage() {
       <GalleryDescription>
         Cover virtually any marketing project with our pre-designed sections and templates.
       </GalleryDescription>
-      <TabsList className="mt-5 flex-wrap justify-center gap-1.5">
+      <TabsList className="mt-5 mx-auto flex w-fit gap-1.5">
         <TabsTrigger value="home" className="gap-1.5"><House /> Home</TabsTrigger>
         <TabsTrigger value="blog" className="gap-1.5"><PencilSimpleLine /> Blog article</TabsTrigger>
         {/* …About, Pricing, Careers */}

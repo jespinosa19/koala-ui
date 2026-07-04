@@ -46,9 +46,10 @@ export function Example() {
       <DocSection title="Fill modes">
         <p className="mt-4 text-pretty text-muted-foreground">
           Pass <code className="font-mono text-sm">modes</code> with two or more entries to add a
-          Solid / Gradient / Image switcher. The gradient editor gives you a draggable stop track
-          (click to add a stop, drag to move it, Delete to remove), a linear/radial toggle, and an
-          angle rail; the image mode takes an upload or a URL with a cover/contain fit. Use{" "}
+          Figma-style fill-type row at the top: a tile per fill kind (Solid, each gradient geometry,
+          Image), each a live preview. The gradient editor gives you a draggable stop track (click
+          to add a stop, drag to move it, Delete to remove) and an angle rail for linear gradients;
+          the image mode takes an upload or a URL with a cover/contain fit. Use{" "}
           <code className="font-mono text-sm">onFillChange</code> to receive one CSS value across
           every mode: a hex, a <code className="font-mono text-sm">linear-gradient()</code>, or a{" "}
           <code className="font-mono text-sm">url()</code>.
@@ -101,7 +102,7 @@ export function Example() {
             },
             {
               q: "How do I turn on the Solid / Gradient / Image modes?",
-              a: "Pass the `modes` prop with the kinds you want, for example modes={[\"solid\", \"gradient\", \"image\"]}. With a single mode (the default) no switcher renders and the picker behaves exactly as before. With two or more, a segmented switcher appears at the top. Control the active mode with `mode`/`defaultMode`/`onModeChange` if you need it, and recompose by hand with ColorPickerModes, ColorPickerGradient, and ColorPickerImage.",
+              a: "Pass the `modes` prop with the kinds you want, for example modes={[\"solid\", \"gradient\", \"image\"]}. With a single mode (the default) no switcher renders and the picker behaves exactly as before. With two or more, a Figma-style fill-type row of live-preview tiles appears at the top, one tile per fill kind, with each gradient geometry (linear/radial) getting its own tile so picking it both switches mode and sets the geometry. Control the active mode with `mode`/`defaultMode`/`onModeChange` if you need it, and recompose by hand with ColorPickerModes, ColorPickerGradient, and ColorPickerImage.",
             },
             {
               q: "What does the picker emit in gradient and image modes?",
@@ -109,7 +110,7 @@ export function Example() {
             },
             {
               q: "How does the gradient stop track work?",
-              a: "Click an empty spot on the track to add a stop (it samples the color already showing there), drag a stop to move it, and select one to edit its color with the square, hue/alpha rails, and hex field below. With three or more stops, pressing Delete or Backspace on a focused stop removes it; the arrow keys nudge its position (hold Shift for a larger step). The Linear/Radial toggle and the angle rail set the gradient geometry.",
+              a: "Click an empty spot on the track to add a stop (it samples the color already showing there), drag a stop to move it, and select one to edit its color with the square, hue/alpha rails, and hex field below. With three or more stops, pressing Delete or Backspace on a focused stop removes it; the arrow keys nudge its position (hold Shift for a larger step). The geometry (linear/radial) is set from the Figma-style fill-type tiles at the top of the panel, and the angle rail sets a linear gradient's direction.",
             },
             {
               q: "How do I get a transparent color out of the picker?",
@@ -140,7 +141,13 @@ export function Example() {
 
 const HERO_CODE = `const [color, setColor] = useState("#6366f1")
 
-<ColorPicker value={color} onValueChange={setColor} />`
+// Standalone the picker is chromeless (its surface comes from ColorPickerContent in a
+// popover); give it one via className when you drop it straight onto a page.
+<ColorPicker
+  value={color}
+  onValueChange={setColor}
+  className="rounded-xl border border-border bg-popover p-3 shadow-xs"
+/>`
 
 const MODES_CODE = `const [fill, setFill] = useState("linear-gradient(90deg, #6366f1, #ec4899)")
 
@@ -150,6 +157,7 @@ const MODES_CODE = `const [fill, setFill] = useState("linear-gradient(90deg, #63
   showAlpha
   defaultValue="#6366f1"
   onFillChange={setFill}
+  className="rounded-xl border border-border bg-popover p-3 shadow-xs"
 />
 
 // fill is a hex, a linear-gradient()/radial-gradient(), or a url("…")`
@@ -167,11 +175,21 @@ const POPOVER_CODE = `const [color, setColor] = useState("#22c55e")
 
 const ALPHA_CODE = `const [color, setColor] = useState("#a855f7cc")
 
-<ColorPicker showAlpha value={color} onValueChange={setColor} />`
+<ColorPicker
+  showAlpha
+  value={color}
+  onValueChange={setColor}
+  className="rounded-xl border border-border bg-popover p-3 shadow-xs"
+/>`
 
 const PRESETS_CODE = `const presets = ["#ef4444", "#f97316", "#eab308", "#84cc16", /* … */]
 
-<ColorPicker value={color} onValueChange={setColor} presets={presets}>
+<ColorPicker
+  value={color}
+  onValueChange={setColor}
+  presets={presets}
+  className="w-56 rounded-xl border border-border bg-popover p-3 shadow-xs"
+>
   {/* Recompose: render only the swatch grid */}
   <ColorPickerSwatches presets={presets} className="grid-cols-4" />
 </ColorPicker>`

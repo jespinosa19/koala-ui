@@ -28,21 +28,21 @@ export const dropdownMenuVariants = tv({
       "transition-colors duration-fast ease-out",
       "focus:bg-accent focus:text-accent-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+      "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
     ],
     checkboxItem: [
       "relative flex cursor-pointer select-none items-center gap-2 text-sm font-medium outline-none",
       "transition-colors duration-fast ease-out",
       "focus:bg-accent focus:text-accent-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+      "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
     ],
     radioItem: [
       "relative flex cursor-pointer select-none items-center gap-2 text-sm font-medium outline-none",
       "transition-colors duration-fast ease-out",
       "focus:bg-accent focus:text-accent-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+      "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
     ],
     // `group` lets the caret nudge on sub-menu open.
     subTrigger: [
@@ -50,7 +50,7 @@ export const dropdownMenuVariants = tv({
       "transition-colors duration-fast ease-out",
       "focus:bg-accent focus:text-accent-foreground",
       "data-[state=open]:bg-accent data-[state=open]:text-accent-foreground",
-      "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+      "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
     ],
     subContent: [
       "z-50 min-w-[8rem] overflow-hidden rounded-md border border-border bg-popover",
@@ -61,7 +61,9 @@ export const dropdownMenuVariants = tv({
       "data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2",
       "duration-base ease-out",
     ],
-    itemIndicator: "absolute right-2 flex size-4 items-center justify-center",
+    // Brand-colored check: a selected checkbox/radio row reads as an on-brand confirmation
+    // (matching Select + country-select), not a muted glyph. The leading icon stays muted.
+    itemIndicator: "absolute right-2 flex size-4 items-center justify-center text-brand",
     label: "font-medium text-muted-foreground",
     separator: "-mx-1 h-px bg-border",
     subCaret: "ml-auto size-4 text-muted-foreground",
@@ -181,7 +183,7 @@ export function DropdownMenuCheckboxItem({
     >
       <span className={slots.itemIndicator()}>
         <DropdownMenuPrimitive.ItemIndicator>
-          <Check className="size-4" />
+          <Check weight="bold" className="size-4" />
         </DropdownMenuPrimitive.ItemIndicator>
       </span>
       {children}
@@ -211,7 +213,7 @@ export function DropdownMenuRadioItem({
           semantics still live in the role (`menuitemradio`) and the section grouping, not the glyph. */}
       <span className={slots.itemIndicator()}>
         <DropdownMenuPrimitive.ItemIndicator>
-          <Check className="size-4" />
+          <Check weight="bold" className="size-4" />
         </DropdownMenuPrimitive.ItemIndicator>
       </span>
       {children}
@@ -295,7 +297,7 @@ export function DropdownMenuSubTrigger({
       {...props}
     >
       {children}
-      <CaretRight className={slots.subCaret()} />
+      <CaretRight weight="bold" className={slots.subCaret()} />
     </DropdownMenuPrimitive.SubTrigger>
   )
 }

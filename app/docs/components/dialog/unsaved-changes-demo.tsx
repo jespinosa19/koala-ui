@@ -1,17 +1,22 @@
 "use client"
 
 import * as React from "react"
+import { UserPlus, NotePencil, Warning } from "@phosphor-icons/react"
+
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
+  DialogIcon,
   DialogHeader,
   DialogFooter,
   DialogTitle,
   DialogDescription,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { dialogVariants } from "@/components/ui/dialog"
 import { InputRoot, InputField, InputLabel, InputHint } from "@/components/ui/input"
+import { InlineClose } from "./inline-close"
 
 // No DS Textarea yet, so this mirrors InputRoot's tokens (border-input, rounded-md, brand
 // focus ring) so the multi-line field sits flush with the Input fields beside it.
@@ -71,6 +76,9 @@ export function UnsavedChangesDemo() {
             attemptClose()
           }}
         >
+          <DialogIcon>
+            <NotePencil weight="bold" />
+          </DialogIcon>
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               New post
@@ -117,6 +125,9 @@ export function UnsavedChangesDemo() {
           showClose={false}
           onCloseAutoFocus={(e) => e.preventDefault()}
         >
+          <DialogIcon className="text-destructive">
+            <Warning weight="bold" />
+          </DialogIcon>
           <DialogHeader>
             <DialogTitle>Discard changes?</DialogTitle>
             <DialogDescription>
@@ -138,14 +149,17 @@ export function UnsavedChangesDemo() {
   )
 }
 
-/** A realistic form layout: labelled inputs inside a dialog body. */
+/**
+ * A realistic form layout: labelled inputs inside a dialog body. Rendered inline (the real
+ * `dialogVariants` slots, no Radix Root/Portal) so it's visible without a trigger; the inline
+ * validation on submit stays fully live. The Code tab shows the openable `Dialog` version.
+ */
 export function FormDialogDemo() {
-  const [open, setOpen] = React.useState(false)
-  const nameRef = React.useRef<HTMLInputElement>(null)
   const [name, setName] = React.useState("")
   const [email, setEmail] = React.useState("")
   const [nameError, setNameError] = React.useState("")
   const [emailError, setEmailError] = React.useState("")
+  const slots = dialogVariants({ size: "sm" })
 
   function handleSubmit() {
     let valid = true
@@ -168,89 +182,70 @@ export function FormDialogDemo() {
       setEmailError("")
     }
 
-    if (valid) {
-      setOpen(false)
-      setName("")
-      setEmail("")
-    }
+    if (valid) clearForm()
   }
 
-  function handleOpenChange(next: boolean) {
-    setOpen(next)
-    if (!next) {
-      setName("")
-      setEmail("")
-      setNameError("")
-      setEmailError("")
-    }
+  function clearForm() {
+    setName("")
+    setEmail("")
+    setNameError("")
+    setEmailError("")
   }
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Button>Invite member</Button>
-      </DialogTrigger>
-      <DialogContent
-        size="sm"
-        onOpenAutoFocus={(e) => {
-          // Land focus on the first field instead of the dialog container.
-          e.preventDefault()
-          nameRef.current?.focus()
-        }}
-      >
-        <DialogHeader>
-          <DialogTitle>Invite team member</DialogTitle>
-          <DialogDescription>
-            Enter the details below. An invitation will be sent by email.
-          </DialogDescription>
-        </DialogHeader>
+    <div className={slots.content()}>
+      <div className={slots.icon()}>
+        <UserPlus weight="bold" />
+      </div>
+      <div className={slots.header()}>
+        <h2 className={slots.title()}>Invite team member</h2>
+        <p className={slots.description()}>
+          Enter the details below. An invitation will be sent by email.
+        </p>
+      </div>
 
-        <div className="grid gap-4">
-          <div className="grid gap-1.5">
-            <InputLabel htmlFor="invite-name">Full name</InputLabel>
-            <InputRoot hasError={!!nameError}>
-              <InputField
-                ref={nameRef}
-                id="invite-name"
-                placeholder="Alex Johnson"
-                value={name}
-                onChange={(e) => {
-                  setName(e.target.value)
-                  if (nameError) setNameError("")
-                }}
-              />
-            </InputRoot>
-            {nameError && <InputHint hasError>{nameError}</InputHint>}
-          </div>
-
-          <div className="grid gap-1.5">
-            <InputLabel htmlFor="invite-email">Email address</InputLabel>
-            <InputRoot hasError={!!emailError}>
-              <InputField
-                id="invite-email"
-                type="email"
-                placeholder="alex@example.com"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value)
-                  if (emailError) setEmailError("")
-                }}
-              />
-            </InputRoot>
-            {emailError && <InputHint hasError>{emailError}</InputHint>}
-          </div>
+      <div className="grid gap-4">
+        <div className="grid gap-1.5">
+          <InputLabel htmlFor="invite-name">Full name</InputLabel>
+          <InputRoot hasError={!!nameError}>
+            <InputField
+              id="invite-name"
+              placeholder="Alex Johnson"
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value)
+                if (nameError) setNameError("")
+              }}
+            />
+          </InputRoot>
+          {nameError && <InputHint hasError>{nameError}</InputHint>}
         </div>
 
-        <DialogFooter>
-          <Button
-            variant="ghost"
-            onClick={() => handleOpenChange(false)}
-          >
-            Cancel
-          </Button>
-          <Button onClick={handleSubmit}>Send invite</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        <div className="grid gap-1.5">
+          <InputLabel htmlFor="invite-email">Email address</InputLabel>
+          <InputRoot hasError={!!emailError}>
+            <InputField
+              id="invite-email"
+              type="email"
+              placeholder="alex@example.com"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value)
+                if (emailError) setEmailError("")
+              }}
+            />
+          </InputRoot>
+          {emailError && <InputHint hasError>{emailError}</InputHint>}
+        </div>
+      </div>
+
+      <div className={slots.footer()}>
+        <Button variant="ghost" onClick={clearForm}>
+          Cancel
+        </Button>
+        <Button onClick={handleSubmit}>Send invite</Button>
+      </div>
+      <InlineClose />
+    </div>
   )
 }

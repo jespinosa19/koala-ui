@@ -10,6 +10,12 @@ import {
   LineDemo,
   AreaDemo,
   BarDemo,
+  BarSeriesDemo,
+  AreaStackDemo,
+  LegendDemo,
+  DualAxisDemo,
+  ForecastDemo,
+  ReferenceDemo,
   NegativeDemo,
   GapsDemo,
   StatesDemo,
@@ -121,6 +127,90 @@ export default function ChartDocsPage() {
         </ComponentPreview>
       </DocSection>
 
+      <DocSection title="Grouped & stacked bars">
+        <p className="mt-4 text-pretty text-muted-foreground">
+          <code className="font-mono text-sm">ChartBars</code> draws several bar series in one band.
+          By default they render <strong>grouped</strong> side by side; set{" "}
+          <code className="font-mono text-sm">stack</code> on{" "}
+          <code className="font-mono text-sm">Chart</code> to <strong>stack</strong> them, and the
+          y-axis grows to the per-category total automatically. Each series takes its hue from{" "}
+          <code className="font-mono text-sm">config</code>.
+        </p>
+        <ComponentPreview previewClassName="block" code={BAR_SERIES_CODE}>
+          <BarSeriesDemo />
+        </ComponentPreview>
+      </DocSection>
+
+      <DocSection title="Stacked area">
+        <p className="mt-4 text-pretty text-muted-foreground">
+          <code className="font-mono text-sm">ChartAreas</code> stacks several area series into a band
+          chart when <code className="font-mono text-sm">stack</code> is set on{" "}
+          <code className="font-mono text-sm">Chart</code>: each series sits on the cumulative total
+          below it, with a more opaque fill so the bands read apart, and every band carries its own
+          edge line. Without <code className="font-mono text-sm">stack</code> the series overlap from
+          the baseline.
+        </p>
+        <ComponentPreview previewClassName="block" code={AREA_STACK_CODE}>
+          <AreaStackDemo />
+        </ComponentPreview>
+      </DocSection>
+
+      <DocSection title="Legend">
+        <p className="mt-4 text-pretty text-muted-foreground">
+          <code className="font-mono text-sm">ChartLegend</code> is a standalone key for multi-series
+          charts. It lives outside the SVG, so place it above or below the{" "}
+          <code className="font-mono text-sm">Chart</code> and feed it the same{" "}
+          <code className="font-mono text-sm">config</code> (or explicit{" "}
+          <code className="font-mono text-sm">items</code>). Each swatch resolves its hue exactly like
+          the chart, palette fallback included.
+        </p>
+        <ComponentPreview previewClassName="block" code={LEGEND_CODE}>
+          <LegendDemo />
+        </ComponentPreview>
+      </DocSection>
+
+      <DocSection title="Dual axis & per-series format">
+        <p className="mt-4 text-pretty text-muted-foreground">
+          Give a series <code className="font-mono text-sm">axis: &quot;right&quot;</code> in{" "}
+          <code className="font-mono text-sm">config</code> to scale it against a secondary y-axis (so
+          two metrics at different magnitudes share one chart), and render a second{" "}
+          <code className="font-mono text-sm">ChartYAxis</code> with{" "}
+          <code className="font-mono text-sm">side=&quot;right&quot;</code>. Each series can also carry
+          its own <code className="font-mono text-sm">format</code>, so the tooltip shows, say, currency
+          for revenue and a plain count for orders.
+        </p>
+        <ComponentPreview previewClassName="block" code={DUAL_AXIS_CODE}>
+          <DualAxisDemo />
+        </ComponentPreview>
+      </DocSection>
+
+      <DocSection title="Forecast & end marker">
+        <p className="mt-4 text-pretty text-muted-foreground">
+          <code className="font-mono text-sm">ChartLine</code> takes{" "}
+          <code className="font-mono text-sm">dashed</code> for projected data and{" "}
+          <code className="font-mono text-sm">markEnd</code> to pin a filled dot on the last point (a
+          &ldquo;current value&rdquo; marker). Split actuals and projection into two series that share
+          the seam point, and the solid line meets its dashed continuation cleanly.
+        </p>
+        <ComponentPreview previewClassName="block" code={FORECAST_CODE}>
+          <ForecastDemo />
+        </ComponentPreview>
+      </DocSection>
+
+      <DocSection title="Reference lines">
+        <p className="mt-4 text-pretty text-muted-foreground">
+          <code className="font-mono text-sm">ChartReferenceLine</code> draws a horizontal threshold
+          (<code className="font-mono text-sm">y</code>) or vertical marker (
+          <code className="font-mono text-sm">x</code>) across the plot, with an optional{" "}
+          <code className="font-mono text-sm">label</code>. Compose it after the data so it annotates
+          on top, for a target, limit, or average. It defaults to a muted dashed line; pass a{" "}
+          <code className="font-mono text-sm">color</code> to emphasize it.
+        </p>
+        <ComponentPreview previewClassName="block" code={REFERENCE_CODE}>
+          <ReferenceDemo />
+        </ComponentPreview>
+      </DocSection>
+
       <DocSection title="Negative values">
         <p className="mt-4 text-pretty text-muted-foreground">
           The domain anchors to zero, and bars and areas grow from the{" "}
@@ -200,6 +290,8 @@ export default function ChartDocsPage() {
           <code className="font-mono text-sm">config</code>,{" "}
           <code className="font-mono text-sm">domain</code>,{" "}
           <code className="font-mono text-sm">sparkline</code>,{" "}
+          <code className="font-mono text-sm">stack</code> (stack multi-series bars and size the domain
+          to the total),{" "}
           <code className="font-mono text-sm">padding</code>,{" "}
           <code className="font-mono text-sm">animate</code> (the load reveal, on by default),{" "}
           <code className="font-mono text-sm">crosshair</code> (the hover tracking line, which paints
@@ -215,13 +307,29 @@ export default function ChartDocsPage() {
           <code className="font-mono text-sm">color</code>;{" "}
           <code className="font-mono text-sm">ChartLine</code> and{" "}
           <code className="font-mono text-sm">ChartArea</code> also take{" "}
-          <code className="font-mono text-sm">connectNulls</code>.{" "}
+          <code className="font-mono text-sm">connectNulls</code>;{" "}
+          <code className="font-mono text-sm">ChartLine</code> adds{" "}
+          <code className="font-mono text-sm">dashed</code> and{" "}
+          <code className="font-mono text-sm">markEnd</code>.{" "}
+          <code className="font-mono text-sm">ChartBars</code> and{" "}
+          <code className="font-mono text-sm">ChartAreas</code> draw several bar / area series
+          (grouped, or stacked when <code className="font-mono text-sm">stack</code> is set) from a{" "}
+          <code className="font-mono text-sm">keys</code> list.{" "}
           <code className="font-mono text-sm">ChartGrid</code>,{" "}
           <code className="font-mono text-sm">ChartXAxis</code>, and{" "}
-          <code className="font-mono text-sm">ChartYAxis</code> are the chrome;{" "}
+          <code className="font-mono text-sm">ChartYAxis</code> (with{" "}
+          <code className="font-mono text-sm">side=&quot;right&quot;</code> for the secondary axis) are
+          the chrome; per-series <code className="font-mono text-sm">config</code> entries take{" "}
+          <code className="font-mono text-sm">format</code> and{" "}
+          <code className="font-mono text-sm">axis</code>;{" "}
+          <code className="font-mono text-sm">ChartReferenceLine</code> adds a{" "}
+          <code className="font-mono text-sm">y</code>/<code className="font-mono text-sm">x</code>{" "}
+          threshold with an optional <code className="font-mono text-sm">label</code>;{" "}
           <code className="font-mono text-sm">ChartTooltip</code> adds the hover bubble with{" "}
           <code className="font-mono text-sm">valueFormatter</code> and{" "}
-          <code className="font-mono text-sm">labelFormatter</code>. Every part accepts{" "}
+          <code className="font-mono text-sm">labelFormatter</code>; and{" "}
+          <code className="font-mono text-sm">ChartLegend</code> is a standalone key (place it outside
+          the chart, fed the same <code className="font-mono text-sm">config</code>). Every part accepts{" "}
           <code className="font-mono text-sm">className</code>, merged last.
         </p>
       </DocSection>
@@ -232,11 +340,17 @@ export default function ChartDocsPage() {
             { q: "How do the series parts know which values to draw?", a: "Each series part takes a dataKey that names the field in your data rows, for example ChartLine dataKey=\"revenue\". The part resolves its hue from the matching config entry, or you can pass an explicit color." },
             { q: "When do I need an index prop?", a: "Pass index when your data is an array of objects and you want category labels on the x-axis, for example index=\"month\". A bare number[] needs no index, which is the typical sparkline case." },
             { q: "How do I make a chromeless inline trend?", a: "Pass sparkline on Chart. It zeroes the padding so the plot bleeds to the edge, spans the points across the full width, and paints in currentColor so a single text-* utility sets the hue. StatSparkline is just a thin wrapper over this." },
-            { q: "How do I format the tooltip and axis values?", a: "ChartTooltip takes valueFormatter and labelFormatter, and ChartYAxis takes tickFormatter, so you can render currency or compact units." },
+            { q: "How do I format the tooltip and axis values?", a: "ChartTooltip takes valueFormatter and labelFormatter, and ChartYAxis takes tickFormatter, so you can render currency or compact units. For per-series formatting, give a config entry its own format function, which the tooltip uses over the shared valueFormatter." },
+            { q: "Can two series use different scales (dual axis)?", a: "Yes. Give a series axis: \"right\" in config to scale it against a secondary y-axis, and render a second ChartYAxis with side=\"right\". It is the right call for two metrics at very different magnitudes, like revenue and order count on one chart." },
+            { q: "How do I show a forecast or a current-value dot?", a: "ChartLine takes dashed for projected data (it renders dashed and skips the self-draw) and markEnd to pin a filled dot on the last point. Split actuals and projection into two series that share the seam point so the solid line meets the dashed continuation cleanly." },
             { q: "How does the hover crosshair stack with the data?", a: "The crosshair is owned by the Chart root and paints behind the grid, area, line, and markers, so the trend always reads on top of the tracking line (the area fades to transparent, so the crosshair still shows through). It is on by default for full charts and off for sparklines; toggle it with the crosshair prop on Chart." },
             { q: "Will my chart re-theme across the four palettes?", a: "Yes. Series take semantic hues like blue, teal, purple, orange, and pink (or current to inherit the ambient color), so every chart re-themes across all four palettes. Series with no color fall back to a rotating palette led by blue." },
             { q: "Why layer ChartArea and ChartLine separately?", a: "They are independent parts reading the same measured SVG from context, so you compose the look you want: ChartArea fills under the trend with a fading gradient, and ChartLine adds a crisp edge on top." },
             { q: "How are negative values and missing data handled?", a: "The domain anchors to zero and bars/areas grow from the y-zero baseline, so negative values render below it with no extra config. Missing points (a non-numeric or absent value) break the line and area by default so dropouts read honestly; pass connectNulls on ChartLine/ChartArea to bridge across them." },
+            { q: "How do I show multiple bar series, grouped or stacked?", a: "Use ChartBars with a keys list. By default the series render grouped side by side; set stack on Chart to stack them, which also grows the y-axis to the per-category total. ChartBar stays the simple single-series option. The same applies to ChartAreas for stacked area bands." },
+            { q: "Where does the legend go?", a: "ChartLegend is a standalone HTML key, so it lives outside the SVG. Place it above or below the Chart and pass it the same config (or explicit items); each swatch resolves its hue exactly like the chart, palette fallback included." },
+            { q: "How do I draw a target or threshold line?", a: "Use ChartReferenceLine with y for a horizontal threshold (or x for a vertical marker) and an optional label. Compose it after the data parts so it annotates on top; it is a muted dashed line by default, and a color prop emphasizes it (e.g. destructive for a limit)." },
+            { q: "Why does the y-axis go a bit above my largest value?", a: "Full charts round the domain to nice bounds and a 1/2/5 tick step (for example a max of 7,100 extends the axis to 8,000 with ticks at 0, 2k, 4k, 6k, 8k). Grid lines and y-axis labels share that one tick set, so they always align. Sparklines and an explicit domain skip the rounding." },
             { q: "What shows while data is loading or empty?", a: "Pass loading on Chart for a Skeleton placeholder (it also sets aria-busy). With empty data the chart shows a muted message you can replace via the empty prop." },
             { q: "How accessible is the chart to screen readers?", a: "The SVG is aria-hidden (pixels do not read well), and every full chart renders a visually-hidden data table as its accessible equivalent, so assistive tech reads the real values row by row. Pass label to name the chart; it captions that table. Sparklines stay decorative since they are labelled by their context, like a Stat's value." },
             { q: "Can I turn off the load animation?", a: "Pass animate={false} on the Chart root. By default every chart plays a one-shot reveal on mount (the line draws, the area rises, bars grow from the baseline). It fires once, not on hover or re-sort, and is held static under prefers-reduced-motion, so opting out is rarely needed." },
@@ -343,6 +457,98 @@ const BAR_CODE = `<Chart data={months} index="month"
   <ChartGrid />
   <ChartYAxis />
   <ChartBar dataKey="orders" />
+  <ChartXAxis />
+  <ChartTooltip />
+</Chart>`
+
+const BAR_SERIES_CODE = `// Grouped (default): series sit side by side.
+<Chart data={months} index="month"
+  config={{ desktop: { color: "blue" }, mobile: { color: "teal" } }} className="h-64">
+  <ChartGrid />
+  <ChartYAxis />
+  <ChartBars keys={["desktop", "mobile"]} />
+  <ChartXAxis />
+  <ChartTooltip />
+</Chart>
+
+// Stacked: add "stack" on Chart; the y-axis covers the per-category total.
+<Chart data={months} index="month" stack
+  config={{ desktop: { color: "blue" }, mobile: { color: "teal" } }} className="h-64">
+  <ChartGrid />
+  <ChartYAxis />
+  <ChartBars keys={["desktop", "mobile"]} />
+  <ChartXAxis />
+  <ChartTooltip />
+</Chart>`
+
+const FORECAST_CODE = `// Two series share the Jun point, so solid meets dashed seamlessly.
+const trend = [
+  { month: "May", actual: 5600, projected: null },
+  { month: "Jun", actual: 6100, projected: 6100 },
+  { month: "Jul", actual: null, projected: 6700 },
+]
+
+<Chart data={trend} index="month"
+  config={{ actual: { color: "blue" }, projected: { color: "blue" } }} className="h-72">
+  <ChartGrid />
+  <ChartYAxis />
+  <ChartLine dataKey="actual" markEnd />
+  <ChartLine dataKey="projected" dashed />
+  <ChartXAxis />
+  <ChartTooltip />
+</Chart>`
+
+const DUAL_AXIS_CODE = `<Chart data={months} index="month"
+  config={{
+    revenue: { label: "Revenue", color: "blue", axis: "left",
+               format: (v) => \`$\${v.toLocaleString()}\` },
+    orders:  { label: "Orders", color: "teal", axis: "right" },
+  }}
+  padding={{ bottom: 28, left: 48, right: 44, top: 12 }} className="h-72">
+  <ChartGrid />
+  <ChartYAxis tickFormatter={(v) => \`$\${(v / 1000).toFixed(0)}k\`} />
+  <ChartYAxis side="right" />
+  <ChartLine dataKey="revenue" />
+  <ChartLine dataKey="orders" />
+  <ChartXAxis />
+  <ChartTooltip />
+</Chart>`
+
+const REFERENCE_CODE = `<Chart data={revenue} index="month"
+  config={{ revenue: { label: "Revenue", color: "blue" } }} className="h-72">
+  <ChartGrid />
+  <ChartYAxis tickFormatter={(v) => \`$\${(v / 1000).toFixed(0)}k\`} />
+  <ChartArea dataKey="revenue" />
+  <ChartLine dataKey="revenue" />
+  {/* after the data => annotates on top */}
+  <ChartReferenceLine y={5000} label="Target $5k" color="destructive" />
+  <ChartXAxis />
+  <ChartTooltip />
+</Chart>`
+
+const LEGEND_CODE = `const config = {
+  desktop: { label: "Desktop", color: "blue" },
+  mobile: { label: "Mobile", color: "teal" },
+}
+
+<div className="flex flex-col gap-3">
+  <ChartLegend config={config} align="end" />
+  <Chart data={months} index="month" config={config} className="h-72">
+    <ChartGrid />
+    <ChartYAxis />
+    <ChartLine dataKey="desktop" />
+    <ChartLine dataKey="mobile" />
+    <ChartXAxis />
+    <ChartTooltip />
+  </Chart>
+</div>`
+
+const AREA_STACK_CODE = `// Stacked band chart: "stack" on Chart + ChartAreas.
+<Chart data={months} index="month" stack
+  config={{ desktop: { color: "blue" }, mobile: { color: "teal" } }} className="h-72">
+  <ChartGrid />
+  <ChartYAxis />
+  <ChartAreas keys={["desktop", "mobile"]} />
   <ChartXAxis />
   <ChartTooltip />
 </Chart>`

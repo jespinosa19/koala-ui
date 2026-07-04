@@ -10,6 +10,8 @@ const VARIANTS = [
   "feature-section-2",
   "feature-section-3",
   "feature-section-4",
+  "feature-section-5",
+  "feature-section-6",
 ] as const
 
 export default function FeatureSectionsPage() {
@@ -17,7 +19,7 @@ export default function FeatureSectionsPage() {
     <>
       <DocHeader
         title="Feature"
-        description="Sections that show what the product does. Variant 1 is a wall of live, interactive component tiles; Variant 2 is a product video showcase; Variant 3 is an asymmetric bento grid; Variant 4 is a balanced grid of feature cards."
+        description="Sections that show what the product does. Variant 1 is a wall of live, interactive component tiles; Variant 2 is a product video showcase; Variant 3 is an asymmetric bento grid; Variant 4 is a balanced grid of feature cards; Variant 5 is a two-up wall of image-led ecosystem tiles; Variant 6 is a left-aligned lede over a flush row of stroke-led capability columns."
       />
 
       <div className="flex flex-col gap-8">
@@ -43,8 +45,13 @@ export default function FeatureSectionsPage() {
           Variant 3 on{" "}
           <a href="/docs/components/bento" className="underline underline-offset-4">Bento</a>, Variant 4
           on{" "}
-          <a href="/docs/components/card" className="underline underline-offset-4">Card</a>, and Variant
-          1 stitches together live controls (Switch, Slider, Tabs, Select, and more).
+          <a href="/docs/components/card" className="underline underline-offset-4">Card</a>, Variant 5
+          is a wall of image-led tiles led by a left-aligned{" "}
+          <a href="/docs/components/section-header" className="underline underline-offset-4">Section Header</a>,
+          Variant 6 hangs bare capability columns off nothing but a hairline stroke each led by the
+          same{" "}
+          <a href="/docs/components/section-header" className="underline underline-offset-4">Section Header</a>,
+          and Variant 1 stitches together live controls (Switch, Slider, Tabs, Select, and more).
         </p>
       </DocSection>
 

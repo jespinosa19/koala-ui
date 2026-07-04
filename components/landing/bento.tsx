@@ -37,7 +37,7 @@ export function BentoSection() {
           {/* Top row: two wide tiles. */}
           <BentoItem size="md" tone="brand">
             <BentoItemIcon>
-              <Storefront />
+              <Storefront weight="bold" />
             </BentoItemIcon>
             <BentoItemTitle>Store templates</BentoItemTitle>
             <BentoItemDescription>
@@ -49,7 +49,7 @@ export function BentoSection() {
 
           <BentoItem size="md" tone="teal">
             <BentoItemIcon>
-              <ChartLineUp />
+              <ChartLineUp weight="bold" />
             </BentoItemIcon>
             <BentoItemTitle>High-converting experience</BentoItemTitle>
             <BentoItemDescription>
@@ -62,7 +62,7 @@ export function BentoSection() {
           {/* Bottom row: three tiles. */}
           <BentoItem size="sm" tone="purple">
             <BentoItemIcon>
-              <Palette />
+              <Palette weight="bold" />
             </BentoItemIcon>
             <BentoItemTitle>Maximum personalization</BentoItemTitle>
             <BentoItemDescription>
@@ -77,7 +77,7 @@ export function BentoSection() {
 
           <BentoItem size="sm" tone="orange">
             <BentoItemIcon>
-              <BookOpen />
+              <BookOpen weight="bold" />
             </BentoItemIcon>
             <BentoItemTitle>Detailed documentation</BentoItemTitle>
             <BentoItemDescription>
@@ -92,7 +92,7 @@ export function BentoSection() {
 
           <BentoItem size="sm" tone="pink">
             <BentoItemIcon>
-              <Stack />
+              <Stack weight="bold" />
             </BentoItemIcon>
             <BentoItemTitle>All assets in 1 place</BentoItemTitle>
             <BentoItemDescription>

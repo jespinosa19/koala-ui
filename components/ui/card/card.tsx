@@ -14,7 +14,15 @@ import { tv, type VariantProps } from "@/lib/tv"
  */
 export const cardVariants = tv({
   slots: {
-    root: "flex flex-col rounded-xl border bg-card text-card-foreground",
+    // `[--surface:var(--card)]` opts the card into the DS surface contract: nested Inputs,
+    // Selects, Textareas and ToggleGroups read `--surface` and blend with the card instead of
+    // falling back to the page `--background`. Invisible in light (card = background) but the
+    // difference that keeps them from looking like a mismatched darker block in dark/moonlight.
+    // `[--surface:var(--card)]` opts the card into the DS surface contract: nested Inputs,
+    // Selects, Textareas and ToggleGroups read `--surface` and blend with the card instead of
+    // falling back to the page `--background` (which resolves to the light/root value and paints
+    // a jarring white block inside a dark/moonlight card). Invisible in light (card = background).
+    root: "flex flex-col rounded-xl border bg-card text-card-foreground [--surface:var(--card)]",
     // Header is a grid so an optional Action sits top-right, optically aligned.
     header:
       "grid auto-rows-min items-start gap-1.5 [&:has([data-slot=card-action])]:grid-cols-[1fr_auto]",

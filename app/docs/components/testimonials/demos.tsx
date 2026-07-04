@@ -11,7 +11,7 @@ import {
   TestimonialLogo,
 } from "@/components/ui/testimonials"
 import { Rating } from "@/components/ui/rating"
-import { AvatarRoot, AvatarFallback } from "@/components/ui/avatar"
+import { AvatarRoot, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { PLACEHOLDER_BRANDS, PlaceholderLogo } from "@/components/docs/placeholder-logos"
 
 const ITEMS = [
@@ -21,6 +21,7 @@ const ITEMS = [
     name: "Alex Rivera",
     title: "Founder, Lumen",
     initials: "AR",
+    img: 13,
     logo: "Lumen",
   },
   {
@@ -29,6 +30,7 @@ const ITEMS = [
     name: "Priya Nair",
     title: "Staff Engineer, Cobalt",
     initials: "PN",
+    img: 45,
     logo: "Cobalt",
   },
   {
@@ -37,14 +39,18 @@ const ITEMS = [
     name: "Daniel Okafor",
     title: "Co-founder, Quanta",
     initials: "DO",
+    img: 59,
     logo: "Quanta",
   },
 ]
 
+// Default byline: a real headshot (our Avatar with an image), falling back to initials while it
+// loads or if it 404s. Images are the default treatment for testimonial authors.
 function Author({ item }: { item: (typeof ITEMS)[number] }) {
   return (
     <>
       <AvatarRoot size="md">
+        <AvatarImage src={`https://i.pravatar.cc/160?img=${item.img}`} alt={item.name} />
         <AvatarFallback>{item.initials}</AvatarFallback>
       </AvatarRoot>
       <TestimonialAuthor>
@@ -200,6 +206,7 @@ export function TestimonialCenteredDemo() {
       </TestimonialQuote>
       <TestimonialFooter>
         <AvatarRoot size="md">
+          <AvatarImage src="https://i.pravatar.cc/160?img=13" alt="Alex Rivera" />
           <AvatarFallback>AR</AvatarFallback>
         </AvatarRoot>
         <TestimonialAuthor>
@@ -222,6 +229,7 @@ export function TestimonialSingleDemo() {
       </TestimonialQuote>
       <TestimonialFooter>
         <AvatarRoot size="md">
+          <AvatarImage src="https://i.pravatar.cc/160?img=32" alt="Mei Lin" />
           <AvatarFallback>ML</AvatarFallback>
         </AvatarRoot>
         <TestimonialAuthor>

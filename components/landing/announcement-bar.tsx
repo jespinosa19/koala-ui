@@ -9,7 +9,7 @@ export function AnnouncementBar() {
   return (
     <Banner variant="purple">
       <BannerIcon>
-        <Megaphone />
+        <Megaphone weight="bold" />
       </BannerIcon>
       <BannerContent>{ANNOUNCEMENT.text}</BannerContent>
       <BannerAction asChild>

@@ -90,7 +90,7 @@ export function ShowcaseDemo() {
             <RankingItem interactive>
               <RankingRank highlight={i === 0}>{i + 1}</RankingRank>
               <RankingMedia>
-                <p.icon />
+                <p.icon weight="bold" />
               </RankingMedia>
               <RankingContent>
                 <RankingLabel>{p.name}</RankingLabel>
@@ -243,7 +243,7 @@ export function InteractiveDemo() {
               <RankingLabel>{p.name}</RankingLabel>
               <RankingMeta>{p.units.toLocaleString()} units</RankingMeta>
             </RankingContent>
-            <CaretRight aria-hidden className="size-4 shrink-0 text-muted-foreground" />
+            <CaretRight weight="bold" aria-hidden className="size-4 shrink-0 text-muted-foreground" />
           </RankingItem>
         ))}
       </RankingList>
@@ -287,35 +287,6 @@ export function VariantsDemo() {
         </RankingHeader>
         {rows}
       </Ranking>
-    </div>
-  )
-}
-
-/* ------------------------------------------------------------------- density --- */
-
-export function DensityDemo() {
-  const card = (label: string, density: "compact" | "comfortable") => (
-    <Ranking density={density}>
-      <RankingHeader>
-        <RankingTitle>{label}</RankingTitle>
-      </RankingHeader>
-      <RankingList>
-        {PRODUCTS.slice(0, 4).map((p, i) => (
-          <RankingItem key={p.name}>
-            <RankingRank highlight={i === 0}>{i + 1}</RankingRank>
-            <RankingContent>
-              <RankingLabel>{p.name}</RankingLabel>
-            </RankingContent>
-            <RankingValue>{p.units.toLocaleString()}</RankingValue>
-          </RankingItem>
-        ))}
-      </RankingList>
-    </Ranking>
-  )
-  return (
-    <div className="grid w-full gap-4 sm:grid-cols-2">
-      {card("Compact", "compact")}
-      {card("Comfortable", "comfortable")}
     </div>
   )
 }

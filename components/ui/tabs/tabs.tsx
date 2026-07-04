@@ -19,17 +19,30 @@ import { tv, type VariantProps } from "@/lib/tv"
 export const tabsVariants = tv({
   slots: {
     root: "flex flex-col gap-2",
-    list: "relative inline-flex self-start items-center",
+    // Responsive: when the row of tabs is wider than its container it scrolls on the main axis
+    // instead of overflowing the page (the classic mobile break). `max-w-full` caps the inline-flex
+    // at the container so the overflow lands *inside* the list; `overflow-y-hidden` keeps it a single
+    // row; `scroll-fade-x` fades the edge you can still scroll toward - the canonical segmented-bar
+    // cue (globals.css), and the only affordance left once scrollbars are hidden site-wide. Inert
+    // when the tabs fit: edges stay crisp and nothing scrolls, so wide layouts are unchanged.
+    list: "relative inline-flex max-w-full self-start items-center overflow-x-auto overflow-y-hidden scroll-fade-x",
     trigger: [
       // `relative z-10` keeps the label above the indicator that slides behind it.
       "relative z-10 inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap",
-      "font-medium text-muted-foreground",
+      // One tight size: 14px label in a 28px-tall trigger with snug 10px sides.
+      "h-7 px-2.5 text-sm",
+      // `tracking-tight` crisps the label; inactive tabs answer hover so the control feels alive.
+      "font-medium tracking-tight text-muted-foreground hover:text-foreground",
       // Specific transition (never `transition: all`); `transition` covers colors + scale.
       "transition duration-fast ease-out",
       // polish: tactile scale-on-press. Disable via the `static` prop.
       "active:scale-[0.96]",
-      "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+      // Inset (not offset) focus ring: the list is a scroll box (see the `list` slot), which clips
+      // on both axes, so an offset ring would be trimmed at the top/bottom edge. Drawn inside the
+      // trigger, the ring stays whole in every variant/density, scroll or not.
+      "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-inset",
       "disabled:pointer-events-none disabled:opacity-50",
+      // Active label is full ink; the indicator behind it does the lifting.
       "data-[state=active]:text-foreground",
       // polish: ≥40px hit area without growing the visual.
       // Vertical-only, so it never overlaps a horizontally-adjacent trigger.
@@ -50,9 +63,12 @@ export const tabsVariants = tv({
   },
   variants: {
     variant: {
+      // Active pill floats off the track: a hairline ring draws a crisp 1px edge and
+      // `shadow-sm` lifts it (the "shadow as border" stack), so the segment reads sharp
+      // instead of melting into the muted track. Both are theme tokens, so it adapts.
       pill: {
         list: "gap-1 bg-muted dark:bg-card",
-        indicator: "bg-background dark:bg-muted shadow-xs",
+        indicator: "bg-background dark:bg-muted shadow-sm ring-1 ring-border",
       },
       // Active trigger shows a pill background (CSS fade) + a sliding bar on the bottom rule.
       // `pb-1.5` opens the gap that separates the pill from the colored indicator below it.
@@ -69,33 +85,29 @@ export const tabsVariants = tv({
         indicator: "rounded-full bg-brand",
       },
     },
-    size: {
-      sm: { trigger: "h-7 px-3 text-xs" },
-      md: { trigger: "h-9 px-4 text-sm" },
-    },
     // Density is Koala's cross-cutting spacing axis (see lib/density.tsx). For Tabs it
-    // tightens the pill chrome (container padding + concentric radii); `size` stays the
-    // height/text tier. Geometry lives in compoundVariants below.
+    // tightens the pill chrome (container padding + concentric radii); the trigger keeps
+    // its single height/text tier. Geometry lives in compoundVariants below.
     density: {
       comfortable: {},
       compact: {},
     },
   },
   compoundVariants: [
-    // polish: concentric radius. inner = outer − padding.
-    // pill·comfortable: list rounded-xl(16) + p-1(4) → trigger/indicator rounded-lg(11).
-    { variant: "pill", density: "comfortable", className: { list: "rounded-xl p-1", trigger: "rounded-lg", indicator: "rounded-lg" } },
-    // pill·compact: list rounded-lg(11) + p-0.5(2) → trigger/indicator rounded-md(9).
-    { variant: "pill", density: "compact", className: { list: "rounded-lg p-0.5", trigger: "rounded-md", indicator: "rounded-md" } },
+    // polish: concentric radius. inner = outer − padding. Kept tight/sharp: a small
+    // corner reads crisper than a pillowy one, and still nests concentrically.
+    // pill·comfortable: list rounded-lg(16) + p-1(4) → trigger/indicator rounded-md(12).
+    { variant: "pill", density: "comfortable", className: { list: "rounded-lg p-1", trigger: "rounded-md", indicator: "rounded-md" } },
+    // pill·compact: list rounded-md(12) + p-0.5(2) → trigger/indicator rounded-sm(8).
+    { variant: "pill", density: "compact", className: { list: "rounded-md p-0.5", trigger: "rounded-sm", indicator: "rounded-sm" } },
     // Line triggers are square; the moving accent bar is the only active affordance.
     { variant: "line", className: { trigger: "rounded-none" } },
     // Folder: concentric radius on active trigger background (outer list has no padding container).
-    { variant: "folder", density: "comfortable", className: { trigger: "rounded-xl" } },
-    { variant: "folder", density: "compact", className: { trigger: "rounded-lg" } },
+    { variant: "folder", density: "comfortable", className: { trigger: "rounded-md" } },
+    { variant: "folder", density: "compact", className: { trigger: "rounded-sm" } },
   ],
   defaultVariants: {
     variant: "pill",
-    size: "sm",
     density: "compact",
   },
 })
@@ -183,8 +195,8 @@ export interface TabsProps
   extends React.ComponentProps<typeof TabsPrimitive.Root>,
     VariantProps<typeof tabsVariants> {}
 
-export function Tabs({ className, variant, size, density, ...props }: TabsProps) {
-  const slots = tabsVariants({ variant, size, density: useDensity(density) })
+export function Tabs({ className, variant, density, ...props }: TabsProps) {
+  const slots = tabsVariants({ variant, density: useDensity(density) })
   return (
     <TabsProvider slots={slots} variant={variant ?? "pill"}>
       <TabsPrimitive.Root data-slot="tabs" className={slots.root({ className })} {...props} />

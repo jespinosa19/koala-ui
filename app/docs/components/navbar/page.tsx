@@ -34,7 +34,7 @@ export default function NavbarDocsPage() {
         previewClassName="block p-6"
         code={`<Navbar>
   <NavbarInner>
-    <NavbarBrand href="/"><PawPrint weight="fill" className="text-brand" />Koala</NavbarBrand>
+    <NavbarBrand href="/"><BrandMark /></NavbarBrand>
     <NavbarNav>
       <NavbarLink href="#">Home</NavbarLink>
       <NavbarLink href="#" active>Features</NavbarLink>
@@ -122,7 +122,7 @@ export default function NavbarDocsPage() {
         previewClassName="block p-6"
           code={`{/* Centered: spacers on both sides of the nav */}
 <NavbarInner>
-  <NavbarBrand href="/">Koala</NavbarBrand>
+  <NavbarBrand href="/"><BrandMark /></NavbarBrand>
   <NavbarSpacer />
   <NavbarNav>…</NavbarNav>
   <NavbarSpacer />
@@ -136,7 +136,7 @@ export default function NavbarDocsPage() {
         previewClassName="block p-6"
           code={`{/* Right: a single spacer after the brand */}
 <NavbarInner>
-  <NavbarBrand href="/">Koala</NavbarBrand>
+  <NavbarBrand href="/"><BrandMark /></NavbarBrand>
   <NavbarSpacer />
   <NavbarNav>…</NavbarNav>
   <NavbarActions>…</NavbarActions>
@@ -186,7 +186,7 @@ export default function NavbarDocsPage() {
           locked
         previewClassName="block p-6"
           code={`<NavbarInner>
-  <NavbarBrand href="/">Koala</NavbarBrand>
+  <NavbarBrand href="/"><BrandMark /></NavbarBrand>
   <NavbarNav>…</NavbarNav>
   <NavbarSpacer />
   <NavbarSearch placeholder="Search anything" className="w-64" />
@@ -210,13 +210,16 @@ export default function NavbarDocsPage() {
         previewClassName="block p-6"
           code={`<Navbar density="compact">
   <NavbarInner>
-    <NavbarBrand href="/">Koala</NavbarBrand>
+    <NavbarBrand href="/"><BrandMark /></NavbarBrand>
     <NavbarNav className="ml-2">…</NavbarNav>
     <NavbarSearch className="ml-auto w-64 bg-muted border-transparent" />
     <NavbarActions>
       <Button size="sm" variant="ghost" iconOnly aria-label="Help"><Question /></Button>
       <Button size="sm" variant="ghost" iconOnly aria-label="Notifications"><Bell /></Button>
-      <Avatar size="sm"><AvatarFallback>AS</AvatarFallback></Avatar>
+      <Avatar size="sm">
+        <AvatarImage src="https://i.pravatar.cc/160?img=15" alt="Account" />
+        <AvatarFallback>AS</AvatarFallback>
+      </Avatar>
     </NavbarActions>
   </NavbarInner>
 </Navbar>`}
@@ -235,7 +238,7 @@ export default function NavbarDocsPage() {
         previewClassName="block p-6"
           code={`<NavbarInner className="grid grid-cols-[1fr_auto_1fr]">
   <NavbarNav>…</NavbarNav>
-  <NavbarBrand href="/" className="justify-self-center">Koala</NavbarBrand>
+  <NavbarBrand href="/" className="justify-self-center"><BrandMark /></NavbarBrand>
   <NavbarActions className="justify-self-end">…</NavbarActions>
 </NavbarInner>`}
         >
@@ -272,7 +275,7 @@ export default function NavbarDocsPage() {
           locked
         previewClassName="block p-6"
           code={`<div className="flex items-center gap-2">
-  <NavbarBrand href="/">Koala</NavbarBrand>
+  <NavbarBrand href="/"><BrandMark /></NavbarBrand>
   <Badge variant="secondary" size="sm" pill>Beta</Badge>
 </div>`}
         >

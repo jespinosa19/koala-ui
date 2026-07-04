@@ -16,7 +16,8 @@ export type FaqItem = { q: string; a: ReactNode }
  * the first row opens by default so the section never reads as an empty stack of triggers.
  *
  * Answers are authored as plain prose (with the occasional inline <code>), so they dogfood the
- * Accordion's own `text-muted-foreground` content styling, with no per-call formatting.
+ * Accordion's own `text-muted-foreground` content styling. We bump the answer to `font-medium`
+ * (matching the question's weight) so both the questions and the content read at medium 500.
  */
 export function Faq({ items }: { items: FaqItem[] }) {
   return (
@@ -24,7 +25,7 @@ export function Faq({ items }: { items: FaqItem[] }) {
       {items.map((item, i) => (
         <AccordionItem key={i} value={`faq-${i}`}>
           <AccordionTrigger>{item.q}</AccordionTrigger>
-          <AccordionContent>{item.a}</AccordionContent>
+          <AccordionContent className="font-medium">{item.a}</AccordionContent>
         </AccordionItem>
       ))}
     </Accordion>

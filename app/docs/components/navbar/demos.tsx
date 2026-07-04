@@ -5,7 +5,6 @@ import {
   MagnifyingGlass,
   ShoppingCart,
   User,
-  PawPrint,
   Bell,
   Question,
 } from "@phosphor-icons/react"
@@ -24,7 +23,7 @@ import {
   NavbarMobileLink,
 } from "@/components/ui/navbar"
 import { Button } from "@/components/ui/button"
-import { AvatarRoot, AvatarFallback } from "@/components/ui/avatar"
+import { AvatarRoot, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import {
   DropdownMenu,
@@ -32,14 +31,14 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu"
+import { BrandMark } from "@/components/landing/brand-mark"
 
 const LINKS = ["Home", "About", "Features", "Blog", "Pricing"] as const
 
 function Brand({ className }: { className?: string }) {
   return (
     <NavbarBrand href="#" className={className}>
-      <PawPrint weight="fill" className="text-brand" />
-      Koala
+      <BrandMark />
     </NavbarBrand>
   )
 }
@@ -51,7 +50,7 @@ function CompanyMenu() {
         <NavbarLink asChild>
           <button type="button">
             Company
-            <CaretDown />
+            <CaretDown weight="bold" />
           </button>
         </NavbarLink>
       </DropdownMenuTrigger>
@@ -238,13 +237,13 @@ export function NavbarEcommerceDemo() {
         <NavbarSpacer />
         <NavbarActions>
           <Button size="sm" variant="ghost" iconOnly aria-label="Search">
-            <MagnifyingGlass />
+            <MagnifyingGlass weight="bold" />
           </Button>
           <Button size="sm" variant="ghost" iconOnly aria-label="Account">
-            <User />
+            <User weight="bold" />
           </Button>
           <Button size="sm" variant="ghost" iconOnly aria-label="Cart">
-            <ShoppingCart />
+            <ShoppingCart weight="bold" />
           </Button>
         </NavbarActions>
         <NavbarMobileToggle />
@@ -296,12 +295,13 @@ export function NavbarProductDemo() {
         />
         <NavbarActions>
           <Button size="sm" variant="ghost" iconOnly aria-label="Help">
-            <Question />
+            <Question weight="bold" />
           </Button>
           <Button size="sm" variant="ghost" iconOnly aria-label="Notifications">
-            <Bell />
+            <Bell weight="bold" />
           </Button>
           <AvatarRoot size="sm" className="ml-1 cursor-pointer">
+            <AvatarImage src="https://i.pravatar.cc/160?img=15" alt="Account" />
             <AvatarFallback>AS</AvatarFallback>
           </AvatarRoot>
         </NavbarActions>
@@ -326,7 +326,7 @@ export function NavbarLogoMiddleDemo() {
         <Brand className="mr-0 justify-self-center" />
         <NavbarActions className="justify-self-end">
           <Button size="sm" variant="ghost" iconOnly aria-label="Cart">
-            <ShoppingCart />
+            <ShoppingCart weight="bold" />
           </Button>
           <Button size="sm">Book now</Button>
         </NavbarActions>

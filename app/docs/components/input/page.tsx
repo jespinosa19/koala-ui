@@ -21,7 +21,7 @@ import { CodeSnippet } from "@/components/docs/code-snippet"
 import { Installation } from "@/components/docs/installation"
 import { DocHeader, DocSection } from "@/components/docs/doc-page"
 import { Faq } from "@/components/docs/faq"
-import { NumberInputDemo, PhoneInputDemo } from "./demos"
+import { NumberInputDemo, QuantityStepperDemo, PhoneInputDemo } from "./demos"
 
 export const metadata = {
   title: "Input",
@@ -48,7 +48,7 @@ export default function InputDocsPage() {
           <InputLabel htmlFor="search">Search</InputLabel>
           <InputRoot>
             <InputPrefix>
-              <MagnifyingGlass />
+              <MagnifyingGlass weight="bold" />
             </InputPrefix>
             <InputField id="search" placeholder="Search components…" />
           </InputRoot>
@@ -146,7 +146,7 @@ export function Example() {
             <InputLabel htmlFor="email-prefix">Email address</InputLabel>
             <InputRoot>
               <InputPrefix>
-                <EnvelopeSimple />
+                <EnvelopeSimple weight="bold" />
               </InputPrefix>
               <InputField
                 id="email-prefix"
@@ -177,7 +177,7 @@ export function Example() {
             <InputRoot>
               <InputField id="search-suffix" placeholder="Search…" />
               <InputSuffix>
-                <MagnifyingGlass />
+                <MagnifyingGlass weight="bold" />
               </InputSuffix>
             </InputRoot>
           </div>
@@ -221,7 +221,7 @@ export function Example() {
               <InputLabel htmlFor="domain-icon">Custom domain</InputLabel>
               <InputRoot>
                 <InputPrefixLabel>
-                  <Globe />
+                  <Globe weight="bold" />
                 </InputPrefixLabel>
                 <InputField id="domain-icon" placeholder="yourdomain.com" />
               </InputRoot>
@@ -252,7 +252,7 @@ export function Example() {
             <InputRoot>
               <InputField id="clearable" defaultValue="clearable value" />
               <InputSuffixButton aria-label="Clear">
-                <X className="size-4" />
+                <X weight="bold" className="size-4" />
               </InputSuffixButton>
             </InputRoot>
           </div>
@@ -299,6 +299,34 @@ export function Example() {
 <NumberInput layout="inline" value={qty} onValueChange={setQty} min={1} max={10} />`}
         >
           <NumberInputDemo />
+        </ComponentPreview>
+      </DocSection>
+
+      <DocSection title="Quantity stepper">
+        <p className="mt-4 text-pretty text-muted-foreground">
+          The <code>{'layout="inline"'}</code> <code>NumberInput</code> <strong>is</strong> the{" "}
+          <code>−</code> value <code>+</code> quantity stepper: compact, clamped at{" "}
+          <code>min</code>, and keyboard- and hold-to-repeat friendly. It&apos;s the control behind
+          a cart row&apos;s{" "}
+          <a href="/docs/components/order-summary" className="underline underline-offset-4">
+            <code>OrderSummaryItemQuantity</code>
+          </a>{" "}
+          (see Order Summary → Shopping cart). Give it a fixed <code>rootClassName</code> width so
+          it stays tidy in a row.
+        </p>
+        <ComponentPreview
+          code={`<NumberInput
+  layout="inline"
+  size="sm"
+  value={qty}
+  onValueChange={setQty}
+  min={1}
+  max={99}
+  rootClassName="w-24"
+  aria-label="Quantity"
+/>`}
+        >
+          <QuantityStepperDemo />
         </ComponentPreview>
       </DocSection>
 

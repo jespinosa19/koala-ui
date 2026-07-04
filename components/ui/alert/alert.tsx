@@ -40,7 +40,7 @@ export const alertVariants = tv({
     variant: {
       default: {
         root: "border-border bg-background",
-        iconWrap: "text-muted-foreground",
+        iconWrap: "text-muted-foreground/60",
       },
       success: {
         root: "border-border bg-background",
@@ -86,6 +86,7 @@ type AlertVariant = NonNullable<VariantProps<typeof alertVariants>["variant"]>
 type AlertSlots = ReturnType<typeof alertVariants>
 
 const VARIANT_ICONS: Partial<Record<AlertVariant, React.ElementType>> = {
+  default: Info,
   success: CheckCircle,
   warning: Warning,
   destructive: XCircle,
@@ -135,7 +136,12 @@ export function Alert({
   )
 }
 
-/** Optional icon area: auto-picks the variant icon when no children are given. */
+/**
+ * Optional icon area: auto-picks the variant icon when no children are given.
+ * Every variant renders a solid badge (weight="fill"); the neutral `default`
+ * uses the same filled glyph in muted gray, so color (gray vs the blue `info`
+ * badge) is what separates them, not weight.
+ */
 export function AlertIcon({ children, className, ...props }: React.ComponentProps<"div">) {
   const { slots, variant } = useAlertContext("AlertIcon")
   const Icon = VARIANT_ICONS[variant]

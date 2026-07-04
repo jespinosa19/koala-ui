@@ -183,6 +183,17 @@ export function stopsToBarCss(stops: GradientStop[]): string {
 }
 
 /**
+ * A fixed-geometry preview of the stops for the gradient-type tiles: a left→right bar for linear,
+ * a centred circle for radial. Geometry only (the real angle is ignored) so each tile reads as its
+ * *type* at a glance, the way Figma's fill-type row previews each kind.
+ */
+export function stopsToTypePreviewCss(type: GradientType, stops: GradientStop[]): string {
+  return type === "radial"
+    ? `radial-gradient(circle, ${stopList(stops)})`
+    : `linear-gradient(to right, ${stopList(stops)})`
+}
+
+/**
  * Linear-RGB interpolate the gradient color at `position` (0–100). Used when a click on empty
  * track adds a stop: it samples the color already showing there, so the new stop lands invisibly
  * and the user tweaks from a sensible base (the Figma behaviour) rather than a jarring default.

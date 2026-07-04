@@ -266,7 +266,7 @@ export function PhoneInput({
             <div className="border-b border-border p-1.5">
               <InputRoot size="sm">
                 <InputPrefix>
-                  <MagnifyingGlass />
+                  <MagnifyingGlass weight="bold" />
                 </InputPrefix>
                 <InputField
                   ref={searchRef}

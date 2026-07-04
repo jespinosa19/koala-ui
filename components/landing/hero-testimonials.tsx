@@ -7,7 +7,7 @@ import {
   TestimonialTitle,
   TestimonialLogo,
 } from "@/components/ui/testimonials"
-import { AvatarRoot, AvatarFallback } from "@/components/ui/avatar"
+import { AvatarRoot, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Section } from "@/components/landing/section"
 import { Reveal } from "@/components/landing/reveal"
 import { HERO_TESTIMONIALS } from "@/components/landing/data"
@@ -48,6 +48,7 @@ export function HeroTestimonials() {
               </p>
               <TestimonialFooter className="mt-4">
                 <AvatarRoot size="md">
+                  <AvatarImage src={`https://i.pravatar.cc/160?img=${t.img}`} alt={t.name} />
                   <AvatarFallback>{initials(t.name)}</AvatarFallback>
                 </AvatarRoot>
                 <TestimonialAuthor>

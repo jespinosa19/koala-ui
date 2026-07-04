@@ -28,8 +28,8 @@ export default function DocsIntroPage() {
         : the same design system, as production-ready React components. Components are owned
         source in your repo, styled with a single{" "}
         <code className="font-mono text-sm">tv</code> recipe, accessible by way of Radix
-        primitives, and themed entirely through semantic design tokens. Three themes ship out
-        of the box: light, dark, and moonlight.
+        primitives, and themed entirely through semantic design tokens. Four themes ship out
+        of the box: light, dark, cream, and moonlight.
       </p>
 
       <div className="mt-8 flex flex-wrap gap-3">

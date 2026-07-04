@@ -38,19 +38,19 @@ function Social() {
   return (
     <FooterSocial>
       <FooterSocialLink href="#" aria-label="X">
-        <XLogo />
+        <XLogo weight="bold" />
       </FooterSocialLink>
       <FooterSocialLink href="#" aria-label="Instagram">
-        <InstagramLogo />
+        <InstagramLogo weight="bold" />
       </FooterSocialLink>
       <FooterSocialLink href="#" aria-label="LinkedIn">
-        <LinkedinLogo />
+        <LinkedinLogo weight="bold" />
       </FooterSocialLink>
       <FooterSocialLink href="#" aria-label="GitHub">
-        <GithubLogo />
+        <GithubLogo weight="bold" />
       </FooterSocialLink>
       <FooterSocialLink href="#" aria-label="YouTube">
-        <YoutubeLogo />
+        <YoutubeLogo weight="bold" />
       </FooterSocialLink>
     </FooterSocial>
   )
@@ -93,7 +93,7 @@ export function FooterDemo() {
         <FooterBrand>
           <BrandMark />
           <FooterTagline>
-            The commercial React design system for teams that ship polished product fast.
+            The commercial React design system for teams that ship polished products, fast.
           </FooterTagline>
           <Social />
         </FooterBrand>
@@ -120,7 +120,7 @@ export function FooterNewsletterDemo() {
               <InputField type="email" placeholder="you@company.com" aria-label="Email address" />
             </InputRoot>
             <Button size="sm" iconOnly aria-label="Subscribe">
-              <ArrowRight />
+              <ArrowRight weight="bold" />
             </Button>
           </form>
         </FooterBrand>
@@ -139,7 +139,7 @@ export function FooterMutedDemo() {
         <FooterBrand>
           <BrandMark />
           <FooterTagline>
-            The commercial React design system for teams that ship polished product fast.
+            The commercial React design system for teams that ship polished products, fast.
           </FooterTagline>
           <Social />
         </FooterBrand>
@@ -295,7 +295,7 @@ export function FooterNewsletterStripDemo() {
         <FooterBrand>
           <BrandMark />
           <FooterTagline>
-            The commercial React design system for teams that ship polished product fast.
+            The commercial React design system for teams that ship polished products, fast.
           </FooterTagline>
           <Social />
         </FooterBrand>
@@ -324,16 +324,20 @@ export function FooterNewsletterStripDemo() {
  * self-contained NewsletterForm card (heading, lead, fine print) anchors the right. The card brings
  * its own concentric surface and the --surface contract, so the nested input blends with the panel
  * instead of painting a darker block.
+ *
+ * Responsive: brand + three columns + a 384px card only fit in one row at xl, so the three-way
+ * split holds until then (`lg:flex-col … xl:flex-row`). In the lg band the card drops below the
+ * columns, capped at max-w-md so it stays a compact card and never bleeds full-width.
  */
 export function FooterNewsletterCardDemo() {
   return (
     <Footer>
-      <FooterTop className="lg:items-start lg:gap-16">
+      <FooterTop className="gap-12 lg:flex-col lg:justify-start xl:flex-row xl:items-start xl:gap-16">
         <div className="flex flex-col gap-10 lg:flex-1 lg:flex-row lg:gap-16">
           <FooterBrand>
             <BrandMark />
             <FooterTagline>
-              The commercial React design system for teams that ship polished product fast.
+              The commercial React design system for teams that ship polished products, fast.
             </FooterTagline>
             <Social />
           </FooterBrand>
@@ -344,7 +348,7 @@ export function FooterNewsletterCardDemo() {
           title="Subscribe to our newsletter"
           description="The latest components, templates, and design tips, straight to your inbox."
           fineprint="No spam. Unsubscribe anytime."
-          className="w-full shrink-0 lg:max-w-sm"
+          className="w-full shrink-0 sm:max-w-md xl:max-w-sm"
         />
       </FooterTop>
       <Bottom />

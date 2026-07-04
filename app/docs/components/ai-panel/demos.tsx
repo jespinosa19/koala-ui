@@ -8,6 +8,13 @@ import {
   ClockCounterClockwise,
   ArrowsInSimple,
   ArrowsOutSimple,
+  ChatsCircle,
+  MagnifyingGlass,
+  FileMagnifyingGlass,
+  TextAlignLeft,
+  NotePencil,
+  WifiSlash,
+  ArrowClockwise,
   X,
 } from "@phosphor-icons/react"
 
@@ -49,6 +56,14 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer"
 import { AvatarRoot, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import {
+  EmptyState,
+  EmptyStateMedia,
+  EmptyStateTitle,
+  EmptyStateDescription,
+  EmptyStateActions,
+} from "@/components/ui/empty-state"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 
 // Koala brand mark, saved locally in /public (256×256). Used as the assistant's avatar.
 const KOALA_LOGO = "/koala-logo.webp"
@@ -65,7 +80,7 @@ function HeaderAvatar() {
     <AvatarRoot size="sm">
       <AvatarImage src={KOALA_LOGO} alt="Koala" />
       <AvatarFallback className="bg-muted text-foreground">
-        <Sparkle className="size-4" />
+        <Sparkle weight="bold" className="size-4" />
       </AvatarFallback>
     </AvatarRoot>
   )
@@ -128,10 +143,10 @@ function AssistantPanel({
         </AIPanelHeading>
         <AIPanelActions>
           <AIPanelAction aria-label="History">
-            <ClockCounterClockwise />
+            <ClockCounterClockwise weight="bold" />
           </AIPanelAction>
           <AIPanelAction aria-label="New chat">
-            <PencilSimpleLine />
+            <PencilSimpleLine weight="bold" />
           </AIPanelAction>
           {trailing}
         </AIPanelActions>
@@ -165,7 +180,7 @@ function AssistantPanel({
           <PromptInputTextarea placeholder="Reply to Koala…" />
           <PromptInputToolbar>
             <PromptInputButton iconOnly aria-label="Add photos & files">
-              <Plus />
+              <Plus weight="bold" />
             </PromptInputButton>
             <PromptInputSubmit />
           </PromptInputToolbar>
@@ -196,7 +211,7 @@ export function OverlayDemo() {
       <Drawer open={mode === "drawer"} onOpenChange={(open) => setMode(open ? "drawer" : "closed")}>
         <DrawerTrigger asChild>
           <Button variant="outline">
-            <Sparkle /> Ask Koala
+            <Sparkle weight="bold" /> Ask Koala
           </Button>
         </DrawerTrigger>
         <DrawerContent side="right" size="md" showClose={false} swipeToClose={false} className="p-0">
@@ -206,11 +221,11 @@ export function OverlayDemo() {
             trailing={
               <>
                 <AIPanelAction aria-label="Minimize to window" onClick={() => setMode("floating")}>
-                  <ArrowsInSimple />
+                  <ArrowsInSimple weight="bold" />
                 </AIPanelAction>
                 <AIPanelAction asChild aria-label="Close">
                   <DrawerClose>
-                    <X />
+                    <X weight="bold" />
                   </DrawerClose>
                 </AIPanelAction>
               </>
@@ -225,10 +240,10 @@ export function OverlayDemo() {
           trailing={
             <>
               <AIPanelAction aria-label="Expand to drawer" onClick={() => setMode("drawer")}>
-                <ArrowsOutSimple />
+                <ArrowsOutSimple weight="bold" />
               </AIPanelAction>
               <AIPanelAction aria-label="Close" onClick={() => setMode("closed")}>
-                <X />
+                <X weight="bold" />
               </AIPanelAction>
             </>
           }
@@ -240,7 +255,13 @@ export function OverlayDemo() {
 
 export function EmptyDemo() {
   const [value, setValue] = React.useState("")
-  const starters = ["Summarize my day", "Draft a standup update", "Find a doc"]
+  // Each starter carries an icon that matches its intent (a summary, a draft, a lookup); the
+  // chip keeps it muted, so the glyph differentiates without shouting for color.
+  const starters = [
+    { label: "Summarize my day", icon: TextAlignLeft },
+    { label: "Draft a standup update", icon: NotePencil },
+    { label: "Find a doc", icon: FileMagnifyingGlass },
+  ]
   return (
     <div className="h-[34rem] w-full max-w-md overflow-hidden rounded-xl border border-border shadow-lg">
       <AIPanel>
@@ -252,7 +273,7 @@ export function EmptyDemo() {
           </AIPanelHeading>
           <AIPanelActions>
             <AIPanelAction aria-label="History">
-              <ClockCounterClockwise />
+              <ClockCounterClockwise weight="bold" />
             </AIPanelAction>
           </AIPanelActions>
         </AIPanelHeader>
@@ -261,19 +282,19 @@ export function EmptyDemo() {
           <AvatarRoot size="lg">
             <AvatarImage src={KOALA_LOGO} alt="Koala" />
             <AvatarFallback className="bg-muted text-foreground">
-              <Sparkle className="size-6" />
+              <Sparkle weight="bold" className="size-6" />
             </AvatarFallback>
           </AvatarRoot>
           <div className="flex flex-col gap-1">
-            <p className="text-base font-semibold">How can I help?</p>
+            <p className="text-pretty text-base font-semibold">How can I help?</p>
             <p className="text-pretty text-sm text-muted-foreground">
               Ask about your workspace, draft content, or summarize a thread.
             </p>
           </div>
           <PromptInputSuggestions className="justify-center">
-            {starters.map((s) => (
-              <PromptInputSuggestion key={s} onClick={() => setValue(s)}>
-                <Sparkle className="text-brand" /> {s}
+            {starters.map(({ label, icon: Icon }) => (
+              <PromptInputSuggestion key={label} onClick={() => setValue(label)}>
+                <Icon weight="bold" /> {label}
               </PromptInputSuggestion>
             ))}
           </PromptInputSuggestions>
@@ -284,13 +305,130 @@ export function EmptyDemo() {
             <PromptInputTextarea placeholder="Ask anything…" />
             <PromptInputToolbar>
               <PromptInputButton iconOnly aria-label="Add photos & files">
-                <Plus />
+                <Plus weight="bold" />
               </PromptInputButton>
               <PromptInputSubmit />
             </PromptInputToolbar>
           </PromptInput>
         </AIPanelFooter>
       </AIPanel>
+    </div>
+  )
+}
+
+/**
+ * Beyond the welcome/starter state above, an assistant hits genuine *no-content* moments:
+ * an empty history, a search that finds nothing, a dropped connection. These reach for the
+ * canonical `EmptyState` (zero-data placeholder) dropped straight into the body, which is a
+ * plain flex region. `compact` density fits the in-panel scale, and `variant` re-themes the
+ * media + action for an error (`destructive`) versus a neutral "nothing here yet" (`default`).
+ */
+type EmptyScenario = "history" | "search" | "offline"
+
+const EMPTY_SCENARIOS: Record<
+  EmptyScenario,
+  {
+    label: string
+    variant: "default" | "destructive"
+    icon: React.ReactNode
+    title: string
+    description: string
+    action: { label: string; icon: React.ReactNode }
+  }
+> = {
+  history: {
+    label: "No history",
+    variant: "default",
+    icon: <ChatsCircle weight="bold" />,
+    title: "No saved conversations",
+    description: "Chats you start with Koala show up here, so you can pick them back up later.",
+    action: { label: "Start a chat", icon: <PencilSimpleLine weight="bold" /> },
+  },
+  search: {
+    label: "No results",
+    variant: "default",
+    icon: <MagnifyingGlass weight="bold" />,
+    title: "No matching messages",
+    description: "We couldn't find anything for that search. Try a different word or phrase.",
+    action: { label: "Clear search", icon: <X weight="bold" /> },
+  },
+  offline: {
+    label: "Offline",
+    variant: "destructive",
+    icon: <WifiSlash weight="bold" />,
+    title: "Can't reach the assistant",
+    description: "Koala is offline right now. Check your connection and try again in a moment.",
+    action: { label: "Retry", icon: <ArrowClockwise weight="bold" /> },
+  },
+}
+
+export function EmptyStatesDemo() {
+  const [scenario, setScenario] = React.useState<EmptyScenario>("history")
+  const s = EMPTY_SCENARIOS[scenario]
+  return (
+    <div className="flex w-full max-w-md flex-col items-center gap-4">
+      <ToggleGroup
+        type="single"
+        size="sm"
+        value={scenario}
+        onValueChange={(v) => v && setScenario(v as EmptyScenario)}
+        aria-label="Empty state"
+      >
+        {(Object.keys(EMPTY_SCENARIOS) as EmptyScenario[]).map((key) => (
+          <ToggleGroupItem key={key} value={key}>
+            {EMPTY_SCENARIOS[key].label}
+          </ToggleGroupItem>
+        ))}
+      </ToggleGroup>
+
+      <div className="h-[32rem] w-full overflow-hidden rounded-xl border border-border shadow-lg">
+        <AIPanel>
+          <AIPanelHeader>
+            <HeaderAvatar />
+            <AIPanelHeading>
+              <AIPanelTitle>Koala Assistant</AIPanelTitle>
+              <AIPanelDescription>Always here to help</AIPanelDescription>
+            </AIPanelHeading>
+            <AIPanelActions>
+              <AIPanelAction aria-label="History">
+                <ClockCounterClockwise weight="bold" />
+              </AIPanelAction>
+              <AIPanelAction aria-label="New chat">
+                <PencilSimpleLine weight="bold" />
+              </AIPanelAction>
+            </AIPanelActions>
+          </AIPanelHeader>
+
+          <AIPanelBody className="flex items-center justify-center">
+            <EmptyState density="compact" variant={s.variant}>
+              <EmptyStateMedia>{s.icon}</EmptyStateMedia>
+              <EmptyStateTitle>{s.title}</EmptyStateTitle>
+              <EmptyStateDescription>{s.description}</EmptyStateDescription>
+              <EmptyStateActions>
+                <Button
+                  size="sm"
+                  variant={s.variant === "destructive" ? "destructive" : "primary"}
+                >
+                  {s.action.icon}
+                  {s.action.label}
+                </Button>
+              </EmptyStateActions>
+            </EmptyState>
+          </AIPanelBody>
+
+          <AIPanelFooter>
+            <PromptInput size="sm" onSubmit={() => {}}>
+              <PromptInputTextarea placeholder="Ask anything…" />
+              <PromptInputToolbar>
+                <PromptInputButton iconOnly aria-label="Add photos & files">
+                  <Plus weight="bold" />
+                </PromptInputButton>
+                <PromptInputSubmit />
+              </PromptInputToolbar>
+            </PromptInput>
+          </AIPanelFooter>
+        </AIPanel>
+      </div>
     </div>
   )
 }
@@ -319,7 +457,7 @@ export function WindowModesDemo() {
               setView("split")
             }}
           >
-            <Sparkle /> Ask Koala
+            <Sparkle weight="bold" /> Ask Koala
           </Button>
         )}
       </div>
@@ -337,7 +475,7 @@ export function WindowModesDemo() {
             <AIPanelActions>
               <AIPanelExpandToggle />
               <AIPanelAction aria-label="Close" onClick={() => setOpen(false)}>
-                <X />
+                <X weight="bold" />
               </AIPanelAction>
             </AIPanelActions>
           </AIPanelHeader>
@@ -370,7 +508,7 @@ export function WindowModesDemo() {
               <PromptInputTextarea placeholder="Reply to Koala…" />
               <PromptInputToolbar>
                 <PromptInputButton iconOnly aria-label="Add photos & files">
-                  <Plus />
+                  <Plus weight="bold" />
                 </PromptInputButton>
                 <PromptInputSubmit />
               </PromptInputToolbar>

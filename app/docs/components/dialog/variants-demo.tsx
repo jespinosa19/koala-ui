@@ -2,7 +2,10 @@
 
 import * as React from "react"
 import {
-  X,
+  UserCircle,
+  Trash,
+  Rows,
+  FileText,
   LinkSimple,
   EnvelopeSimple,
   Copy,
@@ -20,217 +23,214 @@ import {
   InputSuffixButton,
   InputLabel,
 } from "@/components/ui/input"
+import { InlineClose } from "./inline-close"
 
 /**
- * Inert, non-portal gallery of every dialog pattern the library ships, painted inline so all
- * variants are visible at once without opening anything (matching the Sizes showcase). We
- * render the real `dialogVariants` slots directly: no Radix Root/Portal, so title/description
- * use plain h2/p (the Radix parts need a Dialog context). The `inert` attribute keeps the
- * painted controls out of the focus order and the a11y tree. The hero ComponentPreview at the
- * top of the page stays a fully interactive, openable dialog.
+ * The core dialog patterns, each painted *inline* (the real `dialogVariants` slots on plain
+ * elements, no Radix Root/Portal) so it renders always-open inside its own responsive PreviewFrame
+ * iframe (see components/docs/dialog-registry.tsx + app/preview/dialogs/[slug]). Title/description
+ * use plain h2/p (the Radix parts need a Dialog context); the footer buttons and the close glyph are
+ * visual, since an inline preview has nothing to submit or dismiss. Every dialog keeps its real
+ * `shadow-lg` here (unlike the old flat gallery) so it reads as a floating modal over the frame's
+ * dimmed backdrop. The Code tab on each block shows the real, openable `Dialog` + `DialogContent`
+ * API you'd copy into an app.
  */
 
-/** The top-right close glyph, sized per density via the real `close` slot. */
-function CloseGlyph({ density = "comfortable" }: { density?: "comfortable" | "compact" }) {
-  const slots = dialogVariants({ density })
-  return (
-    <span className={slots.close()}>
-      <X />
-    </span>
-  )
-}
+// === Default (Edit profile) ===
 
-/** A labelled, inert painted panel: caption on top, real dialog slots below. */
-function Painted({
-  label,
-  note,
-  children,
-}: {
-  label: string
-  note: string
-  children: React.ReactNode
-}) {
+export function DefaultDialog() {
+  const slots = dialogVariants()
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-        <code className="font-mono text-sm font-medium text-foreground">{label}</code>
-        <span className="text-xs text-muted-foreground">{note}</span>
+    <div className={slots.content()}>
+      <div className={slots.icon()}>
+        <UserCircle weight="bold" />
       </div>
-      {/* `inert`: the panel is a static preview, never focusable or in the a11y tree. */}
-      <div inert>{children}</div>
+      <div className={slots.header()}>
+        <h2 className={slots.title()}>Edit profile</h2>
+        <p className={slots.description()}>
+          Make changes to your profile here. Click save when you&apos;re done.
+        </p>
+      </div>
+      <div className={slots.footer()}>
+        <Button variant="ghost">Cancel</Button>
+        <Button>Save changes</Button>
+      </div>
+      <InlineClose />
     </div>
   )
 }
 
-export function DialogVariantsShowcase() {
-  const dDefault = dialogVariants()
-  const dConfirm = dialogVariants({ size: "sm" })
-  const dCompact = dialogVariants({ size: "sm", density: "compact" })
-  const dScroll = dialogVariants()
-  const dShare = dialogVariants()
-  const dAnnounce = dialogVariants({ bordered: true })
+// === Confirmation (destructive, no close button) ===
 
+export function ConfirmationDialog() {
+  const slots = dialogVariants({ size: "sm" })
   return (
-    <div className="flex w-full flex-col gap-8">
-      {/* Default: neutral edit dialog, ghost + primary footer, with close button. */}
-      <Painted label="Default" note="md · ghost + primary footer">
-        <div className={dDefault.content({ className: "mx-auto" })}>
-          <div className={dDefault.header()}>
-            <h2 className={dDefault.title()}>Edit profile</h2>
-            <p className={dDefault.description()}>
-              Make changes to your profile here. Click save when you&apos;re done.
-            </p>
-          </div>
-          <div className={dDefault.footer()}>
-            <Button variant="ghost">Cancel</Button>
-            <Button>Save changes</Button>
-          </div>
-          <CloseGlyph />
-        </div>
-      </Painted>
+    <div className={slots.content()}>
+      {/* Tint the leading icon red for a destructive action. */}
+      <div className={slots.icon({ className: "text-destructive" })}>
+        <Trash weight="bold" />
+      </div>
+      <div className={slots.header()}>
+        <h2 className={slots.title()}>Delete account?</h2>
+        <p className={slots.description()}>
+          This permanently deletes your account and all data. This cannot be undone.
+        </p>
+      </div>
+      <div className={slots.footer()}>
+        <Button variant="ghost">Cancel</Button>
+        <Button variant="destructive">Delete</Button>
+      </div>
+      {/* No close glyph: showClose={false} forces an explicit choice. */}
+    </div>
+  )
+}
 
-      {/* Confirmation: destructive, showClose={false} forces an explicit choice (no X). */}
-      <Painted label="Confirmation" note='size="sm" · showClose={false}'>
-        <div className={dConfirm.content({ className: "mx-auto" })}>
-          <div className={dConfirm.header()}>
-            <h2 className={dConfirm.title()}>Delete account?</h2>
-            <p className={dConfirm.description()}>
-              This permanently deletes your account and all data. This cannot be undone.
-            </p>
-          </div>
-          <div className={dConfirm.footer()}>
-            <Button variant="ghost">Cancel</Button>
-            <Button variant="destructive">Delete</Button>
-          </div>
-        </div>
-      </Painted>
+// === Compact (tighter padding for application UI) ===
 
-      {/* Compact: tighter padding/title for application UI. */}
-      <Painted label="Compact" note='density="compact" · size="sm"'>
-        <div className={dCompact.content({ className: "mx-auto" })}>
-          <div className={dCompact.header()}>
-            <h2 className={dCompact.title()}>Compact dialog</h2>
-            <p className={dCompact.description()}>
-              Tighter padding and a 1rem title for dense application UI.
-            </p>
-          </div>
-          <div className={dCompact.footer()}>
-            <Button>Got it</Button>
-          </div>
-          <CloseGlyph density="compact" />
-        </div>
-      </Painted>
+export function CompactDialog() {
+  const slots = dialogVariants({ size: "sm", density: "compact" })
+  return (
+    <div className={slots.content()}>
+      <div className={slots.icon()}>
+        <Rows weight="bold" />
+      </div>
+      <div className={slots.header()}>
+        <h2 className={slots.title()}>Compact dialog</h2>
+        <p className={slots.description()}>
+          Tighter padding and a 1rem title for dense application UI.
+        </p>
+      </div>
+      <div className={slots.footer()}>
+        <Button>Got it</Button>
+      </div>
+      <InlineClose density="compact" />
+    </div>
+  )
+}
 
-      {/* Scrollable: pinned header/footer, the body scrolls. */}
-      <Painted label="Scrollable" note="pinned header/footer, body scrolls">
-        <div className={dScroll.content({ className: "mx-auto" })}>
-          <div className={dScroll.header()}>
-            <h2 className={dScroll.title()}>Terms of service</h2>
-            <p className={dScroll.description()}>Please read the full terms before accepting.</p>
-          </div>
-          <div className="max-h-48 overflow-y-auto rounded-lg border border-border p-4 text-sm text-muted-foreground [scrollbar-width:thin]">
-            <p className="mb-3">
-              By using this service, you agree to be bound by these Terms of Service. Please read
-              them carefully before proceeding.
-            </p>
-            <p className="mb-3">
-              <strong className="text-foreground">1. Acceptance.</strong> Your access to and use of
-              the service is conditioned on your acceptance of and compliance with these Terms.
-            </p>
-            <p>
-              <strong className="text-foreground">2. Accounts.</strong> When you create an account
-              you must provide accurate, complete and current information at all times.
-            </p>
-          </div>
-          <div className={dScroll.footer()}>
-            <Button variant="ghost">Decline</Button>
-            <Button>Accept</Button>
-          </div>
-          <CloseGlyph />
-        </div>
-      </Painted>
+// === Scrollable body (pinned header/footer, the body scrolls) ===
 
-      {/* Share: leading DialogIcon + composed Koala Input parts. */}
-      <Painted label="Share" note="DialogIcon + composed Input parts">
-        <div className={dShare.content({ className: "mx-auto" })}>
-          <div className={dShare.icon()}>
-            <LinkSimple />
-          </div>
-          <div className={dShare.header()}>
-            <h2 className={dShare.title()}>Share incident</h2>
-            <p className={dShare.description()}>Choose who you want to share the incident with.</p>
-          </div>
-          <div className="grid gap-4">
-            <div className="grid gap-1.5">
-              <InputLabel htmlFor="demo-share-link" required>
-                Copy the link directly
-              </InputLabel>
-              <InputRoot>
-                <InputField
-                  id="demo-share-link"
-                  readOnly
-                  value="lspcad.flab/incident21414"
-                  className="text-muted-foreground"
-                />
-                <InputSuffixButton aria-label="Copy link">
-                  <Copy className="size-4" />
-                </InputSuffixButton>
-              </InputRoot>
-            </div>
-            <div className="grid gap-1.5">
-              <InputLabel htmlFor="demo-share-email" required>
-                Send the link via invitation
-              </InputLabel>
-              <div className="flex items-center gap-2">
-                <InputRoot className="flex-1">
-                  <InputPrefix>
-                    <EnvelopeSimple />
-                  </InputPrefix>
-                  <InputField
-                    id="demo-share-email"
-                    type="email"
-                    placeholder="Enter your email address"
-                  />
-                </InputRoot>
-                <Button>Send invite</Button>
-              </div>
-            </div>
-          </div>
-          <CloseGlyph />
-        </div>
-      </Painted>
+export function ScrollableDialog() {
+  const slots = dialogVariants()
+  return (
+    <div className={slots.content()}>
+      <div className={slots.icon()}>
+        <FileText weight="bold" />
+      </div>
+      <div className={slots.header()}>
+        <h2 className={slots.title()}>Terms of service</h2>
+        <p className={slots.description()}>Please read the full terms before accepting.</p>
+      </div>
+      <div className="max-h-56 overflow-y-auto rounded-lg border border-border p-4 text-sm text-muted-foreground [scrollbar-width:thin]">
+        <p className="mb-3">
+          By using this service, you agree to be bound by these Terms of Service. Please read them
+          carefully before proceeding.
+        </p>
+        <p className="mb-3">
+          <strong className="text-foreground">1. Acceptance.</strong> Your access to and use of the
+          service is conditioned on your acceptance of and compliance with these Terms.
+        </p>
+        <p className="mb-3">
+          <strong className="text-foreground">2. Accounts.</strong> When you create an account you
+          must provide accurate, complete and current information at all times.
+        </p>
+        <p>
+          <strong className="text-foreground">3. Termination.</strong> We may suspend access to the
+          service immediately, without prior notice, for any breach of these Terms.
+        </p>
+      </div>
+      <div className={slots.footer()}>
+        <Button variant="ghost">Decline</Button>
+        <Button>Accept</Button>
+      </div>
+      <InlineClose />
+    </div>
+  )
+}
 
-      {/* Announcement: leading DialogIcon, hero, bordered split footer (helper + actions). */}
-      <Painted label="Announcement" note="DialogIcon + bordered split footer">
-        <div className={dAnnounce.content({ className: "mx-auto" })}>
-          <div className={dAnnounce.icon()}>
-            <Megaphone />
-          </div>
-          <div className={dAnnounce.header()}>
-            <h2 className={dAnnounce.title()}>Mobile Version Now Available!</h2>
-            <p className={dAnnounce.description()}>Access your dashboard anytime, anywhere.</p>
-          </div>
-          <div className="flex aspect-[16/10] flex-col items-center justify-center gap-3 rounded-lg bg-gradient-to-br from-accent to-muted text-muted-foreground">
-            <DeviceMobile className="size-12" />
-            <span className="text-sm font-medium">Dashboard on mobile</span>
-          </div>
-          <p className="text-pretty text-sm text-muted-foreground">
-            Enjoy a seamless experience on the go with our mobile-friendly dashboard. Manage your
-            data, track progress, and stay updated in real-time, all from your smartphone.
-          </p>
-          <div className={dAnnounce.footer({ className: "sm:items-center sm:justify-between" })}>
-            <span className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
-              <Info className="size-4 text-muted-foreground/70" />
-              Need some help? Contact us
-            </span>
-            <div className="flex flex-col-reverse gap-2 sm:flex-row">
-              <Button variant="outline">Cancel</Button>
-              <Button>Create</Button>
-            </div>
-          </div>
-          <CloseGlyph />
+// === Share (leading icon + composed Input parts) ===
+
+export function ShareDialog() {
+  const slots = dialogVariants()
+  return (
+    <div className={slots.content()}>
+      <div className={slots.icon()}>
+        <LinkSimple weight="bold" />
+      </div>
+      <div className={slots.header()}>
+        <h2 className={slots.title()}>Share incident</h2>
+        <p className={slots.description()}>Choose who you want to share the incident with.</p>
+      </div>
+      <div className="grid gap-4">
+        <div className="grid gap-1.5">
+          <InputLabel htmlFor="demo-share-link" required>
+            Copy the link directly
+          </InputLabel>
+          <InputRoot>
+            <InputField
+              id="demo-share-link"
+              readOnly
+              value="lspcad.flab/incident21414"
+              className="text-muted-foreground"
+            />
+            <InputSuffixButton aria-label="Copy link">
+              <Copy weight="bold" className="size-4" />
+            </InputSuffixButton>
+          </InputRoot>
         </div>
-      </Painted>
+        <div className="grid gap-1.5">
+          <InputLabel htmlFor="demo-share-email" required>
+            Send the link via invitation
+          </InputLabel>
+          {/* Stack on mobile so the button never overflows a narrow dialog; row from sm. */}
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <InputRoot className="min-w-0 sm:flex-1">
+              <InputPrefix>
+                <EnvelopeSimple weight="bold" />
+              </InputPrefix>
+              <InputField id="demo-share-email" type="email" placeholder="Enter your email address" />
+            </InputRoot>
+            <Button className="w-full sm:w-auto">Send invite</Button>
+          </div>
+        </div>
+      </div>
+      <InlineClose />
+    </div>
+  )
+}
+
+// === Announcement (leading icon, hero, split footer helper + actions) ===
+
+export function AnnouncementDialog() {
+  const slots = dialogVariants()
+  return (
+    <div className={slots.content()}>
+      <div className={slots.icon()}>
+        <Megaphone weight="bold" />
+      </div>
+      <div className={slots.header()}>
+        <h2 className={slots.title()}>Mobile Version Now Available!</h2>
+        <p className={slots.description()}>Access your dashboard anytime, anywhere.</p>
+      </div>
+      <div className="flex aspect-[16/10] flex-col items-center justify-center gap-3 rounded-lg bg-gradient-to-br from-accent to-muted text-muted-foreground">
+        <DeviceMobile weight="bold" className="size-12" />
+        <span className="text-sm font-medium">Dashboard on mobile</span>
+      </div>
+      <p className="text-pretty text-sm text-muted-foreground">
+        Enjoy a seamless experience on the go with our mobile-friendly dashboard. Manage your data,
+        track progress, and stay updated in real-time, all from your smartphone.
+      </p>
+      <div className={slots.footer({ className: "sm:items-center sm:justify-between" })}>
+        <span className="flex items-center justify-center gap-1.5 text-sm text-muted-foreground">
+          <Info weight="bold" className="size-4 text-muted-foreground/70" />
+          Need some help?
+        </span>
+        <div className="flex flex-col-reverse gap-2 sm:flex-row">
+          <Button variant="outline">Cancel</Button>
+          <Button>Create</Button>
+        </div>
+      </div>
+      <InlineClose />
     </div>
   )
 }

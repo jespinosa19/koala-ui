@@ -65,18 +65,19 @@ const promptInputVariants = tv({
       "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 focus-visible:ring-offset-background",
       "before:absolute before:-inset-2 before:content-['']",
     ],
-    // Suggestion chips: context-free styled pills, meant to sit *above* the composer. Filled
-    // `secondary` (same recipe as a secondary Button: `bg-secondary` + `shadow-xs`), so the row
-    // reads as a quiet, cohesive set rather than outlined tags. Distinct per-starter glyphs (set
-    // at the call site) carry the differentiation, not color.
+    // Suggestion chips: context-free starter pills, meant to sit *above* the composer. Outlined
+    // and transparent (the outline-Button surface: `border-border` + `bg-transparent` + a soft
+    // `shadow-xs`, hover washing to `accent`), so the row reads as a quiet, cohesive set that
+    // blends on any surface rather than a filled block. The leading glyph stays muted and the
+    // distinct per-starter icon (set at the call site) carries the differentiation, not color.
     suggestions: "flex flex-wrap gap-2",
     suggestion: [
       "inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full",
-      "bg-secondary px-3 py-1.5 text-sm text-secondary-foreground shadow-xs",
+      "border border-border bg-transparent px-3 py-1.5 text-sm text-foreground shadow-xs",
       "transition-[color,background-color,transform] duration-fast ease-out",
-      "hover:bg-secondary/80 active:scale-[0.96]",
+      "hover:bg-accent hover:text-accent-foreground active:scale-[0.96]",
       "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-      "[&>svg]:size-5 [&>svg]:shrink-0",
+      "[&>svg]:size-5 [&>svg]:shrink-0 [&>svg]:text-muted-foreground",
     ],
   },
   variants: {
@@ -144,10 +145,11 @@ const controlSize: Record<Size, NonNullable<ButtonProps["size"]>> = {
 const staticSlots = promptInputVariants()
 
 // One source of truth for the composer's icon size: 20px across the whole bar (toolbar actions +
-// the send⇄stop button). Both Button and DropdownMenuItem ship `[&_svg:not([class*='size-'])]:size-4`;
-// repeating that *same* variant at `size-5` lets `tailwind-merge` swap the 16px step for 20px (it keeps
-// the last utility sharing a variant + property), with no `!important` and no per-icon hardcoding. An
-// icon that sets its own `size-*` (e.g. a smaller caret) is still left untouched by the `:not()` guard.
+// the send⇄stop button). `Button` ships `[&_svg:not([class*='size-'])]:size-4`; repeating that *same*
+// variant at `size-5` lets `tailwind-merge` swap the 16px step for 20px (it keeps the last utility
+// sharing a variant + property), with no `!important` and no per-icon hardcoding. (Menu rows like
+// DropdownMenuItem already default to size-5, so this is a harmless no-op there.) An icon that sets
+// its own `size-*` (e.g. a smaller caret) is still left untouched by the `:not()` guard.
 const ICON_20 = "[&_svg:not([class*='size-'])]:size-5"
 
 // ─── Context ──────────────────────────────────────────────────────────────────
@@ -441,7 +443,7 @@ export function PromptInputSubmit({
         className={cn("ml-auto", ICON_20, className)}
         {...props}
       >
-        <Stop />
+        <Stop weight="bold" />
       </Button>
     )
   }
@@ -458,7 +460,7 @@ export function PromptInputSubmit({
       className={cn("ml-auto", ICON_20, className)}
       {...props}
     >
-      {children ?? <ArrowUp />}
+      {children ?? <ArrowUp weight="bold" />}
     </Button>
   )
 }
@@ -557,7 +559,7 @@ export function PromptInputBanner({
       <div className={slots.bannerRow()}>
         {showIcon && (
           <span data-slot="prompt-input-banner-icon" aria-hidden className={slots.bannerIcon()}>
-            {icon ?? <ToneIcon />}
+            {icon ?? <ToneIcon weight="bold" />}
           </span>
         )}
         <div data-slot="prompt-input-banner-content" className={slots.bannerContent()}>
@@ -571,7 +573,7 @@ export function PromptInputBanner({
             onClick={onClose}
             className={slots.bannerClose()}
           >
-            <X />
+            <X weight="bold" />
           </button>
         )}
       </div>

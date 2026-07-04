@@ -2,13 +2,15 @@
 
 import * as React from "react"
 import {
-  MagnifyingGlass,
+  Envelope,
   ShieldCheck,
   User,
   Eye,
   CurrencyDollar,
   CurrencyEur,
   CurrencyGbp,
+  Copy,
+  Check,
 } from "@phosphor-icons/react"
 
 import { InputGroup, InputGroupAddon } from "@/components/ui/input-group"
@@ -22,19 +24,39 @@ import {
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 
-// Hero: an icon adornment lives *inside* the field segment (InputPrefix); the trailing
-// action stays a real, filled Button. One ring wraps the whole row on focus.
-export function SearchGroupDemo() {
+// Hero: the purest fuse - a "$" affix, the elastic amount field, and a trailing currency
+// Select, joined into one shell with a single ring. No action button lives inside; a
+// prominent action always stays detached (see NewsletterGroupDemo).
+export function AmountGroupDemo() {
   return (
-    <div className="w-full max-w-md">
+    <div className="w-full max-w-sm">
       <InputGroup>
+        <InputGroupAddon>$</InputGroupAddon>
         <InputRoot>
-          <InputPrefix>
-            <MagnifyingGlass />
-          </InputPrefix>
-          <InputField placeholder="Search components" aria-label="Search" />
+          <InputField
+            inputMode="decimal"
+            placeholder="0.00"
+            defaultValue="1,250.00"
+            className="tabular-nums"
+            aria-label="Amount"
+          />
         </InputRoot>
-        <Button>Search</Button>
+        <Select defaultValue="usd">
+          <SelectTrigger aria-label="Currency">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="usd">
+              <CurrencyDollar weight="bold" /> USD
+            </SelectItem>
+            <SelectItem value="eur">
+              <CurrencyEur weight="bold" /> EUR
+            </SelectItem>
+            <SelectItem value="gbp">
+              <CurrencyGbp weight="bold" /> GBP
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </InputGroup>
     </div>
   )
@@ -62,92 +84,149 @@ export function AddonsDemo() {
   )
 }
 
-// The full [Select][input][Button] triple: a Select segment owns the leading affix,
-// the field flexes to fill, the Button caps the row.
+// A prominent text action does NOT melt into the field. Keep it a real, self-contained
+// Button in a flex row (`items-stretch gap-2`) so the heights line up and it reads as a
+// button, not a segment. The field flexes; the Button caps the row from *outside*.
+export function NewsletterGroupDemo() {
+  return (
+    <div className="w-full max-w-md">
+      <div className="flex items-stretch gap-2">
+        <InputRoot className="flex-1">
+          <InputPrefix>
+            <Envelope weight="bold" />
+          </InputPrefix>
+          <InputField
+            type="email"
+            placeholder="Enter your email address"
+            aria-label="Email address"
+          />
+        </InputRoot>
+        <Button>Subscribe</Button>
+      </div>
+    </div>
+  )
+}
+
+// The Select IS a fused segment (it melts into the shell), but the "Invite" text action
+// stays detached beside the group - same rule as the newsletter, one step richer.
 export function InviteGroupDemo() {
   return (
     <div className="w-full max-w-md">
-      <InputGroup>
-        <Select defaultValue="member">
-          <SelectTrigger aria-label="Role">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="admin">
-              <ShieldCheck /> Admin
-            </SelectItem>
-            <SelectItem value="member">
-              <User /> Member
-            </SelectItem>
-            <SelectItem value="viewer">
-              <Eye /> Viewer
-            </SelectItem>
-          </SelectContent>
-        </Select>
-        <InputRoot>
-          <InputField
-            type="email"
-            placeholder="teammate@company.com"
-            aria-label="Email to invite"
-          />
-        </InputRoot>
+      <div className="flex items-stretch gap-2">
+        <InputGroup className="flex-1">
+          <Select defaultValue="member">
+            <SelectTrigger aria-label="Role">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="admin">
+                <ShieldCheck weight="bold" /> Admin
+              </SelectItem>
+              <SelectItem value="member">
+                <User weight="bold" /> Member
+              </SelectItem>
+              <SelectItem value="viewer">
+                <Eye weight="bold" /> Viewer
+              </SelectItem>
+            </SelectContent>
+          </Select>
+          <InputRoot>
+            <InputField
+              type="email"
+              placeholder="teammate@company.com"
+              aria-label="Email to invite"
+            />
+          </InputRoot>
+        </InputGroup>
         <Button>Invite</Button>
-      </InputGroup>
+      </div>
     </div>
   )
 }
 
-// [$][amount][currency]: an addon prefix, the flexible field, and a trailing Select.
-export function AmountGroupDemo() {
+// The sanctioned exception: a *small icon-only* action (copy, clear, a submit arrow) may
+// melt into the shell as a fused segment. It keeps its fill and hover but drops its radius /
+// ring / press-scale, so it sits flush like any other segment.
+export function CopyFieldDemo() {
+  const [copied, setCopied] = React.useState(false)
+
+  function copy() {
+    navigator.clipboard?.writeText("koala.dev/s/ab12cd").catch(() => {})
+    setCopied(true)
+    window.setTimeout(() => setCopied(false), 1500)
+  }
+
   return (
     <div className="w-full max-w-sm">
       <InputGroup>
-        <InputGroupAddon>$</InputGroupAddon>
+        <InputGroupAddon>koala.dev/</InputGroupAddon>
         <InputRoot>
           <InputField
-            inputMode="decimal"
-            placeholder="0.00"
-            defaultValue="1,250.00"
-            className="tabular-nums"
-            aria-label="Amount"
+            readOnly
+            defaultValue="s/ab12cd"
+            aria-label="Share link"
+            className="font-mono"
           />
         </InputRoot>
-        <Select defaultValue="usd">
-          <SelectTrigger aria-label="Currency">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="usd">
-              <CurrencyDollar /> USD
-            </SelectItem>
-            <SelectItem value="eur">
-              <CurrencyEur /> EUR
-            </SelectItem>
-            <SelectItem value="gbp">
-              <CurrencyGbp /> GBP
-            </SelectItem>
-          </SelectContent>
-        </Select>
+        <Button
+          iconOnly
+          variant="ghost"
+          onClick={copy}
+          aria-label={copied ? "Copied" : "Copy link"}
+        >
+          <span className="relative flex size-4 items-center justify-center">
+            <Copy
+              weight="bold"
+              aria-hidden
+              className={`absolute size-4 transition-[opacity,scale] duration-fast ease-out ${copied ? "scale-50 opacity-0" : "scale-100 opacity-100"}`}
+            />
+            <Check
+              weight="bold"
+              aria-hidden
+              className={`absolute size-4 text-success transition-[opacity,scale] duration-fast ease-out ${copied ? "scale-100 opacity-100" : "scale-50 opacity-0"}`}
+            />
+          </span>
+        </Button>
       </InputGroup>
     </div>
   )
 }
 
-// One height knob for the whole shell; give the inner controls the matching size.
+// One height knob for the whole shell; give the inner controls - and the detached Button -
+// the matching size so every part lines up.
 export function SizesDemo() {
   const sizes = ["sm", "md", "lg"] as const
   return (
     <div className="flex w-full max-w-md flex-col gap-4">
       {sizes.map((size) => (
-        <InputGroup key={size} size={size}>
-          <InputRoot size={size}>
-            <InputPrefix>
-              <MagnifyingGlass />
-            </InputPrefix>
-            <InputField placeholder={`Search (${size})`} aria-label={`Search ${size}`} />
-          </InputRoot>
-          <Button size={size}>Search</Button>
-        </InputGroup>
+        <div key={size} className="flex items-stretch gap-2">
+          <InputGroup size={size} className="flex-1">
+            <Select defaultValue="member">
+              <SelectTrigger aria-label={`Role (${size})`}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="admin">
+                  <ShieldCheck weight="bold" /> Admin
+                </SelectItem>
+                <SelectItem value="member">
+                  <User weight="bold" /> Member
+                </SelectItem>
+                <SelectItem value="viewer">
+                  <Eye weight="bold" /> Viewer
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            <InputRoot size={size}>
+              <InputField
+                type="email"
+                placeholder="teammate@company.com"
+                aria-label={`Email ${size}`}
+              />
+            </InputRoot>
+          </InputGroup>
+          <Button size={size}>Invite</Button>
+        </div>
       ))}
     </div>
   )

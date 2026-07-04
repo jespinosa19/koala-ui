@@ -5,10 +5,11 @@ import { DocHeader, DocSection } from "@/components/docs/doc-page"
 import { Faq } from "@/components/docs/faq"
 
 import {
-  SearchGroupDemo,
-  AddonsDemo,
-  InviteGroupDemo,
   AmountGroupDemo,
+  AddonsDemo,
+  NewsletterGroupDemo,
+  InviteGroupDemo,
+  CopyFieldDemo,
   SizesDemo,
   StatesDemo,
 } from "./demos"
@@ -22,21 +23,28 @@ export default function InputGroupDocsPage() {
     <>
       <DocHeader
         title="Input Group"
-        description="Joins several controls - a field, a Select, a Button, a static affix - into one seamless segmented shell. The group owns the border and focus ring; each segment goes chromeless and melts in. It is to the input family what Button Group is to Button."
+        description="Joins several controls - a field, a Select, a static affix, a small icon-only action - into one seamless segmented shell. The group owns the border and focus ring; each segment goes chromeless and melts in. A prominent text action, though, stays a detached Button beside the group - never a big button crammed inside the field."
       />
 
       <ComponentPreview
         code={`<InputGroup>
+  <InputGroupAddon>$</InputGroupAddon>
   <InputRoot>
-    <InputPrefix>
-      <MagnifyingGlass />
-    </InputPrefix>
-    <InputField placeholder="Search components" aria-label="Search" />
+    <InputField inputMode="decimal" defaultValue="1,250.00" className="tabular-nums" aria-label="Amount" />
   </InputRoot>
-  <Button>Search</Button>
+  <Select defaultValue="usd">
+    <SelectTrigger aria-label="Currency">
+      <SelectValue />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="usd"><CurrencyDollar /> USD</SelectItem>
+      <SelectItem value="eur"><CurrencyEur /> EUR</SelectItem>
+      <SelectItem value="gbp"><CurrencyGbp /> GBP</SelectItem>
+    </SelectContent>
+  </Select>
 </InputGroup>`}
       >
-        <SearchGroupDemo />
+        <AmountGroupDemo />
       </ComponentPreview>
 
       <DocSection title="Installation">
@@ -69,13 +77,74 @@ export function Example() {
           An <code className="font-mono text-sm">Input</code> already handles adornments{" "}
           <em>inside a single field</em> - a leading icon (
           <code className="font-mono text-sm">InputPrefix</code>), a divided label (
-          <code className="font-mono text-sm">InputPrefixLabel</code>), a trailing button (
+          <code className="font-mono text-sm">InputPrefixLabel</code>), a trailing icon button (
           <code className="font-mono text-sm">InputSuffixButton</code>). Reach for{" "}
           <code className="font-mono text-sm">InputGroup</code> only when you need to{" "}
-          <em>join several distinct controls</em> - a Select, a Button, another field, a
-          static affix - into one unit. One shell, one focus ring, one set of rounded
-          corners.
+          <em>join several distinct controls</em> - a Select, another field, a static affix -
+          into one unit. One shell, one focus ring, one set of rounded corners.
         </p>
+        <p className="mt-4 text-pretty text-muted-foreground">
+          A prominent <em>text</em> action - Subscribe, Invite, Search - does not belong
+          inside the shell. Crammed in, it reads as a button trapped in a field. Keep it a
+          detached <code className="font-mono text-sm">Button</code> beside the group instead
+          (see below). Only a small <em>icon-only</em> action may melt in.
+        </p>
+      </DocSection>
+
+      <DocSection title="Pairing with an action">
+        <p className="mt-4 text-pretty text-muted-foreground">
+          Do not fuse a big text button into the field. Drop the group (or a plain{" "}
+          <code className="font-mono text-sm">InputRoot</code>) and the{" "}
+          <code className="font-mono text-sm">Button</code> into one flex row (
+          <code className="font-mono text-sm">items-stretch gap-2</code>) at the same size:
+          the field flexes, the button caps the row from <em>outside</em>, and the heights
+          line up on their own. It reads as a real button, not a segment.
+        </p>
+        <ComponentPreview
+          code={`<div className="flex items-stretch gap-2">
+  <InputRoot className="flex-1">
+    <InputPrefix>
+      <Envelope />
+    </InputPrefix>
+    <InputField type="email" placeholder="Enter your email address" aria-label="Email address" />
+  </InputRoot>
+  <Button>Subscribe</Button>
+</div>`}
+        >
+          <NewsletterGroupDemo />
+        </ComponentPreview>
+      </DocSection>
+
+      <DocSection title="With a Select">
+        <p className="mt-4 text-pretty text-muted-foreground">
+          Drop a real <code className="font-mono text-sm">Select</code> in as a segment and
+          it melts into the shell - its own border, ring, and background are stripped while
+          its menu, keyboard nav, and ARIA stay intact. The field flexes to fill the row.
+          The <code className="font-mono text-sm">Invite</code> action, being a text button,
+          stays detached beside the group - same rule as the newsletter, one step richer.
+        </p>
+        <ComponentPreview
+          code={`<div className="flex items-stretch gap-2">
+  <InputGroup className="flex-1">
+    <Select defaultValue="member">
+      <SelectTrigger aria-label="Role">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="admin"><ShieldCheck /> Admin</SelectItem>
+        <SelectItem value="member"><User /> Member</SelectItem>
+        <SelectItem value="viewer"><Eye /> Viewer</SelectItem>
+      </SelectContent>
+    </Select>
+    <InputRoot>
+      <InputField type="email" placeholder="teammate@company.com" aria-label="Email to invite" />
+    </InputRoot>
+  </InputGroup>
+  <Button>Invite</Button>
+</div>`}
+        >
+          <InviteGroupDemo />
+        </ComponentPreview>
       </DocSection>
 
       <DocSection title="Text affixes">
@@ -104,60 +173,27 @@ export function Example() {
         </ComponentPreview>
       </DocSection>
 
-      <DocSection title="With a Select">
+      <DocSection title="Icon-only actions can melt in">
         <p className="mt-4 text-pretty text-muted-foreground">
-          Drop a real <code className="font-mono text-sm">Select</code> in as a segment and
-          it melts into the shell - its own border, ring, and background are stripped while
-          its menu, keyboard nav, and ARIA stay intact. The field flexes to fill the row; the
-          trailing <code className="font-mono text-sm">Button</code> keeps its fill and caps
-          the group.
+          The one action that <em>may</em> live inside the shell is a small{" "}
+          <em>icon-only</em> button - copy, clear, a submit arrow. With no label to
+          crowd the field, it sits flush as a fused segment: it keeps its fill and hover but
+          drops its own radius, ring, and press-scale. Use{" "}
+          <code className="font-mono text-sm">iconOnly</code> and give it an{" "}
+          <code className="font-mono text-sm">aria-label</code>.
         </p>
         <ComponentPreview
           code={`<InputGroup>
-  <Select defaultValue="member">
-    <SelectTrigger aria-label="Role">
-      <SelectValue />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectItem value="admin"><ShieldCheck /> Admin</SelectItem>
-      <SelectItem value="member"><User /> Member</SelectItem>
-      <SelectItem value="viewer"><Eye /> Viewer</SelectItem>
-    </SelectContent>
-  </Select>
+  <InputGroupAddon>koala.dev/</InputGroupAddon>
   <InputRoot>
-    <InputField type="email" placeholder="teammate@company.com" aria-label="Email to invite" />
+    <InputField readOnly defaultValue="s/ab12cd" aria-label="Share link" className="font-mono" />
   </InputRoot>
-  <Button>Invite</Button>
+  <Button iconOnly variant="ghost" aria-label="Copy link" onClick={copy}>
+    {copied ? <Check /> : <Copy />}
+  </Button>
 </InputGroup>`}
         >
-          <InviteGroupDemo />
-        </ComponentPreview>
-      </DocSection>
-
-      <DocSection title="Amount + currency">
-        <p className="mt-4 text-pretty text-muted-foreground">
-          A symbol affix, the flexible amount field, and a trailing currency Select - the
-          classic money input as one joined control.
-        </p>
-        <ComponentPreview
-          code={`<InputGroup>
-  <InputGroupAddon>$</InputGroupAddon>
-  <InputRoot>
-    <InputField inputMode="decimal" placeholder="0.00" className="tabular-nums" aria-label="Amount" />
-  </InputRoot>
-  <Select defaultValue="usd">
-    <SelectTrigger aria-label="Currency">
-      <SelectValue />
-    </SelectTrigger>
-    <SelectContent>
-      <SelectItem value="usd"><CurrencyDollar /> USD</SelectItem>
-      <SelectItem value="eur"><CurrencyEur /> EUR</SelectItem>
-      <SelectItem value="gbp"><CurrencyGbp /> GBP</SelectItem>
-    </SelectContent>
-  </Select>
-</InputGroup>`}
-        >
-          <AmountGroupDemo />
+          <CopyFieldDemo />
         </ComponentPreview>
       </DocSection>
 
@@ -167,16 +203,19 @@ export function Example() {
           (<code className="font-mono text-sm">sm</code> 32,{" "}
           <code className="font-mono text-sm">md</code> 36,{" "}
           <code className="font-mono text-sm">lg</code> 40px) and the affix scale. Give the
-          inner controls the matching size so every segment lines up.
+          inner controls - and the detached Button - the matching size so every part lines
+          up.
         </p>
         <ComponentPreview
-          code={`<InputGroup size="sm">
-  <InputRoot size="sm">{/* ... */}</InputRoot>
-  <Button size="sm">Search</Button>
-</InputGroup>
+          code={`<div className="flex items-stretch gap-2">
+  <InputGroup size="sm" className="flex-1">
+    <Select defaultValue="member">{/* ... */}</Select>
+    <InputRoot size="sm">{/* ... */}</InputRoot>
+  </InputGroup>
+  <Button size="sm">Invite</Button>
+</div>
 
-<InputGroup size="md">{/* ... */}</InputGroup>
-<InputGroup size="lg">{/* ... */}</InputGroup>`}
+{/* size="md" ... size="lg" ... */}`}
         >
           <SizesDemo />
         </ComponentPreview>
@@ -270,19 +309,23 @@ export function Example() {
           items={[
             {
               q: "When do I use InputGroup vs the Input adornments?",
-              a: "Input already covers adornments inside one field: a leading icon (InputPrefix), a divided label (InputPrefixLabel), a trailing button (InputSuffixButton). Use InputGroup only when you are joining several distinct controls - a Select, a Button, another field, a static affix - into one shell. If everything lives in a single field, you do not need InputGroup.",
+              a: "Input already covers adornments inside one field: a leading icon (InputPrefix), a divided label (InputPrefixLabel), a trailing icon button (InputSuffixButton). Use InputGroup only when you are joining several distinct controls - a Select, another field, a static affix - into one shell. If everything lives in a single field, you do not need InputGroup.",
+            },
+            {
+              q: "Why isn't the action button inside the group?",
+              a: "A prominent text action - Subscribe, Invite, Search - reads better as its own button beside the field than melted into the shell, where it looks like a button trapped in an input. Keep it detached in a flex row (flex items-stretch gap-2) at the same size, so the field flexes and the heights line up. Only a small icon-only action (copy, clear, a submit arrow) should melt into the group.",
+            },
+            {
+              q: "So an icon-only button CAN go inside?",
+              a: "Yes. With no label to crowd the field, a small icon-only Button sits flush as a fused segment - it keeps its fill and hover but drops its radius, ring, and press-scale. That is the one button that belongs inside the shell. Anything with a text label stays detached beside the group.",
             },
             {
               q: "How does it join controls without the borders doubling up?",
-              a: "The group owns the single border, radius, focus ring, and background. Each known segment (input-root, select-trigger, button) is stripped of its own frame via data-slot selectors and the seams are redrawn as one 1px divider per junction. It is the same approach Button Group uses, adapted so the whole shell shares one focus ring.",
+              a: "The group owns the single border, radius, focus ring, and background. Each known segment (input-root, select-trigger, and a fused icon-only button) is stripped of its own frame via data-slot selectors and the seams are redrawn as one 1px divider per junction. It is the same approach Button Group uses, adapted so the whole shell shares one focus ring.",
             },
             {
-              q: "Do Select and Button still work normally inside it?",
-              a: "Yes. They are the real components - only their chrome is neutralized for layout. The Select keeps its menu, keyboard navigation, and ARIA; the Button keeps its fill, hover, and click. NumberInput and PhoneInput compose too, since they render an input-root.",
-            },
-            {
-              q: "How do I keep every segment the same height?",
-              a: "Set the same size on the group and on each inner control (e.g. size=\"lg\" on InputGroup, InputRoot, and Button). The shell governs the height via items-stretch, so even mismatched controls align, but matching the size keeps text and padding consistent too.",
+              q: "How do I keep every segment - and the detached button - the same height?",
+              a: "Height comes from one shared scale: Button, Input, InputGroup, and Select all map size sm/md/lg to 32/36/40px. So give the group, each inner control, and the detached Button the same size (e.g. size=\"lg\") and they're identical - no height overrides. Density never changes a control's height; it only sets the DEFAULT size when you don't pass one (compact app shell -> sm, comfortable -> md), so a bare group and a bare Button still match. The flex row's items-stretch is the final guarantee.",
             },
             {
               q: "Does it wire up to Field?",

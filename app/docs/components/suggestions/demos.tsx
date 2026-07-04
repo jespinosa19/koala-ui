@@ -13,7 +13,7 @@ export function SuggestionsDemo() {
   return (
     <div className="flex w-full max-w-xl flex-col gap-4">
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Sparkle className="size-4 shrink-0 text-brand" />
+        <Sparkle weight="bold" className="size-4 shrink-0 text-brand" />
         {reviewed < TOTAL ? (
           <span>
             <span className="font-medium tabular-nums text-foreground">{TOTAL - reviewed}</span>{" "}

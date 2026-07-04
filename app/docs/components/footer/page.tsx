@@ -28,7 +28,7 @@ export default function FooterDocsPage() {
         code={`<Footer>
   <FooterTop>
     <FooterBrand>
-      <a href="/">Koala</a>
+      <BrandMark />
       <FooterTagline>The commercial React design system…</FooterTagline>
       <FooterSocial>
         <FooterSocialLink href="#" aria-label="X"><XLogo /></FooterSocialLink>
@@ -76,7 +76,7 @@ export default function FooterDocsPage() {
           locked
         previewClassName="block p-0"
           code={`<FooterBrand>
-  <a href="/">Koala</a>
+  <BrandMark />
   <FooterTagline>Get product updates. No spam.</FooterTagline>
   <form className="flex items-center gap-2">
     <InputRoot size="sm" className="max-w-2xs">
@@ -118,7 +118,7 @@ export default function FooterDocsPage() {
           code={`<Footer density="compact">
   <FooterBottom className="mt-0 border-t-0 pt-0">
     <div className="flex items-center gap-3">
-      <a href="/">Koala</a>
+      <BrandMark />
       <FooterCopyright>© 2026 Koala UI</FooterCopyright>
     </div>
     <FooterLegal>

@@ -87,6 +87,7 @@ export function Example() {
   required
   label="Verification code"
   hint="Check your authenticator app."
+  placeholder="0"
 />`}
         >
           <OTPInput
@@ -94,6 +95,7 @@ export function Example() {
             required
             label="Verification code"
             hint="Check your authenticator app."
+            placeholder="0"
           />
         </ComponentPreview>
       </DocSection>

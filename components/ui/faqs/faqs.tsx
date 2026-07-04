@@ -32,6 +32,12 @@ import { cn } from "@/lib/utils"
  * comes along for free, so there's no new behavior to hand-roll. Marketing is comfortable
  * by nature, so the section owns no density axis - density still forwards through to the
  * underlying Accordion via `FaqsList`.
+ *
+ * For a long, categorized help center, `FaqsGroup` slots topic clusters between the header
+ * and footer: a topic heading (+ optional blurb) above its own question list. Each group is
+ * a self-contained `FaqsList`, so single-expand is scoped per topic (one open answer per
+ * category, the knowledge-base norm) and the minimal hairline dividers reset cleanly at
+ * every group boundary. The header→topic→questions→topic rhythm is the grouped variant.
  */
 export const faqsVariants = tv({
   slots: {
@@ -44,6 +50,16 @@ export const faqsVariants = tv({
     // List spacing/placement only; the Accordion's own chrome (border, dividers) comes from
     // its `variant`. Merged onto the Accordion root, so no extra wrapper node.
     list: "",
+    // A topic cluster (the grouped variant): a heading above its own question list. The
+    // top margin (set per-layout) is what separates one topic from the header and the next.
+    group: "flex flex-col",
+    // The topic heading: an <h3>, clearly subordinate to the section <h2> (FaqsTitle) so the
+    // outline reads header → topic → questions. Smaller than the section lede, never rivals it.
+    groupTitle: "text-xl font-semibold tracking-tight text-balance text-foreground sm:text-2xl",
+    groupDescription: "mt-2 max-w-2xl text-sm text-pretty text-muted-foreground sm:text-base",
+    // Gap between the topic heading and its questions. Merged onto the inner FaqsList, so it
+    // overrides the layout's own `list` margin within a group.
+    groupList: "mt-5",
     // The "still have questions?" CTA row: muted prose with the action sitting beside it.
     footer:
       "flex flex-col items-center justify-center gap-x-4 gap-y-3 text-pretty text-center text-muted-foreground sm:flex-row",
@@ -54,13 +70,18 @@ export const faqsVariants = tv({
         root: "mx-auto flex max-w-3xl flex-col",
         header: "items-center text-center",
         list: "mt-10",
+        // Topics stand apart from the header and from each other with a uniform top margin;
+        // the centered header above, the left-aligned topic clusters below.
+        group: "mt-12 first:mt-10",
         footer: "mt-12",
       },
       // items-start lets the header column go `sticky`. Grid is 1-col on mobile (stacks),
-      // splitting into header | list from `lg` up.
+      // splitting into header | list from `lg` up. Grouped topics are a stacked-layout
+      // pattern; if one is dropped here it spans both columns rather than wedging into the grid.
       split: {
         root: "grid items-start gap-x-16 gap-y-10 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]",
         header: "lg:sticky lg:top-24",
+        group: "lg:col-span-2",
         footer: "mt-2 lg:col-span-2",
       },
     },
@@ -110,6 +131,51 @@ export function FaqsDescription({ className, ...props }: React.ComponentProps<"p
 }
 
 export type FaqsListProps = Partial<AccordionProps>
+
+// `type` intersection, not `interface extends`: FaqsListProps is `Partial<AccordionProps>`,
+// and AccordionProps carries Radix's single/multiple discriminated union, which an interface
+// can't extend (no statically-known members). The intersection keeps every forwarded list prop.
+export type FaqsGroupProps = FaqsListProps & {
+  /** The topic heading shown above this group's questions. Rendered as an `<h3>`. */
+  title?: React.ReactNode
+  /** Optional supporting copy under the topic heading. */
+  description?: React.ReactNode
+  /** Class for the group wrapper (the topic heading + list). */
+  className?: string
+  /** Class forwarded to the inner `FaqsList`. */
+  listClassName?: string
+  /** The group's `FaqsItem`s. */
+  children?: React.ReactNode
+}
+
+/**
+ * A topic cluster for the grouped / help-center variant: a heading (and optional blurb)
+ * above its own question list. Drop several between `FaqsHeader` and `FaqsFooter` to split a
+ * long FAQ into categories ("Most asked", "Billing", ...). Each group owns its own
+ * `FaqsList`, so single-expand is scoped to the topic and the hairline dividers reset at
+ * every boundary. Defaults to the borderless `minimal` list (the categorized look); every
+ * `FaqsList` / Accordion prop (`variant`, `type`, `defaultValue`, `iconPosition`, `density`)
+ * still forwards through, so a group can opt into `card` or open its first answer like any list.
+ */
+export function FaqsGroup({
+  title,
+  description,
+  className,
+  listClassName,
+  children,
+  ...listProps
+}: FaqsGroupProps) {
+  const { slots } = useFaqsContext("FaqsGroup")
+  return (
+    <div data-slot="faqs-group" className={slots.group({ className })}>
+      {title ? <h3 className={slots.groupTitle()}>{title}</h3> : null}
+      {description ? <p className={slots.groupDescription()}>{description}</p> : null}
+      <FaqsList variant="minimal" className={slots.groupList({ className: listClassName })} {...listProps}>
+        {children}
+      </FaqsList>
+    </div>
+  )
+}
 
 /**
  * The Q&A list. A thin wrapper over Accordion with marketing defaults (single-expand,
@@ -223,11 +289,11 @@ export function FaqsFeedback({
         aria-label="Was this answer helpful?"
       >
         <ToggleGroupItem value="up">
-          <ThumbsUp />
+          <ThumbsUp weight="bold" />
           {helpfulLabel}
         </ToggleGroupItem>
         <ToggleGroupItem value="down">
-          <ThumbsDown />
+          <ThumbsDown weight="bold" />
           {notHelpfulLabel}
         </ToggleGroupItem>
       </ToggleGroup>

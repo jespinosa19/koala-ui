@@ -54,22 +54,22 @@ export const NAV: NavEntry[] = [
 
 /** Hero feature checklist (6 items, 2 rows). Content mirrors the original hero. */
 export const HERO_FEATURES = [
-  "Build & ideate fast",
-  "Light, Dark & Moonlight themes at 1 click",
-  "+3,200 Components",
-  "New updates every month",
-  "Consistent responsive",
-  "Never start from 0 again",
+  "89 accessible components",
+  "Light, dark, cream & moonlight themes",
+  "Own every line of source",
+  "New components every month",
+  "Responsive, typed by default",
+  "Never start from a blank file",
 ] as const
 
 /** Top announcement bar content. */
 export const ANNOUNCEMENT = {
-  text: "Koala UI now available for Mobile Apps!",
+  text: "New: cream and moonlight themes just landed.",
   linkLabel: "Check it out",
   href: "#",
 } as const
 
-/** Feature deep-dive cards ("Never start from scratch"). `icon` resolved in feature-grid. */
+/** Feature deep-dive cards ("The hard parts, already handled"). `icon` resolved in feature-grid. */
 export interface Feature {
   icon:
     | "react"
@@ -97,9 +97,9 @@ export const FEATURES: Feature[] = [
   },
   {
     icon: "themes",
-    title: "3 themes, 8 accents",
+    title: "4 themes, 8 accents",
     description:
-      "Light, dark, and moonlight themes plus eight accent colors, all driven by semantic CSS variables. Re-theme the whole system from one token.",
+      "Light, dark, cream, and moonlight themes plus eight accent colors, all driven by semantic CSS variables. Re-theme the whole system from one token.",
   },
   {
     icon: "density",
@@ -128,49 +128,56 @@ export interface Metric {
 }
 
 export const METRICS: Metric[] = [
-  { value: "60+", label: "React components" },
-  { value: "3", label: "Themes" },
-  { value: "8", label: "Accent colors" },
+  { value: "89", label: "React components" },
+  { value: "260+", label: "Variants & recipes" },
+  { value: "4", label: "Themes" },
   { value: "100%", label: "TypeScript" },
 ]
 
-/** Social-proof testimonials. `avatar` omitted on purpose: the card uses initials. */
+/** Social-proof testimonials. Authors default to a real headshot (`img`), initials as fallback. */
 export interface Testimonial {
   quote: string
   name: string
   title: string
+  /** Author portrait: a `pravatar.cc` image number (the repo's avatar-photo convention). */
+  img: number
 }
 
 export const TESTIMONIALS: Testimonial[] = [
   {
     quote:
-      "We replaced our half-finished in-house kit with Koala UI in a weekend. Everything just felt consistent, down to the focus rings.",
+      "We swapped our half-built in-house kit for Koala over a weekend. Suddenly everything matched, right down to the focus rings.",
     name: "Alex Rivera",
     title: "Founder, Lumen",
+    img: 13,
   },
   {
     quote:
-      "Owning the source is the killer feature. We copy a component in, tweak the recipe, and it still matches the rest of the system.",
+      "Owning the source is the whole point. We pull a component in, adjust the recipe, and it still fits the rest of the system.",
     name: "Priya Nair",
     title: "Staff Engineer, Northwind",
+    img: 45,
   },
   {
     quote:
-      "The theming is genuinely one click. Our dark mode shipped the same afternoon we installed it.",
+      "Re-theming is one token layer. We shipped dark and cream mode the same afternoon we installed it.",
     name: "Tomas Berg",
     title: "Design Engineer, Field",
+    img: 33,
   },
   {
     quote:
-      "Radix under the hood means I stopped worrying about keyboard and screen-reader bugs. They are just handled.",
+      "With Radix underneath, keyboard and screen-reader bugs just stopped turning up in review.",
     name: "Mei Lin",
     title: "Frontend Lead, Cadence",
+    img: 32,
   },
   {
     quote:
-      "It looks finished out of the box. The polish on hover and press states is what sold our designers.",
+      "It arrives finished. The hover and press states are what won our designers over.",
     name: "Daniel Okafor",
     title: "Co-founder, Relay",
+    img: 59,
   },
 ]
 
@@ -185,36 +192,41 @@ export interface HeroTestimonial {
   body: string
   name: string
   title: string
+  /** Author portrait: a `pravatar.cc` image number (the repo's avatar-photo convention). */
+  img: number
 }
 
 export const HERO_TESTIMONIALS: HeroTestimonial[] = [
   {
     brand: "Halcyon",
-    headline: "The UI kit looks fantastic, incredibly extensive.",
-    body: "Especially impressed that it's all there from day one, so you get a huge head start in building your next product.",
+    headline: "It felt finished from day one.",
+    body: "Every component was there, styled, and accessible the moment we installed it. We had a real product screen up that same afternoon.",
     name: "Liam McCabe",
     title: "Founder, Halcyon",
+    img: 12,
   },
   {
     brand: "Forge",
-    headline: "We've built an entire app in 1 week.",
-    body: "Thanks to all the +3,200 components and pre-made sections, we've been able to complete a 120-screen project in 1 week.",
+    headline: "We shipped a full app in a week.",
+    body: "With every component and pre-built section ready to compose, work that used to take us a month took a week.",
     name: "Jordi Espinosa",
-    title: "Founder, Forge",
+    title: "Engineering Lead, Forge",
+    img: 33,
   },
   {
     brand: "Quanta",
-    headline: "There's simply no comparison.",
-    body: "Dark and cream mode, top-notch components, and an abundance of templates. It's every designer's dream, all in one place.",
+    headline: "Nothing else comes close.",
+    body: "Four themes with cream and moonlight, genuinely polished components, and we own every line of the source. It's every design engineer's dream.",
     name: "Carlos Gerónimo",
     title: "Product Lead, Quanta",
+    img: 51,
   },
 ]
 
 /** Social-proof headline counts. */
 export const SOCIAL_PROOF = {
-  builders: 620, // TBD
-  rating: "5.0", // TBD
+  builders: "11,300",
+  rating: "4.8",
 } as const
 
 /** Pricing tiers: Free, Figma, and the premium Figma + React bundle. */
@@ -239,8 +251,8 @@ export const PRICING: PricingTier[] = [
     description: "The full React component library, free to use in any project.",
     cta: { label: "Start for free", href: "/docs" },
     features: [
-      "60+ React components",
-      "Design tokens and 3 themes",
+      "89 React components",
+      "Design tokens and 4 themes",
       "CLI access (free tier)",
       "Lifetime updates",
       "1 developer",
@@ -300,7 +312,7 @@ export const FAQ: FaqItem[] = [
   {
     question: "What is the difference between Free and PRO?",
     answer:
-      "Free gives you the entire component library, design tokens, and three themes. PRO adds composed marketing sections, full page templates, and priority updates.",
+      "Free gives you the entire component library, design tokens, and all four themes. PRO adds composed marketing sections, full page templates, and priority updates.",
   },
   {
     question: "Which frameworks does it support?",
@@ -310,7 +322,7 @@ export const FAQ: FaqItem[] = [
   {
     question: "How many themes are there?",
     answer:
-      "Three themes (light, dark, and moonlight) plus eight accent colors. Everything is driven by semantic CSS variables, so switching is a single token change.",
+      "Four themes (light, dark, cream, and moonlight) plus eight accent colors. Everything is driven by semantic CSS variables, so switching is a single token change.",
   },
   {
     question: "How often is it updated?",
@@ -334,12 +346,35 @@ export const FAQ: FaqItem[] = [
   },
 ]
 
+/**
+ * The same FAQ entries, grouped into topics for the sectioned / help-center FAQ slab
+ * (faq-section-2). Slices straight from `FAQ` so the questions stay the single source of truth
+ * and never drift from the flat list.
+ */
+export interface FaqTopic {
+  topic: string
+  questions: FaqItem[]
+}
+
+export const FAQ_TOPICS: FaqTopic[] = [
+  { topic: "Getting started", questions: FAQ.slice(0, 2) },
+  { topic: "The product", questions: FAQ.slice(2, 6) },
+  { topic: "Plans and billing", questions: FAQ.slice(6) },
+]
+
 /** Changelog / "New month, new updates". Dates and notes are placeholders. */
+export type ChangelogCategory = "New" | "Improved" | "Fixed"
+
 export interface ChangelogEntry {
   version: string
   date: string
   title: string
   description: string
+  /**
+   * Optional release tag. Consumed by the richer changelog section variants (the timeline rail
+   * and the media-card grid) to tint a marker and label the entry; the base card list ignores it.
+   */
+  category?: ChangelogCategory
 }
 
 export const CHANGELOG: ChangelogEntry[] = [
@@ -348,7 +383,8 @@ export const CHANGELOG: ChangelogEntry[] = [
     date: "Dec 13, 2025", // TBD
     title: "Koala UI for React",
     description:
-      "The full React library lands: 60+ components, three themes, eight accents, and the koalaui CLI.",
+      "The full React library lands: 89 components, four themes, eight accents, and the koalaui CLI.",
+    category: "New",
   },
   {
     version: "v0.9",
@@ -356,6 +392,7 @@ export const CHANGELOG: ChangelogEntry[] = [
     title: "Data display family",
     description:
       "Charts, data tables, stats, and rankings join the library, all dependency-light and themeable.",
+    category: "New",
   },
   {
     version: "v0.8",
@@ -363,6 +400,7 @@ export const CHANGELOG: ChangelogEntry[] = [
     title: "Forms blocks",
     description:
       "Composed form blocks for auth, contact, payment, and more, each with built-in state and success flows.",
+    category: "New",
   },
   {
     version: "v0.7",
@@ -370,6 +408,7 @@ export const CHANGELOG: ChangelogEntry[] = [
     title: "Accessibility pass",
     description:
       "A full sweep across every component for keyboard, focus, and screen-reader behavior on top of Radix.",
+    category: "Improved",
   },
 ]
 

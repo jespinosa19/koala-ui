@@ -18,7 +18,7 @@ import {
   ListItemDescription,
   ListItemMeta,
 } from "@/components/ui/list"
-import { AvatarRoot, AvatarFallback } from "@/components/ui/avatar"
+import { AvatarRoot, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { ComponentPreview } from "@/components/docs/component-preview"
@@ -78,21 +78,21 @@ export default function ListDocsPage() {
           <ListItem asChild>
             <a href="#account">
               <ListItemMedia>
-                <User />
+                <User weight="bold" />
               </ListItemMedia>
               <ListItemContent>
                 <ListItemTitle>Account</ListItemTitle>
                 <ListItemDescription>Profile, email, password</ListItemDescription>
               </ListItemContent>
               <ListItemMeta>
-                <CaretRight />
+                <CaretRight weight="bold" />
               </ListItemMeta>
             </a>
           </ListItem>
           <ListItem asChild>
             <a href="#billing">
               <ListItemMedia>
-                <CreditCard />
+                <CreditCard weight="bold" />
               </ListItemMedia>
               <ListItemContent>
                 <ListItemTitle>Billing</ListItemTitle>
@@ -102,21 +102,21 @@ export default function ListDocsPage() {
                 <Badge variant="success" size="sm" pill>
                   Pro
                 </Badge>
-                <CaretRight />
+                <CaretRight weight="bold" />
               </ListItemMeta>
             </a>
           </ListItem>
           <ListItem asChild>
             <a href="#security">
               <ListItemMedia>
-                <ShieldCheck />
+                <ShieldCheck weight="bold" />
               </ListItemMedia>
               <ListItemContent>
                 <ListItemTitle>Security</ListItemTitle>
                 <ListItemDescription>2FA, sessions, devices</ListItemDescription>
               </ListItemContent>
               <ListItemMeta>
-                <CaretRight />
+                <CaretRight weight="bold" />
               </ListItemMeta>
             </a>
           </ListItem>
@@ -170,14 +170,14 @@ export function Example() {
           <div className="mx-auto grid w-full max-w-2xl gap-8 sm:grid-cols-2">
             <List variant="card">
               <ListItem>
-                <ListItemMedia><Bell /></ListItemMedia>
+                <ListItemMedia><Bell weight="bold" /></ListItemMedia>
                 <ListItemContent>
                   <ListItemTitle>Notifications</ListItemTitle>
                 </ListItemContent>
                 <ListItemMeta>3</ListItemMeta>
               </ListItem>
               <ListItem>
-                <ListItemMedia><Globe /></ListItemMedia>
+                <ListItemMedia><Globe weight="bold" /></ListItemMedia>
                 <ListItemContent>
                   <ListItemTitle>Language</ListItemTitle>
                 </ListItemContent>
@@ -186,14 +186,14 @@ export function Example() {
             </List>
             <List variant="plain">
               <ListItem>
-                <ListItemMedia><Bell /></ListItemMedia>
+                <ListItemMedia><Bell weight="bold" /></ListItemMedia>
                 <ListItemContent>
                   <ListItemTitle>Notifications</ListItemTitle>
                 </ListItemContent>
                 <ListItemMeta>3</ListItemMeta>
               </ListItem>
               <ListItem>
-                <ListItemMedia><Globe /></ListItemMedia>
+                <ListItemMedia><Globe weight="bold" /></ListItemMedia>
                 <ListItemContent>
                   <ListItemTitle>Language</ListItemTitle>
                 </ListItemContent>
@@ -220,7 +220,10 @@ export function Example() {
           code={`<ListItem asChild>
   <a href="/team/ana">
     <ListItemMedia>
-      <AvatarRoot size="sm"><AvatarFallback>AT</AvatarFallback></AvatarRoot>
+      <AvatarRoot size="sm">
+        <AvatarImage src="https://i.pravatar.cc/160?img=5" alt="Ana Torres" />
+        <AvatarFallback>AT</AvatarFallback>
+      </AvatarRoot>
     </ListItemMedia>
     <ListItemContent>
       <ListItemTitle>Ana Torres</ListItemTitle>
@@ -232,14 +235,15 @@ export function Example() {
         >
           <List className="mx-auto w-full max-w-md">
             {[
-              { initials: "AT", name: "Ana Torres", email: "ana@koalaui.com", role: "Admin" },
-              { initials: "MV", name: "Marc Vidal", email: "marc@koalaui.com", role: "Editor" },
-              { initials: "LR", name: "Lucia Ramos", email: "lucia@koalaui.com", role: "Viewer" },
+              { initials: "AT", name: "Ana Torres", email: "ana@koalaui.com", role: "Admin", img: 5 },
+              { initials: "MV", name: "Marc Vidal", email: "marc@koalaui.com", role: "Editor", img: 12 },
+              { initials: "LR", name: "Lucia Ramos", email: "lucia@koalaui.com", role: "Viewer", img: 9 },
             ].map((m) => (
               <ListItem key={m.initials} asChild>
                 <a href="#member">
                   <ListItemMedia>
                     <AvatarRoot size="sm">
+                      <AvatarImage src={`https://i.pravatar.cc/160?img=${m.img}`} alt={m.name} />
                       <AvatarFallback>{m.initials}</AvatarFallback>
                     </AvatarRoot>
                   </ListItemMedia>
@@ -251,7 +255,7 @@ export function Example() {
                     <Badge variant="secondary" size="sm">
                       {m.role}
                     </Badge>
-                    <CaretRight />
+                    <CaretRight weight="bold" />
                   </ListItemMeta>
                 </a>
               </ListItem>
@@ -281,7 +285,7 @@ export function Example() {
         >
           <List className="mx-auto w-full max-w-md">
             <ListItem>
-              <ListItemMedia><Bell /></ListItemMedia>
+              <ListItemMedia><Bell weight="bold" /></ListItemMedia>
               <ListItemContent>
                 <ListItemTitle>Push notifications</ListItemTitle>
                 <ListItemDescription>Alerts on this device</ListItemDescription>
@@ -291,7 +295,7 @@ export function Example() {
               </ListItemMeta>
             </ListItem>
             <ListItem>
-              <ListItemMedia><Lock /></ListItemMedia>
+              <ListItemMedia><Lock weight="bold" /></ListItemMedia>
               <ListItemContent>
                 <ListItemTitle>Private profile</ListItemTitle>
                 <ListItemDescription>Hide from search</ListItemDescription>
@@ -301,7 +305,7 @@ export function Example() {
               </ListItemMeta>
             </ListItem>
             <ListItem>
-              <ListItemMedia><Gear /></ListItemMedia>
+              <ListItemMedia><Gear weight="bold" /></ListItemMedia>
               <ListItemContent>
                 <ListItemTitle>Beta features</ListItemTitle>
                 <ListItemDescription>Early access builds</ListItemDescription>
@@ -311,47 +315,6 @@ export function Example() {
               </ListItemMeta>
             </ListItem>
           </List>
-        </ComponentPreview>
-      </DocSection>
-
-      <DocSection title="Density">
-        <p className="mt-4 text-pretty text-muted-foreground">
-          Density tunes the per-row padding and gap. <code className="font-mono text-sm">compact</code>{" "}
-          (default) suits dense app UI; <code className="font-mono text-sm">comfortable</code>{" "}
-          is roomier. It also honors a surrounding{" "}
-          <code className="font-mono text-sm">DensityProvider</code>.
-        </p>
-        <ComponentPreview
-          previewClassName="block"
-          code={`<List density="compact">…</List>
-<List density="comfortable">…</List>`}
-        >
-          <div className="mx-auto grid w-full max-w-2xl gap-8 sm:grid-cols-2">
-            <List density="compact">
-              <ListItem>
-                <ListItemMedia><User /></ListItemMedia>
-                <ListItemContent><ListItemTitle>Account</ListItemTitle></ListItemContent>
-                <ListItemMeta><CaretRight /></ListItemMeta>
-              </ListItem>
-              <ListItem>
-                <ListItemMedia><CreditCard /></ListItemMedia>
-                <ListItemContent><ListItemTitle>Billing</ListItemTitle></ListItemContent>
-                <ListItemMeta><CaretRight /></ListItemMeta>
-              </ListItem>
-            </List>
-            <List density="comfortable">
-              <ListItem>
-                <ListItemMedia><User /></ListItemMedia>
-                <ListItemContent><ListItemTitle>Account</ListItemTitle></ListItemContent>
-                <ListItemMeta><CaretRight /></ListItemMeta>
-              </ListItem>
-              <ListItem>
-                <ListItemMedia><CreditCard /></ListItemMedia>
-                <ListItemContent><ListItemTitle>Billing</ListItemTitle></ListItemContent>
-                <ListItemMeta><CaretRight /></ListItemMeta>
-              </ListItem>
-            </List>
-          </div>
         </ComponentPreview>
       </DocSection>
 
@@ -370,11 +333,6 @@ export function Example() {
               </li>
               <li>
                 <code className="font-mono">divided</code>: <code className="font-mono">boolean</code>; hairline rule between rows (default <code className="font-mono">true</code>).
-              </li>
-              <li>
-                <code className="font-mono">density</code>: <code className="font-mono">&quot;compact&quot;</code>{" "}
-                (default) | <code className="font-mono">&quot;comfortable&quot;</code>; honors{" "}
-                <code className="font-mono">DensityProvider</code>.
               </li>
               <li>
                 <code className="font-mono">asChild</code>: <code className="font-mono">boolean</code>; render via Radix Slot.
@@ -422,7 +380,6 @@ export function Example() {
             { q: "What is the difference between the asChild and interactive props on ListItem?", a: "`interactive` adds the hover fill, press nudge, and focus ring to a plain `<li>` that handles its own `onClick`. `asChild` does that and also hands the row surface to a link/button child. Setting `asChild` turns `interactive` on automatically." },
             { q: "How do I compose the row parts?", a: "Put a `ListItemMedia` (icon or Avatar) first, a `ListItemContent` wrapping `ListItemTitle` and `ListItemDescription` in the middle, and a `ListItemMeta` for trailing badges, a chevron, or a Switch. The title truncates rather than pushing the meta off the row." },
             { q: "What is the difference between the card and plain variants?", a: "`card` (default) bands the rows inside a bordered, shadowed surface. `plain` drops that chrome so rows sit flush on whatever holds them. Both keep the hairline divider unless you set `divided={false}`." },
-            { q: "Does List honor density?", a: "Yes. The `density` prop tunes per-row padding and gap, with `compact` (default) for dense app UI and `comfortable` for a roomier feel, and it also reads a surrounding `DensityProvider`." },
           ]}
         />
       </DocSection>

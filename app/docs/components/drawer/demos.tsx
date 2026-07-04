@@ -48,10 +48,10 @@ import {
 /** One trigger per edge: the same drawer recipe, four `side` values. */
 export function DrawerSidesShowcase() {
   const sides: { side: DrawerSide; label: string; icon: React.ReactNode }[] = [
-    { side: "top", label: "Top", icon: <ArrowLineUp /> },
-    { side: "right", label: "Right", icon: <ArrowLineRight /> },
-    { side: "bottom", label: "Bottom", icon: <ArrowLineDown /> },
-    { side: "left", label: "Left", icon: <ArrowLineLeft /> },
+    { side: "top", label: "Top", icon: <ArrowLineUp weight="bold" /> },
+    { side: "right", label: "Right", icon: <ArrowLineRight weight="bold" /> },
+    { side: "bottom", label: "Bottom", icon: <ArrowLineDown weight="bold" /> },
+    { side: "left", label: "Left", icon: <ArrowLineLeft weight="bold" /> },
   ]
   return (
     <div className="flex flex-wrap gap-3">
@@ -97,16 +97,16 @@ export function DrawerSidesShowcase() {
  */
 export function MobileSheetDemo() {
   const actions = [
-    { icon: <Copy />, label: "Copy link" },
-    { icon: <Export />, label: "Share to…" },
-    { icon: <Star />, label: "Add to favorites" },
-    { icon: <TrashSimple />, label: "Delete", destructive: true },
+    { icon: <Copy weight="bold" />, label: "Copy link" },
+    { icon: <Export weight="bold" />, label: "Share to…" },
+    { icon: <Star weight="bold" />, label: "Add to favorites" },
+    { icon: <TrashSimple weight="bold" />, label: "Delete", destructive: true },
   ]
   return (
     <Drawer>
       <DrawerTrigger asChild>
         <Button variant="outline">
-          <LinkIcon /> Open action sheet
+          <LinkIcon weight="bold" /> Open action sheet
         </Button>
       </DrawerTrigger>
       <DrawerContent side="bottom" showClose={false}>
@@ -202,12 +202,12 @@ export function DrawerFormDemo() {
 /** A left drawer as a mobile navigation menu: long, scrollable body. */
 export function NavigationDrawerDemo() {
   const items = [
-    { icon: <House />, label: "Dashboard" },
-    { icon: <ChartBar />, label: "Analytics" },
-    { icon: <Users />, label: "Team" },
-    { icon: <CreditCard />, label: "Billing" },
-    { icon: <Gear />, label: "Settings" },
-    { icon: <Lifebuoy />, label: "Support" },
+    { icon: <House weight="bold" />, label: "Dashboard" },
+    { icon: <ChartBar weight="bold" />, label: "Analytics" },
+    { icon: <Users weight="bold" />, label: "Team" },
+    { icon: <CreditCard weight="bold" />, label: "Billing" },
+    { icon: <Gear weight="bold" />, label: "Settings" },
+    { icon: <Lifebuoy weight="bold" />, label: "Support" },
   ]
   return (
     <Drawer>
@@ -252,7 +252,7 @@ function NavRow({ view, icon, label }: { view: string; icon: React.ReactNode; la
       >
         <span className="text-muted-foreground">{icon}</span>
         {label}
-        <CaretRight className="ml-auto text-muted-foreground" />
+        <CaretRight weight="bold" className="ml-auto text-muted-foreground" />
       </button>
     </DrawerNavTrigger>
   )
@@ -288,7 +288,7 @@ export function NestedSheetDemo() {
     <Drawer>
       <DrawerTrigger asChild>
         <Button variant="outline">
-          <Gear /> Settings
+          <Gear weight="bold" /> Settings
         </Button>
       </DrawerTrigger>
       <DrawerContent side="bottom" showClose={false}>
@@ -296,9 +296,9 @@ export function NestedSheetDemo() {
           <DrawerView view="root">
             <ViewHeader title="Settings" />
             <DrawerBody className="pb-2">
-              <NavRow view="account" icon={<UserCircle />} label="Account" />
-              <NavRow view="notifications" icon={<BellSimple />} label="Notifications" />
-              <NavRow view="privacy" icon={<Lock />} label="Privacy & security" />
+              <NavRow view="account" icon={<UserCircle weight="bold" />} label="Account" />
+              <NavRow view="notifications" icon={<BellSimple weight="bold" />} label="Notifications" />
+              <NavRow view="privacy" icon={<Lock weight="bold" />} label="Privacy & security" />
             </DrawerBody>
           </DrawerView>
 
@@ -311,7 +311,7 @@ export function NestedSheetDemo() {
                   <InputField id="nested-name" defaultValue="Ada Lovelace" />
                 </InputRoot>
               </div>
-              <NavRow view="privacy" icon={<ShareNetwork />} label="Connected accounts" />
+              <NavRow view="privacy" icon={<ShareNetwork weight="bold" />} label="Connected accounts" />
             </DrawerBody>
           </DrawerView>
 
@@ -328,7 +328,7 @@ export function NestedSheetDemo() {
             <ViewHeader title="Privacy & security" />
             <DrawerBody className="pb-2">
               <ToggleRow label="Private profile" defaultChecked />
-              <NavRow view="region" icon={<Globe />} label="Region & language" />
+              <NavRow view="region" icon={<Globe weight="bold" />} label="Region & language" />
             </DrawerBody>
           </DrawerView>
 

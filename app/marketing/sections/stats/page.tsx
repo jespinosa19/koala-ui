@@ -13,6 +13,10 @@ const VARIANTS = [
   "stats-section-4",
   "stats-section-5",
   "stats-section-6",
+  "stats-section-7",
+  "stats-section-8",
+  "stats-section-9",
+  "stats-section-10",
 ] as const
 
 export default function StatsSectionsPage() {
@@ -20,7 +24,7 @@ export default function StatsSectionsPage() {
     <>
       <DocHeader
         title="Stats"
-        description="The library at a glance: a four-up band of metrics on one segmented surface, with tabular figures that keep the row steady. Collapses to a two-up grid on mobile."
+        description="Proof, counted. Ten ways to turn coverage, adoption, and outcomes into a band of figures, from a bare ruled row to an elevated inverse panel and a mixed grid of numbers and voices. Tabular figures keep every row from reflowing as it updates."
       />
 
       <div className="flex flex-col gap-8">
@@ -55,12 +59,12 @@ export default function StatsSectionsPage() {
         <Faq
           items={[
             {
-              q: "What is the difference between this and the Stat component?",
-              a: "The component (in /docs/components/stat) is the installable engine. This section is a finished metrics band built from it: a four-up StatGroup on one segmented surface, ready to sit between two larger sections.",
+              q: "How is this different from the Stat component?",
+              a: "The Stat component (in /docs/components/stat) is the installable engine. These sections are finished bands built from it: a StatGroup composed into a ruled row, an inverse panel, or a mixed grid of figures and voices, ready to drop between two larger sections.",
             },
             {
               q: "Can I preview it in another theme?",
-              a: "Yes. The preview follows the site theme, so switch it from the top-right of the docs to check the band in light, dark, or moonlight.",
+              a: "Yes. Previews follow the site theme, so switch it from the top-right of the docs to check any band in light, dark, cream, or moonlight.",
             },
           ]}
         />

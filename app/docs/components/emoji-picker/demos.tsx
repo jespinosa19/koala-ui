@@ -34,7 +34,7 @@ export function EmojiPickerPopoverDemo() {
           {emoji ? (
             <span className="text-base leading-none">{emoji}</span>
           ) : (
-            <Smiley />
+            <Smiley weight="bold" />
           )}
           {emoji ? "Change emoji" : "Add emoji"}
         </Button>

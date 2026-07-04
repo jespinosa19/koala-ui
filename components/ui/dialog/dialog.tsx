@@ -12,7 +12,7 @@ import { Stepper, type StepperProps } from "@/components/ui/stepper"
 /**
  * Dialog: a multi-part component over Radix Dialog (focus trap, scroll lock, a11y, exit
  * animations via Presence). Pattern: one `tv` recipe with `slots`. `size` affects the
- * content width; `density` (lib/density.tsx) tightens padding/gaps/title for application
+ * content width; `density` (lib/density.tsx) tightens padding/gaps for application
  * UI. DialogContent resolves density once and re-provides it to its children, so every
  * part stays in sync, with no Context plumbing of our own. See docs/ARCHITECTURE.md §2.
  *
@@ -56,15 +56,19 @@ export const dialogVariants = tv({
       "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
       "disabled:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
     ],
-    header: "flex flex-col text-center sm:text-left",
+    // Always left-aligned so the header lines up with the leading DialogIcon and the footer at
+    // every width. (Radix/shadcn center on mobile, but Koala dialogs lead with a left icon, so
+    // centering only the text left the icon hanging beside a centered title on a phone.)
+    header: "flex flex-col text-left",
     // Full-bleed band for a Stepper in a wizard dialog: the negative margins cancel the
-    // content's horizontal padding so the divider beneath spans edge-to-edge (both densities
-    // pad 16px). Vertical padding tracks density; the divider itself is opt-out in DialogStepper.
-    stepper: "-mx-4 px-4",
+    // content's horizontal padding so the divider beneath spans edge-to-edge. The bleed must
+    // match `content` padding, which differs by density (comfortable 20px, compact 16px), so
+    // the whole value lives in the density variant below (the divider is opt-out in DialogStepper).
+    stepper: "",
     footer: "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
-    // (footer top spacing lives in the `density` variant below)
-    title: "leading-none font-semibold tracking-tight",
-    description: "text-base text-pretty text-muted-foreground",
+    // (footer spacing + its default top divider live in the `density`/`bordered` variants below)
+    title: "text-base leading-none font-semibold tracking-tight",
+    description: "text-sm text-pretty text-muted-foreground",
     // A leading icon above the title (share, announcement, feedback…). Muted by default so
     // it reads as a quiet category marker, not a hero illustration. Size tracks density.
     icon: "text-muted-foreground [&_svg]:shrink-0",
@@ -72,20 +76,25 @@ export const dialogVariants = tv({
   variants: {
     size: {
       sm: { content: "max-w-sm" },
-      md: { content: "max-w-lg" },
+      // md is the default and the width nearly every dialog should use: 30rem (480px). It's a
+      // deliberate arbitrary value (no Tailwind max-w token lands on 30rem) so the canonical
+      // dialog is a touch narrower than max-w-lg. Reach for sm/lg/xl only when a dialog genuinely
+      // needs less or more.
+      md: { content: "max-w-[30rem]" },
       lg: { content: "max-w-2xl" },
       xl: { content: "max-w-4xl" },
     },
     // Density is Koala's cross-cutting spacing axis (see lib/density.tsx). `comfortable`
     // is the marketing default; `compact` tightens padding/gaps for application UI.
     density: {
-      comfortable: { content: "gap-4 px-4 pt-6 pb-4", header: "gap-1.5", stepper: "pb-4", footer: "mt-4", title: "text-xl", close: "size-7", icon: "[&_svg]:size-6" },
-      compact: { content: "gap-3 p-4", header: "gap-1", stepper: "pb-3", footer: "mt-2", title: "text-lg", close: "size-6", icon: "[&_svg]:size-5" },
+      comfortable: { content: "gap-4 p-5", header: "gap-1.5", stepper: "-mx-5 px-5 pb-4", footer: "mt-4", close: "size-7", icon: "[&_svg]:size-6" },
+      compact: { content: "gap-3 p-4", header: "gap-1", stepper: "-mx-4 px-4 pb-3", footer: "mt-2", close: "size-6", icon: "[&_svg]:size-5" },
     },
-    // Full-bleed top divider on the footer + bottom-flush padding, for footers carrying a
-    // helper on the left and split actions on the right (announcements, checkout, task
-    // creation). The negative margins cancel the content's padding so the divider spans
-    // edge-to-edge; the exact values track density (both pad 16px), hence the compounds.
+    // The footer's full-bleed top divider, ON BY DEFAULT (the canonical dialog look: the footer
+    // reads as a distinct action band). The negative margins cancel the content's padding so the
+    // divider + band span edge-to-edge; the band pads 12px vertically with a horizontal bleed that
+    // tracks density (comfortable 20px, compact 16px) so it must equal `content`, hence the
+    // compounds. `bordered={false}` drops the divider for a footer that just sits below the body.
     bordered: {
       true: {},
       false: {},
@@ -95,18 +104,18 @@ export const dialogVariants = tv({
     {
       bordered: true,
       density: "comfortable",
-      class: { footer: "mt-0 -mx-4 -mb-4 border-t border-border px-4 pt-4 pb-4" },
+      class: { footer: "mt-0 -mx-5 -mb-5 border-t border-border px-5 pt-3 pb-3" },
     },
     {
       bordered: true,
       density: "compact",
-      class: { footer: "mt-0 -mx-4 -mb-4 border-t border-border px-4 pt-3 pb-4" },
+      class: { footer: "mt-0 -mx-4 -mb-4 border-t border-border px-4 pt-3 pb-3" },
     },
   ],
   defaultVariants: {
     size: "md",
     density: "comfortable",
-    bordered: false,
+    bordered: true,
   },
 })
 
@@ -156,7 +165,7 @@ export function DialogContent({
           <DensityProvider density={resolvedDensity}>{children}</DensityProvider>
           {showClose && (
             <DialogPrimitive.Close aria-label={closeLabel} className={slots.close()}>
-              <X />
+              <X weight="bold" />
             </DialogPrimitive.Close>
           )}
         </DialogPrimitive.Content>
@@ -215,8 +224,9 @@ export function DialogStepper({
 
 export interface DialogFooterProps extends React.ComponentProps<"div"> {
   /**
-   * Full-bleed top divider + bottom-flush padding, for footers with a helper on the left
-   * and split actions on the right. Pair with `className="sm:justify-between"` to spread them.
+   * Full-bleed top divider above the footer, **on by default** (bottom-flush 12px band). Set
+   * `false` for a borderless footer that just sits below the body. For a helper on the left and
+   * split actions on the right, keep the default and add `className="sm:justify-between"`.
    */
   bordered?: boolean
 }

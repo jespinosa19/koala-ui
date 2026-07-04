@@ -303,7 +303,7 @@ export function FileUploadIcon({ className, children, ...props }: FileUploadIcon
   const { slots } = useFileUploadContext("FileUploadIcon")
   return (
     <div data-slot="file-upload-icon" aria-hidden className={slots.icon({ className })} {...props}>
-      {children ?? <UploadSimple weight="regular" />}
+      {children ?? <UploadSimple weight="bold" />}
     </div>
   )
 }

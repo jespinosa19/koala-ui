@@ -37,7 +37,7 @@ export function SpringDemo() {
                   on ? "scale-100 opacity-100" : "scale-50 opacity-0",
                 )}
               >
-                <Check className="size-7" />
+                <Check weight="bold" className="size-7" />
               </div>
             </div>
             <div className="text-center">
@@ -81,7 +81,7 @@ export function PressDemo() {
           )}
         >
           <span className="flex size-9 items-center justify-center rounded-lg bg-muted text-foreground transition-colors duration-fast ease-out group-hover:bg-brand group-hover:text-white">
-            <Icon className="size-5" />
+            <Icon weight="bold" className="size-5" />
           </span>
           <span className="flex flex-col gap-0.5">
             <span className="text-sm font-medium text-foreground">{title}</span>
@@ -161,7 +161,7 @@ export function ReducedMotionDemo() {
           <ToggleGroupItem value="reduced">Reduced motion</ToggleGroupItem>
         </ToggleGroup>
         <Button size="sm" variant="outline" onClick={() => setRunId((n) => n + 1)}>
-          <ArrowClockwise />
+          <ArrowClockwise weight="bold" />
           Replay
         </Button>
       </div>

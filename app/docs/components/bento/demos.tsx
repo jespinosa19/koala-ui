@@ -17,7 +17,7 @@ export function BentoDemo() {
     <Bento className="w-full">
       <BentoItem size="md" tone="brand">
         <BentoItemIcon>
-          <Storefront />
+          <Storefront weight="bold" />
         </BentoItemIcon>
         <BentoItemTitle>Store templates</BentoItemTitle>
         <BentoItemDescription>
@@ -28,7 +28,7 @@ export function BentoDemo() {
 
       <BentoItem size="md" tone="teal">
         <BentoItemIcon>
-          <ChartLineUp />
+          <ChartLineUp weight="bold" />
         </BentoItemIcon>
         <BentoItemTitle>High-converting experience</BentoItemTitle>
         <BentoItemDescription>
@@ -39,7 +39,7 @@ export function BentoDemo() {
 
       <BentoItem size="sm" tone="purple">
         <BentoItemIcon>
-          <Palette />
+          <Palette weight="bold" />
         </BentoItemIcon>
         <BentoItemTitle>Maximum personalization</BentoItemTitle>
         <BentoItemDescription>
@@ -54,7 +54,7 @@ export function BentoDemo() {
 
       <BentoItem size="sm" tone="orange">
         <BentoItemIcon>
-          <BookOpen />
+          <BookOpen weight="bold" />
         </BentoItemIcon>
         <BentoItemTitle>Detailed documentation</BentoItemTitle>
         <BentoItemDescription>
@@ -65,7 +65,7 @@ export function BentoDemo() {
 
       <BentoItem size="sm" tone="pink">
         <BentoItemIcon>
-          <Stack />
+          <Stack weight="bold" />
         </BentoItemIcon>
         <BentoItemTitle>All assets in 1 place</BentoItemTitle>
         <BentoItemDescription>
@@ -83,28 +83,28 @@ export function BentoSizesDemo() {
     <Bento className="w-full">
       <BentoItem size="feature" tone="brand">
         <BentoItemIcon>
-          <Storefront />
+          <Storefront weight="bold" />
         </BentoItemIcon>
         <BentoItemTitle>feature</BentoItemTitle>
         <BentoItemDescription>Spans 4 columns and 2 rows: the anchor tile.</BentoItemDescription>
       </BentoItem>
       <BentoItem size="sm" tone="purple">
         <BentoItemIcon>
-          <Palette />
+          <Palette weight="bold" />
         </BentoItemIcon>
         <BentoItemTitle>sm</BentoItemTitle>
         <BentoItemDescription>Spans 2 columns.</BentoItemDescription>
       </BentoItem>
       <BentoItem size="sm" tone="teal">
         <BentoItemIcon>
-          <BookOpen />
+          <BookOpen weight="bold" />
         </BentoItemIcon>
         <BentoItemTitle>sm</BentoItemTitle>
         <BentoItemDescription>Spans 2 columns.</BentoItemDescription>
       </BentoItem>
       <BentoItem size="full" tone="orange">
         <BentoItemIcon>
-          <Stack />
+          <Stack weight="bold" />
         </BentoItemIcon>
         <BentoItemTitle>full</BentoItemTitle>
         <BentoItemDescription>Spans the whole row as a closing band.</BentoItemDescription>

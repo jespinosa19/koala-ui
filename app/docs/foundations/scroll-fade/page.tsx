@@ -25,24 +25,35 @@ export default function ScrollFadePage() {
           a marquee that drifts in from both sides, a masonry that clips at the section edges, or a
           preview that peeks up from the bottom of its frame.
         </p>
-        <div className="mt-6 overflow-hidden rounded-xl border border-border p-4">
-          <div className="fade-x flex gap-3 [--fade-size:8%]">
-            {Array.from({ length: 14 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-16 w-24 shrink-0 rounded-lg bg-gradient-to-br from-muted to-accent"
-              />
-            ))}
+        <div className="mt-6 overflow-hidden rounded-xl border border-border">
+          {/* A marquee makes the edge fades obvious: tiles dissolve as they drift past the masked
+              sides instead of hard-clipping. Pure CSS via the animate-marquee token (set rendered
+              twice for a seamless -50% loop), pauses on hover, holds still under reduced motion. */}
+          <div className="group/marquee fade-x [--fade-size:10%]">
+            <div
+              aria-hidden
+              className="flex w-max animate-marquee gap-3 py-4 pr-3 [--marquee-duration:28s] group-hover/marquee:[animation-play-state:paused] motion-reduce:[animation:none]"
+            >
+              {Array.from({ length: 20 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="grid h-16 w-24 shrink-0 place-items-center rounded-lg bg-muted text-sm font-medium tabular-nums text-muted-foreground"
+                >
+                  {String((i % 10) + 1).padStart(2, "0")}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
         <CodeSnippet
           filename="logos.tsx"
           className="mt-4"
           code={`// A marquee whose tiles dissolve into the band at both edges, at any scroll position.
-<div className="overflow-hidden">
-  <div className="fade-x flex animate-marquee gap-3 [--fade-size:8%]">
-    {logos.map((logo) => (
-      <Logo key={logo.id} {...logo} />
+<div className="group/marquee overflow-hidden fade-x [--fade-size:10%]">
+  {/* Render the set twice so the -50% marquee loops with no seam. */}
+  <div className="flex w-max animate-marquee gap-3 pr-3 group-hover/marquee:[animation-play-state:paused] motion-reduce:[animation:none]">
+    {[...logos, ...logos].map((logo, i) => (
+      <Logo key={i} {...logo} />
     ))}
   </div>
 </div>`}

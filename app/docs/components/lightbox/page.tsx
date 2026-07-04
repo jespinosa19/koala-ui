@@ -128,10 +128,14 @@ const images: LightboxImage[] = [
             <h3 className="font-mono font-semibold">Navigation</h3>
             <p className="mt-1 text-pretty text-muted-foreground">
               The arrow buttons, the <kbd className="font-mono text-xs">←</kbd> /{" "}
-              <kbd className="font-mono text-xs">→</kbd> keys, and the thumbnail rail page between
-              images (looping); the active thumbnail is ringed and a counter sits top-left. They all
-              appear only with more than one image. Click the scrim or press{" "}
-              <kbd className="font-mono text-xs">Esc</kbd> to close. All motion is gated behind{" "}
+              <kbd className="font-mono text-xs">→</kbd> keys, the thumbnail rail, and a
+              swipe/drag on the image itself page between images (looping); the active thumbnail is
+              ringed and a counter sits top-left. They all appear only with more than one image. The
+              image follows the finger while you drag and commits on a firm swipe (by distance or a
+              quick flick), otherwise it springs back to center. The rail is bounded to the screen
+              width and scrolls sideways when the thumbnails outrun it (common on mobile or with many
+              images), keeping the active tile scrolled to center as you page. Click the scrim or
+              press <kbd className="font-mono text-xs">Esc</kbd> to close. All motion is gated behind{" "}
               <code className="font-mono text-sm">motion-safe</code>.
             </p>
           </div>
@@ -142,7 +146,7 @@ const images: LightboxImage[] = [
         <Faq
           items={[
             { q: "How do I open the viewer at a specific image?", a: "Give each trigger its position in the `images` array via the `index` prop. `LightboxTrigger` calls into the Lightbox to open at that index, so clicking the third tile opens the third image. The viewer then owns navigation from there." },
-            { q: "How do I move between photos?", a: "Once the viewer is open, use the left/right arrow buttons, the ← and → keys, or click a thumbnail in the bottom rail. Paging loops, and the photo crossfades as it changes. Arrows and the rail only show when there is more than one image." },
+            { q: "How do I move between photos?", a: "Once the viewer is open, use the left/right arrow buttons, the ← and → keys, click a thumbnail in the bottom rail, or swipe/drag the image sideways (great on touch). The image follows your finger and commits on a firm swipe (distance or a quick flick), otherwise it springs back. Paging loops, and the photo crossfades as it changes. Arrows, the rail, and swipe only apply when there is more than one image." },
             { q: "Can a Gallery tile open the lightbox?", a: "Yes, that is the intended pairing. Wrap the `GalleryItem` in a `LightboxTrigger` with `asChild`, and set the item's `action` (for example `\"See image\"`). The tile reveals its pill on hover without shifting position, and clicking opens the viewer." },
             { q: "How does it open and close?", a: "It is a clean fade with a soft zoom-in, handled by Radix Dialog's enter/exit animations (no morph or flying transition). Opening fades the dark scrim in and the image zooms slightly into place; closing reverses it. Everything is gated behind `motion-safe`, so reduced-motion users get an instant open/close." },
             { q: "Why is the chrome dark instead of themed?", a: "The viewer always sits over a photo on a near-black scrim, so the controls (scrim, arrows, close, thumbnails) use a fixed dark wash rather than theme tokens. This mirrors the Dialog overlay, which is also a fixed scrim so it reads in every theme." },

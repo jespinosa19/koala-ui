@@ -1,8 +1,15 @@
 "use client"
 
 import * as React from "react"
+import { Rocket, Crown, Buildings, Package, Truck, AirplaneTilt, User, CreditCard, Wallet } from "@phosphor-icons/react"
 
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import {
+  RadioGroup,
+  RadioGroupItem,
+  RadioCard,
+  RadioCardTitle,
+  RadioCardDescription,
+} from "@/components/ui/radio-group"
 
 /** Hero: a single choice from a small, visible set, each item paired with a label. */
 const PLANS = ["Starter", "Pro", "Enterprise"] as const
@@ -73,30 +80,80 @@ export function StatesDemo() {
   )
 }
 
-/** Each option carries supporting text: the dot optically aligns to the first line of the label. */
+/** Each option carries supporting text and a leading glyph, the same RadioCard the plan picker uses. */
 const SHIPPING = [
-  { value: "standard", title: "Standard", hint: "4–6 business days. Free." },
-  { value: "express", title: "Express", hint: "2–3 business days. $9." },
-  { value: "overnight", title: "Overnight", hint: "Next business day. $24." },
+  { value: "standard", icon: <Package />, title: "Standard", hint: "4–6 business days. Free." },
+  { value: "express", icon: <Truck />, title: "Express", hint: "2–3 business days. $9." },
+  { value: "overnight", icon: <AirplaneTilt />, title: "Overnight", hint: "Next business day. $24." },
 ] as const
 
 export function WithDescriptionDemo() {
   return (
-    <RadioGroup defaultValue="express" className="w-72">
-      {SHIPPING.map(({ value, title, hint }) => (
-        <label
-          key={value}
-          htmlFor={`ship-${value}`}
-          className="flex cursor-pointer items-start gap-3 rounded-lg border border-border p-3.5 transition-colors duration-fast ease-out has-[[data-state=checked]]:border-brand has-[[data-state=checked]]:bg-accent"
-        >
-          <RadioGroupItem id={`ship-${value}`} value={value} className="mt-0.5" />
-          <span className="flex flex-col gap-0.5">
-            <span className="text-sm font-medium leading-none">{title}</span>
-            <span className="text-sm text-muted-foreground">{hint}</span>
-          </span>
-        </label>
+    <RadioGroup defaultValue="express" className="w-full max-w-sm gap-3">
+      {SHIPPING.map(({ value, icon, title, hint }) => (
+        <RadioCard key={value} value={value} icon={icon}>
+          <RadioCardTitle>{title}</RadioCardTitle>
+          <RadioCardDescription>{hint}</RadioCardDescription>
+        </RadioCard>
       ))}
     </RadioGroup>
+  )
+}
+
+/**
+ * Cards: the whole option becomes a selectable surface. Each RadioCard is itself the radio, so
+ * a leading icon, title and description sit inside one button, and the card borders brand + lifts
+ * the accent halo when picked. The flooded circle mirrors the standalone control.
+ */
+const CARD_PLANS = [
+  { value: "starter", icon: <Rocket />, title: "Starter", hint: "$0 / month. For side projects and prototypes." },
+  { value: "pro", icon: <Crown />, title: "Pro", hint: "$59 / month. For growing teams that ship." },
+  { value: "enterprise", icon: <Buildings />, title: "Enterprise", hint: "$99 / month. SSO, audit logs and support." },
+] as const
+
+export function CardsDemo() {
+  return (
+    <RadioGroup defaultValue="pro" className="w-full max-w-sm gap-3">
+      {CARD_PLANS.map(({ value, icon, title, hint }) => (
+        <RadioCard key={value} value={value} icon={icon}>
+          <RadioCardTitle>{title}</RadioCardTitle>
+          <RadioCardDescription>{hint}</RadioCardDescription>
+        </RadioCard>
+      ))}
+    </RadioGroup>
+  )
+}
+
+/**
+ * Card sizes: `md` (default, shown above) suits a title + description. `sm` tightens the padding
+ * and control so a ONE-LINE option (a title on its own, or an icon + text) doesn't float in dead
+ * space, the affordance behind a billing-type toggle or a compact payment-method list.
+ */
+export function CardSizesDemo() {
+  return (
+    <div className="flex w-full max-w-sm flex-col gap-6">
+      <RadioGroup
+        defaultValue="individual"
+        aria-label="Billing type"
+        className="grid grid-cols-2 gap-3"
+      >
+        <RadioCard value="individual" size="sm" icon={<User />}>
+          <RadioCardTitle>Individual</RadioCardTitle>
+        </RadioCard>
+        <RadioCard value="company" size="sm" icon={<Buildings />}>
+          <RadioCardTitle>Company</RadioCardTitle>
+        </RadioCard>
+      </RadioGroup>
+
+      <RadioGroup defaultValue="card" aria-label="Payment method" className="gap-2.5">
+        <RadioCard value="card" size="sm" icon={<CreditCard />}>
+          <RadioCardTitle>Credit or debit card</RadioCardTitle>
+        </RadioCard>
+        <RadioCard value="paypal" size="sm" icon={<Wallet />}>
+          <RadioCardTitle>PayPal balance</RadioCardTitle>
+        </RadioCard>
+      </RadioGroup>
+    </div>
   )
 }
 

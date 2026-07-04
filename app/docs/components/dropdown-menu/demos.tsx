@@ -59,47 +59,47 @@ export function AccountMenuDemo() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
-            <UserCircle /> Profile
+            <UserCircle weight="bold" /> Profile
             <DropdownMenuShortcut>⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <BellSimple /> Notifications
+            <BellSimple weight="bold" /> Notifications
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <CreditCard /> Billing
+            <CreditCard weight="bold" /> Billing
             <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Gear /> Settings
+            <Gear weight="bold" /> Settings
             <DropdownMenuShortcut>⌘,</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
-            <Users /> Team
+            <Users weight="bold" /> Team
           </DropdownMenuItem>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
-              <Plus /> Invite members
+              <Plus weight="bold" /> Invite members
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent className="w-48">
               <DropdownMenuItem>
-                <Envelope /> Email
+                <Envelope weight="bold" /> Email
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Link /> Copy invite link
+                <Link weight="bold" /> Copy invite link
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
-                <ChatCircle /> Send message
+                <ChatCircle weight="bold" /> Send message
               </DropdownMenuItem>
             </DropdownMenuSubContent>
           </DropdownMenuSub>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem variant="destructive">
-          <SignOut /> Log out
+          <SignOut weight="bold" /> Log out
           <DropdownMenuShortcut>⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -117,35 +117,35 @@ export function EditMenuDemo() {
         <DropdownMenuLabel>Edit</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <FilePlus /> New file
+          <FilePlus weight="bold" /> New file
           <DropdownMenuShortcut>⌘N</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <PencilSimple /> Rename
+          <PencilSimple weight="bold" /> Rename
           <DropdownMenuShortcut>F2</DropdownMenuShortcut>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
-            <ShareNetwork /> Share
+            <ShareNetwork weight="bold" /> Share
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent className="w-44">
             <DropdownMenuItem>
-              <Envelope /> Email link
+              <Envelope weight="bold" /> Email link
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Link /> Copy link
+              <Link weight="bold" /> Copy link
               <DropdownMenuShortcut>⌘L</DropdownMenuShortcut>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <ChatCircle /> Messages
+              <ChatCircle weight="bold" /> Messages
             </DropdownMenuItem>
           </DropdownMenuSubContent>
         </DropdownMenuSub>
         <DropdownMenuSeparator />
         <DropdownMenuItem variant="destructive">
-          <Trash /> Delete
+          <Trash weight="bold" /> Delete
           <DropdownMenuShortcut>⌫</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -207,18 +207,18 @@ export function UserMenuDemo() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
-            <UserCircle /> Profile
+            <UserCircle weight="bold" /> Profile
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <CreditCard /> Billing
+            <CreditCard weight="bold" /> Billing
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Gear /> Settings
+            <Gear weight="bold" /> Settings
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem variant="destructive">
-          <SignOut /> Log out
+          <SignOut weight="bold" /> Log out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -230,22 +230,22 @@ export function MoreActionsMenuDemo() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" iconOnly aria-label="More actions" tooltip={false}>
-          <DotsThree />
+          <DotsThree weight="bold" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-44">
         <DropdownMenuItem>
-          <PencilSimple /> Edit
+          <PencilSimple weight="bold" /> Edit
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Copy /> Duplicate
+          <Copy weight="bold" /> Duplicate
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <ShareNetwork /> Share
+          <ShareNetwork weight="bold" /> Share
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem variant="destructive">
-          <Trash /> Delete
+          <Trash weight="bold" /> Delete
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -263,13 +263,13 @@ export function ThemeMenuDemo() {
         <DropdownMenuSeparator />
         <DropdownMenuRadioGroup value="system">
           <DropdownMenuRadioItem value="light">
-            <Sun /> Light
+            <Sun weight="bold" /> Light
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="dark">
-            <Moon /> Dark
+            <Moon weight="bold" /> Dark
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="system">
-            <Monitor /> System
+            <Monitor weight="bold" /> System
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>

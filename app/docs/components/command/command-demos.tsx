@@ -60,7 +60,7 @@ export function CommandDialogDemo() {
           "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:border-transparent",
         )}
       >
-        <MagnifyingGlass className="size-4 shrink-0" />
+        <MagnifyingGlass weight="bold" className="size-4 shrink-0" />
         <span className="flex-1 text-left">Search components…</span>
         <span className="flex items-center gap-1">
           <Kbd size="sm" variant="ghost">⌘</Kbd>
@@ -86,7 +86,7 @@ export function CommandDialogDemo() {
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandGroup heading="Suggestions">
             <CommandItem value="New file" keywords={["create", "document"]}>
-              <FilePlus />
+              <FilePlus weight="bold" />
               New file
               <CommandShortcut>
                 <Kbd size="sm">⌘</Kbd>
@@ -94,18 +94,18 @@ export function CommandDialogDemo() {
               </CommandShortcut>
             </CommandItem>
             <CommandItem value="Invite member" keywords={["team", "user", "add"]}>
-              <UserPlus />
+              <UserPlus weight="bold" />
               Invite member
             </CommandItem>
             <CommandItem value="Calendar" keywords={["schedule", "events"]}>
-              <Calendar />
+              <Calendar weight="bold" />
               Calendar
             </CommandItem>
           </CommandGroup>
           <CommandSeparator />
           <CommandGroup heading="Settings">
             <CommandItem value="Profile" keywords={["account"]}>
-              <User />
+              <User weight="bold" />
               Profile
               <CommandShortcut>
                 <Kbd size="sm">⌘</Kbd>
@@ -113,11 +113,11 @@ export function CommandDialogDemo() {
               </CommandShortcut>
             </CommandItem>
             <CommandItem value="Billing" keywords={["invoice", "payment", "plan"]}>
-              <CreditCard />
+              <CreditCard weight="bold" />
               Billing
             </CommandItem>
             <CommandItem value="Preferences" keywords={["settings", "config"]}>
-              <Gear />
+              <Gear weight="bold" />
               Preferences
             </CommandItem>
           </CommandGroup>
@@ -132,31 +132,31 @@ export function CommandInlineDemo() {
   const [selected, setSelected] = React.useState<string | null>(null)
   return (
     <div className="flex w-full max-w-md flex-col gap-3">
-      <Command label="Quick actions" className="shadow-sm" onSelect={setSelected}>
+      <Command label="Quick actions" onSelect={setSelected}>
         <CommandInput placeholder="Search actions…" />
         <CommandList>
           <CommandEmpty>Nothing matches that.</CommandEmpty>
           <CommandGroup heading="Create">
             <CommandItem value="New project" keywords={["create"]}>
-              <Plus />
+              <Plus weight="bold" />
               New project
             </CommandItem>
             <CommandItem value="Invite teammate" keywords={["user", "member"]}>
-              <UserPlus />
+              <UserPlus weight="bold" />
               Invite teammate
             </CommandItem>
           </CommandGroup>
           <CommandGroup heading="Navigate">
             <CommandItem value="Dashboard">
-              <ChartBar />
+              <ChartBar weight="bold" />
               Dashboard
             </CommandItem>
             <CommandItem value="Account" keywords={["profile"]}>
-              <User />
+              <User weight="bold" />
               Account
             </CommandItem>
             <CommandItem value="Support" keywords={["help"]} disabled>
-              <Lifebuoy />
+              <Lifebuoy weight="bold" />
               Support (offline)
             </CommandItem>
           </CommandGroup>
@@ -178,28 +178,28 @@ export function CommandInlineDemo() {
 /** Compact density: tighter rows for an information-dense surface. */
 export function CommandDensityDemo() {
   return (
-    <Command label="Theme" density="compact" className="w-full max-w-md shadow-sm">
+    <Command label="Theme" density="compact" className="w-full max-w-md">
       <CommandInput placeholder="Search themes…" />
       <CommandList>
         <CommandEmpty>No themes found.</CommandEmpty>
         <CommandGroup heading="Appearance">
           <CommandItem value="Light">
-            <Sun />
+            <Sun weight="bold" />
             Light
           </CommandItem>
           <CommandItem value="Dark">
-            <Moon />
+            <Moon weight="bold" />
             Dark
           </CommandItem>
           <CommandItem value="System" keywords={["auto"]}>
-            <Gear />
+            <Gear weight="bold" />
             System
           </CommandItem>
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup heading="Resources">
           <CommandItem value="GitHub repository" keywords={["source", "code"]}>
-            <GithubLogo />
+            <GithubLogo weight="bold" />
             GitHub repository
           </CommandItem>
         </CommandGroup>

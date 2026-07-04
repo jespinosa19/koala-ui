@@ -1,14 +1,6 @@
 "use client"
 
 import * as React from "react"
-import {
-  DiscordLogo as DiscordGlyph,
-  GithubLogo as GithubGlyph,
-  InstagramLogo,
-  LinkedinLogo,
-  XLogo,
-  YoutubeLogo,
-} from "@phosphor-icons/react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -23,7 +15,16 @@ import {
 import { useDensity, type Density } from "@/lib/density"
 import { tv } from "@/lib/tv"
 
-import { AppleLogo, DiscordLogo, GithubLogo, GoogleLogo } from "./brand-logos"
+import {
+  AppleLogo,
+  DiscordLogo,
+  GithubLogo,
+  GoogleLogo,
+  InstagramLogo,
+  LinkedinLogo,
+  XLogo,
+  YoutubeLogo,
+} from "./brand-logos"
 
 /**
  * AuthForm: three ready auth blocks sharing one recipe: `LoginForm`, `SignUpForm`, and
@@ -45,7 +46,9 @@ export const authFormVariants = tv({
     header: "flex flex-col gap-1.5 text-center",
     title: "font-semibold tracking-tight text-foreground text-balance",
     description: "text-sm text-pretty text-muted-foreground",
-    social: "grid grid-cols-3 gap-2",
+    // Provider icons stack in one column on narrow screens (a phone / a split pane below the fold)
+    // and spread to a 3-up row once there's room at `sm`, so they never crowd a 320px viewport.
+    social: "grid grid-cols-1 gap-2 sm:grid-cols-3",
     // Provider-first (`ProviderForm`): a vertical stack of full-width "Continue with X" buttons,
     // the legal line under them, and the social footer rail.
     providerStack: "flex flex-col gap-2.5",
@@ -133,6 +136,9 @@ function SocialRow({
             onClick={() => onProvider?.(id)}
           >
             <Icon />
+            {/* Icon-only in the 3-up row (no room for labels); once the row stacks to one column
+                below `sm`, the spare width earns the provider name beside the mark. */}
+            <span className="sm:hidden">{label}</span>
           </Button>
         )
       })}
@@ -440,15 +446,16 @@ export interface SocialLink {
   label?: string
 }
 
+// Real brand marks (Simple Icons), monochrome so they dim/brighten with the footer link.
 const SOCIAL_META: Record<
   SocialNetwork,
-  { label: string; icon: React.ComponentType<{ className?: string }> }
+  { label: string; icon: typeof GoogleLogo }
 > = {
-  x: { label: "Twitter", icon: XLogo },
-  discord: { label: "Discord", icon: DiscordGlyph },
+  x: { label: "X", icon: XLogo },
+  discord: { label: "Discord", icon: DiscordLogo },
   youtube: { label: "YouTube", icon: YoutubeLogo },
   instagram: { label: "Instagram", icon: InstagramLogo },
-  github: { label: "GitHub", icon: GithubGlyph },
+  github: { label: "GitHub", icon: GithubLogo },
   linkedin: { label: "LinkedIn", icon: LinkedinLogo },
 }
 
@@ -573,10 +580,10 @@ export function ProviderForm({
               size="lg"
               disabled={gated}
               onClick={() => onProvider?.(id)}
-              className="relative w-full justify-center"
+              className="w-full"
             >
-              {/* Optical alignment: mark pinned left, label optically centered in the button. */}
-              <Icon className="absolute left-4 size-5" />
+              {/* Mark rides next to the label; the pair centers together (never pinned to the edge). */}
+              <Icon className="size-5" />
               {verb} {label}
             </Button>
           )

@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { X } from "@phosphor-icons/react"
+import { X, UserCircle } from "@phosphor-icons/react"
 
 import { Button } from "@/components/ui/button"
 import { dialogVariants } from "@/components/ui/dialog"
@@ -9,8 +9,8 @@ import { dialogVariants } from "@/components/ui/dialog"
 /**
  * Static, non-portal preview of every DialogContent `size`. We render the real
  * `dialogVariants` slots directly (no Radix Root/Portal) so all four widths are
- * visible at once without opening anything. The panels are visually identical to
- * a live dialog, just inert. Title/description use plain h2/p instead of the Radix
+ * visible at once without opening anything. Left-aligned, shadow-free (the real modal keeps
+ * `shadow-lg`), each led by an icon. Title/description use plain h2/p instead of the Radix
  * parts, which require a Dialog context to render.
  */
 
@@ -22,8 +22,8 @@ const SIZES = [
   },
   {
     size: "md",
-    width: "max-w-lg · 32rem / 512px",
-    use: "The default, most forms and messages.",
+    width: "max-w-[30rem] · 30rem / 480px",
+    use: "The default; the width nearly every dialog should use.",
   },
   {
     size: "lg",
@@ -52,7 +52,10 @@ export function DialogSizesShowcase() {
               <span className="text-xs text-muted-foreground">{use}</span>
             </div>
             {/* The real content slot, rendered inline (no portal). */}
-            <div className={slots.content({ className: "mx-auto" })} aria-hidden>
+            <div className={slots.content({ className: "shadow-none" })} aria-hidden>
+              <div className={slots.icon()}>
+                <UserCircle weight="bold" />
+              </div>
               <div className={slots.header()}>
                 <h2 className={slots.title()}>Edit profile</h2>
                 <p className={slots.description()}>
@@ -64,7 +67,7 @@ export function DialogSizesShowcase() {
                 <Button>Save changes</Button>
               </div>
               <span className="absolute top-4 right-4 text-muted-foreground [&_svg]:size-4">
-                <X />
+                <X weight="bold" />
               </span>
             </div>
           </div>

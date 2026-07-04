@@ -46,7 +46,7 @@ export function CardContextMenuDemo() {
           <CardHeader>
             <div className="flex items-center gap-3">
               <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-purple/10 text-purple">
-                <FolderOpen className="size-5" />
+                <FolderOpen weight="bold" className="size-5" />
               </div>
               <div className="min-w-0">
                 <CardTitle className="text-base">Q3 Marketing Plan</CardTitle>
@@ -59,42 +59,42 @@ export function CardContextMenuDemo() {
       </ContextMenuTrigger>
       <ContextMenuContent className="w-56">
         <ContextMenuItem>
-          <FolderOpen /> Open
+          <FolderOpen weight="bold" /> Open
           <ContextMenuShortcut>⏎</ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuItem>
-          <PencilSimple /> Rename
+          <PencilSimple weight="bold" /> Rename
           <ContextMenuShortcut>⌘R</ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuItem>
-          <Copy /> Duplicate
+          <Copy weight="bold" /> Duplicate
           <ContextMenuShortcut>⌘D</ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuSeparator />
         <ContextMenuItem>
-          <PushPin /> Pin to top
+          <PushPin weight="bold" /> Pin to top
         </ContextMenuItem>
         <ContextMenuSub>
           <ContextMenuSubTrigger>
-            <ShareNetwork /> Share
+            <ShareNetwork weight="bold" /> Share
           </ContextMenuSubTrigger>
           <ContextMenuSubContent className="w-44">
             <ContextMenuItem>
-              <Envelope /> Email
+              <Envelope weight="bold" /> Email
             </ContextMenuItem>
             <ContextMenuItem>
-              <Link /> Copy link
+              <Link weight="bold" /> Copy link
               <ContextMenuShortcut>⌘L</ContextMenuShortcut>
             </ContextMenuItem>
             <ContextMenuSeparator />
             <ContextMenuItem>
-              <ChatCircle /> Send message
+              <ChatCircle weight="bold" /> Send message
             </ContextMenuItem>
           </ContextMenuSubContent>
         </ContextMenuSub>
         <ContextMenuSeparator />
         <ContextMenuItem variant="destructive">
-          <Trash /> Delete
+          <Trash weight="bold" /> Delete
           <ContextMenuShortcut>⌫</ContextMenuShortcut>
         </ContextMenuItem>
       </ContextMenuContent>
@@ -123,22 +123,22 @@ export function ImageContextMenuDemo() {
       </ContextMenuTrigger>
       <ContextMenuContent className="w-52">
         <ContextMenuItem>
-          <CornersOut /> Open full size
+          <CornersOut weight="bold" /> Open full size
         </ContextMenuItem>
         <ContextMenuItem>
-          <ImageSquare /> Copy image
+          <ImageSquare weight="bold" /> Copy image
           <ContextMenuShortcut>⌘C</ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuItem>
-          <Link /> Copy image address
+          <Link weight="bold" /> Copy image address
         </ContextMenuItem>
         <ContextMenuSeparator />
         <ContextMenuItem>
-          <DownloadSimple /> Save image
+          <DownloadSimple weight="bold" /> Save image
           <ContextMenuShortcut>⌘S</ContextMenuShortcut>
         </ContextMenuItem>
         <ContextMenuItem>
-          <Star /> Add to favorites
+          <Star weight="bold" /> Add to favorites
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
@@ -182,13 +182,13 @@ export function SortContextMenuDemo() {
         <ContextMenuSeparator />
         <ContextMenuRadioGroup value="modified">
           <ContextMenuRadioItem value="name">
-            <TextAa /> Name
+            <TextAa weight="bold" /> Name
           </ContextMenuRadioItem>
           <ContextMenuRadioItem value="modified">
-            <PencilSimple /> Last modified
+            <PencilSimple weight="bold" /> Last modified
           </ContextMenuRadioItem>
           <ContextMenuRadioItem value="size">
-            <ArrowsOutCardinal /> Size
+            <ArrowsOutCardinal weight="bold" /> Size
           </ContextMenuRadioItem>
         </ContextMenuRadioGroup>
       </ContextMenuContent>
@@ -209,11 +209,11 @@ export function EditorContextMenuDemo() {
       <ContextMenuContent className="w-56">
         <ContextMenuGroup>
           <ContextMenuItem>
-            <Copy /> Copy
+            <Copy weight="bold" /> Copy
             <ContextMenuShortcut>⌘C</ContextMenuShortcut>
           </ContextMenuItem>
           <ContextMenuItem>
-            <PencilSimple /> Cut
+            <PencilSimple weight="bold" /> Cut
             <ContextMenuShortcut>⌘X</ContextMenuShortcut>
           </ContextMenuItem>
           <ContextMenuItem inset>
@@ -224,25 +224,25 @@ export function EditorContextMenuDemo() {
         <ContextMenuSeparator />
         <ContextMenuSub>
           <ContextMenuSubTrigger>
-            <ShareNetwork /> Share
+            <ShareNetwork weight="bold" /> Share
           </ContextMenuSubTrigger>
           <ContextMenuSubContent className="w-44">
             <ContextMenuItem>
-              <Envelope /> Email link
+              <Envelope weight="bold" /> Email link
             </ContextMenuItem>
             <ContextMenuItem>
-              <Link /> Copy link
+              <Link weight="bold" /> Copy link
               <ContextMenuShortcut>⌘L</ContextMenuShortcut>
             </ContextMenuItem>
             <ContextMenuSeparator />
             <ContextMenuItem>
-              <ChatCircle /> Messages
+              <ChatCircle weight="bold" /> Messages
             </ContextMenuItem>
           </ContextMenuSubContent>
         </ContextMenuSub>
         <ContextMenuSeparator />
         <ContextMenuItem variant="destructive">
-          <Trash /> Delete
+          <Trash weight="bold" /> Delete
           <ContextMenuShortcut>⌫</ContextMenuShortcut>
         </ContextMenuItem>
       </ContextMenuContent>

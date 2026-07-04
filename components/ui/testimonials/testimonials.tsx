@@ -21,7 +21,10 @@ export const testimonialVariants = tv({
     root: "flex h-full flex-col gap-4 rounded-2xl border p-6 text-card-foreground sm:gap-5",
     // A soft watermark quote glyph; muted gray, decorative. Outline weight per the DS rule.
     mark: "text-muted-foreground/30 [&>svg]:size-8",
-    quote: "text-pretty text-base leading-relaxed",
+    // The quote is the content of the card: it always reads at medium (500) weight so social
+    // proof feels deliberate, not passing body copy. Override to `font-semibold` for a logo-led
+    // headline treatment; the base stays medium everywhere else.
+    quote: "text-pretty text-base font-medium leading-relaxed",
     footer: "mt-auto flex items-center gap-3",
     author: "flex min-w-0 flex-col",
     name: "text-sm font-semibold text-foreground",
@@ -102,7 +105,7 @@ export function TestimonialMark({ className, ...props }: React.ComponentProps<"d
   const { slots } = useTestimonialContext("TestimonialMark")
   return (
     <div data-slot="testimonial-mark" aria-hidden className={slots.mark({ className })} {...props}>
-      <Quotes />
+      <Quotes weight="bold" />
     </div>
   )
 }

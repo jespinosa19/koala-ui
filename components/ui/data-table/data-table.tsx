@@ -430,6 +430,13 @@ export function DataTable<TData, TValue>({
     manualSorting,
     manualFiltering,
     manualPagination,
+    // TanStack's `autoResetPageIndex` (default on) calls `setPagination` from inside the row-model
+    // memo on the very first render, i.e. a state update during render, before the table has
+    // mounted. React rejects that ("Can't perform a React state update on a component that hasn't
+    // mounted yet"), and the thrown warning derails the initial passive-effect flush for the whole
+    // tree. We turn it off and reset to the first page ourselves, after mount, when the filter
+    // inputs change (the case where the active page can fall out of range), in the effect below.
+    autoResetPageIndex: false,
     ...(manualPagination && {
       pageCount:
         pageCount ?? (rowCount != null ? Math.ceil(rowCount / pagination.pageSize) : undefined),
@@ -485,6 +492,23 @@ export function DataTable<TData, TValue>({
     ...(showExpansion && { getExpandedRowModel: getExpandedRowModel() }),
     ...(enablePagination && !manualPagination && { getPaginationRowModel: getPaginationRowModel() }),
   })
+
+  // Replaces the disabled `autoResetPageIndex` (see the table options above): when the search or a
+  // faceted filter changes the row count, the current page can fall past the last page, so snap
+  // back to the first. Skipping the mount run keeps this out of the initial render (the whole point
+  // of disabling the built-in), and client-paged tables only: in `manualPagination` the consumer
+  // owns paging and refetches on its own callbacks.
+  const didMountRef = React.useRef(false)
+  React.useEffect(() => {
+    if (!enablePagination || manualPagination) return
+    if (!didMountRef.current) {
+      didMountRef.current = true
+      return
+    }
+    // Only when we're actually past the first page, so an already-first-page table never fires a
+    // redundant pagination update (incl. under dev StrictMode's mount/remount).
+    if (table.getState().pagination.pageIndex !== 0) table.setPageIndex(0)
+  }, [globalFilter, columnFilters, enablePagination, manualPagination, table])
 
   const leafColumnCount = table.getVisibleLeafColumns().length
 
@@ -740,7 +764,8 @@ export function DataTable<TData, TValue>({
   const showPagination = enablePagination && !infiniteScroll
 
   // Bulk-action pill: only when selection is on and a renderer is given. The bar shows once a
-  // row is selected; the wrapper has to exist up front to host it (so it's part of the guard).
+  // row is selected, overlaying the table region; `hasSelectionBar` gates the `relative` wrapper
+  // that hosts it (and the bare-table guard below).
   const selectedRows = enableRowSelection ? table.getSelectedRowModel().rows : []
   const hasSelectionBar = renderSelectionActions != null
   const showSelectionBar = hasSelectionBar && selectedRows.length > 0
@@ -791,7 +816,24 @@ export function DataTable<TData, TValue>({
         </DataTableToolbar>
       )}
       {hasFilters && <DataTableActiveFilters table={table} filters={filters!} />}
-      {contentElement}
+      {hasSelectionBar ? (
+        // The table region is the positioning context for the floating bulk-action pill, so the
+        // pill overlays the last rows out of flow: raising or dismissing it never shifts the
+        // toolbar above or the pagination below.
+        <div className="relative">
+          {contentElement}
+          {showSelectionBar && (
+            <DataTableSelectionBar
+              count={selectedRows.length}
+              onClear={() => table.resetRowSelection()}
+            >
+              {renderSelectionActions!(selectedRows, table)}
+            </DataTableSelectionBar>
+          )}
+        </div>
+      ) : (
+        contentElement
+      )}
       {infiniteScroll && (
         <LoadMoreSentinel
           onLoadMore={onLoadMore}
@@ -813,14 +855,6 @@ export function DataTable<TData, TValue>({
           density={resolvedDensity}
           showRowsPerPage
         />
-      )}
-      {showSelectionBar && (
-        <DataTableSelectionBar
-          count={selectedRows.length}
-          onClear={() => table.resetRowSelection()}
-        >
-          {renderSelectionActions!(selectedRows, table)}
-        </DataTableSelectionBar>
       )}
     </div>
   )
@@ -997,7 +1031,7 @@ function LoadMoreSentinel({
     >
       {loadingMore && (
         <span className="inline-flex items-center gap-2">
-          <CircleNotch className="size-4 animate-spin" />
+          <CircleNotch weight="bold" className="size-4 animate-spin" />
           Loading more…
         </span>
       )}
@@ -1016,7 +1050,7 @@ function HeaderTooltip({ content }: { content: React.ReactNode }) {
         aria-label="More information"
         className="inline-flex size-5 shrink-0 cursor-help items-center justify-center rounded-full text-muted-foreground/70 outline-none transition-colors duration-fast ease-out hover:text-foreground focus-visible:ring-2 focus-visible:ring-brand"
       >
-        <Info className="size-3.5" />
+        <Info weight="bold" className="size-3.5" />
       </button>
     </Tooltip>
   )

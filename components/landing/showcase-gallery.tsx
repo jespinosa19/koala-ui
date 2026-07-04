@@ -5,16 +5,14 @@ import {
   TextB,
   TextItalic,
   TextUnderline,
-  Bell,
   CurrencyDollar,
-  SpeakerHigh,
+  Sun,
   Megaphone,
   ArrowRight,
   Lightning,
   GitBranch,
 } from "@phosphor-icons/react"
 
-import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { Slider } from "@/components/ui/slider"
@@ -75,7 +73,7 @@ import {
   TableHead,
   TableCell,
 } from "@/components/ui/data-table"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { AvatarGroup } from "@/components/ui/avatar-group"
 import {
   Testimonial,
@@ -117,25 +115,29 @@ import { ColorPicker, ColorPickerArea, ColorPickerControls } from "@/components/
 import { LoginForm } from "@/components/ui/auth-form"
 
 /**
- * The "60+ components, ready to use" wall. Not a labelled grid: every tile is a real, working
- * Koala component dropped straight in (no wrapper card, no name caption, no docs link), packed
- * into a CSS-multicolumn masonry the way the components themselves would sit in a product. The
- * mix is deliberate: self-contained surfaces (a KPI tile, a login card, a chart) interleaved
- * with bare interactive clusters (a slider you can drag, switches you can toggle, an accordion
- * you can open) so a visitor sees the system *in use*, not catalogued.
+ * The "89 components, ready to use" wall. Every tile is a real, working Koala component, and each
+ * reads as exactly ONE bounded card. Components that bring their own surface (Stat, Chart, the
+ * login card, Pricing, Testimonial, FileCard, Banner, the settings-card slider) stand on their
+ * own; bare clusters with no surface of their own (a Switch row, an Accordion, a chat thread, a
+ * Table) get a matching `Frame` so nothing floats and nothing double-frames. Packed into a
+ * CSS-multicolumn masonry so a visitor sees the system *in use*, each component's limits drawn.
  */
 
 // ── Interactive clusters (own their own state) ──────────────────────────────
 
+/** A settings card: an icon-labelled row with the live value trailing, a brand slider beneath. */
 function SliderDemo() {
   const [value, setValue] = React.useState([72])
   return (
-    <div className="flex w-full max-w-xs items-center gap-3">
-      <SpeakerHigh className="size-5 shrink-0 text-muted-foreground" />
-      <Slider value={value} onValueChange={setValue} aria-label="Volume" />
-      <span className="w-9 shrink-0 text-right text-sm tabular-nums text-muted-foreground">
-        {value[0]}%
-      </span>
+    <div className="w-full rounded-xl border border-border bg-card p-5 shadow-xs">
+      <div className="mb-3 flex items-center justify-between">
+        <span className="flex items-center gap-2 text-sm font-medium">
+          <Sun weight="bold" className="size-4 text-muted-foreground" aria-hidden />
+          Brightness
+        </span>
+        <span className="text-sm tabular-nums text-muted-foreground">{value[0]}%</span>
+      </div>
+      <Slider value={value} onValueChange={setValue} variant="brand" aria-label="Brightness" />
     </div>
   )
 }
@@ -145,9 +147,7 @@ function SwitchDemo() {
     <div className="flex w-full max-w-xs flex-col gap-3.5 text-sm">
       <label className="flex items-center gap-3 font-medium">
         <Switch defaultChecked />
-        <span className="inline-flex items-center gap-1.5">
-          <Bell className="size-4 text-brand" /> Notifications
-        </span>
+        Notifications
       </label>
       <label className="flex items-center gap-3 font-medium">
         <Switch />
@@ -179,9 +179,19 @@ function CheckboxDemo() {
 
 // ── The wall ────────────────────────────────────────────────────────────────
 
-/** A bare cluster centered in its column, with breathing room above/below its neighbours. */
-function Cluster({ children }: { children: React.ReactNode }) {
-  return <div className="flex justify-center py-2">{children}</div>
+/**
+ * The surface for components that have none of their own (a Switch row, a Slider, a Table, a chat
+ * thread). It gives them the same bordered card the self-contained tiles already carry, so every
+ * tile reads as exactly one bounded surface, never a card inside a card. Components that bring
+ * their own surface (Stat, Ranking, Chart-in-Card, Pricing, Testimonial, FileCard, Banner, the
+ * settings-card slider) are NOT wrapped: their own surface is the frame.
+ */
+function Frame({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex w-full items-center justify-center rounded-xl border border-border bg-card p-6 shadow-xs">
+      {children}
+    </div>
+  )
 }
 
 const ITEMS: React.ReactNode[] = [
@@ -190,7 +200,7 @@ const ITEMS: React.ReactNode[] = [
     <StatHeader>
       <StatLabel>Total revenue</StatLabel>
       <StatIcon className="bg-success/10 text-success">
-        <CurrencyDollar />
+        <CurrencyDollar weight="bold" />
       </StatIcon>
     </StatHeader>
     <StatValue>$48,210</StatValue>
@@ -206,9 +216,9 @@ const ITEMS: React.ReactNode[] = [
     />
   </Stat>,
 
-  <Cluster key="switch">
+  <Frame key="switch">
     <SwitchDemo />
-  </Cluster>,
+  </Frame>,
 
   // Full login card: typeable, with social providers and a password field.
   <LoginForm key="login" className="w-full max-w-none" />,
@@ -237,9 +247,8 @@ const ITEMS: React.ReactNode[] = [
     </RankingList>
   </Ranking>,
 
-  <Cluster key="slider">
-    <SliderDemo />
-  </Cluster>,
+  // A settings card: its own surface, so it stands without a Frame.
+  <SliderDemo key="slider" />,
 
   // Area chart living in its natural Card home.
   <Card key="chart" className="w-full">
@@ -274,63 +283,64 @@ const ITEMS: React.ReactNode[] = [
     </CardContent>
   </Card>,
 
-  <Accordion
-    key="accordion"
-    type="single"
-    collapsible
-    defaultValue="a"
-    variant="minimal"
-    className="w-full"
-  >
-    <AccordionItem value="a">
-      <AccordionTrigger>Is it accessible?</AccordionTrigger>
-      <AccordionContent>Yes. Behavior comes from Radix primitives.</AccordionContent>
-    </AccordionItem>
-    <AccordionItem value="b">
-      <AccordionTrigger>Can I theme it?</AccordionTrigger>
-      <AccordionContent>Four themes and eight accents, all token-driven.</AccordionContent>
-    </AccordionItem>
-  </Accordion>,
+  <Frame key="accordion">
+    <Accordion type="single" collapsible defaultValue="a" variant="minimal" className="w-full">
+      <AccordionItem value="a">
+        <AccordionTrigger>Is it accessible?</AccordionTrigger>
+        <AccordionContent>Yes. Behavior comes from Radix primitives.</AccordionContent>
+      </AccordionItem>
+      <AccordionItem value="b">
+        <AccordionTrigger>Can I theme it?</AccordionTrigger>
+        <AccordionContent>Four themes and eight accents, all token-driven.</AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  </Frame>,
 
-  // AI conversation thread with a live typing indicator.
-  <Conversation key="chat" className="w-full">
-    <Message role="user">
-      <MessageBody>
-        <MessageContent>What changed this release?</MessageContent>
-      </MessageBody>
-    </Message>
-    <Message role="assistant">
-      <MessageAvatar name="Koala" />
-      <MessageBody>
-        <MessageContent>Three key updates landed.</MessageContent>
-      </MessageBody>
-    </Message>
-    <Message role="assistant">
-      <MessageAvatar name="Koala" />
-      <MessageBody>
-        <MessageContent>
-          <MessageTyping />
-        </MessageContent>
-      </MessageBody>
-    </Message>
-  </Conversation>,
+  // AI conversation thread with a live typing indicator. `bubble` variant so every turn is a
+  // chat bubble paired with the Koala avatar (the `plain` default drops the bubble + avatar and
+  // would leave the assistant turn as bare text beside a stray avatar).
+  <Frame key="chat">
+    <Conversation variant="bubble" className="w-full">
+      <Message role="user">
+        <MessageBody>
+          <MessageContent>What changed this release?</MessageContent>
+        </MessageBody>
+      </Message>
+      <Message role="assistant">
+        <MessageAvatar name="Koala" src="/koala-logo.webp" />
+        <MessageBody>
+          <MessageContent>Three key updates landed.</MessageContent>
+        </MessageBody>
+      </Message>
+      <Message role="assistant">
+        <MessageAvatar name="Koala" src="/koala-logo.webp" />
+        <MessageBody>
+          <MessageContent>
+            <MessageTyping />
+          </MessageContent>
+        </MessageBody>
+      </Message>
+    </Conversation>
+  </Frame>,
 
-  <Tabs key="tabs" defaultValue="overview" className="w-full">
-    <TabsList className="w-full">
-      <TabsTrigger value="overview" className="flex-1">
-        Overview
-      </TabsTrigger>
-      <TabsTrigger value="activity" className="flex-1">
-        Activity
-      </TabsTrigger>
-    </TabsList>
-    <TabsContent value="overview" className="pt-3 text-center text-sm text-muted-foreground">
-      A quick summary lives here.
-    </TabsContent>
-    <TabsContent value="activity" className="pt-3 text-center text-sm text-muted-foreground">
-      The latest events show here.
-    </TabsContent>
-  </Tabs>,
+  <Frame key="tabs">
+    <Tabs defaultValue="overview" className="w-full">
+      <TabsList className="w-full">
+        <TabsTrigger value="overview" className="flex-1">
+          Overview
+        </TabsTrigger>
+        <TabsTrigger value="activity" className="flex-1">
+          Activity
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent value="overview" className="pt-3 text-center text-sm text-muted-foreground">
+        A quick summary lives here.
+      </TabsContent>
+      <TabsContent value="activity" className="pt-3 text-center text-sm text-muted-foreground">
+        The latest events show here.
+      </TabsContent>
+    </Tabs>
+  </Frame>,
 
   // Featured pricing tier (provides its own context, no grid needed).
   <PricingTier key="pricing" featured className="w-full gap-4 p-5">
@@ -356,24 +366,26 @@ const ITEMS: React.ReactNode[] = [
     </PricingTierAction>
   </PricingTier>,
 
-  <Cluster key="avatars">
+  <Frame key="avatars">
     <AvatarGroup max={4}>
       {(
         [
-          { initials: "EA", color: "brand" },
-          { initials: "MJ", color: "purple" },
-          { initials: "AL", color: "teal" },
-          { initials: "RT", color: "orange" },
-          { initials: "SD", color: "pink" },
-          { initials: "KO", color: "brand" },
+          { initials: "EA", name: "Emma Adams", color: "brand", img: 47 },
+          { initials: "MJ", name: "Marcus Jones", color: "purple", img: 12 },
+          { initials: "AL", name: "Aisha Lin", color: "teal", img: 5 },
+          { initials: "RT", name: "Rosa Torres", color: "orange", img: 32 },
+          { initials: "SD", name: "Sam Diaz", color: "pink", img: 14 },
+          { initials: "KO", name: "Kenji Ono", color: "brand", img: 60 },
         ] as const
-      ).map(({ initials, color }) => (
+      ).map(({ initials, name, color, img }) => (
+        // Real photos via pravatar; Radix falls back to the colored initials if an image fails.
         <Avatar key={initials} color={color}>
+          <AvatarImage src={`https://i.pravatar.cc/96?img=${img}`} alt={name} />
           <AvatarFallback>{initials}</AvatarFallback>
         </Avatar>
       ))}
     </AvatarGroup>
-  </Cluster>,
+  </Frame>,
 
   <Testimonial key="testimonial" className="w-full">
     <TestimonialQuote>We replaced our in-house kit in a weekend.</TestimonialQuote>
@@ -389,69 +401,71 @@ const ITEMS: React.ReactNode[] = [
   </Testimonial>,
 
   // HSV color picker: drag the square, slide the hue rail.
-  <Cluster key="color">
+  <Frame key="color">
     <ColorPicker density="compact" defaultValue="#5b8def" className="w-full max-w-[15rem]">
       <ColorPickerArea className="h-28" />
       <ColorPickerControls />
     </ColorPicker>
-  </Cluster>,
+  </Frame>,
 
-  <Cluster key="checkbox">
+  <Frame key="checkbox">
     <CheckboxDemo />
-  </Cluster>,
+  </Frame>,
 
-  <Table key="table" className="w-full text-sm">
-    <TableHeader>
-      <TableRow>
-        <TableHead>Name</TableHead>
-        <TableHead>Status</TableHead>
-      </TableRow>
-    </TableHeader>
-    <TableBody>
-      <TableRow>
-        <TableCell>Alice Chen</TableCell>
-        <TableCell>
-          <Badge variant="success" size="sm" dot pill>
-            Active
-          </Badge>
-        </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell>Bob Lee</TableCell>
-        <TableCell>
-          <Badge variant="warning" size="sm" dot pill>
-            Pending
-          </Badge>
-        </TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell>Carla Ruiz</TableCell>
-        <TableCell>
-          <Badge variant="success" size="sm" dot pill>
-            Active
-          </Badge>
-        </TableCell>
-      </TableRow>
-    </TableBody>
-  </Table>,
+  <Frame key="table">
+    <Table className="w-full text-sm">
+      <TableHeader>
+        <TableRow>
+          <TableHead>Name</TableHead>
+          <TableHead>Status</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell>Alice Chen</TableCell>
+          <TableCell>
+            <Badge variant="success" size="sm" dot pill>
+              Active
+            </Badge>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>Bob Lee</TableCell>
+          <TableCell>
+            <Badge variant="warning" size="sm" dot pill>
+              Pending
+            </Badge>
+          </TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell>Carla Ruiz</TableCell>
+          <TableCell>
+            <Badge variant="success" size="sm" dot pill>
+              Active
+            </Badge>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  </Frame>,
 
-  <Cluster key="toggle">
+  <Frame key="toggle">
     <ToggleGroup type="multiple" defaultValue={["bold"]} aria-label="Text style">
       <ToggleGroupItem value="bold" aria-label="Bold">
-        <TextB />
+        <TextB weight="bold" />
       </ToggleGroupItem>
       <ToggleGroupItem value="italic" aria-label="Italic">
-        <TextItalic />
+        <TextItalic weight="bold" />
       </ToggleGroupItem>
       <ToggleGroupItem value="underline" aria-label="Underline">
-        <TextUnderline />
+        <TextUnderline weight="bold" />
       </ToggleGroupItem>
     </ToggleGroup>
-  </Cluster>,
+  </Frame>,
 
-  <Cluster key="otp">
-    <OTPInput length={5} aria-label="Verification code" />
-  </Cluster>,
+  <Frame key="otp">
+    <OTPInput length={5} placeholder="0" aria-label="Verification code" />
+  </Frame>,
 
   <FileCard key="file" className="w-full">
     <FileCardIcon type="pdf" />
@@ -461,10 +475,10 @@ const ITEMS: React.ReactNode[] = [
     </FileCardContent>
   </FileCard>,
 
-  <Cluster key="badges">
+  <Frame key="badges">
     <BadgeGroup max={3}>
       <Badge variant="info" pill>
-        <Lightning /> React
+        <Lightning weight="bold" /> React
       </Badge>
       <Badge variant="purple" pill>
         TypeScript
@@ -473,36 +487,32 @@ const ITEMS: React.ReactNode[] = [
         Tailwind
       </Badge>
       <Badge variant="outline" pill>
-        <GitBranch /> Radix
+        <GitBranch weight="bold" /> Radix
       </Badge>
       <Badge variant="outline" pill>
         Next.js
       </Badge>
     </BadgeGroup>
-  </Cluster>,
+  </Frame>,
 
   <Banner key="banner" variant="purple" className="w-full rounded-xl">
     <BannerIcon>
-      <Megaphone />
+      <Megaphone weight="bold" />
     </BannerIcon>
     <BannerContent>Koala UI now available for Mobile!</BannerContent>
     <BannerAction href="#" aria-label="Learn more">
-      <ArrowRight />
+      <ArrowRight weight="bold" />
     </BannerAction>
   </Banner>,
 ]
 
 export function ShowcaseGallery() {
   return (
-    <div
-      className={cn(
-        // CSS multi-column masonry: tiles flow top-to-bottom and pack by height. `break-inside-avoid`
-        // (on each child) keeps a tile whole; the trailing margin is the only vertical rhythm.
-        "columns-1 gap-6 sm:columns-2 lg:columns-3 xl:columns-4",
-      )}
-    >
+    // CSS multi-column masonry: tiles flow top-to-bottom and pack by height. `break-inside-avoid`
+    // (on each child) keeps a tile whole; the trailing margin is the only vertical rhythm.
+    <div className="columns-1 gap-4 sm:columns-2 lg:columns-3 xl:columns-4">
       {ITEMS.map((item, i) => (
-        <div key={i} className="mb-6 break-inside-avoid">
+        <div key={i} className="mb-4 break-inside-avoid">
           {item}
         </div>
       ))}

@@ -36,8 +36,13 @@ export const tableVariants = tv({
     body: "[&>tr:last-child>td]:border-b-0",
     footer: "[&>tr>td]:border-t [&>tr>td]:border-b-0 [&>tr>td]:border-border bg-[color-mix(in_oklab,var(--muted)_50%,var(--table-surface))] font-medium",
     row: "bg-[var(--table-surface)] transition-colors duration-fast ease-out data-[state=selected]:bg-muted",
-    head: "px-3 text-left align-middle font-medium text-muted-foreground whitespace-nowrap border-b border-border",
-    cell: "px-3 align-middle whitespace-nowrap border-b border-border",
+    // The `transition-[height,padding]` is what makes a density change *glide* instead of snap:
+    // toggling `density` swaps the cell's height/padding classes, and these are the only two
+    // properties that differ between the tiers, so the rows ease open/closed (make-interfaces #4:
+    // an interruptible CSS transition, so rapid toggling reverses cleanly). Held instant under
+    // reduced-motion. Kept off the `row` (a `<tr>` has no height/padding of its own; the cells do).
+    head: "px-3 text-left align-middle font-medium text-muted-foreground whitespace-nowrap border-b border-border transition-[height,padding] duration-base ease-out motion-reduce:transition-none",
+    cell: "px-3 align-middle whitespace-nowrap border-b border-border transition-[height,padding] duration-base ease-out motion-reduce:transition-none",
     caption: "mt-4 text-sm text-pretty text-muted-foreground",
   },
   variants: {

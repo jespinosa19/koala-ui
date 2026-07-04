@@ -23,7 +23,7 @@ export default function FileCardDocsPage() {
     <>
       <DocHeader
         title="File Card"
-        description="A card for a single file: a type-tinted icon (or image thumbnail), the name, a meta line, trailing actions, and an optional upload progress bar. Compose the named parts into attachment rows, upload trays, and file lists."
+        description="A card for a single file: a realistic file-type illustration (or image thumbnail), the name, a meta line, trailing actions, and an optional upload progress bar. Compose the named parts into attachment rows, upload trays, and file lists."
       />
 
       <ComponentPreview previewClassName="block" code={SHOWCASE_CODE}>
@@ -67,8 +67,13 @@ export default function FileCardDocsPage() {
       <DocSection title="File types">
         <p className="mt-4 text-pretty text-muted-foreground">
           Pass <code className="font-mono text-sm">type</code> to{" "}
-          <code className="font-mono text-sm">FileCardIcon</code> and it picks a Phosphor glyph
-          and a soft, re-themable tint. PDFs read red, images purple, sheets green, and so on.
+          <code className="font-mono text-sm">FileCardIcon</code> and it renders a realistic file
+          illustration: a sheet with a dog-eared corner and a colored band stamped with the
+          extension. The tone re-themes across all four palettes: PDFs read red, images purple,
+          sheets green, and so on. The band shows a short stand-in (PDF, XLS, IMG&hellip;) by
+          default; pass <code className="font-mono text-sm">label</code> to stamp the real
+          extension (the demo below shows <code className="font-mono text-sm">DOCX</code>,{" "}
+          <code className="font-mono text-sm">XLSX</code>, <code className="font-mono text-sm">TSX</code>).
           Don&rsquo;t know the type up front? Derive it from the filename with{" "}
           <code className="font-mono text-sm">fileTypeFromName(file.name)</code>.
         </p>
@@ -124,7 +129,7 @@ export default function FileCardDocsPage() {
           gridded lists; <code className="font-mono text-sm">elevated</code> trades the border for a
           lifted shadow when a card needs to float; <code className="font-mono text-sm">ghost</code>{" "}
           strips all chrome and padding so the row sits flush in feeds, comment threads, and dense
-          lists. The type-tinted icon still carries the file&rsquo;s identity.
+          lists. The file illustration still carries the file&rsquo;s identity.
         </p>
         <ComponentPreview previewClassName="block" code={VARIANTS_CODE}>
           <VariantsDemo />
@@ -178,7 +183,9 @@ export default function FileCardDocsPage() {
           <code className="font-mono text-sm">FileCardActions</code>) forward{" "}
           <code className="font-mono text-sm">div</code> props.{" "}
           <code className="font-mono text-sm">FileCardIcon</code> adds{" "}
-          <code className="font-mono text-sm">type</code> (or pass your own glyph as children);{" "}
+          <code className="font-mono text-sm">type</code> and an optional{" "}
+          <code className="font-mono text-sm">label</code> band override (or pass your own glyph as
+          children);{" "}
           <code className="font-mono text-sm">FileCardThumbnail</code> forwards{" "}
           <code className="font-mono text-sm">img</code> props and requires{" "}
           <code className="font-mono text-sm">alt</code>;{" "}
@@ -198,8 +205,8 @@ export default function FileCardDocsPage() {
         <Faq
           items={[
             {
-              q: "How do I pick the right glyph and tint without knowing the file type up front?",
-              a: "Pass `type` to FileCardIcon to choose a glyph and soft re-themable tint, for example \"pdf\" reads red and \"image\" reads purple. If you only have a filename, call `fileTypeFromName(file.name)` and pass its result as the type; it falls back to \"default\" for unknown or extensionless names.",
+              q: "How do I pick the right illustration and tint without knowing the file type up front?",
+              a: "Pass `type` to FileCardIcon to render a realistic file illustration (a sheet with a dog-eared corner and a colored extension band) with a re-themable tint, for example \"pdf\" reads red and \"image\" reads purple. If you only have a filename, call `fileTypeFromName(file.name)` and pass its result as the type; it falls back to \"default\" for unknown or extensionless names. By default the band shows a short per-type stand-in (PDF, XLS, IMG…); pass `label` to stamp the exact extension, e.g. label=\"CSV\".",
             },
             {
               q: "When should I use FileCardThumbnail instead of FileCardIcon?",
@@ -295,13 +302,16 @@ const ANATOMY_CODE = `<FileCard>
   </FileCardActions>
 </FileCard>`
 
-const FILE_TYPES_CODE = `// type picks the glyph + soft tint
-<FileCardIcon type="pdf" />     {/* red */}
-<FileCardIcon type="image" />   {/* purple */}
-<FileCardIcon type="sheet" />   {/* green */}
-<FileCardIcon type="code" />    {/* teal */}
+const FILE_TYPES_CODE = `// type picks the tone + a default band label
+<FileCardIcon type="pdf" />     {/* red · "PDF" */}
+<FileCardIcon type="image" />   {/* purple · "IMG" */}
+<FileCardIcon type="sheet" />   {/* green · "XLS" */}
+<FileCardIcon type="code" />    {/* teal · "</>" */}
 
-// …or derive it straight from the filename
+// stamp the real extension on the band
+<FileCardIcon type="sheet" label="CSV" />
+
+// …or derive the type straight from the filename
 <FileCardIcon type={fileTypeFromName("index.tsx")} />`
 
 const THUMBNAIL_CODE = `<FileCard>

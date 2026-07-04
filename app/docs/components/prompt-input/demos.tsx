@@ -70,19 +70,19 @@ function ModelPicker() {
           aria-label="Model"
           className="gap-1.5 data-[state=open]:bg-accent data-[state=open]:text-accent-foreground"
         >
-          <Sparkle /> {MODELS[model]} <CaretDown className="size-4 opacity-60" />
+          <Sparkle weight="bold" /> {MODELS[model]} <CaretDown weight="bold" className="size-4 opacity-60" />
         </PromptInputButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
         <DropdownMenuRadioGroup value={model} onValueChange={setModel}>
           <DropdownMenuRadioItem value="opus">
-            <Sparkle /> Opus 4.8
+            <Sparkle weight="bold" /> Opus 4.8
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="sonnet">
-            <Sparkle /> Sonnet 4.6
+            <Sparkle weight="bold" /> Sonnet 4.6
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="haiku">
-            <Sparkle /> Haiku 4.5
+            <Sparkle weight="bold" /> Haiku 4.5
           </DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
@@ -107,15 +107,15 @@ function AddMenu() {
           aria-label="Add photos & files"
           className="data-[state=open]:bg-accent data-[state=open]:text-accent-foreground"
         >
-          <Plus />
+          <Plus weight="bold" />
         </PromptInputButton>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
         <DropdownMenuItem>
-          <ImageIcon /> Add photo
+          <ImageIcon weight="bold" /> Add photo
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Paperclip /> Add files
+          <Paperclip weight="bold" /> Add files
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -126,8 +126,9 @@ function AddMenu() {
 // at a glance, without a competing filled control.
 const activeTool = "bg-brand/10 text-brand hover:bg-brand/15 hover:text-brand"
 
-// The composer's tools, each a distinct glyph. Toggled on/off independently, so they live in
-// a checkbox menu (their check sits on the right, the menu convention).
+// The composer's tools, each a distinct glyph. Mutually exclusive: at most one is active at a
+// time, so picking one clears the others (re-picking the active one turns it off). They live in
+// a menu with the check on the right, the menu convention.
 const TOOLS = [
   { id: "image", label: "Image", icon: ImageIcon },
   { id: "canvas", label: "Canvas", icon: PaintBrush },
@@ -138,24 +139,22 @@ const TOOLS = [
 
 /**
  * The tools picker: one dropdown that gathers every optional capability (image, canvas, web /
- * deep research, code) instead of one toggle button per tool crowding the bar. Its trigger is a
- * `PromptInputButton` so it matches the rest of the bar; `compact` collapses it to icon-only for
- * the minimal layout. Rather than a generic "Tools" label, the trigger names what's actually on:
- * the active tool's own icon + label when one is selected, a count when several, falling back to
- * the neutral "Tools" affordance (and a brand tint) so the state always reads at a glance.
+ * deep research, code) instead of one toggle button per tool crowding the bar. Only one tool runs
+ * at a time, so picking one clears the others and re-picking the active one turns it off (at most
+ * one active). Its trigger is a `PromptInputButton` so it matches the rest of the bar; `compact`
+ * collapses it to icon-only for the minimal layout. Rather than a generic "Tools" label, the
+ * trigger names what's actually on: the active tool's own icon + label, falling back to the
+ * neutral "Tools" affordance (and a brand tint) so the state always reads at a glance.
  */
 function ToolsMenu({ compact = false }: { compact?: boolean }) {
-  const [active, setActive] = React.useState<Record<string, boolean>>({ deep: true })
-  const toggle = (id: string) => (checked: boolean) =>
-    setActive((prev) => ({ ...prev, [id]: checked }))
+  // At most one tool active: a single id, or null when none is on.
+  const [active, setActive] = React.useState<string | null>("deep")
+  const select = (id: string) => (checked: boolean) => setActive(checked ? id : null)
 
-  const selected = TOOLS.filter((t) => active[t.id])
-  const single = selected.length === 1 ? selected[0] : null
-  // Name the active tool: its icon + label when exactly one is on, a count when several, else the
-  // neutral "Tools" affordance.
+  const single = TOOLS.find((t) => t.id === active) ?? null
+  // Name the active tool by its own icon + label, else fall back to the neutral "Tools" affordance.
   const TriggerIcon = single ? single.icon : SlidersHorizontal
-  const triggerLabel =
-    single?.label ?? (selected.length > 1 ? `${selected.length} tools` : "Tools")
+  const triggerLabel = single?.label ?? "Tools"
 
   return (
     <DropdownMenu>
@@ -166,17 +165,17 @@ function ToolsMenu({ compact = false }: { compact?: boolean }) {
           static
           iconOnly={compact}
           tooltip={false}
-          aria-label={selected.length ? `Tools: ${triggerLabel}` : "Tools"}
+          aria-label={single ? `Tools: ${triggerLabel}` : "Tools"}
           className={cn(
             "gap-1.5 data-[state=open]:bg-accent data-[state=open]:text-accent-foreground",
-            selected.length > 0 && activeTool,
+            single && activeTool,
           )}
         >
-          <TriggerIcon />
+          <TriggerIcon weight="bold" />
           {!compact && (
             <>
               {triggerLabel}
-              <CaretDown className="size-4 opacity-60" />
+              <CaretDown weight="bold" className="size-4 opacity-60" />
             </>
           )}
         </PromptInputButton>
@@ -186,10 +185,10 @@ function ToolsMenu({ compact = false }: { compact?: boolean }) {
         {TOOLS.map(({ id, label, icon: Icon }) => (
           <DropdownMenuCheckboxItem
             key={id}
-            checked={!!active[id]}
-            onCheckedChange={toggle(id)}
+            checked={active === id}
+            onCheckedChange={select(id)}
           >
-            <Icon /> {label}
+            <Icon weight="bold" /> {label}
           </DropdownMenuCheckboxItem>
         ))}
       </DropdownMenuContent>
@@ -228,7 +227,7 @@ export function PromptInputDemo() {
         {/* gap-0.5 (2px) so the filled send button never butts flush against the ghost mic. */}
         <div className="ml-auto flex items-center gap-0.5">
           <PromptInputButton iconOnly aria-label="Dictate">
-            <Microphone />
+            <Microphone weight="bold" />
           </PromptInputButton>
           <PromptInputSubmit className="ml-0" />
         </div>
@@ -262,10 +261,10 @@ export function StreamingDemo() {
       <PromptInputTextarea placeholder="Send a message, then watch the button turn into stop…" />
       <PromptInputToolbar>
         <PromptInputButton>
-          <Globe /> Search
+          <Globe weight="bold" /> Search
         </PromptInputButton>
         <PromptInputButton>
-          <Brain /> Reason
+          <Brain weight="bold" /> Reason
         </PromptInputButton>
         <PromptInputSubmit />
       </PromptInputToolbar>
@@ -282,7 +281,7 @@ export function SizesDemo() {
           <PromptInputTextarea placeholder={`Size "${size}", ask anything…`} />
           <PromptInputToolbar>
             <PromptInputButton iconOnly aria-label="Add photos & files">
-              <Plus />
+              <Plus weight="bold" />
             </PromptInputButton>
             <ModelPicker />
             <PromptInputSubmit />
@@ -311,7 +310,7 @@ export function SuggestionsDemo() {
       <PromptInputSuggestions>
         {suggestions.map(({ label, icon: Icon }) => (
           <PromptInputSuggestion key={label} onClick={() => setValue(label)}>
-            <Icon /> {label}
+            <Icon weight="bold" /> {label}
           </PromptInputSuggestion>
         ))}
       </PromptInputSuggestions>
@@ -319,7 +318,7 @@ export function SuggestionsDemo() {
         <PromptInputTextarea placeholder="Pick a starter or type your own…" />
         <PromptInputToolbar>
           <PromptInputButton iconOnly aria-label="Attach file">
-            <Paperclip />
+            <Paperclip weight="bold" />
           </PromptInputButton>
           <PromptInputSubmit />
         </PromptInputToolbar>
@@ -345,7 +344,7 @@ export function BannerDemo() {
         <PromptInputTextarea placeholder="How can I help you today?" />
         <PromptInputToolbar>
           <PromptInputButton iconOnly aria-label="Add photos & files">
-            <Plus />
+            <Plus weight="bold" />
           </PromptInputButton>
           <ModelPicker />
           <PromptInputSubmit />
@@ -365,14 +364,14 @@ export function BannerBottomDemo() {
         <PromptInputTextarea placeholder="How can I help you today?" />
         <PromptInputToolbar>
           <PromptInputButton iconOnly aria-label="Add photos & files">
-            <Plus />
+            <Plus weight="bold" />
           </PromptInputButton>
           <ModelPicker />
           <PromptInputSubmit />
         </PromptInputToolbar>
       </PromptInput>
       {open && (
-        <PromptInputBanner side="bottom" icon={<Sparkle />} onClose={() => setOpen(false)}>
+        <PromptInputBanner side="bottom" icon={<Sparkle weight="bold" />} onClose={() => setOpen(false)}>
           Get better answers from your apps.
           <PromptInputBannerAction className="ml-auto">Connect</PromptInputBannerAction>
         </PromptInputBanner>
@@ -387,7 +386,7 @@ export function CountDemo() {
       <PromptInputTextarea placeholder="Describe the image you want…" />
       <PromptInputToolbar>
         <PromptInputButton iconOnly aria-label="Attach file">
-          <Paperclip />
+          <Paperclip weight="bold" />
         </PromptInputButton>
         <div className="ml-auto flex items-center gap-2">
           <PromptInputCount max={500} />
@@ -437,20 +436,20 @@ export function MinimalDemo() {
               aria-label="Model"
               className="data-[state=open]:bg-accent data-[state=open]:text-accent-foreground"
             >
-              <Sparkle />
+              <Sparkle weight="bold" />
             </PromptInputButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
             <DropdownMenuLabel>Model</DropdownMenuLabel>
             <DropdownMenuRadioGroup value={model} onValueChange={setModel}>
               <DropdownMenuRadioItem value="opus">
-                <Sparkle /> Opus 4.8
+                <Sparkle weight="bold" /> Opus 4.8
               </DropdownMenuRadioItem>
               <DropdownMenuRadioItem value="sonnet">
-                <Sparkle /> Sonnet 4.6
+                <Sparkle weight="bold" /> Sonnet 4.6
               </DropdownMenuRadioItem>
               <DropdownMenuRadioItem value="haiku">
-                <Sparkle /> Haiku 4.5
+                <Sparkle weight="bold" /> Haiku 4.5
               </DropdownMenuRadioItem>
             </DropdownMenuRadioGroup>
           </DropdownMenuContent>

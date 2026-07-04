@@ -74,7 +74,7 @@ export function DocsCommandMenu() {
         )}
         aria-label="Search components"
       >
-        <MagnifyingGlass className="size-4 shrink-0" />
+        <MagnifyingGlass weight="bold" className="size-4 shrink-0" />
         <span className="hidden sm:inline">Search components…</span>
         <span className="ml-4 hidden items-center gap-1 sm:flex">
           <Kbd size="sm" variant="ghost">⌘</Kbd>
@@ -101,7 +101,7 @@ export function DocsCommandMenu() {
                   keywords={item.keywords}
                   onSelect={() => go(item.href)}
                 >
-                  <item.icon aria-hidden weight="regular" />
+                  <item.icon aria-hidden weight="bold" />
                   {item.title}
                 </CommandItem>
               ))}

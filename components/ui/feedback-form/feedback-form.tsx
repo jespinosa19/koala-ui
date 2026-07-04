@@ -173,7 +173,7 @@ export function FeedbackForm({
               aria-label={label}
               className={cn(slots.ratingItem(), TONE_ITEM[value])}
             >
-              <Icon />
+              <Icon weight="bold" />
             </ToggleGroupItem>
           ))}
         </ToggleGroup>
@@ -213,7 +213,7 @@ export function FeedbackForm({
           disabled={!rating}
           className="w-full"
         >
-          <ArrowUp />
+          <ArrowUp weight="bold" />
           {action}
         </Button>
       </form>

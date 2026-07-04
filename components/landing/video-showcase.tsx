@@ -53,8 +53,8 @@ export interface VideoShowcaseProps {
  * are configurable; everything is overridable per page.
  */
 export function VideoShowcase({
-  title = "Never start from scratch ever again",
-  description = "Quickly generate multiple concepts thanks to all the components and sections we have carefully designed for you.",
+  title = "See it move before you build it",
+  description = "Every component and section in motion, exactly as it behaves in your product. Press play, then drop the same source into your repo.",
   eyebrow = "See it in motion",
   src = DEFAULT_SRC,
   poster = DEFAULT_POSTER,

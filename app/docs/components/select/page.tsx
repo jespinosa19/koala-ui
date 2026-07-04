@@ -256,12 +256,18 @@ const [country, setCountry] = useState("US")
 
       <DocSection title="Density">
         <p className="mt-4 text-pretty text-muted-foreground">
-          <code className="font-mono text-sm">density</code> on{" "}
-          <code className="font-mono text-sm">SelectTrigger</code> switches between{" "}
-          <code className="font-mono text-sm">comfortable</code> (h-10, generous items) and{" "}
-          <code className="font-mono text-sm">compact</code> (h-8, tight items) - pass the same
-          prop to <code className="font-mono text-sm">SelectContent</code> or drive both from a
-          parent <code className="font-mono text-sm">DensityProvider</code>.
+          The trigger height comes from{" "}
+          <code className="font-mono text-sm">size</code> on{" "}
+          <code className="font-mono text-sm">SelectTrigger</code> -{" "}
+          <code className="font-mono text-sm">sm</code>/<code className="font-mono text-sm">md</code>/<code className="font-mono text-sm">lg</code>{" "}
+          map to 32/36/40px, the same scale as Button and Input, so a Select lines up with them
+          at a shared size. <code className="font-mono text-sm">density</code> no longer sets the
+          trigger height; it picks the <em>default</em> size when you do not pass one (compact →{" "}
+          <code className="font-mono text-sm">sm</code>, comfortable →{" "}
+          <code className="font-mono text-sm">md</code>) and tightens the dropdown menu rows.
+          Pass <code className="font-mono text-sm">density</code> to{" "}
+          <code className="font-mono text-sm">SelectContent</code> (or a parent{" "}
+          <code className="font-mono text-sm">DensityProvider</code>) for the menu spacing.
         </p>
         <ComponentPreview
           code={`import { Circle } from "@phosphor-icons/react"
@@ -302,7 +308,7 @@ const [country, setCountry] = useState("US")
             { q: "When should I use Select versus MultiSelect or CountrySelect?", a: "Use `Select` to pick exactly one value from a short list; it closes on pick. For toggling several values with checkboxes or switches that stay open, reach for `MultiSelect`, and for the ~250-country case use the searchable `CountrySelect` from the Input family." },
             { q: "How do I compose the parts?", a: "Wrap everything in `Select`, put `SelectValue` (with a `placeholder`) inside a `SelectTrigger`, and list `SelectItem`s inside `SelectContent`. Organize long lists with `SelectGroup` plus `SelectLabel`, and divide groups with `SelectSeparator`." },
             { q: "How do I attach a hint to a terse option?", a: "Pass a `tooltip` string to `SelectItem` to surface a hint on hover and on keyboard focus, useful for labels like High or Medium that say nothing about the trade-off. Use `tooltipPlacement` to change the side it grows toward (defaults to `right`)." },
-            { q: "How do I set density, and where does the prop go?", a: "Pass `density` to `SelectTrigger` to switch between `comfortable` (h-10) and `compact` (h-8), and pass the same prop to `SelectContent` so the menu items match. You can also drive both from a parent `DensityProvider`." },
+            { q: "How do I size the trigger, and where does density go?", a: "Trigger height comes from `size` on `SelectTrigger` (sm/md/lg = 32/36/40px, the same scale as Button and Input). `density` no longer sets the height - it picks the default size when you don't pass one (compact -> sm, comfortable -> md) and tightens the dropdown rows; pass it to `SelectContent` (or a parent `DensityProvider`) for the menu spacing. An explicit `size` always wins." },
             { q: "Is keyboard navigation and type-ahead handled for me?", a: "Yes. Select is built on Radix Select, so arrow-key navigation, type-ahead search, and ARIA come for free. Mark an option `disabled` to skip it in that navigation." },
             { q: "How do I add an icon to each option?", a: "Koala's convention is a leading Phosphor icon per option: wrap the icon and label in a `<span className=\"flex items-center gap-2\">` inside the `SelectItem`. Render icons in outline weight to match the rest of the system." },
           ]}

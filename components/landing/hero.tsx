@@ -31,37 +31,37 @@ export function Hero() {
         <HeroEyebrow asChild>
           <Link href="#changelog">
             <Badge variant="orange" pill>
-              <Megaphone />
-              Update available
+              <Megaphone weight="bold" />
+              New release
             </Badge>
-            <span>Koala UI v11 it&apos;s here!</span>
+            <span>Koala UI v1.0 is here</span>
           </Link>
         </HeroEyebrow>
 
-        <HeroTitle>A Design System built for AI-Powered Products</HeroTitle>
+        <HeroTitle>A design system built to feel finished</HeroTitle>
 
         <HeroSubtitle>
-          A Design System for builders of AI assistants, copilots and intelligent tools. Ship
-          MVPs fast.
+          89 accessible React components and four themes, with the real source copied straight
+          into your repo. Assemble production screens in an afternoon, not a sprint.
         </HeroSubtitle>
 
         <HeroActions>
           <Button asChild size="lg">
             <Link href="#pricing">
-              Buy now &amp; use forever
-              <ArrowRight />
+              Buy once, use forever
+              <ArrowRight weight="bold" />
+            </Link>
+          </Button>
+          <Button asChild size="lg" variant="outline">
+            <Link href="#pricing">
+              <FigmaLogo weight="bold" />
+              Get the Figma kit
             </Link>
           </Button>
           <Button asChild size="lg" variant="outline">
             <Link href="/docs">
-              <FigmaLogo />
-              Preview Desktop
-            </Link>
-          </Button>
-          <Button asChild size="lg" variant="outline">
-            <Link href="/docs">
-              <DeviceMobile />
-              Preview Mobile
+              <DeviceMobile weight="bold" />
+              Browse the docs
             </Link>
           </Button>
         </HeroActions>
@@ -76,11 +76,11 @@ export function Hero() {
           <HeroSocialAvatars />
           <div className="flex flex-col items-center gap-1 sm:items-start">
             <span className="text-sm font-medium text-foreground">
-              +{SOCIAL_PROOF.builders} Designers have joined already
+              +{SOCIAL_PROOF.builders} builders have joined already
             </span>
             <HeroRating>
               <span className="font-medium text-foreground tabular-nums">
-                {SOCIAL_PROOF.rating} Ratings
+                {SOCIAL_PROOF.rating}/5 average rating
               </span>
             </HeroRating>
           </div>

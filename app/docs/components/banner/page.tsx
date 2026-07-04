@@ -35,7 +35,7 @@ export default function BannerDocsPage() {
   <BannerIcon>
     <Megaphone />
   </BannerIcon>
-  <BannerContent>Koala UI now available for Mobile Apps!</BannerContent>
+  <BannerContent>New: cream and moonlight themes just landed.</BannerContent>
   <BannerAction href="#">
     Check it out
     <ArrowRight />
@@ -44,12 +44,12 @@ export default function BannerDocsPage() {
       >
         <Banner variant="purple" className="rounded-lg">
           <BannerIcon>
-            <Megaphone />
+            <Megaphone weight="bold" />
           </BannerIcon>
-          <BannerContent>Koala UI now available for Mobile Apps!</BannerContent>
+          <BannerContent>New: cream and moonlight themes just landed.</BannerContent>
           <BannerAction href="#">
             Check it out
-            <ArrowRight />
+            <ArrowRight weight="bold" />
           </BannerAction>
         </Banner>
       </ComponentPreview>
@@ -75,7 +75,7 @@ export function Example() {
       <BannerIcon>
         <Megaphone />
       </BannerIcon>
-      <BannerContent>Koala UI now available for Mobile Apps!</BannerContent>
+      <BannerContent>New: cream and moonlight themes just landed.</BannerContent>
       <BannerAction href="#">Check it out</BannerAction>
     </Banner>
   )
@@ -102,42 +102,42 @@ export function Example() {
         >
           <Banner variant="brand" className="rounded-lg">
             <BannerIcon>
-              <Rocket />
+              <Rocket weight="bold" />
             </BannerIcon>
-            <BannerContent>Koala UI v2.0 is here.</BannerContent>
+            <BannerContent>Koala UI v1.0 is here.</BannerContent>
             <BannerAction href="#">Read the release notes</BannerAction>
           </Banner>
           <Banner variant="purple" className="rounded-lg">
             <BannerIcon>
-              <Sparkle />
+              <Sparkle weight="bold" />
             </BannerIcon>
             <BannerContent>Introducing the new AI components.</BannerContent>
             <BannerAction href="#">Explore</BannerAction>
           </Banner>
           <Banner variant="info" className="rounded-lg">
             <BannerIcon>
-              <Lightning />
+              <Lightning weight="bold" />
             </BannerIcon>
             <BannerContent>Scheduled maintenance this Sunday at 02:00 UTC.</BannerContent>
             <BannerAction href="#">Status page</BannerAction>
           </Banner>
           <Banner variant="success" className="rounded-lg">
             <BannerIcon>
-              <Confetti />
+              <Confetti weight="bold" />
             </BannerIcon>
             <BannerContent>Your account has been upgraded to Pro.</BannerContent>
             <BannerAction href="#">View benefits</BannerAction>
           </Banner>
           <Banner variant="warning" className="rounded-lg">
             <BannerIcon>
-              <Lightning />
+              <Lightning weight="bold" />
             </BannerIcon>
             <BannerContent>Your trial ends in 3 days.</BannerContent>
             <BannerAction href="#">Upgrade now</BannerAction>
           </Banner>
           <Banner variant="default" className="rounded-lg">
             <BannerIcon>
-              <Megaphone />
+              <Megaphone weight="bold" />
             </BannerIcon>
             <BannerContent>We refreshed our docs. Take a look around.</BannerContent>
             <BannerAction href="#">What&apos;s new</BannerAction>
@@ -167,28 +167,28 @@ export function Example() {
   <BannerIcon>
     <Rocket />
   </BannerIcon>
-  <BannerContent>Koala UI v2.0 is live.</BannerContent>
+  <BannerContent>Koala UI v1.0 is live.</BannerContent>
   <BannerAction href="#">See what's new</BannerAction>
 </Banner>`}
         >
           <Banner appearance="solid" variant="default" className="rounded-lg">
             <BannerIcon>
-              <Megaphone />
+              <Megaphone weight="bold" />
             </BannerIcon>
             <BannerContent>Black Friday: 40% off all plans this week.</BannerContent>
             <BannerAction href="#">
               Get the deal
-              <ArrowRight />
+              <ArrowRight weight="bold" />
             </BannerAction>
           </Banner>
           <Banner appearance="solid" variant="brand" className="rounded-lg">
             <BannerIcon>
-              <Rocket />
+              <Rocket weight="bold" />
             </BannerIcon>
-            <BannerContent>Koala UI v2.0 is live.</BannerContent>
+            <BannerContent>Koala UI v1.0 is live.</BannerContent>
             <BannerAction href="#">
               See what&apos;s new
-              <ArrowRight />
+              <ArrowRight weight="bold" />
             </BannerAction>
           </Banner>
         </ComponentPreview>
@@ -197,14 +197,11 @@ export function Example() {
       <DocSection title="Festive">
         <p className="mt-4 text-pretty text-muted-foreground">
           Set <code className="font-mono text-sm">appearance=&quot;festive&quot;</code> for a
-          playful celebration bar: a multi-stop gradient drifts slowly behind white text, the
-          natural home for launches, milestones, and holidays. The drift is an ambient,
-          reduced-motion-aware loop, and it ignores the tone{" "}
-          <code className="font-mono text-sm">variant</code>. Theme it by overriding three CSS
-          variables, <code className="font-mono text-sm">--banner-festive-from</code>,{" "}
-          <code className="font-mono text-sm">--banner-festive-via</code>, and{" "}
-          <code className="font-mono text-sm">--banner-festive-to</code>, with brand or flag colors.
-          Keep the stops deep and saturated so the white text stays legible across every theme.
+          playful celebration bar: a flat, saturated fill behind white text, the natural home for
+          launches, milestones, and holidays. It ignores the tone{" "}
+          <code className="font-mono text-sm">variant</code>. Recolor the bar by overriding one CSS
+          variable, <code className="font-mono text-sm">--banner-festive-via</code>, with a brand or
+          flag color. Keep it deep and saturated so the white text stays legible across every theme.
         </p>
         <ComponentPreview
           previewClassName="flex-col items-stretch gap-3 p-6"
@@ -212,54 +209,44 @@ export function Example() {
   <BannerIcon>
     <Confetti />
   </BannerIcon>
-  <BannerContent>We just shipped v2.0. Thanks for celebrating with us.</BannerContent>
+  <BannerContent>We just shipped v1.0. Thanks for celebrating with us.</BannerContent>
   <BannerAction href="#">See what's new</BannerAction>
 </Banner>
 
-// Theme the gradient with any palette (here, a flag-inspired set)
+// Recolor the bar with any deep tone
 <Banner
   appearance="festive"
-  style={{
-    "--banner-festive-from": "oklch(0.66 0.14 85)",
-    "--banner-festive-via": "oklch(0.45 0.17 252)",
-    "--banner-festive-to": "oklch(0.52 0.21 25)",
-  }}
+  style={{ "--banner-festive-via": "oklch(0.55 0.2 255)" }}
 >
   <BannerIcon>
     <Sparkle />
   </BannerIcon>
-  <BannerContent>Drive the bar with your own colors.</BannerContent>
+  <BannerContent>Drive the bar with your own color.</BannerContent>
   <BannerAction href="#">Join the celebration</BannerAction>
 </Banner>`}
         >
           <Banner appearance="festive" className="rounded-lg">
             <BannerIcon>
-              <Confetti />
+              <Confetti weight="bold" />
             </BannerIcon>
-            <BannerContent>We just shipped v2.0. Thanks for celebrating with us.</BannerContent>
+            <BannerContent>We just shipped v1.0. Thanks for celebrating with us.</BannerContent>
             <BannerAction href="#">
               See what&apos;s new
-              <ArrowRight />
+              <ArrowRight weight="bold" />
             </BannerAction>
           </Banner>
           <Banner
             appearance="festive"
             className="rounded-lg"
-            style={
-              {
-                "--banner-festive-from": "oklch(0.66 0.14 85)",
-                "--banner-festive-via": "oklch(0.45 0.17 252)",
-                "--banner-festive-to": "oklch(0.52 0.21 25)",
-              } as CSSProperties
-            }
+            style={{ "--banner-festive-via": "oklch(0.55 0.2 255)" } as CSSProperties}
           >
             <BannerIcon>
-              <Sparkle />
+              <Sparkle weight="bold" />
             </BannerIcon>
-            <BannerContent>Drive the bar with your own colors.</BannerContent>
+            <BannerContent>Drive the bar with your own color.</BannerContent>
             <BannerAction href="#">
               Join the celebration
-              <ArrowRight />
+              <ArrowRight weight="bold" />
             </BannerAction>
           </Banner>
         </ComponentPreview>
@@ -268,11 +255,11 @@ export function Example() {
       <DocSection title="Interactive (confetti)">
         <p className="mt-4 text-pretty text-muted-foreground">
           Add <code className="font-mono text-sm">confetti</code> to a festive bar to make it
-          playful: it bursts once on mount and again on every click, and the icon gives a little
-          pop. The pieces are themed by the <code className="font-mono text-sm">--banner-confetti-*</code>{" "}
-          tokens, which derive from the festive palette, so they re-tint with it (set flag colors
-          and both the gradient and the confetti follow). It is decorative and fully honors
-          reduced-motion. Click the bars below.
+          playful: it bursts once on mount and again on every click. The icon pops on the mount
+          burst only, so clicking showers confetti while the icon stays still. The pieces are themed
+          by the <code className="font-mono text-sm">--banner-confetti-*</code> tokens, which derive
+          from the festive palette, so they re-tint with it (recolor the bar and the confetti
+          follows). It is decorative and fully honors reduced-motion. Click the bars below.
         </p>
         <ComponentPreview
           previewClassName="flex-col items-stretch gap-3 p-6"
@@ -280,35 +267,34 @@ export function Example() {
   <BannerIcon>
     <Confetti />
   </BannerIcon>
-  <BannerContent>We just hit 10,000 stars. Tap to celebrate!</BannerContent>
+  <BannerContent>We just crossed 9,000 stars. Tap to celebrate!</BannerContent>
   <BannerAction href="#">Star the repo</BannerAction>
 </Banner>
 
-// Same interaction, themed with a flag-inspired palette
+// Same interaction, recolored (--via fills the bar, --to accents the confetti)
 <Banner
   appearance="festive"
   confetti
   style={{
-    "--banner-festive-from": "oklch(0.66 0.14 85)",
-    "--banner-festive-via": "oklch(0.45 0.17 252)",
+    "--banner-festive-via": "oklch(0.55 0.2 255)",
     "--banner-festive-to": "oklch(0.52 0.21 25)",
   }}
 >
   <BannerIcon>
     <Confetti />
   </BannerIcon>
-  <BannerContent>Drive the gradient and the confetti with your own colors.</BannerContent>
+  <BannerContent>Drive the bar and the confetti with your own colors.</BannerContent>
   <BannerAction href="#">Join in</BannerAction>
 </Banner>`}
         >
           <Banner appearance="festive" confetti className="rounded-lg">
             <BannerIcon>
-              <Confetti />
+              <Confetti weight="bold" />
             </BannerIcon>
-            <BannerContent>We just hit 10,000 stars. Tap to celebrate!</BannerContent>
+            <BannerContent>We just crossed 9,000 stars. Tap to celebrate!</BannerContent>
             <BannerAction href="#">
               Star the repo
-              <ArrowRight />
+              <ArrowRight weight="bold" />
             </BannerAction>
           </Banner>
           <Banner
@@ -317,19 +303,18 @@ export function Example() {
             className="rounded-lg"
             style={
               {
-                "--banner-festive-from": "oklch(0.66 0.14 85)",
-                "--banner-festive-via": "oklch(0.45 0.17 252)",
+                "--banner-festive-via": "oklch(0.55 0.2 255)",
                 "--banner-festive-to": "oklch(0.52 0.21 25)",
               } as CSSProperties
             }
           >
             <BannerIcon>
-              <Confetti />
+              <Confetti weight="bold" />
             </BannerIcon>
-            <BannerContent>Drive the gradient and the confetti with your own colors.</BannerContent>
+            <BannerContent>Drive the bar and the confetti with your own colors.</BannerContent>
             <BannerAction href="#">
               Join in
-              <ArrowRight />
+              <ArrowRight weight="bold" />
             </BannerAction>
           </Banner>
         </ComponentPreview>
@@ -395,7 +380,7 @@ export function Example() {
               </span>
             </BannerOrnament>
             <BannerIcon>
-              <Confetti />
+              <Confetti weight="bold" />
             </BannerIcon>
             <BannerContent>We&apos;re celebrating with Venezuela today.</BannerContent>
             <Button size="sm" variant="secondary" asChild>
@@ -440,7 +425,7 @@ export function Example() {
         >
           <Banner align="between" variant="info" className="rounded-lg">
             <BannerIcon>
-              <Lightning />
+              <Lightning weight="bold" />
             </BannerIcon>
             <BannerContent>You have 14 days left in your free trial.</BannerContent>
             <Button size="sm" asChild>
@@ -449,7 +434,7 @@ export function Example() {
           </Banner>
           <Banner align="between" appearance="solid" variant="brand" className="rounded-lg">
             <BannerIcon>
-              <Sparkle />
+              <Sparkle weight="bold" />
             </BannerIcon>
             <BannerContent>Try the new AI components, free during beta.</BannerContent>
             <Button size="sm" variant="secondary" asChild>
@@ -477,7 +462,7 @@ export function Example() {
   <BannerIcon>
     <Megaphone />
   </BannerIcon>
-  <BannerContent>Koala UI now available for Mobile Apps!</BannerContent>
+  <BannerContent>New: cream and moonlight themes just landed.</BannerContent>
   <BannerAction href="#">
     Check it out
     <ArrowRight />
@@ -504,7 +489,7 @@ export function Example() {
   <BannerIcon>
     <Sparkle />
   </BannerIcon>
-  <BannerContent>Read the 2.0 changelog.</BannerContent>
+  <BannerContent>Read the v1.0 changelog.</BannerContent>
   <BannerAction asChild>
     <Link href="/changelog">
       See what's new
@@ -515,13 +500,13 @@ export function Example() {
         >
           <Banner variant="teal" className="rounded-lg">
             <BannerIcon>
-              <Sparkle />
+              <Sparkle weight="bold" />
             </BannerIcon>
-            <BannerContent>Read the 2.0 changelog.</BannerContent>
+            <BannerContent>Read the v1.0 changelog.</BannerContent>
             <BannerAction asChild>
               <a href="#">
                 See what&apos;s new
-                <ArrowRight />
+                <ArrowRight weight="bold" />
               </a>
             </BannerAction>
           </Banner>
@@ -554,8 +539,8 @@ export function Example() {
                 <td className="font-mono text-muted-foreground">soft | solid | festive</td>
                 <td className="font-mono text-muted-foreground">soft</td>
                 <td className="text-muted-foreground">
-                  Fill style. solid supports default (inverse) and brand; festive is a drifting
-                  gradient bar themed by the --banner-festive-* vars.
+                  Fill style. solid supports default (inverse) and brand; festive is a flat
+                  celebration bar themed by the --banner-festive-via var.
                 </td>
               </tr>
               <tr>
@@ -645,8 +630,8 @@ export function Example() {
               a: "Yes: set asChild on BannerAction and pass a single link element (a Next.js <Link>, for instance). The action renders its styles onto that element via Radix Slot, so you keep client-side navigation and valid markup.",
             },
             {
-              q: "How do I theme the festive gradient (brand or flag colors)?",
-              a: "Override --banner-festive-from, --banner-festive-via, and --banner-festive-to on the banner (a className or an inline style), or globally on a parent for a consistent palette. The defaults are a deep violet/fuchsia/coral set chosen so white text holds contrast across all four themes; keep your custom stops similarly deep and saturated. The festive bar ignores the tone variant, so the gradient is the only color source.",
+              q: "How do I theme the festive bar (brand or flag colors)?",
+              a: "Override --banner-festive-via on the banner (a className or an inline style), or globally on a parent for a consistent palette. That single var fills the flat bar; --banner-festive-to accents the confetti alongside it. The default is a clean indigo chosen so white text holds contrast across all four themes; keep your custom color similarly deep and saturated. The festive bar ignores the tone variant, so this var is the only color source.",
             },
           ]}
         />

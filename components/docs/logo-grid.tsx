@@ -101,7 +101,7 @@ function LogoCard({ brand }: { brand: PlaceholderBrand }) {
         >
           <Tooltip content={copied ? "Copied!" : "Copy SVG"}>
             <ButtonGroupItem iconOnly onClick={handleCopy} aria-label={`Copy ${brand.name} SVG`}>
-              {copied ? <Check /> : <Copy />}
+              {copied ? <Check weight="bold" /> : <Copy weight="bold" />}
             </ButtonGroupItem>
           </Tooltip>
           <Tooltip content="Download SVG">
@@ -110,7 +110,7 @@ function LogoCard({ brand }: { brand: PlaceholderBrand }) {
               onClick={handleDownload}
               aria-label={`Download ${brand.name} SVG`}
             >
-              <DownloadSimple />
+              <DownloadSimple weight="bold" />
             </ButtonGroupItem>
           </Tooltip>
         </ButtonGroup>

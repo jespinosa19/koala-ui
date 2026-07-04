@@ -1,6 +1,7 @@
 import { Label, Hint } from "@/components/ui/label"
 import { InputRoot, InputField } from "@/components/ui/input"
 import { Field, FieldLabel, FieldHint } from "@/components/ui/field"
+import { Skeleton } from "@/components/ui/skeleton"
 import { ComponentPreview } from "@/components/docs/component-preview"
 import { CodeSnippet } from "@/components/docs/code-snippet"
 import { Installation } from "@/components/docs/installation"
@@ -69,12 +70,26 @@ export function Example() {
           <code className="font-mono text-sm">aria-hidden</code>.
         </p>
         <ComponentPreview
-          code={`<Label>Workspace name</Label>
-<Label required>Workspace name</Label>`}
+          code={`<div className="flex w-full max-w-sm flex-col gap-4">
+  <div className="flex flex-col gap-1.5">
+    <Label>Workspace name</Label>
+    <Skeleton animation="none" className="h-9 w-full" />
+  </div>
+  <div className="flex flex-col gap-1.5">
+    <Label required>Workspace name</Label>
+    <Skeleton animation="none" className="h-9 w-full" />
+  </div>
+</div>`}
         >
-          <div className="flex flex-col gap-4">
-            <Label>Workspace name</Label>
-            <Label required>Workspace name</Label>
+          <div className="flex w-full max-w-sm flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <Label>Workspace name</Label>
+              <Skeleton animation="none" className="h-9 w-full" />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label required>Workspace name</Label>
+              <Skeleton animation="none" className="h-9 w-full" />
+            </div>
           </div>
         </ComponentPreview>
       </DocSection>
@@ -87,12 +102,26 @@ export function Example() {
           tone (the color transitions, so it fades in rather than snaps).
         </p>
         <ComponentPreview
-          code={`<Hint>Use 8 or more characters.</Hint>
-<Hint hasError>Password is too short.</Hint>`}
+          code={`<div className="flex w-full max-w-sm flex-col gap-4">
+  <div className="flex flex-col gap-1.5">
+    <Skeleton animation="none" className="h-9 w-full" />
+    <Hint>Use 8 or more characters.</Hint>
+  </div>
+  <div className="flex flex-col gap-1.5">
+    <Skeleton animation="none" className="h-9 w-full" />
+    <Hint hasError>Password is too short.</Hint>
+  </div>
+</div>`}
         >
-          <div className="flex flex-col gap-3">
-            <Hint>Use 8 or more characters.</Hint>
-            <Hint hasError>Password is too short.</Hint>
+          <div className="flex w-full max-w-sm flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <Skeleton animation="none" className="h-9 w-full" />
+              <Hint>Use 8 or more characters.</Hint>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Skeleton animation="none" className="h-9 w-full" />
+              <Hint hasError>Password is too short.</Hint>
+            </div>
           </div>
         </ComponentPreview>
       </DocSection>
@@ -103,8 +132,16 @@ export function Example() {
           disabled control. Inside a <code className="font-mono text-sm">Field</code> it&apos;s
           inferred from <code className="font-mono text-sm">{`<Field disabled>`}</code>.
         </p>
-        <ComponentPreview code={`<Label disabled>Billing email</Label>`}>
-          <Label disabled>Billing email</Label>
+        <ComponentPreview
+          code={`<div className="flex w-full max-w-sm flex-col gap-1.5">
+  <Label disabled>Billing email</Label>
+  <Skeleton animation="none" className="h-9 w-full opacity-50" />
+</div>`}
+        >
+          <div className="flex w-full max-w-sm flex-col gap-1.5">
+            <Label disabled>Billing email</Label>
+            <Skeleton animation="none" className="h-9 w-full opacity-50" />
+          </div>
         </ComponentPreview>
       </DocSection>
 

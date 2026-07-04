@@ -21,25 +21,25 @@ export function TreeDemo() {
     <Tree
       aria-label="Project files"
       defaultValue="button.tsx"
-      defaultExpandedValues={["src", "components"]}
+      defaultExpandedValues={["src", "components", "lib", "public"]}
       className="w-full max-w-sm"
     >
-      <TreeItem value="src" label="src" icon={<Folder />} expandedIcon={<FolderOpen />}>
-        <TreeItem value="components" label="components" icon={<Folder />} expandedIcon={<FolderOpen />}>
-          <TreeItem value="button.tsx" label="button.tsx" icon={<FileCode />} />
-          <TreeItem value="card.tsx" label="card.tsx" icon={<FileCode />} />
-          <TreeItem value="tree.tsx" label="tree.tsx" icon={<FileCode />} />
+      <TreeItem value="src" label="src" icon={<Folder weight="bold" />} expandedIcon={<FolderOpen weight="bold" />}>
+        <TreeItem value="components" label="components" icon={<Folder weight="bold" />} expandedIcon={<FolderOpen weight="bold" />}>
+          <TreeItem value="button.tsx" label="button.tsx" icon={<FileCode weight="bold" />} />
+          <TreeItem value="card.tsx" label="card.tsx" icon={<FileCode weight="bold" />} />
+          <TreeItem value="tree.tsx" label="tree.tsx" icon={<FileCode weight="bold" />} />
         </TreeItem>
-        <TreeItem value="lib" label="lib" icon={<Folder />} expandedIcon={<FolderOpen />}>
-          <TreeItem value="utils.ts" label="utils.ts" icon={<FileCode />} />
+        <TreeItem value="lib" label="lib" icon={<Folder weight="bold" />} expandedIcon={<FolderOpen weight="bold" />}>
+          <TreeItem value="utils.ts" label="utils.ts" icon={<FileCode weight="bold" />} />
         </TreeItem>
-        <TreeItem value="globals.css" label="globals.css" icon={<FileText />} />
+        <TreeItem value="globals.css" label="globals.css" icon={<FileText weight="bold" />} />
       </TreeItem>
-      <TreeItem value="public" label="public" icon={<Folder />} expandedIcon={<FolderOpen />}>
-        <TreeItem value="logo.svg" label="logo.svg" icon={<FileImage />} />
+      <TreeItem value="public" label="public" icon={<Folder weight="bold" />} expandedIcon={<FolderOpen weight="bold" />}>
+        <TreeItem value="logo.svg" label="logo.svg" icon={<FileImage weight="bold" />} />
       </TreeItem>
-      <TreeItem value="package.json" label="package.json" icon={<FileText />} />
-      <TreeItem value="README.md" label="README.md" icon={<FileText />} />
+      <TreeItem value="package.json" label="package.json" icon={<FileText weight="bold" />} />
+      <TreeItem value="README.md" label="README.md" icon={<FileText weight="bold" />} />
     </Tree>
   )
 }
@@ -53,15 +53,15 @@ export function SelectionDemo() {
         aria-label="Documentation"
         value={selected}
         onValueChange={setSelected}
-        defaultExpandedValues={["guides"]}
+        defaultExpandedValues={["guides", "components"]}
       >
-        <TreeItem value="guides" label="Guides" icon={<Folder />} expandedIcon={<FolderOpen />}>
-          <TreeItem value="getting-started" label="Getting started" icon={<FileText />} />
-          <TreeItem value="installation" label="Installation" icon={<FileText />} />
+        <TreeItem value="guides" label="Guides" icon={<Folder weight="bold" />} expandedIcon={<FolderOpen weight="bold" />}>
+          <TreeItem value="getting-started" label="Getting started" icon={<FileText weight="bold" />} />
+          <TreeItem value="installation" label="Installation" icon={<FileText weight="bold" />} />
         </TreeItem>
-        <TreeItem value="components" label="Components" icon={<Folder />} expandedIcon={<FolderOpen />}>
-          <TreeItem value="overview" label="Overview" icon={<FileText />} />
-          <TreeItem value="changelog" label="Changelog" icon={<FileText />} disabled />
+        <TreeItem value="components" label="Components" icon={<Folder weight="bold" />} expandedIcon={<FolderOpen weight="bold" />}>
+          <TreeItem value="overview" label="Overview" icon={<FileText weight="bold" />} />
+          <TreeItem value="changelog" label="Changelog" icon={<FileText weight="bold" />} disabled />
         </TreeItem>
       </Tree>
       <p className="text-sm text-muted-foreground">
@@ -83,25 +83,25 @@ export function CategoryDemo() {
       <TreeItem
         value="electronics"
         label="Electronics"
-        icon={<Laptop />}
+        icon={<Laptop weight="bold" />}
         actions={<Badge variant="secondary" size="sm">128</Badge>}
       >
         <TreeItem
           value="phones"
           label="Phones"
-          icon={<DeviceMobile />}
+          icon={<DeviceMobile weight="bold" />}
           actions={<Badge variant="secondary" size="sm">54</Badge>}
         />
         <TreeItem
           value="audio"
           label="Audio"
-          icon={<Headphones />}
+          icon={<Headphones weight="bold" />}
           actions={<Badge variant="secondary" size="sm">31</Badge>}
         />
         <TreeItem
           value="laptops"
           label="Laptops"
-          icon={<Laptop />}
+          icon={<Laptop weight="bold" />}
           actions={<Badge variant="secondary" size="sm">43</Badge>}
         />
       </TreeItem>
@@ -150,23 +150,23 @@ const INITIAL_TREE: FileNode[] = [
   {
     value: "app",
     label: "app",
-    icon: <Folder />,
+    icon: <Folder weight="bold" />,
     children: [
-      { value: "layout.tsx", label: "layout.tsx", icon: <FileCode /> },
-      { value: "page.tsx", label: "page.tsx", icon: <FileCode /> },
+      { value: "layout.tsx", label: "layout.tsx", icon: <FileCode weight="bold" /> },
+      { value: "page.tsx", label: "page.tsx", icon: <FileCode weight="bold" /> },
     ],
   },
   {
     value: "components",
     label: "components",
-    icon: <Folder />,
+    icon: <Folder weight="bold" />,
     children: [
-      { value: "button.tsx", label: "button.tsx", icon: <FileCode /> },
-      { value: "tree.tsx", label: "tree.tsx", icon: <FileCode /> },
+      { value: "button.tsx", label: "button.tsx", icon: <FileCode weight="bold" /> },
+      { value: "tree.tsx", label: "tree.tsx", icon: <FileCode weight="bold" /> },
     ],
   },
-  { value: "tailwind.config.ts", label: "tailwind.config.ts", icon: <FileCode /> },
-  { value: "README.md", label: "README.md", icon: <FileText /> },
+  { value: "tailwind.config.ts", label: "tailwind.config.ts", icon: <FileCode weight="bold" /> },
+  { value: "README.md", label: "README.md", icon: <FileText weight="bold" /> },
 ]
 
 /** Drag any row onto another to drop it before, after, or inside a folder. Alt+↑/↓ reorders too. */
@@ -185,8 +185,8 @@ export function ReorderDemo() {
         key={node.value}
         value={node.value}
         label={node.label}
-        icon={node.children ? <Folder /> : node.icon}
-        expandedIcon={node.children ? <FolderOpen /> : undefined}
+        icon={node.children ? <Folder weight="bold" /> : node.icon}
+        expandedIcon={node.children ? <FolderOpen weight="bold" /> : undefined}
       >
         {node.children ? renderNodes(node.children) : null}
       </TreeItem>

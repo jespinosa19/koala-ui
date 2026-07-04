@@ -262,7 +262,7 @@ export function GalleryAccordionTrigger({
           {peek}
           {count != null && <span className={slots.count()}>{count}</span>}
           <span aria-hidden className={slots.toggle()}>
-            <Plus />
+            <Plus weight="bold" />
           </span>
         </span>
       </AccordionPrimitive.Trigger>

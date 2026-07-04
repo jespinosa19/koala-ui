@@ -70,7 +70,7 @@ export function DataTableViewOptions<TData>({
         {/* `tooltip={false}`: a menu trigger owns its own open state, so it doesn't double up with
             the icon-button tooltip (same call the row-action trigger makes). */}
         <Button variant="outline" iconOnly aria-label={label} tooltip={false}>
-          <SlidersHorizontal />
+          <SlidersHorizontal weight="bold" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
@@ -82,11 +82,11 @@ export function DataTableViewOptions<TData>({
               onValueChange={(value) => onLayoutChange?.(value as DataTableLayout)}
             >
               <DropdownMenuRadioItem value="rows">
-                <Rows />
+                <Rows weight="bold" />
                 Rows
               </DropdownMenuRadioItem>
               <DropdownMenuRadioItem value="cards">
-                <SquaresFour />
+                <SquaresFour weight="bold" />
                 Cards
               </DropdownMenuRadioItem>
             </DropdownMenuRadioGroup>

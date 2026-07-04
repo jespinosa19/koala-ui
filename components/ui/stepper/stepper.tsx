@@ -291,10 +291,10 @@ export function StepperIndicator({
   return (
     <span data-slot="stepper-indicator" className={slots.indicator({ className })} {...props}>
       {loading ? (
-        <CircleNotch className="animate-spin" aria-hidden />
+        <CircleNotch weight="bold" className="animate-spin" aria-hidden />
       ) : state === "completed" ? (
         // #7: the check pops in when a step completes, rather than hard-cutting from the number.
-        <Check aria-hidden className="animate-in zoom-in-50 fade-in duration-base ease-out" />
+        <Check weight="bold" aria-hidden className="animate-in zoom-in-50 fade-in duration-base ease-out" />
       ) : (
         // Tabular figures keep multi-digit steps from reflowing as the active step changes.
         <span className="tabular-nums">{children ?? step}</span>

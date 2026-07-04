@@ -6,7 +6,7 @@ import { CaretLeft, CaretRight, CalendarBlank, X } from "@phosphor-icons/react"
 
 import { tv, type VariantProps } from "@/lib/tv"
 import { cn } from "@/lib/utils"
-import { useDensity, type Density } from "@/lib/density"
+import { useControlSize, useDensity, type Density } from "@/lib/density"
 import { useFieldContext } from "@/lib/field-context"
 
 /**
@@ -442,7 +442,7 @@ export function Calendar(props: CalendarProps) {
             className={cn(slots.nav(), "absolute left-1")}
             onClick={() => shiftView(-1)}
           >
-            <CaretLeft />
+            <CaretLeft weight="bold" />
           </button>
           <button
             type="button"
@@ -457,7 +457,7 @@ export function Calendar(props: CalendarProps) {
             className={cn(slots.nav(), "absolute right-1")}
             onClick={() => shiftView(1)}
           >
-            <CaretRight />
+            <CaretRight weight="bold" />
           </button>
         </div>
 
@@ -533,7 +533,7 @@ export function Calendar(props: CalendarProps) {
               className={cn(slots.nav(), "absolute left-1")}
               onClick={() => shiftView(-1)}
             >
-              <CaretLeft />
+              <CaretLeft weight="bold" />
             </button>
           )}
           {canSwitchView ? (
@@ -550,7 +550,7 @@ export function Calendar(props: CalendarProps) {
               className={cn(slots.nav(), "absolute right-1")}
               onClick={() => shiftView(1)}
             >
-              <CaretRight />
+              <CaretRight weight="bold" />
             </button>
           )}
         </div>
@@ -691,7 +691,7 @@ function PickerTrigger({
         data-placeholder={isPlaceholder || undefined}
         className={datePickerTriggerVariants({ size, block, clearable: showClear, className })}
       >
-        <CalendarBlank className="shrink-0 text-muted-foreground" />
+        <CalendarBlank weight="bold" className="shrink-0 text-muted-foreground" />
         <span className="flex-1 truncate">{label}</span>
       </PopoverPrimitive.Trigger>
       {showClear && (
@@ -706,7 +706,7 @@ function PickerTrigger({
             "outline-none focus-visible:ring-2 focus-visible:ring-brand",
           )}
         >
-          <X className="size-3.5" />
+          <X weight="bold" className="size-3.5" />
         </button>
       )}
     </div>
@@ -806,7 +806,7 @@ export function DatePicker({
   defaultValue,
   onChange,
   placeholder = "Pick a date",
-  size = "md",
+  size,
   block = false,
   disabled,
   hasError,
@@ -845,7 +845,7 @@ export function DatePicker({
       <PickerTrigger
         label={date ? fmt(date) : placeholder}
         isPlaceholder={!date}
-        size={size}
+        size={useControlSize(size, density)}
         block={block}
         disabled={disabled ?? field?.disabled}
         invalid={hasError ?? field?.hasError}
@@ -926,7 +926,7 @@ export function DateRangePicker({
   defaultValue,
   onChange,
   placeholder = "Pick a date range",
-  size = "md",
+  size,
   block = false,
   disabled,
   hasError,
@@ -977,7 +977,7 @@ export function DateRangePicker({
       <PickerTrigger
         label={label}
         isPlaceholder={!range?.from}
-        size={size}
+        size={useControlSize(size, density)}
         block={block}
         disabled={disabled ?? field?.disabled}
         invalid={hasError ?? field?.hasError}

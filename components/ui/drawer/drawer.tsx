@@ -354,7 +354,7 @@ export function DrawerContent({
 
         {showClose && (
           <DialogPrimitive.Close aria-label={closeLabel} className={slots.close()}>
-            <X />
+            <X weight="bold" />
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Content>
@@ -635,7 +635,7 @@ export function DrawerNavBack({
       }}
       {...props}
     >
-      {children ?? <CaretLeft />}
+      {children ?? <CaretLeft weight="bold" />}
     </button>
   )
 }

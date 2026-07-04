@@ -50,8 +50,9 @@ export default function PromptInputDocsPage() {
       <p className="mt-6 text-pretty text-muted-foreground">
         The bar is built out of our <code className="font-mono text-sm">Button</code>: an attach
         menu, the model picker, and a single tools dropdown (image, canvas, web / deep research,
-        code) on the left, dictate and send on the right. The tools trigger names what&apos;s on,
-        showing the active tool&apos;s icon and label rather than a generic{" "}
+        code) on the left, dictate and send on the right. Only one tool runs at a time, so the menu
+        is single-select: picking one clears the others. The trigger names what&apos;s on, showing
+        the active tool&apos;s icon and label rather than a generic{" "}
         <code className="font-mono text-sm">Tools</code> word. Every toolbar glyph renders at a
         consistent 20px, and the send button is an upward arrow that flips to a stop square while a
         response streams.
@@ -99,8 +100,9 @@ export function Composer() {
         <p className="mt-4 text-pretty text-muted-foreground">
           Same capabilities, quieter chrome: each group becomes its own compact icon dropdown
           (attachments, model, tools) so the bar is just icons plus send. Models are a radio group;
-          the tools (image, canvas, web / deep research, code) are checkbox toggles (their check
-          sits on the right, the menu convention). Each trigger is a{" "}
+          the tools (image, canvas, web / deep research, code) are mutually exclusive, so picking
+          one clears the rest (at most one active; their check sits on the right, the menu
+          convention). Each trigger is a{" "}
           <code className="font-mono text-sm">static</code> icon-only{" "}
           <code className="font-mono text-sm">PromptInputButton</code>.
         </p>
@@ -136,7 +138,7 @@ export function Composer() {
     </DropdownMenuContent>
   </DropdownMenu>
 
-  {/* Tools: image · canvas · web / deep research · code */}
+  {/* Tools: image · canvas · web / deep research · code (single-select: at most one) */}
   <DropdownMenu>
     <DropdownMenuTrigger asChild>
       <PromptInputButton static iconOnly tooltip={false} aria-label="Tools">
@@ -145,10 +147,11 @@ export function Composer() {
     </DropdownMenuTrigger>
     <DropdownMenuContent align="start">
       <DropdownMenuLabel>Tools</DropdownMenuLabel>
-      <DropdownMenuCheckboxItem checked={image} onCheckedChange={setImage}>
+      {/* one \`tool\` state; picking one clears the rest, re-picking it clears to null */}
+      <DropdownMenuCheckboxItem checked={tool === "image"} onCheckedChange={(on) => setTool(on ? "image" : null)}>
         <Image /> Image
       </DropdownMenuCheckboxItem>
-      <DropdownMenuCheckboxItem checked={deep} onCheckedChange={setDeep}>
+      <DropdownMenuCheckboxItem checked={tool === "deep"} onCheckedChange={(on) => setTool(on ? "deep" : null)}>
         <Binoculars /> Deep research
       </DropdownMenuCheckboxItem>
       {/* …canvas, web research, code */}

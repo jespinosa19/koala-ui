@@ -1,7 +1,6 @@
 "use client"
 
 import {
-  Cloud,
   SquaresFour,
   FolderSimple,
   Users,
@@ -19,10 +18,10 @@ import {
   Receipt,
   GoogleLogo,
   AppleLogo,
-  PawPrint,
   Quotes,
 } from "@phosphor-icons/react"
 
+import { BrandMark } from "@/components/landing/brand-mark"
 import {
   Layout,
   LayoutSidebar,
@@ -87,7 +86,7 @@ import {
   SelectItem,
 } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { AvatarRoot, AvatarFallback } from "@/components/ui/avatar"
+import { AvatarRoot, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import type { Density } from "@/lib/density"
 import { cn } from "@/lib/utils"
 
@@ -101,25 +100,21 @@ function SidebarNav({ density, className }: { density?: Density; className?: str
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <SidebarSwitcher
-                leading={
-                  <span className="grid size-9 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground">
-                    <Cloud className="size-5" />
-                  </span>
-                }
-                title="Nimbus"
+                leading={<BrandMark wordmark={false} className="shrink-0 [&>img]:size-9" />}
+                title="Koala"
                 subtitle="Workspace"
               />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
               <DropdownMenuLabel>Workspaces</DropdownMenuLabel>
               <DropdownMenuItem>
-                <Cloud />
-                Nimbus
-                <Check className="ml-auto" />
+                <BrandMark wordmark={false} className="[&>img]:size-5" />
+                Koala
+                <Check weight="bold" className="ml-auto" />
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
-                <Plus />
+                <Plus weight="bold" />
                 Create workspace
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -129,19 +124,19 @@ function SidebarNav({ density, className }: { density?: Density; className?: str
         <SidebarContent>
           <SidebarGroup aria-label="Primary">
             <SidebarItem>
-              <SquaresFour />
+              <SquaresFour weight="bold" />
               Overview
             </SidebarItem>
             <SidebarItem>
-              <FolderSimple />
+              <FolderSimple weight="bold" />
               Projects
             </SidebarItem>
             <SidebarItem>
-              <Users />
+              <Users weight="bold" />
               Team
             </SidebarItem>
             <SidebarItem active>
-              <GearSix />
+              <GearSix weight="bold" />
               Settings
             </SidebarItem>
           </SidebarGroup>
@@ -153,26 +148,27 @@ function SidebarNav({ density, className }: { density?: Density; className?: str
               <SidebarSwitcher
                 leading={
                   <AvatarRoot size="sm" className="shrink-0">
+                    <AvatarImage src="https://i.pravatar.cc/160?img=47" alt="Mara Okonkwo" />
                     <AvatarFallback>MO</AvatarFallback>
                   </AvatarRoot>
                 }
                 title="Mara Okonkwo"
-                subtitle="mara@nimbus.io"
+                subtitle="mara@koala.io"
               />
             </DropdownMenuTrigger>
             <DropdownMenuContent side="top" align="start" className="w-56">
               <DropdownMenuLabel>My account</DropdownMenuLabel>
               <DropdownMenuItem>
-                <UserCircle />
+                <UserCircle weight="bold" />
                 Profile
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <CreditCard />
+                <CreditCard weight="bold" />
                 Billing
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
-                <SignOut />
+                <SignOut weight="bold" />
                 Sign out
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -274,7 +270,7 @@ function Shell({
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">General settings</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Manage your account details and how Nimbus looks for you.
+              Manage your account details and how Koala looks for you.
             </p>
           </div>
 
@@ -293,9 +289,9 @@ function Shell({
                 <FieldLabel>Email address</FieldLabel>
                 <InputRoot>
                   <InputPrefix>
-                    <EnvelopeSimple />
+                    <EnvelopeSimple weight="bold" />
                   </InputPrefix>
-                  <InputField type="email" defaultValue="mara@nimbus.io" />
+                  <InputField type="email" defaultValue="mara@koala.io" />
                 </InputRoot>
                 <FieldHint>Used for sign-in and notifications.</FieldHint>
               </Field>
@@ -308,7 +304,7 @@ function Shell({
               <Field>
                 <FieldLabel>Workspace name</FieldLabel>
                 <InputRoot>
-                  <InputField defaultValue="Nimbus HQ" />
+                  <InputField defaultValue="Koala HQ" />
                 </InputRoot>
               </Field>
               <Field>
@@ -321,7 +317,7 @@ function Shell({
                     {themes.map((t) => (
                       <SelectItem key={t.value} value={t.value}>
                         <span className="flex items-center gap-2">
-                          <t.icon /> {t.label}
+                          <t.icon weight="bold" /> {t.label}
                         </span>
                       </SelectItem>
                     ))}
@@ -332,7 +328,7 @@ function Shell({
 
             <Section
               title="Notifications"
-              description="Choose what Nimbus emails you about."
+              description="Choose what Koala emails you about."
             >
               {notifications.map((n) => (
                 <label key={n.id} className="flex items-start gap-3">
@@ -531,7 +527,7 @@ const invoices = [
   { id: "INV-2037", client: "Hooli", amount: "$3,720.00", status: "Pending" },
   { id: "INV-2036", client: "Stark Industries", amount: "$28,400.00", status: "Paid" },
   { id: "INV-2035", client: "Wayne Enterprises", amount: "$7,050.00", status: "Overdue" },
-  { id: "INV-2034", client: "Acme Rockets", amount: "$960.00", status: "Paid" },
+  { id: "INV-2034", client: "Vandelay Industries", amount: "$960.00", status: "Paid" },
   { id: "INV-2033", client: "Cyberdyne Systems", amount: "$15,500.00", status: "Pending" },
 ]
 
@@ -547,7 +543,7 @@ function InvoiceList() {
       {invoices.map((inv) => (
         <li key={inv.id} className="flex items-center gap-4 px-4 py-3">
           <span className="grid size-9 shrink-0 place-items-center rounded-md bg-muted text-muted-foreground">
-            <Receipt className="size-4" />
+            <Receipt weight="bold" className="size-4" />
           </span>
           <span className="flex min-w-0 flex-col">
             <span className="truncate text-sm font-medium">{inv.client}</span>
@@ -598,11 +594,11 @@ export function LayoutPageHeaderDemo() {
             </PageHeaderContent>
             <PageHeaderActions>
               <Button variant="outline">
-                <Export />
+                <Export weight="bold" />
                 Export
               </Button>
               <Button>
-                <Plus />
+                <Plus weight="bold" />
                 New invoice
               </Button>
             </PageHeaderActions>
@@ -635,7 +631,7 @@ export function LayoutStickyHeaderDemo() {
               </BreadcrumbList>
             </Breadcrumb>
             <Button size="sm">
-              <Plus />
+              <Plus weight="bold" />
               New invoice
             </Button>
           </LayoutHeader>
@@ -665,12 +661,7 @@ export function LayoutMobileDemo() {
             <LayoutMobileSidebar triggerClassName="inline-flex lg:inline-flex">
               <SidebarNav className="h-full w-full border-r-0" />
             </LayoutMobileSidebar>
-            <span className="flex items-center gap-2 font-semibold">
-              <span className="grid size-7 shrink-0 place-items-center rounded-md bg-primary text-primary-foreground">
-                <Cloud className="size-4" />
-              </span>
-              Nimbus
-            </span>
+            <BrandMark />
           </LayoutMobileBar>
 
           {/* Pin the horizontal padding to its mobile value (px-4 = 16px). The container's
@@ -709,26 +700,26 @@ function DocsRail() {
         <SidebarGroup aria-label="Getting started">
           <SidebarGroupLabel>Getting started</SidebarGroupLabel>
           <SidebarItem>
-            <FolderSimple />
+            <FolderSimple weight="bold" />
             Introduction
           </SidebarItem>
           <SidebarItem>
-            <FolderSimple />
+            <FolderSimple weight="bold" />
             Installation
           </SidebarItem>
         </SidebarGroup>
         <SidebarGroup aria-label="Components">
           <SidebarGroupLabel>Components</SidebarGroupLabel>
           <SidebarItem>
-            <SquaresFour />
+            <SquaresFour weight="bold" />
             Button
           </SidebarItem>
           <SidebarItem active>
-            <SquaresFour />
+            <SquaresFour weight="bold" />
             Layout
           </SidebarItem>
           <SidebarItem>
-            <SquaresFour />
+            <SquaresFour weight="bold" />
             Sidebar
           </SidebarItem>
         </SidebarGroup>
@@ -822,7 +813,7 @@ function ResizableContent({ note }: { note: string }) {
         </PageHeaderContent>
         <PageHeaderActions>
           <Button>
-            <Plus />
+            <Plus weight="bold" />
             New invoice
           </Button>
         </PageHeaderActions>
@@ -889,7 +880,7 @@ function InspectorPanel() {
     <div className="flex h-full flex-col gap-4 rounded-2xl bg-card p-4 shadow-sm ring-1 ring-border [--surface:var(--card)]">
       <div className="flex items-center gap-3">
         <span className="grid size-9 shrink-0 place-items-center rounded-md bg-muted text-muted-foreground">
-          <Receipt className="size-4" />
+          <Receipt weight="bold" className="size-4" />
         </span>
         <div className="min-w-0">
           <p className="truncate text-sm font-medium">INV-2042</p>
@@ -910,7 +901,7 @@ function InspectorPanel() {
         ))}
       </dl>
       <Button variant="ghost" className="mt-auto justify-start">
-        <Export />
+        <Export weight="bold" />
         Export PDF
       </Button>
     </div>
@@ -952,16 +943,9 @@ export function LayoutResizableInspectorDemo() {
 // `grid-cols-1` / `lg:grid-cols-2` + `hidden lg:block` would otherwise collapse to one
 // column on this narrower docs preview), and swap `min-h-svh` for a fixed-height frame.
 
-// The Koala brand lockup: a tinted square + wordmark, reused across both panes.
+// The Koala brand lockup: the canonical BrandMark, reused across both panes.
 function Brand({ className }: { className?: string }) {
-  return (
-    <span className={cn("flex items-center gap-2 font-semibold tracking-tight", className)}>
-      <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground">
-        <PawPrint className="size-5" />
-      </span>
-      <span className="text-lg">Koala</span>
-    </span>
-  )
+  return <BrandMark className={className} />
 }
 
 // The two social sign-in buttons, shared by the sign-up and sign-in panes.
@@ -969,11 +953,11 @@ function SocialButtons() {
   return (
     <div className="grid grid-cols-2 gap-3">
       <Button variant="outline" className="w-full">
-        <GoogleLogo />
+        <GoogleLogo weight="bold" />
         Google
       </Button>
       <Button variant="outline" className="w-full">
-        <AppleLogo />
+        <AppleLogo weight="bold" />
         Apple
       </Button>
     </div>
@@ -1038,7 +1022,7 @@ export function SplitLayoutDemo() {
         {/* A warm gradient "photo" stands in for a real image (DS demo convention). */}
         <div className="absolute inset-0 bg-gradient-to-br from-amber-300 via-orange-500 to-rose-600" />
         <SplitMediaOverlay>
-          <Quotes className="size-7 opacity-80" />
+          <Quotes weight="bold" className="size-7 opacity-80" />
           <p className="text-lg font-medium text-balance">
             Koala UI let us ship a polished product in days, not months.
           </p>

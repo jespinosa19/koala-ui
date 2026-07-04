@@ -177,6 +177,7 @@ export function Example() {
   <PopoverContent className="w-72">
     <div className="flex items-center gap-3">
       <AvatarRoot size="lg">
+        <AvatarImage src="https://i.pravatar.cc/160?img=5" alt="Katie Park" />
         <AvatarFallback>KP</AvatarFallback>
         <AvatarStatus variant="online" />
       </AvatarRoot>

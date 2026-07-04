@@ -666,31 +666,126 @@ export const PLACEHOLDER_BRANDS_VARIED: PlaceholderBrand[] = (() => {
 
 export type PlaceholderLogoVariant = "mark" | "lockup"
 
-const WORDMARK = "font-semibold tracking-tight text-foreground"
+const WORDMARK = "font-semibold tracking-tight"
 
 /**
  * Render one placeholder brand as the colored symbol alone (`mark`) or the symbol beside its
  * wordmark (`lockup`, the default).
+ *
+ * `mono` drops the literal brand color and the `text-foreground` wordmark so BOTH the symbol and the
+ * wordmark inherit `currentColor`. Set a text color on the wrapper (e.g. `text-white/70`) to tint
+ * the whole row at once: the monochrome treatment that keeps a logo wall calm over a photo or a
+ * dark surface, instead of a clash of brand hues.
  */
 export function PlaceholderLogo({
   brand,
   variant = "lockup",
+  mono = false,
   className,
 }: {
   brand: PlaceholderBrand
   variant?: PlaceholderLogoVariant
+  mono?: boolean
   className?: string
 }) {
   const { Mark: BrandMark, name, color } = brand
+  const markStyle = mono ? undefined : { color }
 
   if (variant === "mark") {
-    return <BrandMark style={{ color }} className={cn("size-9", className)} />
+    return <BrandMark style={markStyle} className={cn("size-9", className)} />
   }
 
   return (
     <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <BrandMark style={{ color }} className="size-6 shrink-0" />
-      <span className={cn(WORDMARK, "text-lg")}>{name}</span>
+      <BrandMark style={markStyle} className="size-6 shrink-0" />
+      <span className={cn(WORDMARK, "text-lg", !mono && "text-foreground")}>{name}</span>
+    </span>
+  )
+}
+
+/* ─────────────────────────────── Rotating logo wall ─────────────────────────────── */
+
+/**
+ * How many slots a rotating wall can show before its two disjoint halves would overlap: slot `i`
+ * cross-fades between {@link PLACEHOLDER_BRANDS_VARIED}`[i]` and `[i + LOGO_ROTATE_SLOTS]`, so as long
+ * as a wall (or row) renders at most this many slots, no two slots ever show the same brand at once.
+ * Keeps the social-proof grids a clean 2x4.
+ */
+export const LOGO_ROTATE_SLOTS = 8
+
+// The whole wall swaps together every HOLD ms: one synchronized cross-fade, not per-slot flicker.
+const ROTATE_HOLD = 5600
+
+// The two layers stack in one grid cell, so the slot is sized to the wider wordmark and a swap never
+// shifts layout. Motion is a directional vertical roll from the logo-roll keyframes (globals.css):
+// `roll-out` lifts the outgoing logo up + blurs it away, `roll-in` rises the incoming one from below
+// into focus, at the same time. Alternating the two each swap restarts the animation (the name
+// changes), and `both` fill holds each end state between swaps; at rest (swap 0) the hidden layer is
+// just faded out, so nothing animates on load.
+const LOGO_LAYER = "col-start-1 row-start-1 motion-reduce:animate-none"
+
+function swapLayer(swap: number, visible: boolean) {
+  if (swap === 0) return visible ? "" : "pointer-events-none opacity-0"
+  return visible ? "animate-logo-roll-in" : "pointer-events-none animate-logo-roll-out"
+}
+
+/**
+ * Drives a logo wall on ONE shared counter so every slot rolls in the same frame: a synchronized
+ * swap reads far calmer than per-slot flicker. Holds the at-rest set for the first HOLD ms (nothing
+ * animates on load), then ticks every HOLD. Honors `prefers-reduced-motion` by never starting.
+ *
+ * One hook drives every rotating logo wall in the product (hero trusted-by strips and the
+ * social-proof walls both call it), so they all roll on the same cadence. See memory
+ * `logo-swap-roll-motion`.
+ */
+export function useLogoSwap() {
+  const [swap, setSwap] = React.useState(0)
+  React.useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+    const id = setInterval(() => setSwap((n) => n + 1), ROTATE_HOLD)
+    return () => clearInterval(id)
+  }, [])
+  return swap
+}
+
+/**
+ * One rotating logo slot: rolls between its two brands as the shared `swap` counter ticks (drive it
+ * from {@link useLogoSwap}). Both layers stay mounted (no layout shift), the visible one rolls up
+ * from below as the other rolls up and out, and the hidden brand is taken out of the a11y tree. Pass
+ * `mono` to drop the brand hues and inherit `currentColor` (tint the wrapper, e.g. `text-white/70`)
+ * for a calm row over a photo; `align="start"` left-aligns the lockup within its slot.
+ */
+export function RotatingPlaceholderLogo({
+  index,
+  swap,
+  align = "center",
+  mono = false,
+  className,
+}: {
+  index: number
+  swap: number
+  align?: "center" | "start"
+  mono?: boolean
+  className?: string
+}) {
+  const n = PLACEHOLDER_BRANDS_VARIED.length
+  const first = PLACEHOLDER_BRANDS_VARIED[index % n]
+  const second = PLACEHOLDER_BRANDS_VARIED[(index + LOGO_ROTATE_SLOTS) % n]
+  const firstVisible = swap % 2 === 0
+  return (
+    <span
+      className={cn(
+        "inline-grid",
+        align === "start" ? "justify-items-start" : "justify-items-center",
+        className,
+      )}
+    >
+      <span aria-hidden={!firstVisible} className={cn(LOGO_LAYER, swapLayer(swap, firstVisible))}>
+        <PlaceholderLogo brand={first} variant="lockup" mono={mono} />
+      </span>
+      <span aria-hidden={firstVisible} className={cn(LOGO_LAYER, swapLayer(swap, !firstVisible))}>
+        <PlaceholderLogo brand={second} variant="lockup" mono={mono} />
+      </span>
     </span>
   )
 }

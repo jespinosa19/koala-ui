@@ -10,8 +10,8 @@ import { Toaster } from "@/components/ui/toast";
 // accent. Mirrors next-themes' own anti-FOUC script; key matches ACCENT_STORAGE_KEY.
 const accentScript = `(function(){try{var a=localStorage.getItem("koala-accent");if(a)document.documentElement.setAttribute("data-accent",a)}catch(e){}})()`;
 
-// Two typefaces: Inter carries UI + body (`--font-sans`), DM Sans is reserved for
-// headings/titles (`--font-heading`, applied to h1–h6 in globals.css).
+// Two typefaces: Inter carries UI + body and the smaller headings h3–h6 (`--font-sans`),
+// DM Sans is reserved for the display headings h1–h2 (`--font-heading`, applied in globals.css).
 const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],

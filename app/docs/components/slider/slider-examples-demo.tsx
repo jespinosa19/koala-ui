@@ -170,7 +170,7 @@ export function ControlledDemo() {
   const VolumeIcon = v === 0 ? SpeakerLow : SpeakerHigh
   return (
     <div className="flex w-full max-w-xs items-center gap-3">
-      <VolumeIcon className="size-5 shrink-0 text-muted-foreground" aria-hidden />
+      <VolumeIcon weight="bold" className="size-5 shrink-0 text-muted-foreground" aria-hidden />
       <Slider value={value} onValueChange={setValue} aria-label="Volume" />
       <span className="w-9 text-right text-sm tabular-nums text-muted-foreground">{v}%</span>
     </div>
@@ -184,7 +184,7 @@ export function SettingsRowDemo() {
     <div className="w-full max-w-sm rounded-xl border border-border p-4">
       <div className="mb-3 flex items-center justify-between">
         <span className="flex items-center gap-2 text-sm font-medium">
-          <Sun className="size-4 text-muted-foreground" aria-hidden />
+          <Sun weight="bold" className="size-4 text-muted-foreground" aria-hidden />
           Brightness
         </span>
         <span className="text-sm tabular-nums text-muted-foreground">{value[0]}%</span>

@@ -83,10 +83,13 @@ export function Example() {
 
       <DocSection title="Variants">
         <p className="mt-4 text-pretty text-muted-foreground">
-          Five semantic variants using soft tints derived from a single token
-          (<code className="font-mono text-sm">--success</code>,{" "}
-          <code className="font-mono text-sm">--warning</code>, etc.), so they
-          re-theme across all four Koala themes automatically.
+          Five semantic variants. Each keeps a neutral surface (
+          <code className="font-mono text-sm">border-border</code> on{" "}
+          <code className="font-mono text-sm">bg-background</code>) and only recolors the
+          leading icon from a single semantic token (
+          <code className="font-mono text-sm">--success</code>,{" "}
+          <code className="font-mono text-sm">--warning</code>, etc.), so the status reads at
+          a glance and re-themes across all four Koala themes automatically.
         </p>
         <ComponentPreview
           code={`<Alert variant="default">

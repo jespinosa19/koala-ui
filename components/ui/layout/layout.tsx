@@ -343,7 +343,7 @@ export function LayoutMobileSidebar({
           aria-label={triggerLabel}
           className={slots.sidebarTrigger({ className: triggerClassName })}
         >
-          <List />
+          <List weight="bold" />
         </button>
       </DrawerTrigger>
       {/* Side sheet sized to a rail; `p-0` lets the Sidebar own the chrome edge-to-edge. */}

@@ -40,6 +40,7 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover"
+import { toolbarControlBase } from "@/components/ui/toolbar/control-base"
 
 /**
  * RichTextEditor: a WYSIWYG editor over Tiptap (ProseMirror). Radix ships no rich-text
@@ -53,23 +54,11 @@ import {
  * by default, or any custom set of `RichTextEditorButton`s you pass as children. For fully
  * custom chrome, reach the live editor with the {@link useRichTextEditor} hook.
  */
-// Shared look for every icon control (main toolbar + bubble): color, hover, pressed chip,
-// press scale, focus ring, and a vertical-only 40px hit extender (#16, never horizontal so it
-// can't steal a neighbour's click). The two button slots differ only in their box dimensions.
-const controlBase = [
-  "relative inline-flex shrink-0 cursor-pointer select-none items-center justify-center rounded-md",
-  "text-muted-foreground",
-  "before:absolute before:inset-x-0 before:top-1/2 before:h-10 before:-translate-y-1/2 before:content-['']",
-  // Specific transition (never `transition: all`, #14): colors + the press scale.
-  "transition-[background-color,color,scale] duration-fast ease-out",
-  "hover:bg-accent hover:text-foreground",
-  "active:scale-[0.96]",
-  // Pressed (active mark/block) reads as a filled, foreground-colored chip.
-  "data-[pressed]:bg-accent data-[pressed]:text-foreground",
-  "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 focus-visible:ring-offset-background",
-  "disabled:pointer-events-none disabled:opacity-40",
-  "[&_svg]:size-4 [&_svg]:shrink-0",
-]
+// The editor's controls share ONE interaction base with the standalone Toolbar
+// (components/ui/toolbar/control-base.ts) so the two never drift on color/hover/pressed/focus.
+// The editor keeps its own 12px corners (rounded-md) and 16px glyph; the two button slots then
+// differ only in their box dimensions.
+const controlBase = [...toolbarControlBase, "rounded-md", "[&_svg]:size-4"]
 
 export const richTextEditorVariants = tv({
   slots: {
@@ -492,11 +481,11 @@ function DefaultBubble() {
             aria-label="Remove link"
             onClick={removeLink}
           >
-            <LinkBreak />
+            <LinkBreak weight="bold" />
           </Button>
         )}
         <Button type="submit" size="sm" iconOnly aria-label="Apply link">
-          <Check />
+          <Check weight="bold" />
         </Button>
         <Button
           type="button"
@@ -509,7 +498,7 @@ function DefaultBubble() {
             editor?.commands.focus()
           }}
         >
-          <X />
+          <X weight="bold" />
         </Button>
       </form>
     )
@@ -524,7 +513,7 @@ function DefaultBubble() {
         pressed={s.bold}
         onClick={() => editor?.chain().focus().toggleBold().run()}
       >
-        <TextB />
+        <TextB weight="bold" />
       </RichTextEditorButton>
       <RichTextEditorButton
         size="sm"
@@ -533,7 +522,7 @@ function DefaultBubble() {
         pressed={s.italic}
         onClick={() => editor?.chain().focus().toggleItalic().run()}
       >
-        <TextItalic />
+        <TextItalic weight="bold" />
       </RichTextEditorButton>
       <RichTextEditorButton
         size="sm"
@@ -542,13 +531,13 @@ function DefaultBubble() {
         pressed={s.underline}
         onClick={() => editor?.chain().focus().toggleUnderline().run()}
       >
-        <TextUnderline />
+        <TextUnderline weight="bold" />
       </RichTextEditorButton>
 
       <RichTextEditorSeparator className="mx-0.5 h-4" />
 
       <RichTextEditorButton size="sm" tooltip="Link" pressed={s.link} onClick={openLinkEditor}>
-        <LinkSimple />
+        <LinkSimple weight="bold" />
       </RichTextEditorButton>
     </>
   )
@@ -599,28 +588,28 @@ function DefaultToolbar() {
         pressed={s.h1}
         onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()}
       >
-        <TextHOne />
+        <TextHOne weight="bold" />
       </RichTextEditorButton>
       <RichTextEditorButton
         tooltip="Heading 2"
         pressed={s.h2}
         onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
       >
-        <TextHTwo />
+        <TextHTwo weight="bold" />
       </RichTextEditorButton>
       <RichTextEditorButton
         tooltip="Heading 3"
         pressed={s.h3}
         onClick={() => editor?.chain().focus().toggleHeading({ level: 3 }).run()}
       >
-        <TextHThree />
+        <TextHThree weight="bold" />
       </RichTextEditorButton>
       <RichTextEditorButton
         tooltip="Heading 4"
         pressed={s.h4}
         onClick={() => editor?.chain().focus().toggleHeading({ level: 4 }).run()}
       >
-        <TextHFour />
+        <TextHFour weight="bold" />
       </RichTextEditorButton>
 
       <RichTextEditorSeparator />
@@ -631,7 +620,7 @@ function DefaultToolbar() {
         pressed={s.bold}
         onClick={() => editor?.chain().focus().toggleBold().run()}
       >
-        <TextB />
+        <TextB weight="bold" />
       </RichTextEditorButton>
       <RichTextEditorButton
         tooltip="Italic"
@@ -639,7 +628,7 @@ function DefaultToolbar() {
         pressed={s.italic}
         onClick={() => editor?.chain().focus().toggleItalic().run()}
       >
-        <TextItalic />
+        <TextItalic weight="bold" />
       </RichTextEditorButton>
       <RichTextEditorButton
         tooltip="Underline"
@@ -647,7 +636,7 @@ function DefaultToolbar() {
         pressed={s.underline}
         onClick={() => editor?.chain().focus().toggleUnderline().run()}
       >
-        <TextUnderline />
+        <TextUnderline weight="bold" />
       </RichTextEditorButton>
 
       <RichTextEditorSeparator />
@@ -661,14 +650,14 @@ function DefaultToolbar() {
         pressed={s.bulletList}
         onClick={() => editor?.chain().focus().toggleBulletList().run()}
       >
-        <ListBullets />
+        <ListBullets weight="bold" />
       </RichTextEditorButton>
       <RichTextEditorButton
         tooltip="Numbered list"
         pressed={s.orderedList}
         onClick={() => editor?.chain().focus().toggleOrderedList().run()}
       >
-        <ListNumbers />
+        <ListNumbers weight="bold" />
       </RichTextEditorButton>
     </>
   )
@@ -716,7 +705,7 @@ function LinkButton({ active }: { active: boolean }) {
             aria-label="Link"
             className={slots.button()}
           >
-            <LinkSimple />
+            <LinkSimple weight="bold" />
           </ToolbarPrimitive.Button>
         </PopoverTrigger>
       </Tooltip>
@@ -747,7 +736,7 @@ function LinkButton({ active }: { active: boolean }) {
                 onClick={remove}
                 className="mr-auto"
               >
-                <LinkBreak /> Remove
+                <LinkBreak weight="bold" /> Remove
               </Button>
             )}
             <Button type="submit" size="sm">

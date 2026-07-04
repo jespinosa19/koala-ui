@@ -1,5 +1,4 @@
 import Link from "next/link"
-import { ArrowRight } from "@phosphor-icons/react/ssr"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -35,10 +34,7 @@ export function Changelog() {
 
       <div className="flex justify-center">
         <Button asChild variant="ghost">
-          <Link href="/docs">
-            Read the docs
-            <ArrowRight />
-          </Link>
+          <Link href="/docs">Read the docs</Link>
         </Button>
       </div>
     </Section>

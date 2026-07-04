@@ -36,10 +36,13 @@ const countrySelectVariants = tv({
       "bg-[var(--surface,var(--background))] text-left text-foreground shadow-xs",
       "transition-[border-color,box-shadow] duration-fast ease-out",
       "hover:border-ring/50",
-      "focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent",
+      // Focus + open read like an Input/Select: brand border + soft `brand-ring` halo, not a
+      // hard 2px ring. `data-[state=open]` keeps the halo while the listbox owns focus.
+      "outline-none focus-visible:border-brand focus-visible:brand-ring",
+      "data-[state=open]:border-brand data-[state=open]:brand-ring",
       "active:scale-[0.99]",
       "disabled:cursor-not-allowed disabled:opacity-50",
-      "aria-[invalid=true]:border-destructive aria-[invalid=true]:focus:ring-destructive",
+      "aria-[invalid=true]:border-destructive aria-[invalid=true]:focus-visible:destructive-ring aria-[invalid=true]:data-[state=open]:destructive-ring",
     ],
     value: "flex min-w-0 items-center gap-2",
     valueText: "truncate",
@@ -246,7 +249,7 @@ export function CountrySelect({
           <div className="border-b border-border p-1.5">
             <InputRoot size="sm">
               <InputPrefix>
-                <MagnifyingGlass />
+                <MagnifyingGlass weight="bold" />
               </InputPrefix>
               <InputField
                 ref={searchRef}

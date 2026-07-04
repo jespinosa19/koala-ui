@@ -11,7 +11,8 @@ import { cn } from "@/lib/utils"
  *   - `Section`: a full-bleed vertical **band**. Owns the rhythm down the page (`py-20 sm:py-28`)
  *     and spans edge to edge so a tint or image (`className="bg-muted/40"`) reads full-width.
  *   - `SectionContainer`: the centered **gutter** that caps the content width and provides the
- *     32px horizontal padding. It is a `flex` column with the signature **56px gap** (`gap-14`)
+ *     horizontal padding (20px on mobile, 32px from `sm` up). It is a `flex` column with the
+ *     signature **56px gap** (`gap-14`)
  *     between its children, so a `SectionHeader` followed by the content lands at one canonical
  *     vertical gap with no per-section margins to tune.
  *
@@ -38,9 +39,10 @@ export const sectionVariants = tv({
     // the SINGLE owner of the page's vertical rhythm (the `padding` variant below). Never re-add a
     // `py-*` on a child: a self-padded child (a Hero) would then land a doubled band.
     root: "w-full",
-    // The centered gutter: caps width (per `width` below), pads 32px on the sides, and stacks its
-    // children in a flex column with the canonical 56px (`gap-14`) gap between them.
-    container: "mx-auto flex w-full flex-col gap-14 px-8",
+    // The centered gutter: caps width (per `width` below), pads 20px on the sides on mobile and
+    // 32px from `sm` up, and stacks its children in a flex column with the canonical 56px (`gap-14`)
+    // gap between them.
+    container: "mx-auto flex w-full flex-col gap-14 px-5 sm:px-8",
   },
   variants: {
     // Vertical rhythm lives here and ONLY here. `none` is the escape hatch for a child that is

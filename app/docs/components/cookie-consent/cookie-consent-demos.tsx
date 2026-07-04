@@ -113,7 +113,7 @@ export function CookieBannerDemo() {
       >
         <CookieBanner className="absolute" position="bottom-right">
           <CookieBannerIcon>
-            <Cookie />
+            <Cookie weight="bold" />
           </CookieBannerIcon>
           <CookieBannerContent>
             <CookieBannerTitle>We value your privacy</CookieBannerTitle>
@@ -147,7 +147,7 @@ export function CookieBannerDemo() {
               setRound((r) => r + 1)
             }}
           >
-            <ArrowClockwise /> Replay banner
+            <ArrowClockwise weight="bold" /> Replay banner
           </Button>
         </div>
       ) : null}
@@ -184,7 +184,7 @@ export function CookiePositionsDemo() {
         <CookieConsent categories={COOKIE_CATEGORIES}>
           <CookieBanner className="absolute" position="bottom-left">
             <CookieBannerIcon>
-              <Cookie />
+              <Cookie weight="bold" />
             </CookieBannerIcon>
             <CookieBannerContent>
               <CookieBannerTitle>We value your privacy</CookieBannerTitle>
@@ -213,7 +213,7 @@ export function CookiePreferencesDemo() {
       <CookiePreferences>
         <CookiePreferencesTrigger asChild>
           <Button variant="outline">
-            <Gear /> Cookie settings
+            <Gear weight="bold" /> Cookie settings
           </Button>
         </CookiePreferencesTrigger>
         <CookiePreferencesContent>
@@ -232,39 +232,5 @@ export function CookiePreferencesDemo() {
         </CookiePreferencesContent>
       </CookiePreferences>
     </CookieConsent>
-  )
-}
-
-/** Density: the same corner banner at comfortable vs. compact spacing. */
-export function CookieDensityDemo() {
-  return (
-    <div className="grid w-full gap-4 lg:grid-cols-2">
-      {(["comfortable", "compact"] as const).map((density) => (
-        <CookieFrame key={density} className="min-h-72">
-          <CookieConsent categories={COOKIE_CATEGORIES} density={density}>
-            <CookieBanner className="absolute" position="bottom-right">
-              <CookieBannerIcon>
-                <Cookie />
-              </CookieBannerIcon>
-              <CookieBannerContent>
-                <CookieBannerTitle>
-                  {density === "comfortable" ? "Comfortable" : "Compact"}
-                </CookieBannerTitle>
-                <CookieBannerDescription>
-                  We use cookies to improve your experience on this site.
-                </CookieBannerDescription>
-              </CookieBannerContent>
-              <CookieBannerActions>
-                <CookieRejectAllButton size="sm" />
-                <CookieAcceptAllButton size="sm" />
-              </CookieBannerActions>
-            </CookieBanner>
-            <CookiePreferences>
-              <PreferencesDialog />
-            </CookiePreferences>
-          </CookieConsent>
-        </CookieFrame>
-      ))}
-    </div>
   )
 }

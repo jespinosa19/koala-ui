@@ -27,7 +27,7 @@ import { Tooltip } from "@/components/ui/tooltip/tooltip"
  * **Why light-on-dark, not themed tokens?** The control bar floats over arbitrary video, so
  * it can't borrow a theme surface: a `bg-popover` bar turns white in light mode and vanishes
  * over a bright shot. Like every native player, the controls carry their own fixed contrast:
- * white glyphs on a black scrim, legible over any frame in any of the three themes. This is the
+ * white glyphs on a black scrim, legible over any frame in any of the four themes. This is the
  * deliberate exception to "semantic roles only" (the same spirit as Tooltip wrapping Tippy):
  * `white`/`black` here are Tailwind utilities, not raw hex, and motion still rides the tokens.
  */
@@ -728,7 +728,7 @@ export function VideoFullscreen({ className, onClick, ...props }: VideoFullscree
         }}
         {...props}
       >
-        {fullscreen ? <ArrowsInSimple /> : <ArrowsOutSimple />}
+        {fullscreen ? <ArrowsInSimple weight="bold" /> : <ArrowsOutSimple weight="bold" />}
       </button>
     </Tooltip>
   )
@@ -740,7 +740,7 @@ export function VideoSpinner({ className, ...props }: React.ComponentProps<"div"
   if (!buffering) return null
   return (
     <div data-slot="video-spinner" className={slots.spinner({ className })} {...props}>
-      <CircleNotch className="size-10 animate-spin text-white" />
+      <CircleNotch weight="bold" className="size-10 animate-spin text-white" />
     </div>
   )
 }

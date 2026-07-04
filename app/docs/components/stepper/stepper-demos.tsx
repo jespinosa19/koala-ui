@@ -54,18 +54,18 @@ export function NavigableStepperDemo() {
           disabled={step === 1}
           onClick={() => setStep((s) => Math.max(1, s - 1))}
         >
-          <ArrowLeft /> Back
+          <ArrowLeft weight="bold" /> Back
         </Button>
         <Button
           onClick={() => (isLast ? setStep(1) : setStep((s) => Math.min(STEPS.length, s + 1)))}
         >
           {isLast ? (
             <>
-              <Check /> Done
+              <Check weight="bold" /> Done
             </>
           ) : (
             <>
-              Next <ArrowRight />
+              Next <ArrowRight weight="bold" />
             </>
           )}
         </Button>
@@ -143,7 +143,7 @@ export function WizardDialogDemo() {
             <div className="grid gap-1.5">
               <InputLabel htmlFor="wiz-ws">Workspace name</InputLabel>
               <InputRoot>
-                <InputField id="wiz-ws" placeholder="Acme Inc." autoFocus />
+                <InputField id="wiz-ws" placeholder="Koala Inc." autoFocus />
               </InputRoot>
             </div>
           )}
@@ -163,14 +163,14 @@ export function WizardDialogDemo() {
             disabled={step === 1}
             onClick={() => setStep((s) => Math.max(1, s - 1))}
           >
-            <ArrowLeft /> Back
+            <ArrowLeft weight="bold" /> Back
           </Button>
           <Button
             onClick={() => (isLast ? setOpen(false) : setStep((s) => s + 1))}
           >
             {isLast ? "Create workspace" : (
               <>
-                Next <ArrowRight />
+                Next <ArrowRight weight="bold" />
               </>
             )}
           </Button>

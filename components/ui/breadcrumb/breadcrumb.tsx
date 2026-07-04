@@ -89,7 +89,7 @@ export function BreadcrumbSeparator({
       className={cn("flex items-center [&>svg]:size-3.5", className)}
       {...props}
     >
-      {children ?? <CaretRight />}
+      {children ?? <CaretRight weight="bold" />}
     </li>
   )
 }

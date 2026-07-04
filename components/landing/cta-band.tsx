@@ -30,7 +30,7 @@ export function CtaBand() {
             <Button asChild size="lg">
               <Link href="#pricing">
                 Get Koala UI
-                <ArrowRight />
+                <ArrowRight weight="bold" />
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline">

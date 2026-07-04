@@ -47,13 +47,13 @@ export function DocsBreadcrumb({ className }: { className?: string }) {
         <BreadcrumbItem>
           {isRoot ? (
             <BreadcrumbPage className="inline-flex items-center gap-1.5">
-              <House aria-hidden className="size-3.5" />
+              <House weight="bold" aria-hidden className="size-3.5" />
               Docs
             </BreadcrumbPage>
           ) : (
             <BreadcrumbLink asChild>
               <Link href="/docs" className="inline-flex items-center gap-1.5">
-                <House aria-hidden className="size-3.5" />
+                <House weight="bold" aria-hidden className="size-3.5" />
                 Docs
               </Link>
             </BreadcrumbLink>

@@ -24,8 +24,8 @@ export const metadata = {
  * recipe (not the page-level type scale). Headings descend xl→sm and all sit in the strong
  * foreground; body copy is the muted secondary color, so a document reads calm with only its
  * headings and emphasis lifted. `className` mirrors the resolved prose styles verbatim, and
- * each sample is a real heading element so it picks up the same `font-heading` (DM Sans) and
- * base tracking the editor renders.
+ * each sample is a real heading element so it picks up the same base face the editor renders:
+ * `font-heading` (DM Sans) on h1–h2, Inter on h3–h4, plus the base tracking.
  */
 const PROSE_SCALE = [
   { tag: "h1", name: "H1", token: "text-3xl", px: "30px", note: "semibold · tight", className: "text-3xl font-semibold tracking-tight text-foreground", sample: "Heading one" },
@@ -35,7 +35,7 @@ const PROSE_SCALE = [
   { tag: "p", name: "Body", token: "text-sm", px: "14px", note: "relaxed · muted", className: "max-w-md text-sm leading-relaxed text-muted-foreground", sample: "Body copy reads in the secondary text color, so only headings and emphasis carry the strong foreground." },
 ] as const
 
-/** Render a prose specimen as its real element so it inherits the editor's heading font. */
+/** Render a prose specimen as its real element so it inherits the base heading face (DM Sans on h1–h2, Inter on h3–h4). */
 function ProseSample({
   tag: Tag,
   className,

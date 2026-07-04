@@ -1,10 +1,12 @@
 "use client"
 
+import * as React from "react"
 import {
   ShoppingBag,
   CurrencyDollar,
   Receipt,
   ArrowUUpLeft,
+  ArrowClockwise,
   DotsThree,
 } from "@phosphor-icons/react"
 
@@ -35,7 +37,7 @@ export function ShowcaseDemo() {
         <StatHeader>
           <StatLabel>Total orders</StatLabel>
           <StatIcon className="bg-primary/10 text-primary">
-            <ShoppingBag />
+            <ShoppingBag weight="bold" />
           </StatIcon>
         </StatHeader>
         <StatValue>1,429</StatValue>
@@ -49,7 +51,7 @@ export function ShowcaseDemo() {
         <StatHeader>
           <StatLabel>Revenue</StatLabel>
           <StatIcon className="bg-success/10 text-success">
-            <CurrencyDollar />
+            <CurrencyDollar weight="bold" />
           </StatIcon>
         </StatHeader>
         <StatValue>$84,200</StatValue>
@@ -63,7 +65,7 @@ export function ShowcaseDemo() {
         <StatHeader>
           <StatLabel>Avg. order value</StatLabel>
           <StatIcon className="bg-info/10 text-info">
-            <Receipt />
+            <Receipt weight="bold" />
           </StatIcon>
         </StatHeader>
         <StatValue>$58.92</StatValue>
@@ -77,7 +79,7 @@ export function ShowcaseDemo() {
         <StatHeader>
           <StatLabel>Refunds</StatLabel>
           <StatIcon className="bg-muted text-muted-foreground">
-            <ArrowUUpLeft />
+            <ArrowUUpLeft weight="bold" />
           </StatIcon>
         </StatHeader>
         <StatValue>32</StatValue>
@@ -102,7 +104,7 @@ export function GroupDemo() {
         <StatHeader>
           <StatLabel>Total orders</StatLabel>
           <StatIcon className="bg-primary/10 text-primary">
-            <ShoppingBag />
+            <ShoppingBag weight="bold" />
           </StatIcon>
         </StatHeader>
         <div className="flex items-center gap-2">
@@ -115,7 +117,7 @@ export function GroupDemo() {
         <StatHeader>
           <StatLabel>Revenue</StatLabel>
           <StatIcon className="bg-success/10 text-success">
-            <CurrencyDollar />
+            <CurrencyDollar weight="bold" />
           </StatIcon>
         </StatHeader>
         <div className="flex items-center gap-2">
@@ -128,7 +130,7 @@ export function GroupDemo() {
         <StatHeader>
           <StatLabel>Avg. order value</StatLabel>
           <StatIcon className="bg-info/10 text-info">
-            <Receipt />
+            <Receipt weight="bold" />
           </StatIcon>
         </StatHeader>
         <div className="flex items-center gap-2">
@@ -141,7 +143,7 @@ export function GroupDemo() {
         <StatHeader>
           <StatLabel>Refunds</StatLabel>
           <StatIcon className="bg-muted text-muted-foreground">
-            <ArrowUUpLeft />
+            <ArrowUUpLeft weight="bold" />
           </StatIcon>
         </StatHeader>
         <div className="flex items-center gap-2">
@@ -164,7 +166,7 @@ export function AnatomyDemo() {
       <StatHeader>
         <StatLabel>Total orders</StatLabel>
         <StatIcon className="bg-primary/10 text-primary">
-          <ShoppingBag />
+          <ShoppingBag weight="bold" />
         </StatIcon>
       </StatHeader>
       <StatValue>1,429</StatValue>
@@ -234,6 +236,42 @@ export function SparklineDemo() {
   )
 }
 
+/* ------------------------------------------------------------------- count up --- */
+
+/* Bumping `runId` remounts the group so the count-up replays on demand; in the wild it counts up each
+   time the band scrolls into view. */
+export function CountUpDemo() {
+  const [runId, setRunId] = React.useState(0)
+  return (
+    <div className="flex w-full flex-col items-center gap-6">
+      <StatGroup key={runId} columns={3} className="w-full">
+        <Stat density="comfortable" className="items-center gap-1.5 text-center">
+          <StatValue countUp className="text-4xl">
+            4,100+
+          </StatValue>
+          <StatLabel>Teams building on Koala</StatLabel>
+        </Stat>
+        <Stat density="comfortable" className="items-center gap-1.5 text-center">
+          <StatValue countUp className="text-4xl">
+            $4.2M
+          </StatValue>
+          <StatLabel>Engineering time saved</StatLabel>
+        </Stat>
+        <Stat density="comfortable" className="items-center gap-1.5 text-center">
+          <StatValue countUp className="text-4xl">
+            4.6×
+          </StatValue>
+          <StatLabel>Faster to ship</StatLabel>
+        </Stat>
+      </StatGroup>
+      <Button variant="outline" size="sm" onClick={() => setRunId((n) => n + 1)}>
+        <ArrowClockwise weight="bold" />
+        Replay
+      </Button>
+    </div>
+  )
+}
+
 /* ------------------------------------------------------------------ variants --- */
 
 export function VariantsDemo() {
@@ -267,7 +305,7 @@ export function DensityDemo() {
         <StatHeader>
           <StatLabel>Compact</StatLabel>
           <StatIcon className="bg-primary/10 text-primary">
-            <ShoppingBag />
+            <ShoppingBag weight="bold" />
           </StatIcon>
         </StatHeader>
         <StatValue>1,429</StatValue>
@@ -277,7 +315,7 @@ export function DensityDemo() {
         <StatHeader>
           <StatLabel>Comfortable</StatLabel>
           <StatIcon className="bg-primary/10 text-primary">
-            <ShoppingBag />
+            <ShoppingBag weight="bold" />
           </StatIcon>
         </StatHeader>
         <StatValue>1,429</StatValue>
@@ -297,7 +335,7 @@ export function InteractiveDemo() {
           <StatHeader>
             <StatLabel>Total orders</StatLabel>
             <StatIcon className="bg-primary/10 text-primary">
-              <ShoppingBag />
+              <ShoppingBag weight="bold" />
             </StatIcon>
           </StatHeader>
           <StatValue>1,429</StatValue>
@@ -312,7 +350,7 @@ export function InteractiveDemo() {
         <StatHeader>
           <StatLabel>Revenue</StatLabel>
           <Button variant="ghost" size="sm" iconOnly aria-label="More">
-            <DotsThree />
+            <DotsThree weight="bold" />
           </Button>
         </StatHeader>
         <StatValue>$84,200</StatValue>

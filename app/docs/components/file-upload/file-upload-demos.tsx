@@ -103,7 +103,7 @@ export function ShowcaseDemo() {
                 {it.status === "uploading" ? (
                   <FileCardProgress value={it.progress} label="Uploading…" />
                 ) : it.status === "error" ? (
-                  <FileCardMeta>Upload failed &middot; {formatBytes(it.size)}</FileCardMeta>
+                  <FileCardMeta>{formatBytes(it.size)} &middot; Upload failed</FileCardMeta>
                 ) : (
                   <FileCardMeta>{formatBytes(it.size)} &middot; Uploaded</FileCardMeta>
                 )}
@@ -111,7 +111,7 @@ export function ShowcaseDemo() {
               <FileCardActions>
                 <FileCardStatus />
                 <Button variant="ghost" size="sm" iconOnly aria-label="Remove" onClick={() => removeItem(it.id)}>
-                  <Trash />
+                  <Trash weight="bold" />
                 </Button>
               </FileCardActions>
             </FileCard>
@@ -147,7 +147,7 @@ export function BrowseButtonDemo() {
     <FileUpload accept=".pdf,.doc,.docx" onFiles={(f) => setName(f[0]?.name ?? null)}>
       <div className="flex items-center gap-3">
         <FileUploadTrigger>
-          <Paperclip />
+          <Paperclip weight="bold" />
           Attach a file
         </FileUploadTrigger>
         <span className="truncate text-sm text-muted-foreground">{name ?? "No file selected"}</span>
@@ -183,7 +183,7 @@ export function ImageGridDemo() {
     <FileUpload multiple accept="image/*" density="compact" onFiles={addImages} className="max-w-xl">
       <FileUploadDropzone>
         <FileUploadIcon>
-          <ImageSquare weight="regular" />
+          <ImageSquare weight="bold" />
         </FileUploadIcon>
         <FileUploadTitle>Add images</FileUploadTitle>
         <FileUploadDescription>PNG, JPG or GIF &middot; drop or browse</FileUploadDescription>
@@ -206,7 +206,7 @@ export function ImageGridDemo() {
                 onClick={() => removeImage(img.id)}
                 className="absolute right-1.5 top-1.5 size-7 rounded-full opacity-0 shadow-sm transition-opacity duration-fast ease-out focus-visible:opacity-100 group-hover/tile:opacity-100"
               >
-                <X />
+                <X weight="bold" />
               </Button>
             </div>
           ))}
@@ -292,7 +292,7 @@ export function ValidationDemo() {
     >
       <FileUploadDropzone>
         <FileUploadIcon>
-          <FilePdf weight="regular" />
+          <FilePdf weight="bold" />
         </FileUploadIcon>
         <FileUploadTitle>Upload a PDF</FileUploadTitle>
         <FileUploadDescription>Single PDF file, up to 2 MB</FileUploadDescription>

@@ -8,14 +8,16 @@ import { tv, type VariantProps } from "@/lib/tv"
 /**
  * Badge: a single-element component (like Button): one `tv` recipe, semantic tokens
  * only, `className` merged last. Status variants (success/warning/info/destructive) are
- * "soft": a tinted background + colored text derived from one status token via opacity,
- * so they re-theme across all three themes. See docs/ARCHITECTURE.md.
+ * "soft": a tinted background (the status hue at /10) plus a darker, more legible text
+ * counterpart (the `-strong` token, see globals.css) and no border, so the fill carries the
+ * color and the text stays readable. They re-theme across all four themes. See docs/ARCHITECTURE.md.
  */
 export const badgeVariants = tv({
   base: [
     "inline-flex items-center justify-center shrink-0 whitespace-nowrap",
-    // Border always present (transparent by default) so soft variants can add a hairline
-    // ring without shifting layout.
+    // Border always present but transparent: it reserves the hairline so the `outline` and
+    // `dot` variants can paint a neutral stroke without shifting layout. Tinted (soft)
+    // variants keep it transparent: a background fill already carries the color.
     "rounded-md border border-transparent font-medium",
     "transition duration-fast ease-out",
   ],
@@ -25,14 +27,14 @@ export const badgeVariants = tv({
       primary: "bg-primary text-primary-foreground",
       secondary: "bg-secondary text-secondary-foreground",
       outline: "border-border text-foreground",
-      success: "border-success/20 bg-success/10 text-success",
-      warning: "border-warning/20 bg-warning/10 text-warning",
-      info: "border-info/20 bg-info/10 text-info",
-      destructive: "border-destructive/20 bg-destructive/10 text-destructive",
-      purple: "border-purple/20 bg-purple/10 text-purple",
-      pink: "border-pink/20 bg-pink/10 text-pink",
-      teal: "border-teal/20 bg-teal/10 text-teal",
-      orange: "border-orange/20 bg-orange/10 text-orange",
+      success: "bg-success/10 text-success-strong",
+      warning: "bg-warning/10 text-warning-strong",
+      info: "bg-info/10 text-info-strong",
+      destructive: "bg-destructive/10 text-destructive-strong",
+      purple: "bg-purple/10 text-purple",
+      pink: "bg-pink/10 text-pink",
+      teal: "bg-teal/10 text-teal",
+      orange: "bg-orange/10 text-orange",
     },
     size: {
       sm: "gap-1 px-1.5 py-0.5 text-xs [&>svg]:size-3",
@@ -104,7 +106,7 @@ export function Badge({
         <span aria-hidden className="size-1.5 shrink-0 rounded-full bg-current" />
       )}
       {dot ? (
-        <span className="text-muted-foreground">{children}</span>
+        <span className="text-foreground">{children}</span>
       ) : (
         children
       )}

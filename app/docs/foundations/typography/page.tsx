@@ -66,7 +66,7 @@ export default function TypographyPage() {
     <>
       <DocHeader
         title="Typography"
-        description="Two typefaces: Inter carries UI and body, DM Sans is reserved for headings and titles, with the system monospace as the code fallback. DM Sans loads with an optical-size axis, so its display letterfit self-tunes by size. The full type scale, weights, tracking and leading come straight from Tailwind v4; we don't redefine them. The numbers below are the resolved token values."
+        description="Two typefaces: Inter carries UI, body and the smaller headings, DM Sans is reserved for display headings (h1–h2), with the system monospace as the code fallback. DM Sans loads with an optical-size axis, so its display letterfit self-tunes by size. The full type scale, weights, tracking and leading come straight from Tailwind v4; we don't redefine them. The numbers below are the resolved token values."
       />
 
       <DocSection title="Font families">
@@ -74,9 +74,11 @@ export default function TypographyPage() {
           Two bundled typefaces, both variable fonts loaded via{" "}
           <code className="font-mono text-sm">next/font</code>.{" "}
           <code className="font-mono text-sm">font-sans</code> (Inter) is the workhorse for
-          UI and body; <code className="font-mono text-sm">font-heading</code> (DM Sans, with
-          an optical-size axis) is applied to every <code className="font-mono text-sm">h1</code>–
-          <code className="font-mono text-sm">h6</code>.{" "}
+          UI, body and the smaller headings (<code className="font-mono text-sm">h3</code>–
+          <code className="font-mono text-sm">h6</code>);{" "}
+          <code className="font-mono text-sm">font-heading</code> (DM Sans, with
+          an optical-size axis) is reserved for the display headings{" "}
+          <code className="font-mono text-sm">h1</code>–<code className="font-mono text-sm">h2</code>.{" "}
           <code className="font-mono text-sm">font-mono</code> falls back to the platform UI
           monospace - nothing to download.
         </p>
@@ -116,8 +118,10 @@ export default function TypographyPage() {
         </div>
         <p className="mt-4 text-sm text-pretty text-muted-foreground">
           These are raw sizes, not heading roles. A bare{" "}
-          <code className="font-mono text-sm">h1</code>–<code className="font-mono text-sm">h6</code>{" "}
-          carries the heading face and tracking (see Font families) but no intrinsic size, so each
+          <code className="font-mono text-sm">h1</code>–<code className="font-mono text-sm">h2</code>{" "}
+          carries the DM Sans display face and tracking while{" "}
+          <code className="font-mono text-sm">h3</code>–<code className="font-mono text-sm">h6</code>{" "}
+          stay in Inter (see Font families), but none carry an intrinsic size, so each
           context steps off this scale on its own. For the document scale the{" "}
           <a
             href="/docs/components/rich-text-editor#prose-scale"

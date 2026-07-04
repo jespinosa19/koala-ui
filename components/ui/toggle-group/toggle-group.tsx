@@ -20,7 +20,7 @@ import { tv, type VariantProps } from "@/lib/tv"
  *
  * Selected (`data-[state=on]`) draws a brand outline + a soft brand halo, with the label and glyph
  * in the foreground (only the border is brand, matching Figma) and no fill, so it reads as chosen
- * under all three themes without a background that would fight nested surfaces.
+ * under all four themes without a background that would fight nested surfaces.
  *
  * `"use client"` because Radix ToggleGroup is interactive (roving focus + pressed state). Each item
  * is its own labelled button, so unlike RadioGroup it needs no paired `<label>`.

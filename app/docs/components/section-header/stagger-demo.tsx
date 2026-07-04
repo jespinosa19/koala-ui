@@ -106,7 +106,7 @@ export function SectionHeaderStaggerDemo() {
         </div>
 
         <Button size="sm" variant="outline" onClick={replay}>
-          <ArrowClockwise />
+          <ArrowClockwise weight="bold" />
           Replay
         </Button>
       </div>

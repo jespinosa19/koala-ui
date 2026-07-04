@@ -6,12 +6,16 @@ import { ArrowClockwise } from "@phosphor-icons/react"
 import {
   Chart,
   ChartArea,
+  ChartAreas,
   ChartLine,
   ChartBar,
+  ChartBars,
   ChartGrid,
   ChartXAxis,
   ChartYAxis,
+  ChartReferenceLine,
   ChartTooltip,
+  ChartLegend,
 } from "@/components/ui/chart"
 import { Button } from "@/components/ui/button"
 
@@ -91,7 +95,7 @@ export function AnimationDemo() {
     <div className="flex w-full flex-col gap-6">
       <div className="flex justify-end">
         <Button size="sm" variant="outline" onClick={() => setRunId((n) => n + 1)}>
-          <ArrowClockwise />
+          <ArrowClockwise weight="bold" />
           Replay
         </Button>
       </div>
@@ -215,6 +219,184 @@ export function NegativeDemo() {
       <ChartXAxis />
       <ChartTooltip />
     </Chart>
+  )
+}
+
+/* ----------------------------------------------------------------- forecast --- */
+
+/* Actuals through Jun, then a projection: the two series share the Jun point so the solid line and
+ * the dashed continuation meet seamlessly. */
+const TREND = [
+  { month: "Jan", actual: 4200, projected: null },
+  { month: "Feb", actual: 4600, projected: null },
+  { month: "Mar", actual: 5100, projected: null },
+  { month: "Apr", actual: 4800, projected: null },
+  { month: "May", actual: 5600, projected: null },
+  { month: "Jun", actual: 6100, projected: 6100 },
+  { month: "Jul", actual: null, projected: 6700 },
+  { month: "Aug", actual: null, projected: 7200 },
+]
+
+export function ForecastDemo() {
+  return (
+    <Chart
+      data={TREND}
+      index="month"
+      label="Revenue with projection"
+      config={{
+        actual: { label: "Actual", color: "blue", format: usd },
+        projected: { label: "Projected", color: "blue", format: usd },
+      }}
+      padding={{ bottom: 28, left: 44, top: 12, right: 12 }}
+      className="h-72"
+    >
+      <ChartGrid />
+      <ChartYAxis tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
+      <ChartLine dataKey="actual" markEnd />
+      <ChartLine dataKey="projected" dashed />
+      <ChartXAxis />
+      <ChartTooltip />
+    </Chart>
+  )
+}
+
+/* ---------------------------------------------------------------- dual axis --- */
+
+export function DualAxisDemo() {
+  return (
+    <Chart
+      data={MONTHS}
+      index="month"
+      label="Revenue and orders by month"
+      config={{
+        revenue: { label: "Revenue", color: "blue", format: (v) => `$${v.toLocaleString()}`, axis: "left" },
+        orders: { label: "Orders", color: "teal", axis: "right" },
+      }}
+      padding={{ bottom: 28, left: 48, right: 44, top: 12 }}
+      className="h-72"
+    >
+      <ChartGrid />
+      <ChartYAxis tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
+      <ChartYAxis side="right" />
+      <ChartLine dataKey="revenue" />
+      <ChartLine dataKey="orders" />
+      <ChartXAxis />
+      <ChartTooltip />
+    </Chart>
+  )
+}
+
+/* ---------------------------------------------------------------- reference --- */
+
+export function ReferenceDemo() {
+  return (
+    <Chart
+      data={MONTHS}
+      index="month"
+      label="Monthly revenue against target"
+      config={{ revenue: { label: "Revenue", color: "blue" } }}
+      padding={{ bottom: 28, left: 44, top: 16, right: 12 }}
+      className="h-72"
+    >
+      <ChartGrid />
+      <ChartYAxis tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`} />
+      <ChartArea dataKey="revenue" />
+      <ChartLine dataKey="revenue" />
+      {/* Drawn after the data so it annotates on top. */}
+      <ChartReferenceLine y={5000} label="Target $5k" color="destructive" />
+      <ChartXAxis />
+      <ChartTooltip valueFormatter={usd} />
+    </Chart>
+  )
+}
+
+/* ------------------------------------------------------------------- legend --- */
+
+const VISITORS_CONFIG = {
+  desktop: { label: "Desktop", color: "blue" as const },
+  mobile: { label: "Mobile", color: "teal" as const },
+}
+
+export function LegendDemo() {
+  return (
+    <div className="flex w-full flex-col gap-3">
+      <ChartLegend config={VISITORS_CONFIG} align="end" />
+      <Chart
+        data={MONTHS}
+        index="month"
+        label="Desktop vs. mobile visitors by month"
+        config={VISITORS_CONFIG}
+        padding={{ bottom: 28, left: 40, top: 12, right: 12 }}
+        className="h-72"
+      >
+        <ChartGrid />
+        <ChartYAxis />
+        <ChartLine dataKey="desktop" />
+        <ChartLine dataKey="mobile" />
+        <ChartXAxis />
+        <ChartTooltip />
+      </Chart>
+    </div>
+  )
+}
+
+/* -------------------------------------------------------------- stacked area --- */
+
+export function AreaStackDemo() {
+  return (
+    <Chart
+      data={MONTHS}
+      index="month"
+      stack
+      label="Desktop vs. mobile visitors, stacked"
+      config={{
+        desktop: { label: "Desktop", color: "blue" },
+        mobile: { label: "Mobile", color: "teal" },
+      }}
+      padding={{ bottom: 28, left: 40, top: 12, right: 8 }}
+      className="h-72"
+    >
+      <ChartGrid />
+      <ChartYAxis />
+      <ChartAreas keys={["desktop", "mobile"]} />
+      <ChartXAxis />
+      <ChartTooltip />
+    </Chart>
+  )
+}
+
+/* ---------------------------------------------------------- grouped/stacked --- */
+
+export function BarSeriesDemo() {
+  return (
+    <div className="grid w-full gap-6 lg:grid-cols-2">
+      {[
+        { label: "Grouped", stack: false },
+        { label: "Stacked", stack: true },
+      ].map((v) => (
+        <div key={v.label} className="flex flex-col gap-2">
+          <p className="text-sm font-medium text-muted-foreground">{v.label}</p>
+          <Chart
+            data={MONTHS}
+            index="month"
+            stack={v.stack}
+            label={`Desktop vs. mobile visitors (${v.label.toLowerCase()})`}
+            config={{
+              desktop: { label: "Desktop", color: "blue" },
+              mobile: { label: "Mobile", color: "teal" },
+            }}
+            padding={{ bottom: 28, left: 40, top: 12, right: 8 }}
+            className="h-64"
+          >
+            <ChartGrid />
+            <ChartYAxis />
+            <ChartBars keys={["desktop", "mobile"]} />
+            <ChartXAxis />
+            <ChartTooltip />
+          </Chart>
+        </div>
+      ))}
+    </div>
   )
 }
 

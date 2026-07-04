@@ -9,6 +9,7 @@ import {
   Briefcase,
   ArrowRight,
   MagnifyingGlassPlus,
+  Plus,
 } from "@phosphor-icons/react"
 
 import { cn } from "@/lib/utils"
@@ -40,7 +41,7 @@ const TABS = [
   {
     value: "home",
     label: "Home",
-    icon: <House />,
+    icon: <House weight="bold" />,
     previews: [
       { src: img("1486312338219-ce68d2c6f44d"), alt: "Landing page concept on a laptop" },
       { src: img("1498050108023-c5249f4df085"), alt: "Code-forward product homepage" },
@@ -59,7 +60,7 @@ const TABS = [
   {
     value: "blog",
     label: "Blog article",
-    icon: <PencilSimpleLine />,
+    icon: <PencilSimpleLine weight="bold" />,
     previews: [
       { src: img("1455390582262-044cdead277a"), alt: "Long-form article writing setup" },
       { src: img("1481277542470-605612bd2d61"), alt: "Editorial reading layout" },
@@ -78,7 +79,7 @@ const TABS = [
   {
     value: "about",
     label: "About",
-    icon: <UsersThree />,
+    icon: <UsersThree weight="bold" />,
     previews: [
       { src: img("1522202176988-66273c2fd55f"), alt: "Team collaborating in an office" },
       { src: img("1556761175-5973dc0f32e7"), alt: "Company team portrait" },
@@ -97,7 +98,7 @@ const TABS = [
   {
     value: "pricing",
     label: "Pricing",
-    icon: <Tag />,
+    icon: <Tag weight="bold" />,
     previews: [
       { src: img("1460925895917-afdab827c52f"), alt: "Analytics dashboard layout" },
       { src: img("1454165804606-c3d57bc86b40"), alt: "Plan comparison metrics" },
@@ -116,7 +117,7 @@ const TABS = [
   {
     value: "careers",
     label: "Careers",
-    icon: <Briefcase />,
+    icon: <Briefcase weight="bold" />,
     previews: [
       { src: img("1497032628192-86f99bcd76bc"), alt: "Open office careers page" },
       { src: img("1517245386807-bb43f82c33c4"), alt: "Hiring desk setup" },
@@ -132,6 +133,27 @@ const TABS = [
       { src: img("1556761175-4b46a572b786"), alt: "Hiring conversation in the office" },
     ],
   },
+]
+
+// Deliberately varied crop ratios, cycled by tile index, so the fake-masonry actually staggers.
+// The source photos all sit near the same landscape ratio, so left to their natural heights the
+// wall reads as a plain grid with a lone tall outlier. Forcing a mix of portrait / square /
+// landscape aspects (the image is `w-full object-cover`, so it crops to fit) breaks the rows so
+// neighbouring columns never line up. The strings are literal (not interpolated) so Tailwind's JIT
+// generates each `aspect-[…]` utility, and the cycle is 12 long: one full pass per tab's 12 tiles.
+const TILE_ASPECTS = [
+  "aspect-[4/5]", // portrait
+  "aspect-[3/2]", // wide
+  "aspect-square", // square
+  "aspect-[3/4]", // tall
+  "aspect-[5/4]", // landscape
+  "aspect-[5/6]", // soft portrait
+  "aspect-[4/3]", // landscape
+  "aspect-[2/3]", // tall statement (only one, so a single column gets the dramatic frame)
+  "aspect-square", // square
+  "aspect-[4/5]", // portrait
+  "aspect-[4/3]", // landscape
+  "aspect-[5/6]", // soft portrait
 ]
 
 /** Tabbed concepts wall: tabs switch the category, each revealing a full-bleed fake-masonry. */
@@ -153,9 +175,11 @@ export function GalleryDemo() {
               </SectionHeaderDescription>
             </SectionHeaderText>
           </SectionHeader>
-          {/* The Tabs recipe pins its list with `self-start`; inside the centered GalleryHeader
-              column that pushes the rail left, so re-center it to sit under the lede. */}
-          <TabsList className="mt-5 flex-wrap justify-center gap-1.5 self-center">
+          {/* Tabs default to `self-start` (left) inside the centered GalleryHeader column; `mx-auto`
+              re-centers the rail under the lede, and `w-fit` keeps it shrink-to-content so it stays
+              centered when it fits and fills + scrolls as a single row (with the edge fade) once the
+              tabs outgrow the frame, instead of wrapping to a second row. */}
+          <TabsList className="mt-5 mx-auto flex w-fit gap-1.5">
             {TABS.map((tab) => (
               <TabsTrigger key={tab.value} value={tab.value} className="gap-1.5">
                 {tab.icon}
@@ -181,7 +205,11 @@ export function GalleryDemo() {
                   {tab.previews.map((preview, i) => (
                     <LightboxTrigger key={preview.src} index={i} asChild>
                       <GalleryItem action="See image">
-                        <GalleryImage src={preview.src} alt={preview.alt} />
+                        <GalleryImage
+                          src={preview.src}
+                          alt={preview.alt}
+                          className={TILE_ASPECTS[i % TILE_ASPECTS.length]}
+                        />
                       </GalleryItem>
                     </LightboxTrigger>
                   ))}
@@ -223,9 +251,11 @@ export function GalleryTabbedDemo() {
               </SectionHeaderDescription>
             </SectionHeaderText>
           </SectionHeader>
-          {/* The Tabs recipe pins its list with `self-start`; inside the centered GalleryHeader
-              column that pushes the rail left, so re-center it to sit under the lede. */}
-          <TabsList className="mt-5 flex-wrap justify-center gap-1.5 self-center">
+          {/* Tabs default to `self-start` (left) inside the centered GalleryHeader column; `mx-auto`
+              re-centers the rail under the lede, and `w-fit` keeps it shrink-to-content so it stays
+              centered when it fits and fills + scrolls as a single row (with the edge fade) once the
+              tabs outgrow the frame, instead of wrapping to a second row. */}
+          <TabsList className="mt-5 mx-auto flex w-fit gap-1.5">
             {TABS.map((tab) => (
               <TabsTrigger key={tab.value} value={tab.value} className="gap-1.5">
                 {tab.icon}
@@ -267,7 +297,11 @@ export function GalleryTabbedDemo() {
                     {tab.previews.map((preview, i) => (
                       <LightboxTrigger key={preview.src} index={i} asChild>
                         <GalleryItem action="See image">
-                          <GalleryImage src={preview.src} alt={preview.alt} />
+                          <GalleryImage
+                            src={preview.src}
+                            alt={preview.alt}
+                            className={TILE_ASPECTS[i % TILE_ASPECTS.length]}
+                          />
                         </GalleryItem>
                       </LightboxTrigger>
                     ))}
@@ -479,7 +513,7 @@ export function GalleryRingDemo() {
               {RING.map((tile, i) => (
                 <LightboxTrigger key={tile.id} index={i} asChild>
                   <GalleryItem
-                    action={<MagnifyingGlassPlus />}
+                    action={<MagnifyingGlassPlus weight="bold" />}
                     className={cn(
                       "pointer-events-auto absolute m-0 animate-stagger-in-blur motion-reduce:animate-none",
                       tile.size,
@@ -517,7 +551,7 @@ export function GalleryRingDemo() {
                   <SectionHeaderActions>
                     <Button size="lg">
                       Explore the gallery
-                      <ArrowRight />
+                      <ArrowRight weight="bold" />
                     </Button>
                   </SectionHeaderActions>
                 </SectionHeader>
@@ -527,6 +561,421 @@ export function GalleryRingDemo() {
         </div>
       </Lightbox>
     </Gallery>
+  )
+}
+
+// ── Story variant: a scroll-driven "sticky reveal" — the canvas on the left swaps as the reader ──
+// scrolls (or clicks) through the chapters on the right (the Waabi "Safe / Scalable / Practical" look).
+// A crisp stage image and a larger one for the full-screen lightbox, so the card loads light.
+const storyImg = (id: string) =>
+  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1200&q=80`
+const storyFull = (id: string) =>
+  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1800&q=80`
+
+type StoryStep = { title: string; description: string; id: string; alt: string }
+
+const STORY: StoryStep[] = [
+  {
+    title: "Design tokens",
+    description:
+      "Four themes and eight accents flow from one token layer, so every screen restyles in a single switch with nothing hard-coded.",
+    id: "1486312338219-ce68d2c6f44d",
+    alt: "A landing page concept open on a laptop",
+  },
+  {
+    title: "Composable parts",
+    description:
+      "Every component shares one recipe language, snapping together into finished pages without a line of custom CSS.",
+    id: "1460925895917-afdab827c52f",
+    alt: "An analytics dashboard laid out on a screen",
+  },
+  {
+    title: "Built-in motion",
+    description:
+      "Staggered entrances, spring presses, and scroll-driven reveals ship in the box, each one tuned to feel right by default.",
+    id: "1467232004584-a241de8bcf5d",
+    alt: "A minimal hero layout in a designer's workspace",
+  },
+  {
+    title: "Ship anywhere",
+    description:
+      "Copy the source, paste it into your app, and it reads as finished on the very first render, in every theme.",
+    id: "1531403009284-440f080d1e12",
+    alt: "A modern studio workspace with the team",
+  },
+]
+
+/**
+ * Story variant: a click-driven "story stepper". One canvas on the left and numbered chapters on the
+ * right; click a chapter to brighten it, reveal its description, and bring its canvas to the front. It
+ * is click-based, not scroll-based, so it behaves identically everywhere, including inside the
+ * fixed-height preview frame (which can't scroll), and it opens deterministically on the first chapter.
+ *
+ * Only ONE canvas shows at rest, never a stacked pile. The motion plays only while changing, a
+ * vertical slide (the Waabi reference): the chosen canvas slides UP from below over the current one,
+ * which peeks at the TOP until covered, settling back to a single image. The motion is IDENTICAL for
+ * every chapter, whichever you click: each card rests in the same waiting pose (parked off the bottom)
+ * and the incoming always slides up from there. We park the outgoing at the front position for the
+ * slide (so the incoming covers it) via `prev`, then release it back to the waiting pose once the
+ * slide ends, which re-arms every card to slide in the same way, so direction never changes the
+ * animation. Tagged active (front) / prev (parked, covered) / hidden (waiting). The front card opens
+ * the shared full-screen Lightbox; the lede is the canonical SectionHeader. setState fires only from
+ * `select`.
+ */
+export function GalleryStoryDemo() {
+  const [active, setActive] = React.useState(0)
+  // The card we just left, parked at the front position (covered by the new one) so the incoming
+  // slides up OVER it. We release it back to the waiting pose once the slide finishes, so EVERY click
+  // animates identically (the chosen card always slides up from below), whichever chapter you pick.
+  const [prev, setPrev] = React.useState<number | null>(null)
+  const resetTimer = React.useRef<number | null>(null)
+  const images: LightboxImage[] = STORY.map((step) => ({ src: storyFull(step.id), alt: step.alt }))
+
+  function select(index: number) {
+    if (index === active) return
+    if (resetTimer.current) clearTimeout(resetTimer.current)
+    setPrev(active)
+    setActive(index)
+    // Once the slide is done, drop the outgoing card to the waiting pose. It's hidden behind the new
+    // front card, so the move is invisible; it just re-arms every card to slide up the same way next.
+    resetTimer.current = window.setTimeout(() => setPrev(null), 520)
+  }
+
+  React.useEffect(
+    () => () => {
+      if (resetTimer.current) clearTimeout(resetTimer.current)
+    },
+    [],
+  )
+
+  return (
+    <>
+      <SectionHeader align="center" stagger staggerTrigger="inView">
+        <SectionHeaderText>
+          <Badge variant="purple" dot pill>
+            Gallery
+          </Badge>
+          <SectionHeaderHeading>See it work, chapter by chapter</SectionHeaderHeading>
+          <SectionHeaderDescription>
+            Click through the chapters. Each one brings its canvas forward on the left.
+          </SectionHeaderDescription>
+        </SectionHeaderText>
+      </SectionHeader>
+
+      {/* `items-center` aligns the (shorter) chapter column to the vertical centre of the canvas, so
+          the two halves read as one balanced, centred block instead of the chapters floating at the
+          top with empty space beneath. */}
+      <div className="mt-12 grid items-center gap-10 lg:mt-16 lg:grid-cols-2 lg:gap-16">
+        {/* Left: a single canvas at rest. Clicking a chapter (right) plays the deck-shuffle: the old
+            card turns and shrinks back, the new one turns straight and grows to the front. */}
+        <div>
+          <Lightbox images={images}>
+            <LightboxTrigger index={active} asChild>
+              <button
+                type="button"
+                aria-label="Open the front canvas full screen"
+                className={cn(
+                  // The image window: a rounded, shadowed frame. `overflow-hidden` clips the cards to
+                  // it, so the incoming card slides up cleanly from the bottom edge while the outgoing
+                  // peeks at the top. At rest the front card fills it, so you just see one image.
+                  "relative block aspect-square w-full cursor-zoom-in overflow-hidden rounded-[1.5rem] bg-card shadow-lg outline-none",
+                  "focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                )}
+              >
+                {STORY.map((step, i) => {
+                  const state = i === active ? "active" : i === prev ? "prev" : "hidden"
+                  return (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      key={step.id}
+                      src={storyImg(step.id)}
+                      alt={i === active ? step.alt : ""}
+                      aria-hidden={i !== active}
+                      draggable={false}
+                      // Eager: the waiting cards sit off the bottom edge, so preload them or the first
+                      // slide-in of each would flash blank.
+                      loading="eager"
+                      data-state={state}
+                      className={cn(
+                        // Waiting pose: parked just below the window (off the bottom edge, clipped), so
+                        // it slides UP into view. Cards stay opaque; the slide + z-order do all the work
+                        // (no fade, scale, or rotate), which is what keeps every transition identical.
+                        "absolute inset-0 z-10 size-full translate-y-full rounded-[1.5rem] object-cover ring-1 ring-inset ring-black/10 dark:ring-white/10 select-none",
+                        "transition-[translate] duration-slow ease-out motion-reduce:transition-none",
+                        // prev: the card just left, parked at the front position one layer DOWN, so the
+                        // incoming slides up over it (it peeks at the top until covered); then it's
+                        // released back to the waiting pose, hidden behind the new front card.
+                        "data-[state=prev]:z-20 data-[state=prev]:translate-y-0",
+                        // active: the front card; the incoming animates UP to here from below.
+                        "data-[state=active]:z-30 data-[state=active]:translate-y-0",
+                      )}
+                    />
+                  )
+                })}
+              </button>
+            </LightboxTrigger>
+          </Lightbox>
+        </div>
+
+        {/* Right: the chapters. Each is a button that sets the canvas on click; the active chapter
+            brightens and reveals its description. */}
+        <ol className="flex flex-col">
+          {STORY.map((step, i) => {
+            const isActive = i === active
+            return (
+              <li
+                key={step.title}
+                data-active={isActive}
+                className="group/step border-t border-border/60 first:border-t-0"
+              >
+                <button
+                  type="button"
+                  onClick={() => select(i)}
+                  aria-pressed={isActive}
+                  className="flex w-full cursor-pointer items-baseline gap-4 py-6 text-left outline-none lg:py-7"
+                >
+                  <span
+                    className={cn(
+                      "text-sm font-medium tabular-nums text-muted-foreground/50 transition-colors duration-base ease-out",
+                      "group-data-[active=false]/step:group-hover/step:text-muted-foreground",
+                      "group-data-[active=true]/step:text-brand",
+                    )}
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span
+                    className={cn(
+                      "text-2xl font-semibold tracking-tight text-balance text-muted-foreground/40 transition-colors duration-base ease-out sm:text-3xl",
+                      "group-data-[active=false]/step:group-hover/step:text-foreground/60",
+                      "group-data-[active=true]/step:text-foreground",
+                    )}
+                  >
+                    {step.title}
+                  </span>
+                </button>
+                {/* Description reveal: the grid 0fr→1fr trick animates height:auto cleanly; the inner
+                    wrapper clips it while collapsed. Same gentle ease + slow duration as the canvas,
+                    with a slight delay so the copy unfurls just after the title brightens. */}
+                <div
+                  className={cn(
+                    "grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-slow ease-in-out motion-reduce:transition-none",
+                    "group-data-[active=true]/step:grid-rows-[1fr] group-data-[active=true]/step:opacity-100 group-data-[active=true]/step:delay-75",
+                  )}
+                >
+                  <div className="overflow-hidden">
+                    <p className="max-w-md pb-6 pl-9 text-pretty text-muted-foreground lg:pb-7">
+                      {step.description}
+                    </p>
+                  </div>
+                </div>
+              </li>
+            )
+          })}
+        </ol>
+      </div>
+    </>
+  )
+}
+
+// ── Spotlight variant: an expanding "panel rail" — one panel is open and wide while the rest tuck ──
+// into minimal slivers on either side (the Waabi "Waabi World" look). Click a sliver to bring it
+// forward; the open panel slides its caption in and opens the shared full-screen lightbox. A crisp
+// rail image and a larger one for the viewer, so the rail loads light.
+const panelImg = (id: string) =>
+  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1400&q=80`
+const panelFull = (id: string) =>
+  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=2000&q=85`
+
+type PanelStep = { title: string; description: string; id: string; alt: string }
+
+const PANELS: PanelStep[] = [
+  {
+    title: "Design tokens",
+    description:
+      "Four themes and eight accents flow from one token layer, so every screen restyles in a single switch.",
+    id: "1486312338219-ce68d2c6f44d",
+    alt: "A landing page concept open on a laptop",
+  },
+  {
+    title: "Composable parts",
+    description:
+      "Every component shares one recipe language, snapping together into finished pages.",
+    id: "1460925895917-afdab827c52f",
+    alt: "An analytics dashboard laid out on a screen",
+  },
+  {
+    title: "Built-in motion",
+    description:
+      "Staggered entrances, spring presses, and scroll-driven reveals ship in the box, tuned to feel right.",
+    id: "1467232004584-a241de8bcf5d",
+    alt: "A minimal hero layout in a designer's workspace",
+  },
+  {
+    title: "Accessible by default",
+    description:
+      "Focus, keyboard, and ARIA come from Radix underneath, so every control is usable from the first render.",
+    id: "1517694712202-14dd9538aa97",
+    alt: "A product homepage open on a laptop screen",
+  },
+  {
+    title: "Ship anywhere",
+    description:
+      "Copy the source, paste it into your app, and it reads as finished on the very first render.",
+    id: "1531403009284-440f080d1e12",
+    alt: "A modern studio workspace with the team",
+  },
+]
+
+/**
+ * Spotlight variant: a click-driven expanding "panel rail". One panel is open (wide, with its
+ * caption) while the rest collapse to minimal slivers on either side — the Waabi reference. It opens
+ * on a middle panel so the rail reads balanced at rest, and it is click-based (not hover, the standing
+ * DS rule for accordion-style reveals; not scroll), so it behaves identically everywhere, including
+ * inside the fixed-height preview frame.
+ *
+ * The open/collapse is a real layout animation: `flex-grow` tweens each panel's width (slow + eased),
+ * so the slivers genuinely shrink rather than transform. Every panel is one stable `<button>` whose
+ * `data-state` flips between `active`/`collapsed`, which keeps the width tween smooth (no remount).
+ * Click a sliver to bring it forward (its `onClick` preventDefaults the trigger and just sets active);
+ * click the open panel and it opens the shared full-screen Lightbox via `LightboxTrigger asChild`.
+ */
+export function GalleryExpandDemo() {
+  // Opens on a middle panel so the rail sits balanced (slivers both sides) at rest, like the reference.
+  const [active, setActive] = React.useState(2)
+  const images: LightboxImage[] = PANELS.map((panel) => ({ src: panelFull(panel.id), alt: panel.alt }))
+
+  return (
+    // Full-bleed band (the registry flags it `bleed`): the rail spans wide and the band clips any
+    // overflow at the edges for the immersive feel. `isolate` keeps the panels' z-stacking local.
+    <section className="relative isolate w-full overflow-hidden">
+      <div className="mx-auto w-full max-w-2xl px-6 pt-16 text-center sm:pt-20">
+        <SectionHeader align="center" stagger staggerTrigger="inView">
+          <SectionHeaderText>
+            <Badge variant="purple" dot pill>
+              Gallery
+            </Badge>
+            <SectionHeaderHeading>A closer look, one panel at a time</SectionHeaderHeading>
+            <SectionHeaderDescription>
+              Click a panel to bring it forward. The rest tuck into the rail, so the screen you care
+              about always gets the room.
+            </SectionHeaderDescription>
+          </SectionHeaderText>
+        </SectionHeader>
+      </div>
+
+      <Lightbox images={images}>
+        <div className="mx-auto mt-12 w-full max-w-[110rem] px-4 pb-16 sm:px-6 sm:pb-20 lg:mt-16">
+          <div className="flex h-[22rem] gap-2.5 sm:h-[28rem] sm:gap-4 lg:h-[32rem]">
+            {PANELS.map((panel, i) => {
+              const isActive = i === active
+              return (
+                <LightboxTrigger
+                  key={panel.id}
+                  index={i}
+                  asChild
+                  onClick={(event) => {
+                    // Collapsed → expand instead of opening the viewer; open → let the trigger run.
+                    if (!isActive) {
+                      event.preventDefault()
+                      setActive(i)
+                    }
+                  }}
+                >
+                  <button
+                    type="button"
+                    data-state={isActive ? "active" : "collapsed"}
+                    aria-label={isActive ? `Open ${panel.title} full screen` : `Show ${panel.title}`}
+                    className={cn(
+                      "group/panel relative basis-0 cursor-pointer select-none overflow-hidden rounded-3xl bg-card text-left outline-none",
+                      // Image-outline (the polish rule): a hairline inset ring, pure black in light /
+                      // pure white in dark — never a tinted neutral — so each panel keeps a crisp edge
+                      // against the band in every theme. It rides above the photo via the ::after layer.
+                      "after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:ring-1 after:ring-inset after:ring-black/10 dark:after:ring-white/10",
+                      // The open/collapse itself: flex-grow tweens the width on its own (a real layout
+                      // animation, not a transform), slow + eased, so the rail breathes open and the
+                      // slivers shrink to minimal. The open panel also lifts on a soft, per-theme shadow
+                      // so it reads as the hero. min-w keeps a sliver a ≥44px hit target.
+                      "shadow-none transition-[flex-grow,box-shadow] duration-slow ease-out motion-reduce:transition-none",
+                      "data-[state=active]:grow-[7] data-[state=active]:min-w-0 data-[state=active]:shadow-xl",
+                      "data-[state=collapsed]:grow-[1] data-[state=collapsed]:min-w-[2.75rem]",
+                      "focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                      // Gentle staggered entrance; once only (animation, not transition) so it never
+                      // fights the flex tween. fill-mode-backwards holds the FROM during each delay.
+                      "motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-3 motion-safe:fill-mode-backwards motion-safe:duration-slow",
+                    )}
+                    style={{ animationDelay: `${i * 90}ms` }}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={panelImg(panel.id)}
+                      alt={isActive ? panel.alt : ""}
+                      aria-hidden={!isActive}
+                      draggable={false}
+                      loading="lazy"
+                      className="absolute inset-0 size-full select-none object-cover"
+                    />
+
+                    {/* Quiet dim recedes the slivers so the open panel pops; a hover gently lifts it to
+                        preview the image, and it clears entirely once active. */}
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 bg-black/30 transition-[opacity,background-color] duration-slow ease-out group-hover/panel:bg-black/15 group-data-[state=active]/panel:opacity-0"
+                    />
+                    {/* Bottom gradient — only the open panel earns it, for legible white caption text. */}
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/30 to-transparent opacity-0 transition-opacity duration-slow ease-out group-data-[state=active]/panel:opacity-100"
+                    />
+
+                    {/* Collapsed face: a spaced sequence number up top, a glassy "+" expand affordance at
+                        the foot that grows on hover and presses in on click (the press feedback the big
+                        panel deliberately skips, localised so it never reads as a layout jump). Fades out
+                        as the panel opens; pointer-events-none so the panel click always wins. */}
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 flex flex-col items-center justify-between py-5 opacity-100 transition-opacity duration-base ease-out group-data-[state=active]/panel:opacity-0"
+                    >
+                      <span className="text-xs font-medium tabular-nums tracking-[0.2em] text-white/75">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className="grid size-9 place-items-center rounded-full bg-white/10 text-white shadow-sm ring-1 ring-inset ring-white/25 backdrop-blur-md transition-[background-color,scale] duration-base ease-out group-hover/panel:bg-white/20 group-hover/panel:scale-110 group-active/panel:scale-95 [&_svg]:size-4">
+                        <Plus weight="bold" />
+                      </span>
+                    </span>
+
+                    {/* Open face: the caption, slid up + faded in just after the panel widens. The
+                        copy stays compact on a narrow (mobile) open panel and grows on wider frames. */}
+                    <span className="pointer-events-none absolute inset-x-0 bottom-0 flex translate-y-3 flex-col gap-1.5 p-5 opacity-0 transition-[opacity,translate] duration-slow ease-out group-data-[state=active]/panel:translate-y-0 group-data-[state=active]/panel:opacity-100 group-data-[state=active]/panel:delay-100 sm:gap-2.5 sm:p-8 lg:p-10">
+                      <span className="text-xs font-medium tabular-nums tracking-[0.2em] text-white/70">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      {/* span (block), not h3/p: a <button>'s content model is phrasing only, so flow
+                          elements would be invalid here; the section heading lives in SectionHeader. */}
+                      <span className="block text-balance text-xl font-semibold tracking-tight text-white sm:text-[1.75rem] sm:leading-tight">
+                        {panel.title}
+                      </span>
+                      <span className="line-clamp-3 max-w-md text-pretty text-sm leading-relaxed text-white/85 sm:text-base">
+                        {panel.description}
+                      </span>
+                    </span>
+
+                    {/* Zoom hint: only the open panel renders it (so a hovered sliver never flashes it),
+                        and it stays hidden until you actually hover the panel — a quiet affordance that
+                        surfaces only when you reach for it, then clears out of the way. */}
+                    {isActive && (
+                      <span className="pointer-events-none absolute right-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-black/45 px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow-sm ring-1 ring-inset ring-white/15 backdrop-blur-none transition-[opacity,backdrop-filter] duration-base ease-out group-hover/panel:opacity-100 group-hover/panel:backdrop-blur-md [&_svg]:size-3.5">
+                        <MagnifyingGlassPlus weight="bold" />
+                        View
+                      </span>
+                    )}
+                  </button>
+                </LightboxTrigger>
+              )
+            })}
+          </div>
+        </div>
+      </Lightbox>
+    </section>
   )
 }
 
@@ -542,9 +991,13 @@ export function GalleryMinimalDemo() {
         </GalleryDescription>
       </GalleryHeader>
       <GalleryMasonry>
-        {previews.map((preview) => (
+        {previews.map((preview, i) => (
           <GalleryItem key={preview.src}>
-            <GalleryImage src={preview.src} alt={preview.alt} />
+            <GalleryImage
+              src={preview.src}
+              alt={preview.alt}
+              className={TILE_ASPECTS[i % TILE_ASPECTS.length]}
+            />
           </GalleryItem>
         ))}
       </GalleryMasonry>

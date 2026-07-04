@@ -65,7 +65,7 @@ export default function DataTableDocsPage() {
           ride alignment and pinning along on each column&rsquo;s{" "}
           <code className="font-mono text-sm">meta</code>.
         </p>
-        <CodeSnippet filename="members-table.tsx" className="mt-4" code={USAGE_CODE} />
+        <CodeSnippet filename="members-table.tsx" className="mt-4" collapsible code={USAGE_CODE} />
       </DocSection>
 
       <DocSection title="Container">
@@ -319,9 +319,13 @@ export default function DataTableDocsPage() {
         <p className="mt-4 text-pretty text-muted-foreground">
           With selection on, pass{" "}
           <code className="font-mono text-sm">renderSelectionActions</code> and a floating pill rises
-          while rows are selected: the live count, a clear button, and your actions. The renderer
-          receives the selected rows and the table instance, so an action can read the selection and
-          reset it. Select a couple of rows below.
+          while rows are selected: the live count, a clear button, and your actions. It&rsquo;s a
+          dark bar (the Figma/Linear look) that reads as one distinct object over the table, and any
+          Koala <code className="font-mono text-sm">Button</code> or menu you drop in re-tints to it
+          automatically. It overlays the bottom of the table out of flow, so it appears and leaves
+          without shifting the toolbar above or anything on the page below. The renderer receives the
+          selected rows and the table instance, so an action can read the selection and reset it.
+          Select a couple of rows below.
         </p>
         <ComponentPreview previewClassName="block" code={BULK_ACTIONS_CODE}>
           <BulkActionsDemo />
@@ -584,11 +588,30 @@ const BULK_ACTIONS_CODE = `<DataTable
   data={data}
   getRowId={(r) => r.id}
   enableRowSelection
+  // The pill is a dark bar; drop plain Koala Buttons in and they read light on it for free.
   renderSelectionActions={(rows, table) => (
     <>
+      {/* Quiet actions: icon-only ghosts (aria-label doubles as the tooltip). */}
+      <Button variant="ghost" size="sm" iconOnly aria-label="Assign"><UserPlus /></Button>
+      <Button variant="ghost" size="sm" iconOnly aria-label="Add tag"><Tag /></Button>
+      <Button variant="ghost" size="sm" iconOnly aria-label="Archive"><Archive /></Button>
       <Button variant="ghost" size="sm" onClick={() => table.resetRowSelection()}>
         <Export /> Export
       </Button>
+      {/* Overflow menu for the rest. */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="sm" iconOnly aria-label="More actions" tooltip={false}>
+            <DotsThree />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem><Copy /> Duplicate</DropdownMenuItem>
+          <DropdownMenuItem><FolderSimple /> Move to project</DropdownMenuItem>
+          <DropdownMenuItem><EnvelopeSimple /> Email selected</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <span aria-hidden className="mx-0.5 h-5 w-px bg-border" />
       <Button
         variant="destructive"
         size="sm"
@@ -964,10 +987,17 @@ const STICKY_COLUMN_CODE = `const columns: ColumnDef<Member>[] = [
     cell: ({ row }) => <MemberCell member={row.original} />,
   },
   { accessorKey: "team", header: "Team" },
-  // …more columns than fit, forcing horizontal scroll
+  { accessorKey: "role", header: "Role" },
+  { accessorKey: "status", header: "Status", cell: /* Badge */ },
+  { accessorKey: "tags", header: "Tags", cell: /* chips */ },
+  { accessorKey: "delta", header: "Trend", cell: /* trend */ },
+  { accessorKey: "activity", header: "Activity", cell: /* sparkline */ },
+  { accessorKey: "email", header: "Email" },
+  { accessorKey: "balance", header: "Balance", meta: { numeric: true } },
 ]
 
-<DataTable columns={columns} data={members} className="min-w-[52rem]" />`
+// The table is wider than its container, so the un-pinned columns scroll under the pinned one.
+<DataTable columns={columns} data={members} className="min-w-[72rem]" />`
 
 const PRIMITIVES_CODE = `<Table>
   <TableHeader>

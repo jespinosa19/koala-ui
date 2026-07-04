@@ -208,7 +208,7 @@ export function AIPanelExpandToggle({ className, ...props }: ButtonProps) {
       className={className}
       {...props}
     >
-      {split ? <ArrowsOutSimple /> : <SidebarSimple />}
+      {split ? <ArrowsOutSimple weight="bold" /> : <SidebarSimple weight="bold" />}
     </AIPanelAction>
   )
 }

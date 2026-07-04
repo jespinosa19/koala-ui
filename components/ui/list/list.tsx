@@ -5,7 +5,6 @@ import { Slot } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 import { createContext } from "@/lib/create-context"
-import { useDensity, type Density } from "@/lib/density"
 import { tv, type VariantProps } from "@/lib/tv"
 
 /**
@@ -27,8 +26,9 @@ export const listVariants = tv({
     // The outer <li>: carries the divider only; the row layout lives on `item` so an
     // interactive row can move it onto an inner <a>/<button> (valid <li><a> nesting).
     row: "",
-    // The row surface: media left, content fills, meta rides the right edge.
-    item: "flex items-center gap-3",
+    // The row surface: media left, content fills, meta rides the right edge. Carries the
+    // per-row padding and gap directly (plain rows drop the horizontal padding below).
+    item: "flex items-center gap-3 px-3 py-2.5",
     // Leading slot: holds a bare icon, an Avatar, or a small image. Bare svgs are sized
     // and toned here; an Avatar brings its own.
     media: "flex shrink-0 items-center justify-center text-muted-foreground [&>svg]:size-5",
@@ -54,13 +54,6 @@ export const listVariants = tv({
     divided: {
       true: { row: "border-b border-border last:border-b-0" },
     },
-    // Density is Koala's cross-cutting spacing axis (see lib/density.tsx). For List it
-    // governs the per-row padding and gap. `compact` is the dense app default; `comfortable`
-    // is the roomier marketing alternative.
-    density: {
-      compact: { item: "gap-3 px-3 py-2.5" },
-      comfortable: { item: "gap-4 px-4 py-3" },
-    },
     // Set per row on {@link ListItem} when the whole row is a link/button: pointer, a soft
     // hover fill, a press nudge, and an inset focus ring (inset so overflow-hidden can't
     // clip it). Plain rows stay inert.
@@ -82,7 +75,6 @@ export const listVariants = tv({
   defaultVariants: {
     variant: "card",
     divided: true,
-    density: "compact",
   },
 })
 
@@ -90,7 +82,6 @@ type ListSlots = ReturnType<typeof listVariants>
 type ListConfig = {
   variant: NonNullable<VariantProps<typeof listVariants>["variant"]>
   divided: boolean
-  density: Density
 }
 
 const [ListProvider, useListContext] = createContext<{
@@ -113,16 +104,14 @@ export function List({
   className,
   variant,
   divided,
-  density,
   asChild = false,
   ...props
 }: ListProps) {
-  // Density resolves prop > provider > "compact"; the resolved config rides context so
-  // each ListItem can recompute its row class with its own `interactive` flag.
+  // The resolved config rides context so each ListItem can recompute its row class with
+  // its own `interactive` flag.
   const config: ListConfig = {
     variant: variant ?? "card",
     divided: divided ?? true,
-    density: useDensity(density),
   }
   const slots = listVariants(config)
   const Comp = asChild ? Slot.Root : "ul"

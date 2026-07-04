@@ -217,7 +217,7 @@ export function PaginationPrevButton({
       className={className}
       {...props}
     >
-      {children ?? <CaretLeft />}
+      {children ?? <CaretLeft weight="bold" />}
     </Button>
   )
 }
@@ -241,7 +241,7 @@ export function PaginationNextButton({
       className={className}
       {...props}
     >
-      {children ?? <CaretRight />}
+      {children ?? <CaretRight weight="bold" />}
     </Button>
   )
 }

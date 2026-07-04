@@ -12,7 +12,6 @@ import {
   BarChartDemo,
   InteractiveDemo,
   VariantsDemo,
-  DensityDemo,
 } from "./ranking-demos"
 
 export const metadata = { title: "Ranking" }
@@ -41,8 +40,8 @@ export default function RankingDocsPage() {
           Ranking is composed from named parts, like{" "}
           <a href="/docs/components/card" className="underline underline-offset-4">Card</a> and{" "}
           <a href="/docs/components/stat" className="underline underline-offset-4">Stat</a>. The{" "}
-          <code className="font-mono text-sm">Ranking</code> root owns the surface, variant, and
-          density; <code className="font-mono text-sm">RankingList</code> is a semantic{" "}
+          <code className="font-mono text-sm">Ranking</code> root owns the surface and variant;{" "}
+          <code className="font-mono text-sm">RankingList</code> is a semantic{" "}
           <code className="font-mono text-sm">&lt;ol&gt;</code> so assistive tech announces the
           positions, and each <code className="font-mono text-sm">RankingItem</code> lays out a
           rank, content, and value.
@@ -125,28 +124,12 @@ export default function RankingDocsPage() {
         </ComponentPreview>
       </DocSection>
 
-      <DocSection title="Density">
-        <p className="mt-4 text-pretty text-muted-foreground">
-          Density is Koala&rsquo;s cross-cutting spacing axis (see{" "}
-          <a href="/docs/foundations/density" className="underline underline-offset-4">Density</a>).
-          For Ranking it tunes card padding, the gap between rows, and the title size.{" "}
-          <code className="font-mono text-sm">compact</code> is the dashboard default;{" "}
-          <code className="font-mono text-sm">comfortable</code> is roomier. Set it per-card or for a
-          whole grid with <code className="font-mono text-sm">DensityProvider</code>.
-        </p>
-        <ComponentPreview previewClassName="block" code={DENSITY_CODE}>
-          <DensityDemo />
-        </ComponentPreview>
-      </DocSection>
-
       <DocSection title="API reference">
         <p className="mt-4 text-pretty text-muted-foreground">
           <code className="font-mono text-sm">Ranking</code> forwards all{" "}
           <code className="font-mono text-sm">div</code> props and adds{" "}
           <code className="font-mono text-sm">variant</code> (
-          <code className="font-mono text-sm">default | outline | elevated</code>),{" "}
-          <code className="font-mono text-sm">density</code> (
-          <code className="font-mono text-sm">compact | comfortable</code>), and{" "}
+          <code className="font-mono text-sm">default | outline | elevated</code>) and{" "}
           <code className="font-mono text-sm">asChild</code>.{" "}
           <code className="font-mono text-sm">RankingList</code> renders an{" "}
           <code className="font-mono text-sm">&lt;ol&gt;</code>;{" "}
@@ -178,7 +161,7 @@ export default function RankingDocsPage() {
             { q: "What does the value on RankingBar mean?", a: "RankingBar takes a `value` from 0 to 100 representing each row's share of the leader, so the list reads as a chart. The fill width is a runtime value, so it rides a CSS variable and animates when the data changes." },
             { q: "How do I read the same list as a vertical bar chart?", a: "Set `layout=\"bars\"` on the Ranking root. RankingList becomes a row of full-height columns and each RankingBar grows from the bottom. The columns are narrow, so wrap each RankingItem in a Tooltip for the detail instead of crowding the row." },
             { q: "How do I make rows clickable?", a: "Pass `interactive` to a RankingItem for a pointer, hover wash, and focus ring, then wire `onClick`. Nested surfaces (rank chip, media tile, bar track) step down to the card surface on hover so they keep definition; add a trailing chevron to signal the affordance." },
-            { q: "How do variant and density change the card?", a: "`variant` sets the surface treatment: `default` (border plus soft shadow), `outline` (flat, no shadow), or `elevated` (lifted shadow, no border). `density` tunes padding, row gap, and title size; set it per-card or for a whole grid via DensityProvider." },
+            { q: "How does variant change the card?", a: "`variant` sets the surface treatment: `default` (border plus soft shadow), `outline` (flat, no shadow), or `elevated` (lifted shadow, no border). Ranking is a dashboard widget, so its spacing is fixed compact, there's no density knob to tune." },
           ]}
         />
       </DocSection>
@@ -325,7 +308,3 @@ const INTERACTIVE_CODE = `<RankingItem interactive onClick={() => openProduct(p.
 const VARIANTS_CODE = `<Ranking variant="default">…</Ranking>
 <Ranking variant="outline">…</Ranking>
 <Ranking variant="elevated">…</Ranking>`
-
-const DENSITY_CODE = `// "compact" (the dashboard default) or "comfortable"
-<Ranking density="compact">…</Ranking>
-<Ranking density="comfortable">…</Ranking>`

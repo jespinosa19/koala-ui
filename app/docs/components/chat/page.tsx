@@ -133,8 +133,7 @@ export function Thread() {
           A message&apos;s <code className="font-mono text-sm">role</code> is the only switch.{" "}
           <code className="font-mono text-sm">assistant</code> aligns left with an avatar and a
           muted bubble; <code className="font-mono text-sm">user</code> aligns right with a solid
-          primary bubble. Each bubble tightens the corner on its own side, so it reads as a tail
-          pointing back to the sender.
+          blue bubble. Both use a soft, uniform radius on all four corners.
         </p>
         <ComponentPreview previewClassName="items-start" code={`<Message role="user">
   <MessageBody>
@@ -422,7 +421,7 @@ export function Thread() {
       <DocSection title="FAQ">
         <Faq
           items={[
-            { q: "What does the role prop on Message control?", a: "role is the only switch: assistant aligns left with an avatar and a muted bubble, while user aligns right with a solid primary bubble. The value flows to every part through context, and each bubble tightens the corner on its own side to read as a tail." },
+            { q: "What does the role prop on Message control?", a: "role is the only switch: assistant aligns left with an avatar and a muted bubble, while user aligns right with a solid blue bubble. The value flows to every part through context, and both bubbles use a soft, uniform radius on all four corners." },
             { q: "What is the difference between the plain and bubble variants?", a: "plain is the default document style: the assistant answer renders as a page with no bubble, avatar, or identity, like Notion or ChatGPT. bubble is the with-identity look where every turn is a chat bubble and you pair the assistant with a MessageAvatar. Set it on Conversation for the whole thread, or per Message to override." },
             { q: "How do I show a streaming response?", a: "Drop a MessageTyping inside a MessageContent while the response streams. It renders three dots that ripple left to right, and holds still under reduced-motion. For the thinking phase, keep MessageReasoning open with streaming set, then collapse it to a summary once done." },
             { q: "How do I render markdown inside a message?", a: "MessageContent is markup-agnostic, so pass plain text or your own rendered markdown. The bubble styles paragraphs, headings, lists, inline code, pre blocks, and links via descendant selectors, tinted to read on either bubble." },

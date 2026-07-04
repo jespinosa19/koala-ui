@@ -74,7 +74,7 @@ export default function SectionDocsPage() {
               <Card density="comfortable">
                 <CardHeader>
                   <span className="mb-2 grid size-11 place-items-center rounded-xl bg-brand/10 text-brand [&>svg]:size-6">
-                    <Lightning />
+                    <Lightning weight="bold" />
                   </span>
                   <CardTitle>Fast</CardTitle>
                   <CardDescription>From idea to production in a single afternoon.</CardDescription>
@@ -83,7 +83,7 @@ export default function SectionDocsPage() {
               <Card density="comfortable">
                 <CardHeader>
                   <span className="mb-2 grid size-11 place-items-center rounded-xl bg-brand/10 text-brand [&>svg]:size-6">
-                    <Sparkle />
+                    <Sparkle weight="bold" />
                   </span>
                   <CardTitle>Polished</CardTitle>
                   <CardDescription>Every component ships feeling finished.</CardDescription>
@@ -92,7 +92,7 @@ export default function SectionDocsPage() {
               <Card density="comfortable">
                 <CardHeader>
                   <span className="mb-2 grid size-11 place-items-center rounded-xl bg-brand/10 text-brand [&>svg]:size-6">
-                    <Palette />
+                    <Palette weight="bold" />
                   </span>
                   <CardTitle>Themeable</CardTitle>
                   <CardDescription>Four themes from one set of semantic tokens.</CardDescription>
@@ -149,17 +149,18 @@ export function Features() {
         <p className="mt-4 text-pretty text-muted-foreground">
           Two parts, one job each.{" "}
           <code className="font-mono text-sm">Section</code> is the band: it owns the vertical
-          rhythm (<code className="font-mono text-sm">py-20 sm:py-28</code>) and spans edge to edge,
+          rhythm (<code className="font-mono text-sm">py-16 sm:py-24</code>) and spans edge to edge,
           so a background tint or image bleeds full-width. <code className="font-mono text-sm">SectionContainer</code>{" "}
-          is the gutter: it caps the width, pads <code className="font-mono text-sm">32px</code> on
-          the sides, and stacks its children in a flex column with a <strong>56px gap</strong>{" "}
+          is the gutter: it caps the width, pads <code className="font-mono text-sm">20px</code> on
+          the sides (<code className="font-mono text-sm">32px</code> from <code className="font-mono text-sm">sm</code>),
+          and stacks its children in a flex column with a <strong>56px gap</strong>{" "}
           (<code className="font-mono text-sm">gap-14</code>). Because the gap lives on the
           container, you never set a header-to-content margin per section again.
         </p>
         <CodeSnippet
           className="mt-4"
-          code={`<Section>                {/* full-bleed band — py-20 sm:py-28 */}
-  <SectionContainer>     {/* centered gutter — max-w 1440px, px-8, gap-14 (56px) */}
+          code={`<Section>                {/* full-bleed band — py-16 sm:py-24 */}
+  <SectionContainer>     {/* centered gutter — max-w 1440px, px-5 sm:px-8, gap-14 (56px) */}
     <SectionHeader … />  {/* the lede */}
     <YourContent />      {/* lands 56px below the header */}
   </SectionContainer>
@@ -242,7 +243,7 @@ export function Features() {
             <p className="mt-1 text-pretty text-muted-foreground">
               The full-bleed band. Renders a{" "}
               <code className="font-mono text-sm">&lt;section&gt;</code> landmark with{" "}
-              <code className="font-mono text-sm">py-20 sm:py-28</code> rhythm. Forwards native{" "}
+              <code className="font-mono text-sm">py-16 sm:py-24</code> rhythm. Forwards native{" "}
               <code className="font-mono text-sm">&lt;section&gt;</code> props and{" "}
               <code className="font-mono text-sm">className</code> (merged last, so a{" "}
               <code className="font-mono text-sm">bg-*</code> or padding override wins).

@@ -7,6 +7,7 @@ export {
   SidebarGroupLabel,
   SidebarGroupContent,
   SidebarItem,
+  SidebarItemIcon,
   SidebarCollapsible,
   SidebarSwitcher,
   SidebarSeparator,
@@ -14,6 +15,7 @@ export {
   type SidebarProps,
   type SidebarGroupProps,
   type SidebarItemProps,
+  type SidebarItemIconProps,
   type SidebarCollapsibleProps,
   type SidebarSwitcherProps,
 } from "./sidebar"

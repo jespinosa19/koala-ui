@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { ArrowRight, CheckCircle, EnvelopeSimple } from "@phosphor-icons/react"
+import { CheckCircle, EnvelopeSimple } from "@phosphor-icons/react"
 
 import { Button } from "@/components/ui/button"
 import { InputRoot, InputField, InputPrefix } from "@/components/ui/input"
@@ -121,12 +121,12 @@ export function NewsletterForm({
         ) : (
           <form className={slots.form()} onSubmit={handleSubmit} noValidate>
             <InputRoot
-              size={isInline ? "md" : "lg"}
+              size="md"
               hasError={status === "error"}
               className={slots.input()}
             >
               <InputPrefix>
-                <EnvelopeSimple />
+                <EnvelopeSimple weight="bold" />
               </InputPrefix>
               <InputField
                 type="email"
@@ -141,12 +141,11 @@ export function NewsletterForm({
             </InputRoot>
             <Button
               type="submit"
-              size={isInline ? "md" : "lg"}
+              size="md"
               loading={status === "loading"}
               className="shrink-0 max-sm:w-full"
             >
               {action}
-              <ArrowRight />
             </Button>
           </form>
         )}

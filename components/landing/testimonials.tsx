@@ -18,7 +18,7 @@ import {
   TestimonialTitle,
 } from "@/components/ui/testimonials"
 import { Rating } from "@/components/ui/rating"
-import { AvatarRoot, AvatarFallback } from "@/components/ui/avatar"
+import { AvatarRoot, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Section, SectionHeading } from "@/components/landing/section"
 import { TESTIMONIALS } from "@/components/landing/data"
 
@@ -50,6 +50,7 @@ export function Testimonials() {
                 <TestimonialQuote>{t.quote}</TestimonialQuote>
                 <TestimonialFooter>
                   <AvatarRoot size="md">
+                    <AvatarImage src={`https://i.pravatar.cc/160?img=${t.img}`} alt={t.name} />
                     <AvatarFallback>{initials(t.name)}</AvatarFallback>
                   </AvatarRoot>
                   <TestimonialAuthor>

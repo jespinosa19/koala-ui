@@ -5,21 +5,21 @@ import { Slot } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 import { createContext } from "@/lib/create-context"
-import { useDensity } from "@/lib/density"
 import { tv, type VariantProps } from "@/lib/tv"
 
 /**
  * Ranking: the Data Display "tops" widget. A leaderboard card listing ranked rows
  * (top products, customers, countries…) with a position chip, optional media, a
  * value, and an optional relative-share bar. Multi-part, built like Card/Stat: one
- * `tv` slots recipe + density flowing to every part through React Context. Compose the
+ * `tv` slots recipe whose slots flow to every part through React Context. It's a
+ * dashboard widget, so its spacing is fixed compact (no density knob). Compose the
  * named parts. See docs/ARCHITECTURE.md §2.
  */
 export const rankingVariants = tv({
   slots: {
-    root: "flex flex-col rounded-xl border bg-card text-card-foreground",
+    root: "flex flex-col gap-3 rounded-xl border bg-card p-4 text-card-foreground",
     header: "flex items-start justify-between gap-3",
-    title: "font-semibold leading-none",
+    title: "text-base font-semibold leading-none",
     description: "text-sm text-pretty text-muted-foreground",
     action: "shrink-0",
     list: "",
@@ -45,39 +45,31 @@ export const rankingVariants = tv({
       outline: { root: "border-border shadow-none" },
       elevated: { root: "border-transparent shadow-lg" },
     },
-    // Density is Koala's cross-cutting spacing axis (see lib/density.tsx). For Ranking it
-    // governs card padding and the title size. `compact` is the dashboard default;
-    // `comfortable` is the roomier marketing alternative (and loosens row gaps below).
-    density: {
-      compact: { root: "gap-3 p-4", title: "text-base" },
-      comfortable: { root: "gap-5 p-6", title: "text-lg" },
-    },
     // Two ways to read a "top" list: stacked rows, or a vertical bar chart.
     layout: {
       list: {
-        list: "flex flex-col gap-1",
+        // Row gap (12px) runs ~2:1 over the label→bar spacing (mt-1.5 = 6px) so each row
+        // reads as one block and multi-part rows (bar under label) breathe instead of blurring
+        // into the next. A near-equal gap (e.g. 8px over 6px) still reads cramped.
+        list: "flex flex-col gap-3",
         item: "flex items-center gap-3",
         barTrack:
-          "mt-2 h-1.5 w-full overflow-hidden rounded-full bg-muted transition-colors duration-fast ease-out group-hover/item:bg-card",
+          "mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted transition-colors duration-fast ease-out group-hover/item:bg-card",
         // Runtime width rides a CSS var per the house rule (no generated classes).
-        barFill: "h-full w-(--ranking-bar) rounded-full bg-primary transition-[width] duration-slow ease-out",
+        barFill: "h-full w-(--ranking-bar) rounded-full bg-blue-500 transition-[width] duration-slow ease-out",
       },
       bars: {
         list: "flex h-44 flex-row items-end justify-between gap-2 sm:gap-3",
         item: "flex h-full flex-1 flex-col items-center justify-end gap-2 text-center",
-        // The track is the full-height column; the fill rises from the bottom.
-        barTrack: "flex w-8 flex-1 flex-col justify-end overflow-hidden rounded-lg bg-muted/60 sm:w-10",
-        barFill: "w-full bg-primary h-(--ranking-bar) transition-[height] duration-slow ease-out",
+        // The track is the full-height column; the fill rises from the bottom. Top corners round
+        // at 4px to match the Chart's bars (blue-500, radius 4); the base sits square on the row.
+        barTrack: "flex w-8 flex-1 flex-col justify-end overflow-hidden rounded-t-[4px] bg-muted/60 sm:w-10",
+        barFill: "w-full rounded-t-[4px] bg-blue-500 h-(--ranking-bar) transition-[height] duration-slow ease-out",
       },
     },
   },
-  compoundVariants: [
-    // Comfortable loosens the stacked rows; bars set their own gap.
-    { layout: "list", density: "comfortable", class: { list: "gap-2.5" } },
-  ],
   defaultVariants: {
     variant: "default",
-    density: "compact",
     layout: "list",
   },
 })
@@ -98,12 +90,11 @@ export interface RankingProps
 export function Ranking({
   className,
   variant,
-  density,
   layout,
   asChild = false,
   ...props
 }: RankingProps) {
-  const slots = rankingVariants({ variant, density: useDensity(density), layout })
+  const slots = rankingVariants({ variant, layout })
   const Comp = asChild ? Slot.Root : "div"
   return (
     <RankingProvider slots={slots}>
@@ -215,8 +206,9 @@ export interface RankingBarProps extends Omit<React.ComponentProps<"div">, "chil
 }
 
 /**
- * RankingBar: a thin relative-share bar. The fill paints with `bg-primary` by default;
- * recolor it with a `className` on the fill via the `[&>div]` child, or pass a tone
+ * RankingBar: a thin relative-share bar. The fill paints `bg-blue-500` by default, the
+ * same chart hue the Chart's line and bars use, so a Ranking and a Chart read as one system.
+ * Recolor it with a `className` on the fill via the `[&>div]` child, or pass a tone
  * class. The width is a runtime value, so it rides a CSS variable, not a generated class.
  */
 export function RankingBar({ className, value, ...props }: RankingBarProps) {

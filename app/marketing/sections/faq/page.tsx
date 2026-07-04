@@ -6,14 +6,14 @@ import { SECTIONS } from "@/components/docs/sections-registry"
 
 export const metadata = { title: "FAQ sections" }
 
-const VARIANTS = ["faq-section-1"] as const
+const VARIANTS = ["faq-section-1", "faq-section-2"] as const
 
 export default function FaqSectionsPage() {
   return (
     <>
       <DocHeader
         title="FAQ"
-        description="A single-open, separated accordion of the product's common questions. Only one panel is open at a time, and the section caps its width so the questions stay easy to scan."
+        description="The product's common questions as a finished section. Variant 1 is a single-open, separated accordion that caps its width so questions stay easy to scan. Variant 2 splits the same questions into topic groups (the help-center look), each a borderless minimal list with single-expand scoped per topic."
       />
 
       <div className="flex flex-col gap-8">

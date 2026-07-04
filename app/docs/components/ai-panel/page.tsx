@@ -4,7 +4,7 @@ import { ComponentPreview } from "@/components/docs/component-preview"
 import { CodeSnippet } from "@/components/docs/code-snippet"
 import { Installation } from "@/components/docs/installation"
 
-import { AIPanelDemo, OverlayDemo, EmptyDemo, WindowModesDemo } from "./demos"
+import { AIPanelDemo, OverlayDemo, EmptyDemo, EmptyStatesDemo, WindowModesDemo } from "./demos"
 
 export const metadata = {
   title: "AI Panel",
@@ -177,7 +177,9 @@ export function Assistant() {
       <DocSection title="Empty state">
         <p className="mt-4 text-pretty text-muted-foreground">
           With no messages yet, center a greeting and a few starters in the body. The body is a
-          plain flex region, so a centered welcome composes with no extra parts.
+          plain flex region, so a centered welcome composes with no extra parts. For genuine{" "}
+          <em>no-content</em> moments (no history, no results, offline), reach for the canonical{" "}
+          <code className="font-mono text-sm">EmptyState</code> instead: see below.
         </p>
         <ComponentPreview
           previewClassName="items-start"
@@ -186,19 +188,48 @@ export function Assistant() {
     <Sparkle className="size-6" />
   </span>
   <div>
-    <p className="text-base font-semibold">How can I help?</p>
-    <p className="text-sm text-muted-foreground">Ask about your workspace…</p>
+    <p className="text-pretty text-base font-semibold">How can I help?</p>
+    <p className="text-pretty text-sm text-muted-foreground">Ask about your workspace…</p>
   </div>
   <PromptInputSuggestions className="justify-center">
-    {starters.map((s) => (
-      <PromptInputSuggestion key={s} onClick={() => setValue(s)}>
-        <Sparkle className="text-brand" /> {s}
+    {starters.map(({ label, icon: Icon }) => (
+      <PromptInputSuggestion key={label} onClick={() => setValue(label)}>
+        <Icon /> {label}
       </PromptInputSuggestion>
     ))}
   </PromptInputSuggestions>
 </AIPanelBody>`}
         >
           <EmptyDemo />
+        </ComponentPreview>
+      </DocSection>
+
+      <DocSection title="No content &amp; error states">
+        <p className="mt-4 text-pretty text-muted-foreground">
+          Beyond the welcome state, an assistant hits real <em>no-content</em> moments: an empty
+          history, a search that finds nothing, a dropped connection. Because the body is a plain
+          flex region, drop the canonical{" "}
+          <code className="font-mono text-sm">EmptyState</code> straight in.{" "}
+          <code className="font-mono text-sm">density=&quot;compact&quot;</code> fits the in-panel
+          scale, and <code className="font-mono text-sm">variant</code> re-themes the media and
+          action for an error (<code className="font-mono text-sm">destructive</code>) versus a
+          neutral zero state (<code className="font-mono text-sm">default</code>).
+        </p>
+        <ComponentPreview
+          code={`<AIPanelBody className="flex items-center justify-center">
+  <EmptyState density="compact" variant="destructive">
+    <EmptyStateMedia><WifiSlash /></EmptyStateMedia>
+    <EmptyStateTitle>Can't reach the assistant</EmptyStateTitle>
+    <EmptyStateDescription>
+      Koala is offline right now. Check your connection and try again.
+    </EmptyStateDescription>
+    <EmptyStateActions>
+      <Button size="sm" variant="destructive"><ArrowClockwise /> Retry</Button>
+    </EmptyStateActions>
+  </EmptyState>
+</AIPanelBody>`}
+        >
+          <EmptyStatesDemo />
         </ComponentPreview>
       </DocSection>
 
@@ -280,6 +311,10 @@ export function Assistant() {
             {
               q: "How should I handle the close action when the panel lives in a Drawer?",
               a: "Hide the Drawer's own close with `showClose={false}` and put a close action in the panel header instead. Render an `AIPanelAction` with `asChild` wrapping a `DrawerClose`, and add a `<DrawerTitle className=\"sr-only\">` for screen readers.",
+            },
+            {
+              q: "How do I show an empty state when there's no content?",
+              a: "The body is a plain flex region, so center whatever fits the moment. For a fresh chat, drop a greeting plus a few `PromptInputSuggestions` starters. For genuine no-content cases (no saved history, a search with no results, or an offline/error), reach for the canonical `EmptyState` at `density=\"compact\"` and swap its `variant` (`default` for a neutral zero state, `destructive` for an error). Add `className=\"flex items-center justify-center\"` to `AIPanelBody` so it centers.",
             },
             {
               q: "Why is AIPanelAction styled differently from a plain Button?",

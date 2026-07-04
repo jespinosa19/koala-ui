@@ -3,6 +3,7 @@
 import * as React from "react"
 import {
   DotsThreeVertical,
+  DotsThree,
   FunnelSimple,
   ArrowsDownUp,
   Export,
@@ -10,6 +11,11 @@ import {
   EnvelopeSimple,
   IdentificationBadge,
   UsersThree,
+  UserPlus,
+  Tag,
+  Archive,
+  Copy,
+  FolderSimple,
   TrendUp,
   TrendDown,
   Minus,
@@ -23,6 +29,7 @@ import { Tooltip } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -77,12 +84,12 @@ interface Member {
 }
 
 const members: Member[] = [
-  { id: "1", name: "Aria Montgomery", email: "aria@koala.dev", role: "Owner", team: "Engineering", status: "Active", balance: 4820, tags: ["React", "Infra", "Design Systems"], delta: 12.4, activity: [3, 5, 4, 7, 6, 9, 12], assignees: [{ img: 12, name: "Esteban Alonso" }, { img: 5, name: "Marie Dubois" }, { img: 32, name: "Liam Chen" }] },
-  { id: "2", name: "Bruno Vasquez", email: "bruno@koala.dev", role: "Admin", team: "Engineering", status: "Active", balance: 1290, tags: ["Node", "DevOps"], delta: 4.1, activity: [8, 6, 7, 5, 6, 7, 8], assignees: [{ img: 47, name: "Sofia Rossi" }, { img: 12, name: "Esteban Alonso" }] },
-  { id: "3", name: "Cleo Nakamura", email: "cleo@koala.dev", role: "Member", team: "Design", status: "Invited", balance: 0, tags: ["Figma", "Brand", "Motion", "Research"], delta: 0, activity: [4, 4, 5, 4, 4, 3, 4], assignees: [{ img: 5, name: "Marie Dubois" }] },
-  { id: "4", name: "Dario Field", email: "dario@koala.dev", role: "Member", team: "Design", status: "Active", balance: 760, tags: ["Illustration"], delta: -3.2, activity: [9, 8, 7, 6, 5, 5, 4], assignees: [{ img: 32, name: "Liam Chen" }, { img: 47, name: "Sofia Rossi" }, { img: 5, name: "Marie Dubois" }, { img: 12, name: "Esteban Alonso" }] },
-  { id: "5", name: "Esme Holloway", email: "esme@koala.dev", role: "Viewer", team: "Marketing", status: "Suspended", balance: -120, tags: ["SEO", "Content"], delta: -8.7, activity: [6, 5, 6, 4, 3, 3, 2], assignees: [{ img: 47, name: "Sofia Rossi" }] },
-  { id: "6", name: "Finn Albrecht", email: "finn@koala.dev", role: "Member", team: "Marketing", status: "Active", balance: 3410, tags: ["Ads", "Analytics", "Lifecycle"], delta: 21.9, activity: [2, 4, 3, 6, 8, 10, 13], assignees: [{ img: 12, name: "Esteban Alonso" }, { img: 32, name: "Liam Chen" }, { img: 5, name: "Marie Dubois" }] },
+  { id: "1", name: "Aria Montgomery", email: "aria@koala.dev", avatar: "https://i.pravatar.cc/160?img=1", role: "Owner", team: "Engineering", status: "Active", balance: 4820, tags: ["React", "Infra", "Design Systems"], delta: 12.4, activity: [3, 5, 4, 7, 6, 9, 12], assignees: [{ img: 12, name: "Esteban Alonso" }, { img: 5, name: "Marie Dubois" }, { img: 32, name: "Liam Chen" }] },
+  { id: "2", name: "Bruno Vasquez", email: "bruno@koala.dev", avatar: "https://i.pravatar.cc/160?img=3", role: "Admin", team: "Engineering", status: "Active", balance: 1290, tags: ["Node", "DevOps"], delta: 4.1, activity: [8, 6, 7, 5, 6, 7, 8], assignees: [{ img: 47, name: "Sofia Rossi" }, { img: 12, name: "Esteban Alonso" }] },
+  { id: "3", name: "Cleo Nakamura", email: "cleo@koala.dev", avatar: "https://i.pravatar.cc/160?img=9", role: "Member", team: "Design", status: "Invited", balance: 0, tags: ["Figma", "Brand", "Motion", "Research"], delta: 0, activity: [4, 4, 5, 4, 4, 3, 4], assignees: [{ img: 5, name: "Marie Dubois" }] },
+  { id: "4", name: "Dario Field", email: "dario@koala.dev", avatar: "https://i.pravatar.cc/160?img=13", role: "Member", team: "Design", status: "Active", balance: 760, tags: ["Illustration"], delta: -3.2, activity: [9, 8, 7, 6, 5, 5, 4], assignees: [{ img: 32, name: "Liam Chen" }, { img: 47, name: "Sofia Rossi" }, { img: 5, name: "Marie Dubois" }, { img: 12, name: "Esteban Alonso" }] },
+  { id: "5", name: "Esme Holloway", email: "esme@koala.dev", avatar: "https://i.pravatar.cc/160?img=16", role: "Viewer", team: "Marketing", status: "Suspended", balance: -120, tags: ["SEO", "Content"], delta: -8.7, activity: [6, 5, 6, 4, 3, 3, 2], assignees: [{ img: 47, name: "Sofia Rossi" }] },
+  { id: "6", name: "Finn Albrecht", email: "finn@koala.dev", avatar: "https://i.pravatar.cc/160?img=33", role: "Member", team: "Marketing", status: "Active", balance: 3410, tags: ["Ads", "Analytics", "Lifecycle"], delta: 21.9, activity: [2, 4, 3, 6, 8, 10, 13], assignees: [{ img: 12, name: "Esteban Alonso" }, { img: 32, name: "Liam Chen" }, { img: 5, name: "Marie Dubois" }] },
 ]
 
 // A larger set so paging has somewhere to go: the six members cloned across pages with
@@ -191,7 +198,7 @@ function TrendCell({ delta }: { delta: number }) {
         direction === "neutral" && "text-muted-foreground",
       )}
     >
-      <Arrow className="size-3.5" />
+      <Arrow weight="bold" className="size-3.5" />
       {delta > 0 ? "+" : ""}
       {delta.toFixed(1)}%
     </span>
@@ -385,10 +392,10 @@ function ToolbarActions() {
   return (
     <>
       <Button variant="outline" iconOnly aria-label="Filter">
-        <FunnelSimple />
+        <FunnelSimple weight="bold" />
       </Button>
       <Button variant="outline" iconOnly aria-label="Export">
-        <Export />
+        <Export weight="bold" />
       </Button>
       <Button>Register</Button>
     </>
@@ -420,15 +427,15 @@ export function CustomToolbarDemo() {
       <DataTableToolbarSection>
         <DataTableSearch />
         <Button variant="outline" iconOnly aria-label="Filter">
-          <FunnelSimple />
+          <FunnelSimple weight="bold" />
         </Button>
         <Button variant="outline" iconOnly aria-label="Sort">
-          <ArrowsDownUp />
+          <ArrowsDownUp weight="bold" />
         </Button>
       </DataTableToolbarSection>
       <DataTableToolbarSection>
         <Button variant="outline" iconOnly aria-label="Export">
-          <Export />
+          <Export weight="bold" />
         </Button>
         <Button>Register</Button>
       </DataTableToolbarSection>
@@ -466,11 +473,11 @@ export function ShowcaseDemo() {
       renderSelectionActions={(rows, table) => (
         <>
           <Button variant="ghost" size="sm" onClick={() => table.resetRowSelection()}>
-            <Export />
+            <Export weight="bold" />
             Export
           </Button>
           <Button variant="destructive" size="sm" onClick={() => table.resetRowSelection()}>
-            <Trash />
+            <Trash weight="bold" />
             Delete
           </Button>
         </>
@@ -699,19 +706,20 @@ export function StripedDemo() {
 export function DensityDemo() {
   const [density, setDensity] = React.useState<"compact" | "comfortable">("compact")
   return (
-    <div className="flex w-full flex-col gap-3">
-      <div className="flex items-center gap-2">
-        {(["compact", "comfortable"] as const).map((d) => (
-          <Button
-            key={d}
-            size="sm"
-            variant={density === d ? "secondary" : "ghost"}
-            className="capitalize"
-            onClick={() => setDensity(d)}
-          >
-            {d === "compact" ? "Condensed" : "Comfortable"}
-          </Button>
-        ))}
+    <div className="flex w-full flex-col gap-6">
+      {/* Segmented pill Tabs drive the density: the active pill slides between the two on switch,
+          reading as one gesture with the rows easing open/closed below. Centered over the table
+          (only the tabs center; the table stays stretched full-width). */}
+      <div className="flex justify-center">
+        <Tabs
+          value={density}
+          onValueChange={(value) => setDensity(value as "compact" | "comfortable")}
+        >
+          <TabsList>
+            <TabsTrigger value="compact">Condensed</TabsTrigger>
+            <TabsTrigger value="comfortable">Comfortable</TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
       <DataTable
         columns={memberColumns}
@@ -828,7 +836,9 @@ export function StickyHeaderDemo() {
   )
 }
 
-/** Sticky column: pin a column (here the member) to the left while the rest scrolls sideways. */
+/** Sticky column: pin a column (here the member) to the left while the rest scrolls sideways. The
+ *  column set is deliberately wide (`min-w-[72rem]`, wider than the docs preview) so there's always
+ *  overflow to scroll: a sticky column only reads as pinned when the rest of the table moves past it. */
 export function StickyColumnDemo() {
   const columns = React.useMemo<ColumnDef<Member>[]>(
     () => [
@@ -849,6 +859,24 @@ export function StickyColumnDemo() {
           </Badge>
         ),
       },
+      {
+        accessorKey: "tags",
+        header: "Tags",
+        enableSorting: false,
+        cell: ({ row }) => <TagsCell tags={row.original.tags} />,
+      },
+      {
+        accessorKey: "delta",
+        header: "Trend",
+        meta: { align: "right" },
+        cell: ({ row }) => <TrendCell delta={row.original.delta} />,
+      },
+      {
+        accessorKey: "activity",
+        header: "Activity",
+        enableSorting: false,
+        cell: ({ row }) => <ActivityCell data={row.original.activity} delta={row.original.delta} />,
+      },
       { accessorKey: "email", header: "Email", cell: ({ getValue }) => <span className="text-muted-foreground">{getValue<string>()}</span> },
       { accessorKey: "balance", header: "Balance", meta: { numeric: true }, cell: ({ getValue }) => currency.format(getValue<number>()) },
     ],
@@ -859,7 +887,7 @@ export function StickyColumnDemo() {
       columns={columns}
       data={members}
       getRowId={(row) => row.id}
-      className="min-w-[52rem]"
+      className="min-w-[72rem]"
     />
   )
 }
@@ -973,9 +1001,9 @@ export function FacetedFilterDemo() {
           columnId: "team",
           title: "Team",
           options: [
-            { value: "Engineering", label: "Engineering", icon: <UsersThree /> },
-            { value: "Design", label: "Design", icon: <UsersThree /> },
-            { value: "Marketing", label: "Marketing", icon: <UsersThree /> },
+            { value: "Engineering", label: "Engineering", icon: <UsersThree weight="bold" /> },
+            { value: "Design", label: "Design", icon: <UsersThree weight="bold" /> },
+            { value: "Marketing", label: "Marketing", icon: <UsersThree weight="bold" /> },
           ],
         },
       ]}
@@ -984,8 +1012,10 @@ export function FacetedFilterDemo() {
   )
 }
 
-/** Bulk actions: selecting rows raises a floating pill with the count and your actions. Delete
- *  removes the selected rows from this demo's local data; reload to bring them back. */
+/** Bulk actions: selecting rows raises a floating black pill (the Figma/Linear look) with the
+ *  count and your actions. Quiet actions ride as icon-only ghost buttons, a three-dots menu holds
+ *  the overflow, and Delete is the prominent destructive step. Delete removes the selected rows
+ *  from this demo's local data; hit Restore rows to bring them back. */
 export function BulkActionsDemo() {
   const [data, setData] = React.useState(members)
   return (
@@ -1002,10 +1032,45 @@ export function BulkActionsDemo() {
         enableRowSelection
         renderSelectionActions={(rows, table) => (
           <>
+            {/* Quiet, high-frequency actions: icon-only ghosts (aria-label doubles as the tooltip),
+                so a wide action set stays compact. They read light on the dark pill for free. */}
+            <Button variant="ghost" size="sm" iconOnly aria-label="Assign">
+              <UserPlus weight="bold" />
+            </Button>
+            <Button variant="ghost" size="sm" iconOnly aria-label="Add tag">
+              <Tag weight="bold" />
+            </Button>
+            <Button variant="ghost" size="sm" iconOnly aria-label="Archive">
+              <Archive weight="bold" />
+            </Button>
             <Button variant="ghost" size="sm" onClick={() => table.resetRowSelection()}>
-              <Export />
+              <Export weight="bold" />
               Export
             </Button>
+            {/* Overflow: everything that doesn't earn a permanent slot. */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" iconOnly aria-label="More actions" tooltip={false}>
+                  <DotsThree weight="bold" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>
+                  <Copy weight="bold" />
+                  Duplicate
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <FolderSimple weight="bold" />
+                  Move to project
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <EnvelopeSimple weight="bold" />
+                  Email selected
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            {/* Set the destructive step apart from the safe actions. */}
+            <span aria-hidden className="mx-0.5 h-5 w-px bg-border" />
             <Button
               variant="destructive"
               size="sm"
@@ -1015,7 +1080,7 @@ export function BulkActionsDemo() {
                 table.resetRowSelection()
               }}
             >
-              <Trash />
+              <Trash weight="bold" />
               Delete
             </Button>
           </>
@@ -1036,9 +1101,9 @@ export function ExpandableRowDemo() {
       getRowId={(row) => row.id}
       renderSubRow={(row) => (
         <div className="grid gap-4 rounded-lg bg-muted/40 p-4 sm:grid-cols-3">
-          <DetailField icon={<EnvelopeSimple />} label="Email" value={row.original.email} />
-          <DetailField icon={<IdentificationBadge />} label="Role" value={row.original.role} />
-          <DetailField icon={<UsersThree />} label="Team" value={row.original.team} />
+          <DetailField icon={<EnvelopeSimple weight="bold" />} label="Email" value={row.original.email} />
+          <DetailField icon={<IdentificationBadge weight="bold" />} label="Role" value={row.original.role} />
+          <DetailField icon={<UsersThree weight="bold" />} label="Team" value={row.original.team} />
         </div>
       )}
       className="min-w-[34rem]"

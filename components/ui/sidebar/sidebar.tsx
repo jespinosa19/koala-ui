@@ -17,7 +17,7 @@ import { Tooltip } from "@/components/ui/tooltip"
  *
  *   <Sidebar>
  *     <SidebarHeader>                  // workspace switcher lives here
- *       <DropdownMenu>…<SidebarSwitcher title="Acme" subtitle="Enterprise" />…</DropdownMenu>
+ *       <DropdownMenu>…<SidebarSwitcher title="Koala" subtitle="Enterprise" />…</DropdownMenu>
  *     </SidebarHeader>
  *
  *     <SidebarContent>                 // the scroll region: primary nav, then sections
@@ -90,9 +90,19 @@ export const sidebarVariants = tv({
       "before:absolute before:-left-2 before:top-1/2 before:h-4 before:w-[3px] before:-translate-y-1/2",
       "before:rounded-r-full before:bg-brand before:opacity-0 before:transition-opacity before:duration-fast before:ease-out before:content-['']",
       "data-[active=true]:before:opacity-100",
-      // Leading glyph: a touch larger than text for optical weight; never shrinks.
-      "[&>svg]:size-[1.125rem] [&>svg]:shrink-0",
+      // Leading glyph: 20px, the text-label-row standard across the DS (menus, select, lists);
+      // never shrinks.
+      "[&>svg]:size-5 [&>svg]:shrink-0",
     ],
+    // A colored icon tile: the leading visual for the "tinted tile" rail (a Productboard-style
+    // sidebar where each row carries a soft rounded square with a hue-colored glyph, rendered by
+    // `SidebarItemIcon`). The tint + glyph color come from the `tone` variant (a hue role, the
+    // same soft-10%/solid pair Bento uses); the square's size scales with density. It sits inside
+    // the row like any other leading element, so the active chip + brand bar still belong to the
+    // row. `place-items-center` centers the Phosphor icon, which is sized here (not by the row's
+    // `[&>svg]` rule, since the icon is nested one level down inside this tile). In the collapsed
+    // rail it becomes the centered chip: it's the row's leading element, so `leadingChild` keeps it.
+    itemIcon: "grid shrink-0 place-items-center rounded-sm [&>svg]:size-[0.9375rem]",
     // The switcher trigger: an identity row (avatar/logo · title/subtitle · caret) that
     // opens a DropdownMenu. `data-[state=open]` keeps it lit while the menu is open. The
     // gap, hover fill, and padding are set by the `variant` axis below (compact default vs full).
@@ -166,6 +176,7 @@ export const sidebarVariants = tv({
         footer: "p-3",
         groupLabel: "px-3 pb-1.5 pt-1 text-xs",
         item: "px-3 py-2",
+        itemIcon: "size-7",
         separator: "-mx-3 my-1",
         // Indent the nested list so its rail sits under the parent label and its rows align a
         // step in from the parent.
@@ -177,6 +188,7 @@ export const sidebarVariants = tv({
         footer: "p-2",
         groupLabel: "px-2.5 pb-1 pt-0.5 text-xs",
         item: "px-2.5 py-1.5",
+        itemIcon: "size-6",
         separator: "-mx-2 my-1",
         sub: "ms-[1.125rem] mt-0.5 ps-2",
       },
@@ -253,6 +265,24 @@ export const sidebarVariants = tv({
       true: { root: "rounded-xl border border-border shadow-lg" },
       false: {},
     },
+    // The hue tint of a `SidebarItemIcon` tile: a soft 10% wash behind a solid glyph, the same
+    // pair Bento uses. A per-row axis (each page gets its own color), so it's set on the
+    // `SidebarItemIcon`, not the root. Values scope to the `itemIcon` slot only (a slotted recipe
+    // needs `{ slot: "…" }` objects, not a bare string). The decorative hues (purple/pink/teal/
+    // orange) carry text at their base weight (already dark enough on the tint, and they lighten
+    // in dark themes); the status hues (green/blue/red/amber) use the darker `-strong` text so the
+    // glyph stays legible on the light-theme tint.
+    tone: {
+      brand: { itemIcon: "bg-brand/10 text-brand" },
+      purple: { itemIcon: "bg-purple/10 text-purple" },
+      pink: { itemIcon: "bg-pink/10 text-pink" },
+      teal: { itemIcon: "bg-teal/10 text-teal" },
+      orange: { itemIcon: "bg-orange/10 text-orange" },
+      green: { itemIcon: "bg-success/10 text-success-strong" },
+      blue: { itemIcon: "bg-info/10 text-info-strong" },
+      red: { itemIcon: "bg-destructive/10 text-destructive-strong" },
+      amber: { itemIcon: "bg-warning/10 text-warning-strong" },
+    },
   },
   compoundVariants: [
     // The separating hairline lives on the edge that meets the content, and only when the rail
@@ -312,6 +342,7 @@ export const sidebarVariants = tv({
     indicator: false,
     side: "left",
     floating: false,
+    tone: "brand",
   },
 })
 
@@ -334,8 +365,8 @@ const SidebarGroupContext = React.createContext<{ collapsible: boolean }>({ coll
 
 export interface SidebarProps
   extends React.ComponentProps<"aside">,
-    // `variant` is a per-switcher axis, not a root one; omit it here.
-    Omit<VariantProps<typeof sidebarVariants>, "variant"> {
+    // `variant` is a per-switcher axis and `tone` a per-item one, not root axes; omit both here.
+    Omit<VariantProps<typeof sidebarVariants>, "variant" | "tone"> {
   /**
    * Collapse the rail to an icon-only column. Labels hide, rows become centered icon chips,
    * and the width animates between the two states. Give each `SidebarItem` a `label` so it
@@ -580,7 +611,7 @@ export function SidebarGroupLabel({ className, children, ...props }: React.Compo
         {...(props as React.ComponentProps<"button">)}
       >
         {children}
-        <CaretRight data-slot="sidebar-group-caret" aria-hidden className={slots.groupCaret()} />
+        <CaretRight weight="bold" data-slot="sidebar-group-caret" aria-hidden className={slots.groupCaret()} />
       </button>
     </CollapsiblePrimitive.Trigger>
   )
@@ -682,6 +713,46 @@ export function SidebarItem({
   return row
 }
 
+export interface SidebarItemIconProps extends React.ComponentProps<"span"> {
+  /**
+   * The hue tint for the tile: a hue role rendered as a soft 10% wash behind a solid glyph (the
+   * same soft/solid pair as Bento). Decorative hues: `brand`, `purple`, `pink`, `teal`, `orange`;
+   * status hues: `green`, `blue`, `red`, `amber`. @default "brand"
+   */
+  tone?: VariantProps<typeof sidebarVariants>["tone"]
+}
+
+/**
+ * A colored icon tile: the leading visual for a tinted-tile rail, where every page carries a soft
+ * rounded square with its own hue-colored glyph (the Productboard/Linear "colored spaces" look).
+ * Wrap a single Phosphor icon; `tone` sets the tint + glyph color and the square scales with the
+ * rail's density. Drop it where a `SidebarItem` icon goes:
+ *
+ *   <SidebarItem asChild>
+ *     <a href="/portfolio">
+ *       <SidebarItemIcon tone="purple"><Cube /></SidebarItemIcon>
+ *       Product Portfolio
+ *     </a>
+ *   </SidebarItem>
+ *
+ * It's decorative (the row's label names the row), so it's `aria-hidden`. In the collapsed icon
+ * rail it becomes the centered chip: it's the row's leading element, so the collapsed row keeps it.
+ * Density flows from the root through context (like `SidebarSwitcher`, the slots are recomputed
+ * here so the tile can carry its own per-instance `tone`).
+ */
+export function SidebarItemIcon({ className, tone, ...props }: SidebarItemIconProps) {
+  const { density } = useSidebarContext("SidebarItemIcon")
+  const slots = sidebarVariants({ density, tone })
+  return (
+    <span
+      data-slot="sidebar-item-icon"
+      aria-hidden
+      className={slots.itemIcon({ className })}
+      {...props}
+    />
+  )
+}
+
 export interface SidebarCollapsibleProps {
   /** Leading glyph for the parent row (lay it out like a `SidebarItem` icon). */
   icon?: React.ReactNode
@@ -769,7 +840,7 @@ export function SidebarCollapsible({
             <span className="min-w-0 flex-1 truncate text-start">{label}</span>
             {actions}
             <span data-slot="sidebar-collapsible-caret" aria-hidden className={slots.subCaret()}>
-              <CaretRight className="size-3.5" />
+              <CaretRight weight="bold" className="size-3.5" />
             </span>
           </button>
         </CollapsiblePrimitive.Trigger>
@@ -833,7 +904,7 @@ export function SidebarSwitcher({
         <span className={slots.switcherTitle()}>{title}</span>
         {subtitle ? <span className={slots.switcherSubtitle()}>{subtitle}</span> : null}
       </span>
-      {caret ? <CaretUpDown data-slot="sidebar-switcher-caret" className={slots.switcherCaret()} /> : null}
+      {caret ? <CaretUpDown weight="bold" data-slot="sidebar-switcher-caret" className={slots.switcherCaret()} /> : null}
     </button>
   )
 }

@@ -4,7 +4,7 @@ import { Installation } from "@/components/docs/installation"
 import { DocHeader, DocSection } from "@/components/docs/doc-page"
 import { Faq } from "@/components/docs/faq"
 
-import { ContactFormDemo } from "./demos"
+import { ContactFormDemo, LeadFormDemo, SupportFormDemo } from "./demos"
 
 export const metadata = { title: "Contact Form" }
 
@@ -13,15 +13,47 @@ export default function ContactFormDocsPage() {
     <>
       <DocHeader
         title="Contact Form"
-        description="A complete contact block: a name and email row, a categorized subject Select, and a message Textarea with a live character count, all wired through Field for automatic label, aria, and error association. It manages its own state and confirms on submit."
+        description="A family of ready get-in-touch blocks sharing one recipe: ContactForm (general), LeadForm (sales / collaboration lead capture), and SupportForm (help-desk request). Each wires every control through Field for automatic label, aria, and error association, manages its own state, and confirms on submit. Use the card variant for a standalone block, or bare to embed inside a page shell."
       />
 
       <ComponentPreview
         locked
+        previewClassName="flex justify-center"
         code={`<ContactForm onSubmit={(data) => send(data)} />`}
       >
         <ContactFormDemo />
       </ComponentPreview>
+
+      <DocSection title="Lead capture">
+        <p className="mt-4 text-pretty text-muted-foreground">
+          <code className="font-mono text-sm">LeadForm</code> is the richer sales / collaboration
+          block: a name and social row, a company-size Select, a country-aware{" "}
+          <a href="/docs/components/input" className="underline underline-offset-4">PhoneInput</a>, and
+          a message. Drop it beside a hero to capture qualified leads.
+        </p>
+        <ComponentPreview
+          locked
+          previewClassName="flex justify-center"
+          code={`<LeadForm defaultCountry="ES" onSubmit={(data) => send(data)} />`}
+        >
+          <LeadFormDemo />
+        </ComponentPreview>
+      </DocSection>
+
+      <DocSection title="Support request">
+        <p className="mt-4 text-pretty text-muted-foreground">
+          <code className="font-mono text-sm">SupportForm</code> is tuned for an inbound support
+          queue: a name and email row, a support-topic Select, an optional order / reference field so
+          an agent can pull the account up fast, and a message.
+        </p>
+        <ComponentPreview
+          locked
+          previewClassName="flex justify-center"
+          code={`<SupportForm onSubmit={(data) => openTicket(data)} />`}
+        >
+          <SupportFormDemo />
+        </ComponentPreview>
+      </DocSection>
 
       <DocSection title="Installation">
         <Installation component="contact-form" />
@@ -34,26 +66,47 @@ export default function ContactFormDocsPage() {
       <DocSection title="API reference">
         <div className="mt-4 flex flex-col gap-6 text-sm">
           <div>
-            <h3 className="font-mono font-semibold">ContactForm</h3>
+            <h3 className="font-mono font-semibold">ContactForm / LeadForm / SupportForm</h3>
             <p className="mt-1 text-pretty text-muted-foreground">
-              Composes{" "}
+              Each composes{" "}
               <a href="/docs/components/field" className="underline underline-offset-4">Field</a>,{" "}
               <a href="/docs/components/input" className="underline underline-offset-4">Input</a>,{" "}
               <a href="/docs/components/select" className="underline underline-offset-4">Select</a>, and{" "}
-              <a href="/docs/components/textarea" className="underline underline-offset-4">Textarea</a>.
-              Forwards all <code className="font-mono text-sm">&lt;div&gt;</code> props.
+              <a href="/docs/components/textarea" className="underline underline-offset-4">Textarea</a>{" "}
+              (LeadForm adds{" "}
+              <a href="/docs/components/input" className="underline underline-offset-4">PhoneInput</a>).
+              Each forwards all <code className="font-mono text-sm">&lt;div&gt;</code> props.
             </p>
             <ul className="mt-2 flex flex-col gap-1 text-muted-foreground">
               <li>
-                <code className="font-mono text-sm">onSubmit</code>:{" "}
-                <code className="font-mono text-sm">(data: ContactFormData) =&gt; void | Promise&lt;void&gt;</code>
-                , where <code className="font-mono text-sm">ContactFormData</code> is{" "}
-                <code className="font-mono text-sm">{`{ name, email, subject, message }`}</code>.
+                <code className="font-mono text-sm">onSubmit</code>: called with the block&apos;s data
+                object on a valid submit ({" "}
+                <code className="font-mono text-sm">{`{ name, email, subject, message }`}</code> for
+                ContactForm,{" "}
+                <code className="font-mono text-sm">{`{ firstName, linkedin, email, companySize, phone, message }`}</code>{" "}
+                for LeadForm,{" "}
+                <code className="font-mono text-sm">{`{ name, email, topic, reference, message }`}</code>{" "}
+                for SupportForm). Return a promise to drive the loading spinner.
+              </li>
+              <li>
+                <code className="font-mono text-sm">variant</code>:{" "}
+                <code className="font-mono text-sm">card</code> (default, standalone bordered block) or{" "}
+                <code className="font-mono text-sm">bare</code> (drops the chrome to embed in a page
+                shell).
+              </li>
+              <li>
+                <code className="font-mono text-sm">density</code>:{" "}
+                <code className="font-mono text-sm">compact</code> (16px, default) or{" "}
+                <code className="font-mono text-sm">comfortable</code> (24px).
               </li>
               <li>
                 <code className="font-mono text-sm">title</code>,{" "}
                 <code className="font-mono text-sm">description</code>,{" "}
                 <code className="font-mono text-sm">action</code>: override the default copy.
+              </li>
+              <li>
+                <code className="font-mono text-sm">defaultCountry</code> (LeadForm only): initial ISO2
+                for the phone field.
               </li>
             </ul>
           </div>
@@ -64,28 +117,24 @@ export default function ContactFormDocsPage() {
         <Faq
           items={[
             {
-              q: "When should I use ContactForm instead of composing Field, Input, Select, and Textarea myself?",
-              a: "Reach for ContactForm when you want a drop-in `get in touch` block: it owns its own field state, validation wiring, and the loading to success flow out of the box. Compose the primitives yourself only when you need a different field set or custom validation, since ContactForm fixes the schema to name, email, subject, and message.",
+              q: "Which block should I reach for: ContactForm, LeadForm, or SupportForm?",
+              a: "Use ContactForm for an open-ended `get in touch` block (name, email, a general subject, and a message). Use LeadForm to capture qualified sales or collaboration leads: it adds a LinkedIn field, a company-size Select, and a country-aware phone field. Use SupportForm for an inbound support queue: it swaps in support-focused topics and an order / reference field. All three share one recipe and the same loading to success flow, so they feel identical to drop in.",
+            },
+            {
+              q: "How do I embed a block inside a hero or marketing slab without the doubled card chrome?",
+              a: "Pass variant=\"bare\" to drop the border, surface, shadow, max-width, and padding, so the block fills whatever shell hosts it. The card variant (the default) is the standalone bordered panel and declares --surface: var(--card) so nested Inputs, Selects, and Textareas blend with it. The Contact marketing section composes LeadForm as a card floating over a photo.",
             },
             {
               q: "What shape is the data passed to onSubmit, and how do I drive the loading spinner?",
-              a: "onSubmit receives a `ContactFormData` object of `{ name, email, subject, message }`. Return a promise from your handler and the submit Button shows its loading state until that promise resolves, after which the form swaps to the success panel.",
+              a: "onSubmit receives the block's typed data object (ContactFormData, LeadFormData, or SupportFormData). Return a promise from your handler and the submit Button shows its loading state until that promise resolves, after which the form swaps to the success panel, which renders with role=\"status\" so it is announced to screen readers.",
             },
             {
               q: "How do I change the heading, supporting text, or submit button label?",
-              a: "Pass the `title`, `description`, and `action` props to override the defaults (`Get in touch`, the intro line, and `Send message`). Set `description` to null if you want to drop the supporting line entirely.",
+              a: "Pass the title, description, and action props to override the defaults. Set description to null to drop the supporting line entirely.",
             },
             {
-              q: "How does ContactForm handle density and how do nested controls blend with the card?",
-              a: "The `density` prop accepts `compact` (16px, the default) or `comfortable` (24px), and falls back to the nearest DensityProvider when omitted. The root declares `--surface: var(--card)`, so the nested Input, Select, and Textarea blend with the panel instead of painting their own background block.",
-            },
-            {
-              q: "Is the character counter and the field labeling accessible?",
-              a: "Each control is wrapped in Field, which auto-associates its FieldLabel, hint, and aria attributes, so labels are programmatically tied to inputs. The message Textarea enforces a 500 character `maxLength` with a live TextareaCount, and the success state renders with `role=\"status\"` so it is announced to screen readers.",
-            },
-            {
-              q: "Why does the subject Select wrap its icon and label in a span, and do I need to do that?",
-              a: "Inside SelectItem the icon and label both land in the item text, so they are wrapped in an inline-flex span to sit on one row rather than stacking, matching the icon plus label Select pattern. ContactForm already handles this internally, so you only need the pattern if you build your own icon-bearing SelectItem rows.",
+              q: "How does the family handle density and how do nested controls blend with the card?",
+              a: "The density prop accepts compact (16px, the default) or comfortable (24px), and falls back to the nearest DensityProvider when omitted. The card root declares --surface: var(--card), so the nested Input, Select, PhoneInput, and Textarea blend with the panel instead of painting their own background block.",
             },
           ]}
         />

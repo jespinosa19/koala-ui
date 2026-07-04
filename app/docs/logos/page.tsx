@@ -3,11 +3,13 @@ import { Alert, AlertContent, AlertDescription, AlertIcon, AlertTitle } from "@/
 import { CodeSnippet } from "@/components/ui/code-snippet"
 import { LogoGrid } from "@/components/docs/logo-grid"
 import { BrandLogoGrid } from "@/components/docs/brand-logo-grid"
+import { BRAND_LOGOS } from "@/components/docs/brand-logos"
 import { PLACEHOLDER_BRANDS } from "@/components/docs/placeholder-logos"
 
 export const metadata = { title: "Logos" }
 
 const COUNT = PLACEHOLDER_BRANDS.length
+const BRAND_COUNT = BRAND_LOGOS.length
 
 export default function LogosPage() {
   return (
@@ -73,9 +75,10 @@ const [apex] = PLACEHOLDER_BRANDS
       <DocSection title="Brand logos">
         <p className="mt-4 text-pretty text-muted-foreground">
           Sometimes you need a <span className="font-medium text-foreground">real</span>{" "}
-          customer&apos;s logo, not a placeholder: say, Spotify on a &ldquo;works with&rdquo; wall.
-          These are the genuine brand marks, ready to copy or download with the official color baked
-          in. They live apart from the fictional set above because, unlike those, each one is a
+          customer&apos;s logo, not a placeholder: say, Spotify or Netflix on a{" "}
+          &ldquo;works with&rdquo; wall. Here are {BRAND_COUNT} of the most recognizable brand marks,
+          ready to copy or download with the official color baked in. Search by name to find one
+          fast. They live apart from the fictional set above because, unlike those, each one is a
           trademark you do not own.
         </p>
         <Alert variant="warning" className="mt-5">
@@ -85,8 +88,9 @@ const [apex] = PLACEHOLDER_BRANDS
             <AlertDescription>
               Koala UI is not affiliated with, endorsed by, or sponsored by any of these companies.
               Every logo remains the property of its brand. Before using one, read and follow that
-              brand&apos;s own trademark and brand guidelines, linked from each logo (the{" "}
-              <span className="font-medium text-foreground">guidelines</span> action on hover).
+              brand&apos;s own trademark and brand guidelines, linked from the logo (the{" "}
+              <span className="font-medium text-foreground">guidelines</span> action on hover) wherever
+              the brand publishes them.
             </AlertDescription>
           </AlertContent>
         </Alert>
@@ -106,18 +110,24 @@ const [apex] = PLACEHOLDER_BRANDS
         <p className="mt-6 text-pretty text-muted-foreground">
           In code, the set works like the placeholders: import{" "}
           <code className="font-mono text-sm">BRAND_LOGOS</code> and render a mark with{" "}
-          <code className="font-mono text-sm">BrandLogo</code>. Each entry also carries the
-          brand&apos;s homepage and guidelines links, so your UI can always point back to the source.
+          <code className="font-mono text-sm">BrandLogo</code>. Each entry carries the brand&apos;s
+          domain (the homepage link via <code className="font-mono text-sm">brandHref</code>) and, when
+          the brand publishes one, a <code className="font-mono text-sm">guidelines</code> URL, so your
+          UI can always point back to the source.
         </p>
         <CodeSnippet
           filename="brand-wall.tsx"
           className="mt-4"
-          code={`import { BRAND_LOGOS, BrandLogo } from "@/components/docs/brand-logos"
+          code={`import { BRAND_LOGOS, BrandLogo, brandHref } from "@/components/docs/brand-logos"
 
 const spotify = BRAND_LOGOS.find((b) => b.name === "Spotify")!
 
 // The trademark mark in its official color
 <BrandLogo brand={spotify} />
+
+// Link to the brand, and to its guidelines when published
+<a href={brandHref(spotify)}>{spotify.name}</a>
+{spotify.guidelines && <a href={spotify.guidelines}>Brand guidelines</a>}
 
 // A row of real brand logos
 <div className="flex flex-wrap items-center gap-x-10 gap-y-6">

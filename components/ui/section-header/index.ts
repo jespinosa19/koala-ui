@@ -1,12 +1,15 @@
 export {
   sectionHeaderVariants,
+  sectionHeaderChipVariants,
   SectionHeader,
   SectionHeaderText,
   SectionHeaderHeading,
   SectionHeaderDescription,
   SectionHeaderActions,
+  SectionHeaderChip,
   type SectionHeaderProps,
   type SectionHeaderHeadingProps,
+  type SectionHeaderChipProps,
   type SectionHeaderStaggerBy,
   type SectionHeaderStaggerTrigger,
 } from "./section-header"

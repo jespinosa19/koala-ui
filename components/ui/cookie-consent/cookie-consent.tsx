@@ -35,9 +35,10 @@ import { tv, type VariantProps } from "@/lib/tv"
  * is the DS Badge, so nothing is re-styled inline and the look only ever drifts on purpose.
  *
  * `"use client"` because it owns interactive consent state and every part reads
- * density/selection from Context. The banner animates in (tw-animate-css `animate-in`) and is
- * a complementary region (`role="region"`), not a modal: it never traps focus or blocks the
- * page; only the preferences dialog (Radix) does.
+ * density/selection from Context. The banner animates in *and out* (tw-animate-css
+ * `animate-in`/`animate-out`, driven by a `data-state` flag), so a choice dismisses it with a
+ * soft fade + drift rather than an instant pop; it's a complementary region (`role="region"`),
+ * not a modal: it never traps focus or blocks the page; only the preferences dialog (Radix) does.
  */
 export const cookieConsentVariants = tv({
   slots: {
@@ -46,7 +47,13 @@ export const cookieConsentVariants = tv({
     banner: [
       "fixed z-50 border border-border-soft bg-popover text-popover-foreground shadow-lg",
       "[--surface:var(--popover)]",
-      "animate-in fade-in-0 duration-base ease-out",
+      // Enter and exit are both keyframed via tw-animate-css, gated on the `data-state` the
+      // CookieBanner stamps (open while visible, closed for the one frame before it unmounts).
+      // Directional slides live in the `position` variants; the exit is softer than the enter
+      // (make-interfaces #6): a gentle fade + short downward drift, never a mirror of the enter.
+      "duration-base ease-out",
+      "data-[state=open]:animate-in data-[state=open]:fade-in-0",
+      "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:slide-out-to-bottom-2",
     ],
     // The content row/column inside the banner (density tunes its gap below).
     bannerBody: "flex w-full",
@@ -80,16 +87,18 @@ export const cookieConsentVariants = tv({
     // screens. Each carries its own directional enter so the motion matches the anchor.
     position: {
       bottom: {
-        banner: "inset-x-0 bottom-0 rounded-t-2xl border-x-0 border-b-0 slide-in-from-bottom-4",
+        banner: "inset-x-0 bottom-0 rounded-t-2xl border-x-0 border-b-0 data-[state=open]:slide-in-from-bottom-4",
         bannerBody: "mx-auto max-w-6xl flex-col gap-4 lg:flex-row lg:items-center lg:justify-between",
       },
       "bottom-left": {
-        banner: "bottom-4 left-4 w-[min(24rem,calc(100vw-2rem))] rounded-xl slide-in-from-left-4 slide-in-from-bottom-4",
+        banner:
+          "bottom-4 left-4 w-[min(24rem,calc(100vw-2rem))] rounded-xl data-[state=open]:slide-in-from-left-4 data-[state=open]:slide-in-from-bottom-4",
         bannerBody: "flex-col gap-4",
         bannerActions: "[&>button]:flex-1",
       },
       "bottom-right": {
-        banner: "right-4 bottom-4 w-[min(24rem,calc(100vw-2rem))] rounded-xl slide-in-from-right-4 slide-in-from-bottom-4",
+        banner:
+          "right-4 bottom-4 w-[min(24rem,calc(100vw-2rem))] rounded-xl data-[state=open]:slide-in-from-right-4 data-[state=open]:slide-in-from-bottom-4",
         bannerBody: "flex-col gap-4",
         bannerActions: "[&>button]:flex-1",
       },
@@ -296,17 +305,30 @@ export function CookieBanner({ className, position = "bottom-right", children, .
   // re-provide them to the banner parts.
   const slots = cookieConsentVariants({ density, position })
 
-  // Hidden once the visitor has chosen: return null rather than animate out, so it never
-  // lingers after a click.
-  if (!bannerVisible) return null
+  // Keep the banner in the DOM through its exit animation so a choice dismisses it smoothly
+  // instead of popping out. React's blessed "adjust state during render" pattern (never an effect,
+  // which the strict react-hooks lint forbids, mirroring AnimatedNumber): once consent flips
+  // `bannerVisible` off we still paint one frame with `data-state="closed"` to play the exit
+  // keyframe, then drop it on animationend. tw-animate-css runs the exit even under reduced-motion,
+  // so `animationend` always fires and the banner never lingers.
+  const [mounted, setMounted] = React.useState(bannerVisible)
+  if (bannerVisible && !mounted) setMounted(true)
+
+  if (!mounted) return null
 
   return (
     <CookieBannerProvider slots={slots}>
       <div
         data-slot="cookie-banner"
+        data-state={bannerVisible ? "open" : "closed"}
         role="region"
         aria-label="Cookie consent"
         className={slots.banner({ position, className })}
+        // Unmount only when the banner's *own* exit finishes (guarded off child bubbling), so the
+        // fade + drift plays to completion before it leaves the tree.
+        onAnimationEnd={(e) => {
+          if (e.target === e.currentTarget && !bannerVisible) setMounted(false)
+        }}
         {...props}
       >
         <div className={slots.bannerBody({ position })}>{children}</div>
@@ -414,7 +436,7 @@ export function CookieCategory({ category, className }: CookieCategoryProps) {
 
   return (
     <div data-slot="cookie-category" className={slots.category({ className })}>
-      {Icon ? <Icon aria-hidden className={slots.categoryIcon()} /> : null}
+      {Icon ? <Icon weight="bold" aria-hidden className={slots.categoryIcon()} /> : null}
       <div className={slots.categoryText()}>
         <div className={slots.categoryLabelRow()}>
           <label htmlFor={id} className={slots.categoryLabel()}>

@@ -82,7 +82,7 @@ export default function DescriptionListDocsPage() {
             <DescriptionList divided>
               <DescriptionListItem>
                 <DescriptionTerm>
-                  <CreditCard /> Plan
+                  <CreditCard weight="bold" /> Plan
                 </DescriptionTerm>
                 <DescriptionDetails>
                   Pro <Badge variant="success" size="sm" pill>Annual</Badge>
@@ -90,19 +90,19 @@ export default function DescriptionListDocsPage() {
               </DescriptionListItem>
               <DescriptionListItem>
                 <DescriptionTerm>
-                  <UsersThree /> Seats
+                  <UsersThree weight="bold" /> Seats
                 </DescriptionTerm>
                 <DescriptionDetails>12 of 20</DescriptionDetails>
               </DescriptionListItem>
               <DescriptionListItem>
                 <DescriptionTerm>
-                  <CalendarDots /> Renews
+                  <CalendarDots weight="bold" /> Renews
                 </DescriptionTerm>
                 <DescriptionDetails>March 1, 2026</DescriptionDetails>
               </DescriptionListItem>
               <DescriptionListItem>
                 <DescriptionTerm>
-                  <UserCircle /> Owner
+                  <UserCircle weight="bold" /> Owner
                 </DescriptionTerm>
                 <DescriptionDetails>Esteban Alonso</DescriptionDetails>
               </DescriptionListItem>
@@ -168,13 +168,13 @@ export function Example() {
             <DescriptionList layout="row" divided>
               <DescriptionListItem>
                 <DescriptionTerm>
-                  <EnvelopeSimple /> Email
+                  <EnvelopeSimple weight="bold" /> Email
                 </DescriptionTerm>
                 <DescriptionDetails>esteban@koalaui.com</DescriptionDetails>
               </DescriptionListItem>
               <DescriptionListItem>
                 <DescriptionTerm>
-                  <MapPin /> Location
+                  <MapPin weight="bold" /> Location
                 </DescriptionTerm>
                 <DescriptionDetails>Barcelona, Spain</DescriptionDetails>
               </DescriptionListItem>
@@ -182,13 +182,13 @@ export function Example() {
             <DescriptionList layout="stack" divided>
               <DescriptionListItem>
                 <DescriptionTerm>
-                  <EnvelopeSimple /> Email
+                  <EnvelopeSimple weight="bold" /> Email
                 </DescriptionTerm>
                 <DescriptionDetails>esteban@koalaui.com</DescriptionDetails>
               </DescriptionListItem>
               <DescriptionListItem>
                 <DescriptionTerm>
-                  <MapPin /> Location
+                  <MapPin weight="bold" /> Location
                 </DescriptionTerm>
                 <DescriptionDetails>Barcelona, Spain</DescriptionDetails>
               </DescriptionListItem>
@@ -220,19 +220,19 @@ export function Example() {
           <DescriptionList divided className="mx-auto w-full max-w-md">
             <DescriptionListItem>
               <DescriptionTerm>
-                <Hash /> Invoice
+                <Hash weight="bold" /> Invoice
               </DescriptionTerm>
               <DescriptionDetails>INV-2026-0042</DescriptionDetails>
             </DescriptionListItem>
             <DescriptionListItem>
               <DescriptionTerm>
-                <CreditCard /> Method
+                <CreditCard weight="bold" /> Method
               </DescriptionTerm>
               <DescriptionDetails>Visa ending 4242</DescriptionDetails>
             </DescriptionListItem>
             <DescriptionListItem>
               <DescriptionTerm>
-                <ShieldCheck /> Status
+                <ShieldCheck weight="bold" /> Status
               </DescriptionTerm>
               <DescriptionDetails>
                 <Badge variant="success" size="sm" pill>

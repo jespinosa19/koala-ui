@@ -7,7 +7,7 @@ import { tv, type VariantProps } from "@/lib/tv"
  * Skeleton: a loading placeholder that mirrors the shape of the content it stands in for.
  * Single-element like Badge: one `tv` recipe, semantic tokens only, `className` merged last.
  *
- * The fill is `bg-muted` so it re-themes across all three themes. Two animations are offered:
+ * The fill is `bg-muted` so it re-themes across all four themes. Two animations are offered:
  * `pulse` (the default, Tailwind's built-in opacity breathe) and `shimmer` (a swept highlight
  * driven by the `--animate-shimmer` motion token). Both are decorative and stop under
  * `prefers-reduced-motion` (see globals.css).

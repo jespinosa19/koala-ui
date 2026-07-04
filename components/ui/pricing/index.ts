@@ -9,11 +9,13 @@ export {
   PricingPeriod,
   PricingFeatures,
   PricingFeature,
+  PricingFeatureGroup,
   PricingTierAction,
   PricingTierBanner,
   pricingVariants,
   type PricingProps,
   type PricingTierProps,
   type PricingFeatureProps,
+  type PricingFeatureGroupProps,
   type PricingTierBannerProps,
 } from "./pricing"

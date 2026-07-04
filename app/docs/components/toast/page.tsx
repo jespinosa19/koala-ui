@@ -81,8 +81,9 @@ function MyComponent() {
       <DocSection title="Variants">
         <p className="mt-4 text-pretty text-muted-foreground">
           Five semantic variants: <code>default</code>, <code>success</code>,{" "}
-          <code>warning</code>, <code>destructive</code>, and <code>info</code>. Each
-          uses the same status tokens as Badge - a tinted ring + icon in the role colour.
+          <code>warning</code>, <code>destructive</code>, and <code>info</code>. Every
+          toast is the same neutral elevated card (border + shadow); the status colour is
+          carried by the icon, so the variants stay calm and never get lost on the corner.
         </p>
         <ComponentPreview
           code={`toast("Changes saved successfully.")

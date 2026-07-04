@@ -17,6 +17,7 @@ import {
   type FileCardType,
 } from "@/components/ui/file-card"
 import { Button } from "@/components/ui/button"
+import { Tooltip } from "@/components/ui/tooltip"
 
 /* ----------------------------------------------------------------- showcase --- */
 
@@ -31,10 +32,10 @@ export function ShowcaseDemo() {
         </FileCardContent>
         <FileCardActions>
           <Button variant="ghost" size="sm" iconOnly aria-label="Download">
-            <DownloadSimple />
+            <DownloadSimple weight="bold" />
           </Button>
           <Button variant="ghost" size="sm" iconOnly aria-label="Remove">
-            <Trash />
+            <Trash weight="bold" />
           </Button>
         </FileCardActions>
       </FileCard>
@@ -52,12 +53,15 @@ export function ShowcaseDemo() {
         <FileCardIcon type="sheet" />
         <FileCardContent>
           <FileCardName>q3-forecast.xlsx</FileCardName>
-          <FileCardProgress value={64} label="Upload failed" hideValue />
+          <FileCardProgress value={64} hideValue />
         </FileCardContent>
         <FileCardActions>
-          <FileCardStatus />
+          {/* On failure the reason isn't stacked above the bar: it rides the red glyph as a tooltip. */}
+          <Tooltip content="Upload failed">
+            <FileCardStatus label="Upload failed" />
+          </Tooltip>
           <Button variant="ghost" size="sm" iconOnly aria-label="Remove">
-            <Trash />
+            <Trash weight="bold" />
           </Button>
         </FileCardActions>
       </FileCard>
@@ -77,10 +81,10 @@ export function AnatomyDemo() {
       </FileCardContent>
       <FileCardActions>
         <Button variant="ghost" size="sm" iconOnly aria-label="Download">
-          <DownloadSimple />
+          <DownloadSimple weight="bold" />
         </Button>
         <Button variant="ghost" size="sm" iconOnly aria-label="More">
-          <DotsThree />
+          <DotsThree weight="bold" />
         </Button>
       </FileCardActions>
     </FileCard>
@@ -102,12 +106,15 @@ const TYPES: { type: FileCardType; name: string }[] = [
   { type: "text", name: "notes.txt" },
 ]
 
+/** The real extension, stamped on the band via FileCardIcon's `label` override. */
+const extOf = (name: string) => name.split(".").pop()!.toUpperCase()
+
 export function FileTypesDemo() {
   return (
     <div className="grid w-full gap-3 sm:grid-cols-2">
       {TYPES.map(({ type, name }) => (
         <FileCard key={type}>
-          <FileCardIcon type={type} />
+          <FileCardIcon type={type} label={extOf(name)} />
           <FileCardContent>
             <FileCardName>{name}</FileCardName>
             <FileCardMeta className="uppercase">{type}</FileCardMeta>
@@ -134,7 +141,7 @@ export function ThumbnailDemo() {
         </FileCardContent>
         <FileCardActions>
           <Button variant="ghost" size="sm" iconOnly aria-label="Remove">
-            <Trash />
+            <Trash weight="bold" />
           </Button>
         </FileCardActions>
       </FileCard>
@@ -150,7 +157,7 @@ export function ThumbnailDemo() {
         </FileCardContent>
         <FileCardActions>
           <Button variant="ghost" size="sm" iconOnly aria-label="Remove">
-            <Trash />
+            <Trash weight="bold" />
           </Button>
         </FileCardActions>
       </FileCard>
@@ -222,7 +229,7 @@ export function StatesDemo() {
         <FileCardActions>
           <FileCardStatus />
           <Button variant="ghost" size="sm" iconOnly aria-label="Retry">
-            <DownloadSimple />
+            <DownloadSimple weight="bold" />
           </Button>
         </FileCardActions>
       </FileCard>
@@ -278,7 +285,7 @@ export function InteractiveDemo() {
           <FileCardMeta>2.4 MB · Click to open</FileCardMeta>
         </FileCardContent>
         <FileCardActions>
-          <DownloadSimple className="size-4 text-muted-foreground" />
+          <DownloadSimple weight="bold" className="size-4 text-muted-foreground" />
         </FileCardActions>
       </a>
     </FileCard>

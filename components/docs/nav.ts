@@ -28,6 +28,7 @@ import {
   ChatTeardrop,
   BellSimple,
   Textbox,
+  LinkSimple as LinkIcon,
   IdentificationCard,
   Password,
   ShieldCheck,
@@ -63,6 +64,7 @@ import {
   Eyedropper,
   ChartLineUp,
   ChartBar,
+  Gauge,
   Fingerprint,
   EnvelopeSimple,
   ChatCenteredDots,
@@ -71,6 +73,7 @@ import {
   UserGear,
   UsersThree,
   Ranking as RankingIcon,
+  Receipt,
   FileArrowUp,
   UploadSimple,
   TreeView,
@@ -94,10 +97,12 @@ import {
   Article,
   CurrencyDollar,
   Question,
+  Newspaper,
   MouseRightClick,
   ArrowsDownUp,
   SealCheck,
   Stamp,
+  Toolbox,
 } from "@phosphor-icons/react/ssr"
 // NOTE: PRO marketing sections/pages live in the private koala-ui-pro repo and are
 // not part of this public docs nav. See registry.json (tier: "pro").
@@ -176,10 +181,31 @@ export const docsNav: NavSection[] = [
       { title: "Pricing", href: "/marketing/sections/pricing", icon: CurrencyDollar },
       { title: "FAQ", href: "/marketing/sections/faq", icon: Question },
       { title: "Changelog", href: "/marketing/sections/changelog", icon: ClockCounterClockwise },
+      { title: "Blog", href: "/marketing/sections/blog", icon: Newspaper },
       { title: "CTA", href: "/marketing/sections/cta", icon: PaperPlaneTilt },
+      { title: "Contact", href: "/marketing/sections/contact", icon: EnvelopeSimple },
       { title: "Banner", href: "/marketing/sections/banner", icon: Megaphone },
       { title: "Footer", href: "/marketing/sections/footer", icon: SquareHalfBottom },
       { title: "Navbar", href: "/marketing/sections/navbar", icon: Signpost },
+    ],
+  },
+  {
+    // The page tier of the marketing domain (see memory `site-ia-tiers`): several sections stacked
+    // into a finished screen, previewed top-to-bottom in the same device frame. Blog post is the
+    // first family; landing, about, and pricing pages graduate here over time.
+    title: "Marketing / Pages",
+    items: [
+      { title: "Blog post", href: "/marketing/pages/blog-post", icon: Article },
+    ],
+  },
+  {
+    // The application-domain sibling of "Marketing / Sections": full app SCREENS (page tier) with
+    // the same device-frame preview. Auth is the first family; settings, dashboards, and empty
+    // states graduate here over time. See memory `site-ia-tiers`.
+    title: "App / Sections",
+    items: [
+      { title: "Authentication", href: "/app/sections/authentication", icon: Fingerprint },
+      { title: "Checkout", href: "/app/sections/checkout", icon: CreditCard },
     ],
   },
   {
@@ -215,9 +241,11 @@ export const docsNav: NavSection[] = [
   {
     title: "Data Display",
     items: [
+      { title: "Animated Number", href: "/docs/components/animated-number", icon: Gauge },
       { title: "Chart", href: "/docs/components/chart", icon: ChartBar },
       { title: "Data Table", href: "/docs/components/data-table", icon: TableIcon },
       { title: "Description List", href: "/docs/components/description-list", icon: ListBullets },
+      { title: "Order Summary", href: "/docs/components/order-summary", icon: Receipt },
       { title: "Ranking", href: "/docs/components/ranking", icon: RankingIcon },
       { title: "Stat", href: "/docs/components/stat", icon: ChartLineUp },
     ],
@@ -258,6 +286,7 @@ export const docsNav: NavSection[] = [
       { title: "Kbd", href: "/docs/components/kbd", icon: Keyboard },
       { title: "Label", href: "/docs/components/label", icon: TextT },
       { title: "Layout", href: "/docs/components/layout", icon: SidebarIcon },
+      { title: "Link", href: "/docs/components/link", icon: LinkIcon },
       { title: "Lightbox", href: "/docs/components/lightbox", icon: FrameCorners },
       { title: "List", href: "/docs/components/list", icon: ListIcon },
       { title: "Multi Select", href: "/docs/components/multi-select", icon: ListChecks },
@@ -280,6 +309,7 @@ export const docsNav: NavSection[] = [
       { title: "Textarea", href: "/docs/components/textarea", icon: TextAlignLeft },
       { title: "Toast", href: "/docs/components/toast", icon: BellSimple },
       { title: "Toggle Group", href: "/docs/components/toggle-group", icon: ToggleLeft },
+      { title: "Toolbar", href: "/docs/components/toolbar", icon: Toolbox },
       { title: "Tooltip", href: "/docs/components/tooltip", icon: ChatTeardrop },
       { title: "Tree", href: "/docs/components/tree", icon: TreeView },
       { title: "Video Player", href: "/docs/components/video-player", icon: PlayCircle },

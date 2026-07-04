@@ -33,7 +33,7 @@ export default function TestimonialsDocsPage() {
   <Testimonial>
     <TestimonialQuote>We replaced our in-house kit in a weekend…</TestimonialQuote>
     <TestimonialFooter>
-      <Avatar size="md"><AvatarFallback>AR</AvatarFallback></Avatar>
+      <Avatar size="md"><AvatarImage src="https://i.pravatar.cc/160?img=13" alt="Alex Rivera" /><AvatarFallback>AR</AvatarFallback></Avatar>
       <TestimonialAuthor>
         <TestimonialName>Alex Rivera</TestimonialName>
         <TestimonialTitle>Founder, Lumen</TestimonialTitle>
@@ -110,7 +110,7 @@ export default function TestimonialsDocsPage() {
           previewClassName="block p-6 sm:p-8"
           code={`<Testimonial>
   <TestimonialFooter className="mt-0">
-    <Avatar size="md"><AvatarFallback>AR</AvatarFallback></Avatar>
+    <Avatar size="md"><AvatarImage src="https://i.pravatar.cc/160?img=13" alt="Alex Rivera" /><AvatarFallback>AR</AvatarFallback></Avatar>
     <TestimonialAuthor>
       <TestimonialName>Alex Rivera</TestimonialName>
       <TestimonialTitle>Founder, Lumen</TestimonialTitle>
@@ -135,7 +135,7 @@ export default function TestimonialsDocsPage() {
           code={`<Testimonial variant="outline" divided>
   <TestimonialQuote>…</TestimonialQuote>
   <TestimonialFooter>
-    <Avatar size="md"><AvatarFallback>AR</AvatarFallback></Avatar>
+    <Avatar size="md"><AvatarImage src="https://i.pravatar.cc/160?img=13" alt="Alex Rivera" /><AvatarFallback>AR</AvatarFallback></Avatar>
     <TestimonialAuthor>
       <TestimonialName>Alex Rivera</TestimonialName>
       <TestimonialTitle>Founder, Lumen</TestimonialTitle>
@@ -167,7 +167,7 @@ export default function TestimonialsDocsPage() {
     </TestimonialLogo>
     <TestimonialQuote className="font-semibold text-foreground">…</TestimonialQuote>
     <TestimonialFooter className="mt-4">
-      <Avatar size="md"><AvatarFallback>AR</AvatarFallback></Avatar>
+      <Avatar size="md"><AvatarImage src="https://i.pravatar.cc/160?img=13" alt="Alex Rivera" /><AvatarFallback>AR</AvatarFallback></Avatar>
       <TestimonialAuthor>
         <TestimonialName>Alex Rivera</TestimonialName>
         <TestimonialTitle>Founder, Halcyon</TestimonialTitle>
@@ -194,7 +194,7 @@ export default function TestimonialsDocsPage() {
   <Testimonial variant="bare">
     <TestimonialQuote className="text-sm">…</TestimonialQuote>
     <TestimonialFooter>
-      <Avatar size="md"><AvatarFallback>AR</AvatarFallback></Avatar>
+      <Avatar size="md"><AvatarImage src="https://i.pravatar.cc/160?img=13" alt="Alex Rivera" /><AvatarFallback>AR</AvatarFallback></Avatar>
       <TestimonialAuthor>
         <TestimonialName>Alex Rivera</TestimonialName>
         <TestimonialTitle>Founder, Lumen</TestimonialTitle>
@@ -221,7 +221,7 @@ export default function TestimonialsDocsPage() {
   <TestimonialMark />
   <TestimonialQuote className="text-xl text-balance sm:text-2xl">…</TestimonialQuote>
   <TestimonialFooter>
-    <Avatar size="md"><AvatarFallback>AR</AvatarFallback></Avatar>
+    <Avatar size="md"><AvatarImage src="https://i.pravatar.cc/160?img=13" alt="Alex Rivera" /><AvatarFallback>AR</AvatarFallback></Avatar>
     <TestimonialAuthor>
       <TestimonialName>Alex Rivera</TestimonialName>
       <TestimonialTitle>Founder, Lumen</TestimonialTitle>
@@ -246,7 +246,7 @@ export default function TestimonialsDocsPage() {
   <TestimonialMark />
   <TestimonialQuote className="text-lg">Radix under the hood means I stopped worrying about a11y bugs.</TestimonialQuote>
   <TestimonialFooter>
-    <Avatar size="md"><AvatarFallback>ML</AvatarFallback></Avatar>
+    <Avatar size="md"><AvatarImage src="https://i.pravatar.cc/160?img=32" alt="Mei Lin" /><AvatarFallback>ML</AvatarFallback></Avatar>
     <TestimonialAuthor>
       <TestimonialName>Mei Lin</TestimonialName>
       <TestimonialTitle>Frontend Lead, Cadence</TestimonialTitle>

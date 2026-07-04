@@ -51,21 +51,21 @@ export default function ResizableDocsPage() {
         <ResizablePanelGroup direction="horizontal" className="h-72 w-full rounded-lg border">
           <ResizablePanel defaultSize={22} minSize={14}>
             <div className="grid h-full place-items-center gap-1.5 p-4 text-sm font-medium text-muted-foreground">
-              <SidebarSimple className="size-5" />
+              <SidebarSimple weight="bold" className="size-5" />
               Sidebar
             </div>
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={52}>
             <div className="grid h-full place-items-center gap-1.5 p-4 text-sm font-medium text-muted-foreground">
-              <FileText className="size-5" />
+              <FileText weight="bold" className="size-5" />
               Editor
             </div>
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={26} minSize={16}>
             <div className="grid h-full place-items-center gap-1.5 p-4 text-sm font-medium text-muted-foreground">
-              <Eye className="size-5" />
+              <Eye weight="bold" className="size-5" />
               Preview
             </div>
           </ResizablePanel>
@@ -156,14 +156,14 @@ export function Example() {
           <ResizablePanelGroup direction="vertical" className="h-80 w-full rounded-lg border">
             <ResizablePanel defaultSize={60}>
               <div className="grid h-full place-items-center gap-1.5 p-4 text-sm font-medium text-muted-foreground">
-                <ChartBar className="size-5" />
+                <ChartBar weight="bold" className="size-5" />
                 Chart
               </div>
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={40} minSize={20}>
               <div className="grid h-full place-items-center gap-1.5 p-4 text-sm font-medium text-muted-foreground">
-                <Table className="size-5" />
+                <Table weight="bold" className="size-5" />
                 Table
               </div>
             </ResizablePanel>
@@ -245,7 +245,7 @@ export function Example() {
             </ResizablePanel>
             <ResizableHandle>
               <span className="z-10 flex h-7 w-4 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-xs transition-colors duration-fast ease-out group-hover/handle:border-brand group-hover/handle:text-foreground [&_svg]:size-3">
-                <DotsSixVertical />
+                <DotsSixVertical weight="bold" />
               </span>
             </ResizableHandle>
             <ResizablePanel defaultSize={32}>
@@ -324,14 +324,14 @@ export function Example() {
           <ResizablePanelGroup direction="horizontal" className="h-60 w-full rounded-lg border">
             <ResizablePanel defaultSize={24} minSize={16} collapsible collapsedSize={0}>
               <div className="grid h-full place-items-center gap-1.5 p-4 text-sm font-medium text-muted-foreground">
-                <SidebarSimple className="size-5" />
+                <SidebarSimple weight="bold" className="size-5" />
                 Collapsible
               </div>
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={76}>
               <div className="grid h-full place-items-center gap-1.5 p-4 text-sm font-medium text-muted-foreground">
-                <FileText className="size-5" />
+                <FileText weight="bold" className="size-5" />
                 Content
               </div>
             </ResizablePanel>
@@ -377,7 +377,7 @@ export function Example() {
           <ResizablePanelGroup direction="horizontal" className="h-80 w-full rounded-lg border">
             <ResizablePanel defaultSize={28} minSize={18}>
               <div className="grid h-full place-items-center gap-1.5 p-4 text-sm font-medium text-muted-foreground">
-                <SidebarSimple className="size-5" />
+                <SidebarSimple weight="bold" className="size-5" />
                 Navigation
               </div>
             </ResizablePanel>
@@ -386,14 +386,14 @@ export function Example() {
               <ResizablePanelGroup direction="vertical">
                 <ResizablePanel defaultSize={65}>
                   <div className="grid h-full place-items-center gap-1.5 p-4 text-sm font-medium text-muted-foreground">
-                    <ChartBar className="size-5" />
+                    <ChartBar weight="bold" className="size-5" />
                     Overview
                   </div>
                 </ResizablePanel>
                 <ResizableHandle withHandle />
                 <ResizablePanel defaultSize={35} minSize={20}>
                   <div className="grid h-full place-items-center gap-1.5 p-4 text-sm font-medium text-muted-foreground">
-                    <Rows className="size-5" />
+                    <Rows weight="bold" className="size-5" />
                     Activity
                   </div>
                 </ResizablePanel>

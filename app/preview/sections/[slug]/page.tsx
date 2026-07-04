@@ -66,25 +66,26 @@ export default async function SectionPreviewPage({
     >
       {/* No min-height from the document itself: it grows to the content so the PreviewFrame can
           size its iframe to the content's `scrollHeight` without a measurement feedback loop.
-          `bleed` slabs (full-bleed bars like Banner) skip the gutter and the vertical padding and
-          pin to the very top of a short page region, so the preview reads as "a banner sitting atop
-          a page" rather than a centered card. Everything else sits in the canonical marketing
-          gutter (SectionContainer: 1440px cap + 32px padding), matching a real page. */}
+          Three treatments, mirroring how a real page composes the slab:
+            - `bleed` (Banner and other full-bleed bars): skip the gutter and the band padding and
+              pin to the very top of a short page region, so it reads as "a bar sitting atop a page".
+            - `ownsPadding` (Hero, Navbar, Footer): the slab is its OWN band. It brings its own
+              horizontal gutter, width cap, and vertical rhythm, so render it raw, with NO
+              SectionContainer gutter and NO band padding. Wrapping it would double-pad it (the exact
+              bug this flag guards against).
+            - everything else: bare content that needs the canonical marketing gutter, so wrap it in
+              SectionContainer (responsive side gutter + 1440px cap) with a `py-10` band so it reads
+              as a framed region inside the iframe instead of bleeding to its edges. */}
       {entry.bleed ? (
         <div data-preview-content className="min-h-[13rem] bg-background text-foreground">
           <Demo />
         </div>
+      ) : entry.ownsPadding ? (
+        <div data-preview-content className="bg-background text-foreground">
+          <Demo />
+        </div>
       ) : (
-        // A self-padded slab (a Hero) brings its own vertical rhythm, so drop the wrapper's `py-10`
-        // (single owner; no double-padding). Everything else gets the band padding here.
-        <div
-          data-preview-content
-          className={
-            entry.ownsPadding
-              ? "bg-background text-foreground"
-              : "bg-background py-10 text-foreground"
-          }
-        >
+        <div data-preview-content className="bg-background py-10 text-foreground">
           <SectionContainer>
             <Demo />
           </SectionContainer>

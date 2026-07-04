@@ -8,12 +8,7 @@ import {
   LoginFormDemo,
   SignUpFormDemo,
   ProviderStackDemo,
-  CommunityFormDemo,
-  ProviderSplitDemo,
-  LoginSplitDemo,
-  SignUpSplitDemo,
-  LoginCenteredDemo,
-  SignUpCenteredDemo,
+  ConsentGateDemo,
 } from "./demos"
 
 export const metadata = { title: "Authentication" }
@@ -70,7 +65,6 @@ export default function AuthFormDocsPage() {
         <ComponentPreview
           locked
           previewClassName="items-start"
-          fullscreenHref="/preview/auth-form?screen=provider-stack"
           code={`<ProviderForm
   providers={["google", "github", "apple"]}
   showEmail
@@ -91,8 +85,7 @@ export default function AuthFormDocsPage() {
         </p>
         <ComponentPreview
           locked
-          previewClassName="block p-0"
-          fullscreenHref="/preview/auth-form?screen=community"
+          previewClassName="items-start"
           code={`<ProviderForm
   title="Want to join Eleven?"
   description="Sign in with Discord to request your whitelist."
@@ -109,141 +102,26 @@ export default function AuthFormDocsPage() {
   ]}
 />`}
         >
-          <CommunityFormDemo />
-        </ComponentPreview>
-
-        <h3 className="mt-10 text-lg font-semibold tracking-tight">Community sign-in · split</h3>
-        <p className="mt-3 text-pretty text-muted-foreground">
-          The same gated provider block goes <code className="font-mono text-sm">bare</code> in a{" "}
-          <a href="/docs/components/layout" className="underline underline-offset-4">
-            SplitLayout
-          </a>{" "}
-          pane, with a media collage on the right.
-        </p>
-        <ComponentPreview
-          locked
-          previewClassName="block p-0"
-          fullscreenHref="/preview/auth-form?screen=community-split"
-          code={`<SplitLayout>
-  <SplitPane>
-    <SplitPaneBody width="sm">
-      <ProviderForm variant="bare" providers={["discord"]} emphasizeFirst requireTerms social={socials} />
-    </SplitPaneBody>
-  </SplitPane>
-
-  <SplitMedia>
-    <img className="absolute inset-0 size-full object-cover" src="/cover.jpg" alt="" />
-  </SplitMedia>
-</SplitLayout>`}
-        >
-          <ProviderSplitDemo />
+          <ConsentGateDemo />
         </ComponentPreview>
       </DocSection>
 
       <DocSection title="Full-page screens">
         <p className="mt-4 text-pretty text-muted-foreground">
-          The same two blocks compose into complete auth pages. For a split screen, drop{" "}
-          <code className="font-mono text-sm">variant=&quot;bare&quot;</code> on the form and place
-          it in a{" "}
+          Composed into complete pages, these blocks become the{" "}
+          <a href="/app/sections/authentication" className="underline underline-offset-4">
+            Authentication
+          </a>{" "}
+          section family: seven finished sign-in and sign-up screens (split and centered, plus the
+          community Discord screens), each with a full-screen, resizable device-frame preview. For a
+          split screen, drop <code className="font-mono text-sm">variant=&quot;bare&quot;</code> on
+          the form and place it in a{" "}
           <a href="/docs/components/layout" className="underline underline-offset-4">
             SplitLayout
           </a>{" "}
-          pane: the shell owns the surface and the form fills it without a second card. For a
-          centered page, keep the default bordered card on a soft backdrop.
+          pane so the shell owns the surface; for a centered page, keep the default bordered card on
+          a soft backdrop.
         </p>
-
-        <h3 className="mt-8 text-lg font-semibold tracking-tight">Sign in · split</h3>
-        <p className="mt-3 text-pretty text-muted-foreground">
-          A bare <code className="font-mono text-sm">LoginForm</code> under a brand lockup on the
-          left, a full-bleed media panel with a testimonial on the right. Below{" "}
-          <code className="font-mono text-sm">lg</code> the media drops and the form fills the
-          screen.
-        </p>
-        <ComponentPreview
-          locked
-          previewClassName="block p-0"
-          code={`<SplitLayout>
-  <SplitPane>
-    <SplitPaneBody width="sm" className="gap-8">
-      <Brand />
-      <LoginForm variant="bare" />
-    </SplitPaneBody>
-  </SplitPane>
-
-  <SplitMedia>
-    <img className="absolute inset-0 size-full object-cover" src="/cover.jpg" alt="" />
-    <SplitMediaOverlay>
-      <p>Koala UI let us ship a polished product in days.</p>
-    </SplitMediaOverlay>
-  </SplitMedia>
-</SplitLayout>`}
-        >
-          <LoginSplitDemo />
-        </ComponentPreview>
-
-        <h3 className="mt-10 text-lg font-semibold tracking-tight">Sign up · split</h3>
-        <p className="mt-3 text-pretty text-muted-foreground">
-          Put <code className="font-mono text-sm">SplitMedia</code> first to place the branded
-          panel on the left. The columns stay an even 50/50 split while the{" "}
-          <code className="font-mono text-sm">SignUpForm</code> sits in the trailing column.
-        </p>
-        <ComponentPreview
-          locked
-          previewClassName="block p-0"
-          code={`<SplitLayout>
-  <SplitMedia>
-    <img className="absolute inset-0 size-full object-cover" src="/cover.jpg" alt="" />
-    <SplitMediaOverlay className="justify-between">
-      <Brand className="text-white" />
-      <p>Build faster with a design system that ships finished.</p>
-    </SplitMediaOverlay>
-  </SplitMedia>
-
-  <SplitPane>
-    <SplitPaneBody width="sm">
-      <SignUpForm variant="bare" />
-    </SplitPaneBody>
-  </SplitPane>
-</SplitLayout>`}
-        >
-          <SignUpSplitDemo />
-        </ComponentPreview>
-
-        <h3 className="mt-10 text-lg font-semibold tracking-tight">Sign in · centered</h3>
-        <p className="mt-3 text-pretty text-muted-foreground">
-          The default bordered card centered on a soft backdrop with a diffuse brand glow: the
-          classic single-column login page.
-        </p>
-        <ComponentPreview
-          locked
-          previewClassName="block p-0"
-          code={`<div className="relative grid min-h-svh place-items-center bg-muted/30 p-6">
-  <div className="flex w-full max-w-sm flex-col items-center gap-6">
-    <Brand />
-    <LoginForm className="w-full" />
-  </div>
-</div>`}
-        >
-          <LoginCenteredDemo />
-        </ComponentPreview>
-
-        <h3 className="mt-10 text-lg font-semibold tracking-tight">Sign up · centered</h3>
-        <p className="mt-3 text-pretty text-muted-foreground">
-          The same centered stage with a trust badge above the{" "}
-          <code className="font-mono text-sm">SignUpForm</code> card.
-        </p>
-        <ComponentPreview
-          locked
-          previewClassName="block p-0"
-          code={`<div className="relative grid min-h-svh place-items-center bg-muted/30 p-6">
-  <div className="flex w-full max-w-sm flex-col items-center gap-6">
-    <Badge>SOC 2 compliant</Badge>
-    <SignUpForm className="w-full" />
-  </div>
-</div>`}
-        >
-          <SignUpCenteredDemo />
-        </ComponentPreview>
       </DocSection>
 
       <DocSection title="API reference">

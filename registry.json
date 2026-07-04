@@ -103,14 +103,28 @@
       ]
     },
     {
+      "name": "animated-number",
+      "type": "component",
+      "tier": "free",
+      "repo": "TheMrdp/koala-ui",
+      "title": "Animated Number",
+      "dependencies": {},
+      "registryDependencies": [],
+      "libDependencies": [
+        "tv"
+      ],
+      "files": [
+        "components/ui/animated-number/animated-number.tsx",
+        "components/ui/animated-number/index.ts"
+      ]
+    },
+    {
       "name": "auth-form",
       "type": "component",
       "tier": "free",
       "repo": "TheMrdp/koala-ui",
       "title": "Auth Form",
-      "dependencies": {
-        "@phosphor-icons/react": "^2.1.10"
-      },
+      "dependencies": {},
       "registryDependencies": [
         "button",
         "checkbox",
@@ -452,7 +466,8 @@
       },
       "registryDependencies": [
         "input",
-        "toggle-group"
+        "toggle-group",
+        "tooltip"
       ],
       "libDependencies": [
         "create-context",
@@ -461,9 +476,18 @@
         "utils"
       ],
       "files": [
+        "components/ui/color-picker/area.tsx",
         "components/ui/color-picker/color-picker.tsx",
         "components/ui/color-picker/color.ts",
-        "components/ui/color-picker/index.ts"
+        "components/ui/color-picker/context.tsx",
+        "components/ui/color-picker/gradient.tsx",
+        "components/ui/color-picker/hex-input.tsx",
+        "components/ui/color-picker/image.tsx",
+        "components/ui/color-picker/index.ts",
+        "components/ui/color-picker/modes.tsx",
+        "components/ui/color-picker/popover.tsx",
+        "components/ui/color-picker/rails.tsx",
+        "components/ui/color-picker/swatches.tsx"
       ]
     },
     {
@@ -1005,6 +1029,7 @@
       ],
       "libDependencies": [
         "create-context",
+        "density",
         "field-context",
         "tv",
         "utils"
@@ -1028,6 +1053,7 @@
       "registryDependencies": [],
       "libDependencies": [
         "create-context",
+        "density",
         "field-context",
         "tv"
       ],
@@ -1241,6 +1267,30 @@
       ]
     },
     {
+      "name": "order-summary",
+      "type": "component",
+      "tier": "free",
+      "repo": "TheMrdp/koala-ui",
+      "title": "Order Summary",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10",
+        "radix-ui": "^1.5.0"
+      },
+      "registryDependencies": [
+        "input"
+      ],
+      "libDependencies": [
+        "create-context",
+        "density",
+        "tv",
+        "utils"
+      ],
+      "files": [
+        "components/ui/order-summary/index.ts",
+        "components/ui/order-summary/order-summary.tsx"
+      ]
+    },
+    {
       "name": "otp-input",
       "type": "component",
       "tier": "free",
@@ -1317,7 +1367,8 @@
       ],
       "libDependencies": [
         "density",
-        "tv"
+        "tv",
+        "utils"
       ],
       "files": [
         "components/ui/payment-form/index.ts",
@@ -1354,6 +1405,7 @@
         "radix-ui": "^1.5.0"
       },
       "registryDependencies": [
+        "divider",
         "tooltip"
       ],
       "libDependencies": [
@@ -1524,6 +1576,7 @@
         "input",
         "kbd",
         "popover",
+        "toolbar",
         "tooltip"
       ],
       "libDependencies": [
@@ -1711,6 +1764,7 @@
       "libDependencies": [
         "create-context",
         "density",
+        "motion",
         "tv",
         "utils"
       ],
@@ -1906,6 +1960,33 @@
       "files": [
         "components/ui/toggle-group/index.ts",
         "components/ui/toggle-group/toggle-group.tsx"
+      ]
+    },
+    {
+      "name": "toolbar",
+      "type": "component",
+      "tier": "free",
+      "repo": "TheMrdp/koala-ui",
+      "title": "Toolbar",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10",
+        "radix-ui": "^1.5.0"
+      },
+      "registryDependencies": [
+        "dropdown-menu",
+        "kbd",
+        "tooltip"
+      ],
+      "libDependencies": [
+        "create-context",
+        "tv",
+        "utils"
+      ],
+      "files": [
+        "components/ui/toolbar/control-base.ts",
+        "components/ui/toolbar/index.ts",
+        "components/ui/toolbar/toolbar-overflow.tsx",
+        "components/ui/toolbar/toolbar.tsx"
       ]
     },
     {

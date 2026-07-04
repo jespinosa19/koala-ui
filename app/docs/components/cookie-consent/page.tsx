@@ -8,7 +8,6 @@ import {
   CookieBannerDemo,
   CookiePositionsDemo,
   CookiePreferencesDemo,
-  CookieDensityDemo,
 } from "./cookie-consent-demos"
 
 export const metadata = { title: "Cookie Consent" }
@@ -179,24 +178,6 @@ export function Example() {
 <CookieBanner position="bottom-right"> … </CookieBanner>`}
         >
           <CookiePositionsDemo />
-        </ComponentPreview>
-      </DocSection>
-
-      <DocSection title="Density">
-        <p className="mt-4 text-pretty text-muted-foreground">
-          Like the rest of Koala, Cookie Consent honors the{" "}
-          <code className="font-mono text-sm">density</code> axis; pass it on{" "}
-          <code className="font-mono text-sm">CookieConsent</code> or inherit it from a{" "}
-          <code className="font-mono text-sm">DensityProvider</code>.{" "}
-          <code className="font-mono text-sm">compact</code> tightens the banner and the category
-          rows for application UI without touching radius or color.
-        </p>
-        <ComponentPreview
-          previewClassName="block"
-          code={`<CookieConsent categories={categories} density="comfortable"> … </CookieConsent>
-<CookieConsent categories={categories} density="compact"> … </CookieConsent>`}
-        >
-          <CookieDensityDemo />
         </ComponentPreview>
       </DocSection>
 

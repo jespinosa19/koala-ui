@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils"
 import { createContext } from "@/lib/create-context"
 import { useDensity, type Density } from "@/lib/density"
 import { tv, type VariantProps } from "@/lib/tv"
+import { cubicBezier, countUpDuration, easingPoints } from "@/lib/motion"
 import { Chart, ChartArea, ChartLine, ChartTooltip } from "@/components/ui/chart"
 
 /**
@@ -131,9 +132,160 @@ export function StatLabel({ className, ...props }: React.ComponentProps<"div">) 
   return <div data-slot="stat-label" className={slots.label({ className })} {...props} />
 }
 
-export function StatValue({ className, ...props }: React.ComponentProps<"div">) {
+// ── Count-up ─────────────────────────────────────────────────────────────────────────────────────
+// `countUp` counts the figure up from zero to its target the first time it scrolls into view, and
+// re-counts every time it re-enters (same IntersectionObserver trigger as the marketing `Reveal`). It
+// climbs and decelerates onto the final value, so it reads as a real count, not a static number. The
+// count is driven imperatively (the freshly formatted value is written straight to the DOM each
+// frame), so nothing re-renders React mid-count and it stays smooth at 60fps.
+
+/** The numeric core of a figure string, parsed so the driver can count up to it while preserving the
+ *  surrounding format. */
+interface ParsedMetric {
+  prefix: string
+  suffix: string
+  /** The value to count up to; the count lands exactly on it. */
+  target: number
+  /** Fixed fractional digits to render every frame (taken from the source string, e.g. `4.2` → 1). */
+  decimals: number
+  /** Group thousands with commas as the figure climbs (mirrors the source string). */
+  grouping: boolean
+}
+
+// `\D*?` (lazy) claims only a leading prefix like "$"; the numeric core carries commas + an optional
+// decimal; everything after is the suffix. Anything without a number (or non-string children) yields
+// null, and StatValue renders the children verbatim.
+const METRIC_PATTERN = /^(\D*?)(\d[\d,]*(?:\.\d+)?)(.*)$/
+
+function parseMetric(children: React.ReactNode): ParsedMetric | null {
+  if (typeof children !== "string") return null
+  const match = METRIC_PATTERN.exec(children.trim())
+  if (!match) return null
+  const [, prefix, digits, suffix] = match
+  const target = Number.parseFloat(digits.replace(/,/g, ""))
+  if (Number.isNaN(target)) return null
+  const dot = digits.indexOf(".")
+  const decimals = dot === -1 ? 0 : digits.length - dot - 1
+  return { prefix, suffix, target, decimals, grouping: digits.includes(",") }
+}
+
+// The count eases up on the same curve as the CSS `ease-out` token (see lib/motion): it shoots up fast
+// then decelerates onto the final figure, the classic count-up settle.
+const countEase = cubicBezier(easingPoints.out)
+
+/**
+ * Renders a parsed figure and counts it up from zero to its target imperatively. It mirrors the
+ * marketing {@link Reveal}: an IntersectionObserver counts up the first time it scrolls into view and
+ * re-counts on every re-entry, writing the freshly formatted value straight to the DOM each frame
+ * (never through React state), so nothing re-renders mid-count. The number server-renders its final
+ * value, so SSR / no-JS / `prefers-reduced-motion` show the real figure; the effect only resets it to
+ * zero once it is ready to animate. The visual figure is `aria-hidden`; StatValue pairs it with an
+ * `sr-only` copy of the real value.
+ */
+function RollingNumber({ parsed }: { parsed: ParsedMetric }) {
+  const numberRef = React.useRef<HTMLSpanElement>(null)
+  // One en-US formatter, reused every frame: fixed fraction digits and the source's grouping, so the
+  // climbing figure keeps its decimals and grows commas exactly like the final value.
+  const format = React.useMemo(
+    () =>
+      new Intl.NumberFormat("en-US", {
+        minimumFractionDigits: parsed.decimals,
+        maximumFractionDigits: parsed.decimals,
+        useGrouping: parsed.grouping,
+      }),
+    [parsed.decimals, parsed.grouping],
+  )
+
+  React.useEffect(() => {
+    const el = numberRef.current
+    if (!el) return
+    const write = (value: number) => {
+      el.textContent = format.format(value)
+    }
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      write(parsed.target) // hold on the real figure, no count
+      return
+    }
+
+    let raf = 0
+    let start: number | null = null
+    const step = (now: number) => {
+      if (start === null) start = now
+      const t = Math.min((now - start) / countUpDuration, 1)
+      if (t < 1) {
+        write(parsed.target * countEase(t))
+        raf = requestAnimationFrame(step)
+      } else {
+        write(parsed.target) // land exactly on the target, free of any rounding drift
+      }
+    }
+    const play = () => {
+      cancelAnimationFrame(raf)
+      start = null
+      raf = requestAnimationFrame(step)
+    }
+
+    write(0) // reset to zero, ready to count up when it (re-)enters view
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) play()
+        else {
+          cancelAnimationFrame(raf)
+          write(0) // rearm so it counts up fresh next time it scrolls back in
+        }
+      },
+      { rootMargin: "0px 0px -10% 0px", threshold: 0.1 },
+    )
+    observer.observe(el)
+    return () => {
+      observer.disconnect()
+      cancelAnimationFrame(raf)
+    }
+  }, [parsed, format])
+
+  // tabular-nums keeps every intermediate figure the same width per digit, so the row never jitters as
+  // the count climbs and grows digits from the right; the prefix and suffix stay put.
+  return (
+    <span aria-hidden className="tabular-nums">
+      {parsed.prefix && <span className="whitespace-pre">{parsed.prefix}</span>}
+      <span ref={numberRef}>{format.format(parsed.target)}</span>
+      {parsed.suffix && <span className="whitespace-pre">{parsed.suffix}</span>}
+    </span>
+  )
+}
+
+export interface StatValueProps extends React.ComponentProps<"div"> {
+  /**
+   * Count the figure up from zero to its value the first time it scrolls into view (same trigger as
+   * the marketing `Reveal`), and re-count every time it re-enters. The figure climbs and decelerates
+   * onto its target, reading as a real count-up rather than a static number. Needs string children
+   * like `"4,100"`, `"$4.2M"`, or `"74%"`; the prefix, suffix, and comma/decimal format are preserved
+   * and the count lands exactly on target. No-ops (renders the children verbatim) for non-string or
+   * number-less content, and honors `prefers-reduced-motion` by showing the final figure immediately.
+   * Pairs with the slot's built-in `tabular-nums`, so the row never jitters as the count climbs.
+   */
+  countUp?: boolean
+}
+
+export function StatValue({ className, countUp = false, children, ...props }: StatValueProps) {
   const { slots } = useStatContext("StatValue")
-  return <div data-slot="stat-value" className={slots.value({ className })} {...props} />
+  const parsed = React.useMemo(
+    () => (countUp ? parseMetric(children) : null),
+    [countUp, children],
+  )
+  return (
+    <div data-slot="stat-value" className={slots.value({ className })} {...props}>
+      {parsed ? (
+        <>
+          {/* Screen readers get the real figure; the animated count is decorative. */}
+          <span className="sr-only">{children}</span>
+          <RollingNumber key={String(children)} parsed={parsed} />
+        </>
+      ) : (
+        children
+      )}
+    </div>
+  )
 }
 
 export function StatCaption({ className, ...props }: React.ComponentProps<"div">) {
@@ -155,10 +307,13 @@ export function StatIcon({ className, ...props }: React.ComponentProps<"div">) {
  *  (for metrics where down is the good outcome: refunds, churn, bounce rate) while
  *  the arrow keeps pointing the honest way. */
 const TREND_ARROW = { up: TrendUp, down: TrendDown, neutral: Minus } as const
+// Tones mirror the canonical soft Badge (see components/ui/badge): a tinted fill at /10, the
+// darker `-strong` text counterpart for legibility, and a transparent border so the fill alone
+// carries the color (no colored hairline). Keeps trend chips consistent with the Badge system.
 const TREND_TONE = {
-  positive: "border-success/20 bg-success/10 text-success",
-  negative: "border-destructive/20 bg-destructive/10 text-destructive",
-  neutral: "border-border bg-muted text-muted-foreground",
+  positive: "border-transparent bg-success/10 text-success-strong",
+  negative: "border-transparent bg-destructive/10 text-destructive-strong",
+  neutral: "border-transparent bg-muted text-muted-foreground",
 } as const
 
 export interface StatTrendProps extends React.ComponentProps<"span"> {
@@ -191,7 +346,7 @@ export function StatTrend({
       className={slots.trend({ className: cn(TREND_TONE[tone], className) })}
       {...props}
     >
-      <Arrow aria-hidden />
+      <Arrow weight="bold" aria-hidden />
       {children}
     </span>
   )

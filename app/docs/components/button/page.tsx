@@ -79,7 +79,7 @@ export default function ButtonDocsPage() {
 <Button variant="ghost">Learn more</Button>`}
       >
         <Button>
-          <Plus /> New project
+          <Plus weight="bold" /> New project
         </Button>
         <Button variant="outline">Cancel</Button>
         <Button variant="ghost">Learn more</Button>
@@ -108,6 +108,7 @@ export function Example() {
 <Button variant="outline">Outline</Button>
 <Button variant="ghost">Ghost</Button>
 <Button variant="destructive">Destructive</Button>
+<Button variant="destructiveGhost">Destructive ghost</Button>
 <Button variant="link">Link</Button>
 <Button loading>Loading</Button>`}
         >
@@ -116,6 +117,7 @@ export function Example() {
           <Button variant="outline">Outline</Button>
           <Button variant="ghost">Ghost</Button>
           <Button variant="destructive">Destructive</Button>
+          <Button variant="destructiveGhost">Destructive ghost</Button>
           <Button variant="link">Link</Button>
           <Button loading>Loading</Button>
         </ComponentPreview>
@@ -143,12 +145,15 @@ export function Example() {
 
       <DocSection title="Density">
         <p className="mt-4 text-pretty text-muted-foreground">
-          <code className="font-mono text-sm">density</code> tightens the control for
-          application UI - compact is one tier shorter than the same-named comfortable size
-          (md: <code className="font-mono text-sm">h-8</code> vs{" "}
-          <code className="font-mono text-sm">h-9</code>). The visual shrinks but a
-          pseudo-element keeps the hit target ≥40px. Set it per-button or for a whole subtree
-          with <code className="font-mono text-sm">DensityProvider</code> - see{" "}
+          Height always comes from <code className="font-mono text-sm">size</code>, never from
+          density. <code className="font-mono text-sm">density</code> only picks the{" "}
+          <em>default</em> size for a subtree - a compact app shell defaults buttons to{" "}
+          <code className="font-mono text-sm">sm</code>, a comfortable one to{" "}
+          <code className="font-mono text-sm">md</code> - so you tune a whole screen from one
+          place while an explicit <code className="font-mono text-sm">size</code> on any button
+          always wins. The two below show those defaults (comfortable md vs compact sm); a
+          pseudo-element holds the smaller button at a hit target of ≥40px. Set it per-button or for a
+          whole subtree with <code className="font-mono text-sm">DensityProvider</code> - see{" "}
           <a href="/docs/foundations/density" className="underline underline-offset-4">Density</a>.
         </p>
         <ComponentPreview
@@ -193,16 +198,16 @@ export function Example() {
           >
             <div className="flex flex-wrap items-center justify-center gap-3">
               <Button>
-                <Plus /> New project
+                <Plus weight="bold" /> New project
               </Button>
               <Button variant="outline">
-                <DownloadSimple /> Download
+                <DownloadSimple weight="bold" /> Download
               </Button>
               <Button variant="destructive">
-                <Trash /> Delete
+                <Trash weight="bold" /> Delete
               </Button>
               <Button variant="secondary">
-                <MagnifyingGlass /> Search
+                <MagnifyingGlass weight="bold" /> Search
               </Button>
             </div>
           </IconSideCard>
@@ -214,13 +219,13 @@ export function Example() {
           >
             <div className="flex flex-wrap items-center justify-center gap-3">
               <Button>
-                Continue <ArrowRight />
+                Continue <ArrowRight weight="bold" />
               </Button>
               <Button variant="outline">
-                Sort by <CaretDown />
+                Sort by <CaretDown weight="bold" />
               </Button>
               <Button variant="ghost">
-                Open docs <ArrowUpRight />
+                Open docs <ArrowUpRight weight="bold" />
               </Button>
             </div>
           </IconSideCard>
@@ -233,7 +238,7 @@ export function Example() {
             caption="Flanking the label with two icons splits the focal point: the leading glyph names the action, the trailing one points elsewhere, and the button reads as two competing ideas. Pick the single side that matches the intent."
           >
             <Button>
-              <Plus /> Add item <ArrowRight />
+              <Plus weight="bold" /> Add item <ArrowRight weight="bold" />
             </Button>
           </IconSideCard>
         </div>
@@ -263,16 +268,50 @@ export function Example() {
 </Button>`}
         >
           <Button>
-            <Plus /> New project
+            <Plus weight="bold" /> New project
           </Button>
           <Button variant="outline">
-            Continue <ArrowRight />
+            Continue <ArrowRight weight="bold" />
           </Button>
           <Button variant="secondary">Save</Button>
           <Button iconOnly aria-label="Add">
-            <Plus />
+            <Plus weight="bold" />
           </Button>
         </ComponentPreview>
+
+        <h3 className="mt-10 text-lg font-semibold tracking-tight">Attached to the label, not the edge</h3>
+        <p className="mt-3 text-pretty text-muted-foreground">
+          The icon rides directly beside the label, and the pair centers together as one unit. This
+          matters most on <strong className="text-foreground">full-width</strong> buttons - form
+          submits, social sign-in, mobile CTAs - where pinning the icon to the button&apos;s edge
+          opens a gap that strands the mark away from the text it belongs to.
+        </p>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <IconSideCard
+            verdict="do"
+            label="Attached - reads as one unit"
+            caption="The mark sits next to the label and the group centers together, so the icon stays glued to the action even when the button stretches full-width."
+          >
+            <div className="w-full max-w-xs">
+              <Button size="lg" className="w-full">
+                <DownloadSimple weight="bold" /> Download for macOS
+              </Button>
+            </div>
+          </IconSideCard>
+
+          <IconSideCard
+            verdict="dont"
+            label="Don't - pinned to the edge"
+            caption="Anchoring the icon to the far edge while the label centers splits the two apart: a gap opens across the button and the mark looks stranded, disconnected from what it labels."
+          >
+            <div className="w-full max-w-xs">
+              <Button size="lg" className="relative w-full">
+                <DownloadSimple weight="bold" className="absolute left-4" /> Download for macOS
+              </Button>
+            </div>
+          </IconSideCard>
+        </div>
       </DocSection>
 
       <DocSection title="Social buttons">
@@ -391,7 +430,7 @@ export function Example() {
             { q: "What does iconOnly do beyond hiding the label?", a: "It collapses the button to a square that tracks the active size and zeroes the label padding and gap so the glyph optically centers. It also auto-wraps the button in a Tooltip from your `aria-label`, and Koala warns in development if no accessible name is present." },
             { q: "How is loading different from disabled?", a: "loading shows a centered spinner, sets `aria-busy`, and disables the button so it cannot be re-triggered, while reserving the label's space so the width never reflows. Plain disabled just greys it out with no spinner or busy state." },
             { q: "Why does my asChild button ignore the loading prop?", a: "Radix Slot expects a single child, so a sibling spinner would break it. Under asChild the rendered child owns its content, and loading is intentionally a no-op there." },
-            { q: "How do I tighten buttons for a dense app shell without setting density on each one?", a: "Wrap the subtree in a DensityProvider set to compact. Button reads the density context, so every button shrinks one tier while a pseudo-element keeps the hit target at least 40px." },
+            { q: "How do I tighten buttons for a dense app shell without setting density on each one?", a: "Wrap the subtree in a DensityProvider set to compact. Button reads the density context and defaults every unsized button to sm (comfortable defaults to md), while a pseudo-element keeps the smaller hit target at least 40px. Density only sets the default size - an explicit size on a button always wins, and height never comes from density." },
             { q: "How do I opt out of the press animation?", a: "Pass the `static` prop, which neutralizes the active:scale press effect for places where the motion would distract." },
           ]}
         />

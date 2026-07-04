@@ -114,6 +114,7 @@ const variantCounts: Record<string, number> = {
   textarea: 3,
   toast: 5,
   "toggle-group": 2,
+  toolbar: 3,
   tooltip: 2,
   tree: 0,
   "video-player": 0,
@@ -159,14 +160,14 @@ function ComponentCard({ item }: { item: NavItem }) {
         >
           {preview ?? (
             <span className="flex size-16 items-center justify-center rounded-xl border border-border bg-card shadow-xs">
-              <Icon className="size-7 text-muted-foreground" aria-hidden />
+              <Icon weight="bold" className="size-7 text-muted-foreground" aria-hidden />
             </span>
           )}
         </div>
       </div>
 
       <div className="flex items-center gap-2 px-4 py-3">
-        <Icon className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+        <Icon weight="bold" className="size-4 shrink-0 text-muted-foreground" aria-hidden />
         {/* Stretched link: a sibling of the preview (not an ancestor), so previews that render
             their own anchor never produce nested `<a>`. `after:inset-0` makes the whole card the
             hit target; the preview is `pointer-events-none` so clicks fall through to it. */}
@@ -205,7 +206,7 @@ export function ComponentsCatalog() {
       <div className="max-w-sm">
         <InputRoot>
           <InputPrefix>
-            <MagnifyingGlass />
+            <MagnifyingGlass weight="bold" />
           </InputPrefix>
           <InputField
             type="search"

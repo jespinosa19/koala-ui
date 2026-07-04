@@ -6,13 +6,13 @@ import { Section, SectionHeading } from "@/components/landing/section"
 import { ShowcaseGallery } from "@/components/landing/showcase-gallery"
 import { Reveal } from "@/components/landing/reveal"
 
-/** "60+ components ready to use" - a gallery of real, interactive components to try inline. */
+/** "89 components ready to use" - a gallery of real, interactive components to try inline. */
 export function ComponentShowcase() {
   return (
     <Section id="components">
       <SectionHeading
         eyebrow="Components"
-        title="60+ components, ready to use"
+        title="89 components, ready to use"
         description="These are live, not screenshots. Toggle, drag, and open them right here, then drop the same source into your project."
       />
 
@@ -24,7 +24,7 @@ export function ComponentShowcase() {
         <Button asChild variant="outline" size="lg">
           <Link href="/docs">
             See all components
-            <ArrowRight />
+            <ArrowRight weight="bold" />
           </Link>
         </Button>
       </div>

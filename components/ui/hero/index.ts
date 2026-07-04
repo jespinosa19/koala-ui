@@ -12,6 +12,7 @@ export {
   HeroSocialProof,
   HeroRating,
   HeroMedia,
+  HeroBackground,
   heroVariants,
   type HeroProps,
   type HeroEyebrowProps,

@@ -27,11 +27,11 @@ export function ToggleGroupDemo() {
   return (
     <ToggleGroup type="single" defaultValue="yes" aria-label="Was this useful?">
       <ToggleGroupItem value="yes">
-        <ThumbsUp />
+        <ThumbsUp weight="bold" />
         Yes
       </ToggleGroupItem>
       <ToggleGroupItem value="no">
-        <ThumbsDown />
+        <ThumbsDown weight="bold" />
         No
       </ToggleGroupItem>
     </ToggleGroup>
@@ -48,15 +48,15 @@ export function SingleVsMultipleDemo() {
       <div className="flex flex-col items-center gap-2">
         <ToggleGroup type="single" defaultValue="grid" aria-label="View">
           <ToggleGroupItem value="list">
-            <ListBullets />
+            <ListBullets weight="bold" />
             List
           </ToggleGroupItem>
           <ToggleGroupItem value="grid">
-            <SquaresFour />
+            <SquaresFour weight="bold" />
             Grid
           </ToggleGroupItem>
           <ToggleGroupItem value="board">
-            <Kanban />
+            <Kanban weight="bold" />
             Board
           </ToggleGroupItem>
         </ToggleGroup>
@@ -66,13 +66,13 @@ export function SingleVsMultipleDemo() {
       <div className="flex flex-col items-center gap-2">
         <ToggleGroup type="multiple" defaultValue={["bold"]} aria-label="Text style">
           <ToggleGroupItem value="bold" aria-label="Bold">
-            <TextB />
+            <TextB weight="bold" />
           </ToggleGroupItem>
           <ToggleGroupItem value="italic" aria-label="Italic">
-            <TextItalic />
+            <TextItalic weight="bold" />
           </ToggleGroupItem>
           <ToggleGroupItem value="underline" aria-label="Underline">
-            <TextUnderline />
+            <TextUnderline weight="bold" />
           </ToggleGroupItem>
         </ToggleGroup>
         <span className="text-xs text-muted-foreground">{`type="multiple"`}</span>
@@ -89,11 +89,11 @@ export function SizesDemo() {
         <div key={size} className="flex flex-col items-center gap-2">
           <ToggleGroup type="single" size={size} defaultValue="yes" aria-label={`Rate (${size})`}>
             <ToggleGroupItem value="yes">
-              <ThumbsUp />
+              <ThumbsUp weight="bold" />
               Yes
             </ToggleGroupItem>
             <ToggleGroupItem value="no">
-              <ThumbsDown />
+              <ThumbsDown weight="bold" />
               No
             </ToggleGroupItem>
           </ToggleGroup>
@@ -128,11 +128,11 @@ export function FeedbackCardDemo() {
           aria-label="Rate your experience"
         >
           <ToggleGroupItem value="yes">
-            <ThumbsUp />
+            <ThumbsUp weight="bold" />
             Yes
           </ToggleGroupItem>
           <ToggleGroupItem value="no">
-            <ThumbsDown />
+            <ThumbsDown weight="bold" />
             No
           </ToggleGroupItem>
         </ToggleGroup>
@@ -166,11 +166,11 @@ export function FeedbackPopoverDemo() {
             aria-label="Rate your experience"
           >
             <ToggleGroupItem value="yes">
-              <ThumbsUp />
+              <ThumbsUp weight="bold" />
               Yes
             </ToggleGroupItem>
             <ToggleGroupItem value="no">
-              <ThumbsDown />
+              <ThumbsDown weight="bold" />
               No
             </ToggleGroupItem>
           </ToggleGroup>
@@ -203,11 +203,11 @@ export function FeedbackInlineDemo() {
             aria-label="Was this useful?"
           >
             <ToggleGroupItem value="yes">
-              <ThumbsUp />
+              <ThumbsUp weight="bold" />
               Yes
             </ToggleGroupItem>
             <ToggleGroupItem value="no">
-              <ThumbsDown />
+              <ThumbsDown weight="bold" />
               No
             </ToggleGroupItem>
           </ToggleGroup>

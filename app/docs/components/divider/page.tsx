@@ -17,7 +17,7 @@ export default function DividerDocsPage() {
     <>
       <DocHeader
         title="Divider"
-        description="A thin rule that separates content, optionally with a centered label. Smart by default: it collapses when it would be orphaned, so a dynamic list never leaves a rule at the edge or floating over an empty state. Stroke styles ride border tokens, and the gradient variant fades a hairline out at both ends, so every form re-themes across all three themes."
+        description="A thin rule that separates content, optionally with a centered label. Smart by default: it collapses when it would be orphaned, so a dynamic list never leaves a rule at the edge or floating over an empty state. Stroke styles ride border tokens, and the gradient variant fades a hairline out at both ends, so every form re-themes across all four themes."
       />
 
       <ComponentPreview
@@ -133,7 +133,7 @@ export function Example() {
           <Divider static variant="dashed">Continue with</Divider>
           <Divider static variant="gradient">
             <span className="inline-flex items-center gap-1.5">
-              <GoogleLogo /> Google
+              <GoogleLogo weight="bold" /> Google
             </span>
           </Divider>
         </ComponentPreview>

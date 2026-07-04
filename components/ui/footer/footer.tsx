@@ -21,8 +21,9 @@ import { tv, type VariantProps } from "@/lib/tv"
 export const footerVariants = tv({
   slots: {
     root: "w-full bg-background text-foreground",
-    // The max-width gutter, shared by the top region and the bottom bar.
-    container: "mx-auto flex w-full max-w-7xl flex-col px-6",
+    // The max-width gutter, shared by the top region and the bottom bar. Matches the canonical
+    // section gutter (max-w-8xl + px-5 sm:px-8) so the footer lines up with the header and sections.
+    container: "mx-auto flex w-full max-w-8xl flex-col px-5 sm:px-8",
     // Brand column beside the link columns; stacks on top below lg.
     top: "flex flex-col gap-10 lg:flex-row lg:justify-between",
     brand: "flex flex-col gap-4 lg:max-w-xs",

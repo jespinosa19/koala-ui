@@ -46,15 +46,36 @@ exposed as utilities (`ease-out`, `duration-base`). Mirrored in `lib/motion.ts` 
 JS animation. **Never inline a raw `cubic-bezier()` or ms value in a component.**
 
 ### Fonts
-Two bundled typefaces. `--font-sans` (**Inter**) carries UI and body; `--font-heading`
-(**DM Sans**) is reserved for headings and applied to every `h1–h6` in `@layer base`.
-`--font-mono` is a **system monospace stack** (`ui-monospace, SFMono-Regular, Menlo,
-Consolas, …`) - used for code and token labels, with nothing to download. Both faces are
-wired through `next/font` in [`app/layout.tsx`](../app/layout.tsx); DM Sans also pulls in
-its optical-size axis (`opsz`) alongside weight. Letterfit is tuned in `globals.css`:
-`font-optical-sizing: auto` plus kerning/ligatures on `body`, and a small negative
-`letter-spacing` on `h1–h6` (DM Sans sets a touch wider than Inter, so headings want
-tightening; explicit `tracking-*` utilities still win on specificity).
+Two bundled typefaces. `--font-sans` (**Inter**) carries UI, body and the smaller headings
+(`h3–h6`); `--font-heading` (**DM Sans**) is reserved for the display headings `h1–h2` in
+`@layer base`, so the family swaps at the `h2`/`h3` boundary. `--font-mono` is a **system
+monospace stack** (`ui-monospace, SFMono-Regular, Menlo, Consolas, …`) - used for code and
+token labels, with nothing to download. Both faces are wired through `next/font` in
+[`app/layout.tsx`](../app/layout.tsx); DM Sans also pulls in its optical-size axis (`opsz`)
+alongside weight. Letterfit is tuned in `globals.css`: `font-optical-sizing: auto` plus
+kerning/ligatures on `body`, and a small negative `letter-spacing` on `h1–h2` (DM Sans sets
+a touch wider than Inter, so display headings want tightening; explicit `tracking-*`
+utilities still win on specificity).
+
+### Iconography - size by context, not one global value
+Icons are [Phosphor](https://phosphoricons.com) (default **bold** weight; see the
+`icons-always-outline` convention). Their size is tied to the surface, not fixed globally:
+
+- **Text-label rows → 20px (`size-5`).** Any surface where a leading icon labels a text
+  row: menus (`DropdownMenu`, `ContextMenu`), `Select` (rows + the trigger's mirrored value),
+  the `Command` palette, `List` media, `MultiSelect`, `Sidebar` items, the `Tree` row's
+  leading glyph, and the data-table faceted filter. These recipes ship
+  `[&_svg:not([class*='size-'])]:size-5`, so a bare
+  `<Icon />` gets 20px automatically while an explicitly-sized glyph (a trailing caret, a
+  `Kbd` shortcut, a right-aligned check indicator) keeps its own size.
+- **Buttons, inputs, and other controls → 16px (`size-4`).** `Button`, `Input` adornments,
+  `InputGroup`, dialog/drawer close buttons. An icon inside a 32-40px control stays 16px so
+  it never crowds the label.
+- **Small chips → 14px (`size-3.5`).** `Badge`, `Breadcrumb`, chips, `Kbd`, stat trend
+  indicators, `FileCard` meta - contexts whose text is 12-14px, where a larger icon would
+  overpower the label.
+- **Never** hardcode a bespoke `size-[…]` on a leading icon; let the recipe's `:not()` rule
+  set it, or override with a standard `size-*` step only for a deliberate exception.
 
 ---
 

@@ -12,6 +12,7 @@ export {
   statVariants,
   statGroupVariants,
   type StatProps,
+  type StatValueProps,
   type StatGroupProps,
   type StatTrendProps,
   type StatSparklineProps,

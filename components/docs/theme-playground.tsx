@@ -344,7 +344,7 @@ export function ThemePlayground() {
           disabled={isDefault}
           className="sm:ml-auto"
         >
-          <ArrowCounterClockwise />
+          <ArrowCounterClockwise weight="bold" />
           Reset
         </Button>
       </div>

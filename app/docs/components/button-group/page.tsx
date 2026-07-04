@@ -56,16 +56,16 @@ export default function ButtonGroupDocsPage() {
         </ButtonGroup>
         <ButtonGroup size="sm">
           <ButtonGroupItem iconOnly aria-label="Align left">
-            <TextAlignLeft />
+            <TextAlignLeft weight="bold" />
           </ButtonGroupItem>
           <ButtonGroupItem iconOnly aria-label="Align center">
-            <TextAlignCenter />
+            <TextAlignCenter weight="bold" />
           </ButtonGroupItem>
           <ButtonGroupItem iconOnly aria-label="Align right">
-            <TextAlignRight />
+            <TextAlignRight weight="bold" />
           </ButtonGroupItem>
           <ButtonGroupItem iconOnly aria-label="Justify">
-            <TextAlignJustify />
+            <TextAlignJustify weight="bold" />
           </ButtonGroupItem>
         </ButtonGroup>
       </ComponentPreview>
@@ -292,27 +292,27 @@ export function Example() {
         >
           <ButtonGroup size="sm">
             <ButtonGroupItem iconOnly aria-label="Align left">
-              <TextAlignLeft />
+              <TextAlignLeft weight="bold" />
             </ButtonGroupItem>
             <ButtonGroupItem iconOnly aria-label="Align center">
-              <TextAlignCenter />
+              <TextAlignCenter weight="bold" />
             </ButtonGroupItem>
             <ButtonGroupItem iconOnly aria-label="Align right">
-              <TextAlignRight />
+              <TextAlignRight weight="bold" />
             </ButtonGroupItem>
             <ButtonGroupItem iconOnly aria-label="Justify">
-              <TextAlignJustify />
+              <TextAlignJustify weight="bold" />
             </ButtonGroupItem>
           </ButtonGroup>
           <ButtonGroup size="sm">
             <ButtonGroupItem iconOnly aria-label="Bold">
-              <TextB />
+              <TextB weight="bold" />
             </ButtonGroupItem>
             <ButtonGroupItem iconOnly aria-label="Italic">
-              <TextItalic />
+              <TextItalic weight="bold" />
             </ButtonGroupItem>
             <ButtonGroupItem iconOnly aria-label="Underline">
-              <TextUnderline />
+              <TextUnderline weight="bold" />
             </ButtonGroupItem>
           </ButtonGroup>
         </ComponentPreview>

@@ -39,6 +39,26 @@ export function NumberInputDemo() {
   )
 }
 
+export function QuantityStepperDemo() {
+  const [qty, setQty] = React.useState<number | null>(1)
+  return (
+    <div className="flex items-center gap-4">
+      <InputLabel htmlFor="qty-stepper">Quantity</InputLabel>
+      <NumberInput
+        id="qty-stepper"
+        layout="inline"
+        size="sm"
+        value={qty}
+        onValueChange={setQty}
+        min={1}
+        max={99}
+        rootClassName="w-24"
+        aria-label="Quantity"
+      />
+    </div>
+  )
+}
+
 export function PhoneInputDemo() {
   const [payload, setPayload] = React.useState<PhoneChangePayload | null>(null)
   return (

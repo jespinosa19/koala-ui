@@ -116,7 +116,7 @@ export function TeamListDemo() {
                     aria-label={`Actions for ${m.name}`}
                     tooltip={false}
                   >
-                    <DotsThreeVertical />
+                    <DotsThreeVertical weight="bold" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -179,11 +179,11 @@ export function CommentThreadDemo() {
             <ActivityBody>{c.text}</ActivityBody>
             <div className="-ml-2.5 mt-1 flex gap-0.5">
               <Button variant="ghost" size="sm">
-                <Heart />
+                <Heart weight="bold" />
                 Like
               </Button>
               <Button variant="ghost" size="sm">
-                <ChatCircle />
+                <ChatCircle weight="bold" />
                 Reply
               </Button>
             </div>

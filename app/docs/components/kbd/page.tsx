@@ -16,7 +16,7 @@ export default function KbdDocsPage() {
     <>
       <DocHeader
         title="Kbd"
-        description="A keyboard key indicator for documenting shortcuts. Renders a native <kbd>; the default variant reads as a raised keycap and re-themes everywhere. Compose combos by placing several side by side."
+        description="A keyboard key indicator for documenting shortcuts. Renders a native <kbd>; the default variant is a flat outline cap (hairline border, transparent fill, no shadow) that re-themes everywhere. Compose combos by placing several side by side."
       />
 
       <ComponentPreview
@@ -26,7 +26,7 @@ export default function KbdDocsPage() {
 <Kbd variant="solid">⏎ Enter</Kbd>`}
       >
         <Kbd>
-          <Command />
+          <Command weight="bold" />
         </Kbd>
         <Kbd>K</Kbd>
         <Kbd variant="outline">Esc</Kbd>
@@ -51,13 +51,14 @@ export function Example() {
 
       <DocSection title="Variants">
         <p className="mt-4 text-pretty text-muted-foreground">
-          <code className="font-mono text-sm">default</code> is a raised keycap (border +
-          soft <code className="font-mono text-sm">shadow-xs</code>),{" "}
-          <code className="font-mono text-sm">soft</code> is the same filled chip but
-          borderless and flat, for shortcuts that sit inside another tinted surface (a tooltip
+          <code className="font-mono text-sm">default</code> is a flat outline cap (hairline
+          border, transparent fill, no shadow),{" "}
+          <code className="font-mono text-sm">soft</code> is a filled chip, borderless and
+          flat, for shortcuts that sit inside another tinted surface (a tooltip
           or menu row) where a bordered cap reads as a competing outline,{" "}
-          <code className="font-mono text-sm">outline</code> is a flat hairline for dense
-          inline help, <code className="font-mono text-sm">solid</code> inverts for
+          <code className="font-mono text-sm">outline</code> is an explicit alias of that same
+          flat cap, for naming the treatment on purpose in dense inline help,{" "}
+          <code className="font-mono text-sm">solid</code> inverts for
           high-contrast callouts, and <code className="font-mono text-sm">ghost</code> drops
           the cap entirely: just the muted glyph, for ⌘K hints inside a button or input where
           a raised key would read as a second control.
@@ -108,16 +109,16 @@ export function Example() {
         >
           <span className="inline-flex items-center gap-1">
             <Kbd>
-              <Command />
+              <Command weight="bold" />
             </Kbd>
             <Kbd>
-              <ArrowUp />
+              <ArrowUp weight="bold" />
             </Kbd>
             <Kbd>P</Kbd>
           </span>
           <span className="inline-flex items-center gap-1">
             <Kbd>
-              <Option />
+              <Option weight="bold" />
             </Kbd>
             <Kbd>Tab</Kbd>
           </span>
@@ -148,7 +149,7 @@ export function Example() {
             { q: "Why does Kbd render a native <kbd> element?", a: "So it carries the correct semantics for assistive tech and document outlines. It is a single styled element with one `tv` recipe, like Badge." },
             { q: "When would I use the outline variant?", a: "Use `variant=\"outline\"` for keys dropped into running text: it is a flat hairline with a transparent fill, so it sits quietly inside a sentence rather than reading as a raised cap." },
             { q: "Can I wrap another element as the key?", a: "Yes. Pass `asChild` and Kbd renders your child as the key via Radix Slot, merging the keycap styling onto it instead of emitting its own `<kbd>`." },
-            { q: "Does Kbd re-theme automatically?", a: "Yes. It uses semantic tokens only (`bg-muted`, `border-border`, `text-muted-foreground`), so the keycap stays legible across all themes with no per-theme overrides." },
+            { q: "Does Kbd re-theme automatically?", a: "Yes. It uses semantic tokens only (`border-border`, `text-muted-foreground`, and a transparent fill by default), so the cap stays legible across all themes with no per-theme overrides." },
           ]}
         />
       </DocSection>

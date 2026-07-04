@@ -24,15 +24,27 @@
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-info: var(--info);
+  /* Soft-badge text: a darker, more legible counterpart to each status hue, for text sitting
+     on the /10 tint (the bright -500 hues read too light as text). Themed per block below:
+     darker in light, equal to the base hue in dark themes (already bright for dark surfaces).
+     Mirrors the --border-soft pattern. */
+  --color-success-strong: var(--success-strong);
+  --color-warning-strong: var(--warning-strong);
+  --color-info-strong: var(--info-strong);
+  --color-destructive-strong: var(--destructive-strong);
+  /* Hyperlink blue: the one role for inline text links (text-link / decoration-link). Distinct
+     from --info (a status hue) and from --brand (the accent action color), so a link reads as a
+     link in any accent. Per-theme below (a darker blue on light, a brighter one on dark). */
+  --color-link: var(--link);
   /* Categorical hues: for labels, tags, and category badges. */
   --color-purple: var(--purple);
   --color-pink: var(--pink);
   --color-teal: var(--teal);
   --color-orange: var(--orange);
-  /* Rating fills: a vivid decorative gold for stars and a love-red for hearts. These are
-     intentionally brighter/more saturated than the --warning status hue (which must stay dark
-     enough for legible warning text on light surfaces); a star/heart glyph is a saturated fill,
-     not text, so it reads clearly on any background. Theme-agnostic (see --brand). */
+  /* Rating fills: a vivid decorative gold for stars and a love-red for hearts. These stay
+     brighter/more saturated than the --warning status hue so the two never read as the same
+     gold; a star/heart glyph is a saturated fill, not text, so it reads clearly on any
+     background. Theme-agnostic (see --brand). */
   --color-rating: var(--rating);
   --color-rating-red: var(--rating-red);
   --color-border: var(--border);
@@ -43,6 +55,10 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-brand: var(--brand);
+  /* Chat sent-bubble fill: a fixed saturated blue-600 (theme-agnostic, like --brand/--rating), so
+     the "you" turn reads the same friendly blue under every theme and carries white text at AA on
+     any surface. Distinct from --link, a text-tuned blue that lightens in the dark themes. */
+  --color-chat-sent: var(--chat-sent);
 
   /* Syntax tokens: consumed by CodeSnippet's highlighter, themed per theme below. */
   --color-syntax-keyword: var(--syntax-keyword);
@@ -54,9 +70,9 @@
   --color-syntax-attribute: var(--syntax-attribute);
   --color-syntax-punctuation: var(--syntax-punctuation);
 
-  /* Inter carries UI + body; DM Sans is reserved for headings (--font-heading, applied to
-     h1–h6 in @layer base). Both are wired via next/font in layout.tsx; code/labels fall back
-     to the platform monospace. */
+  /* Inter carries UI + body; DM Sans is reserved for display headings (--font-heading, applied
+     to h1–h2 in @layer base; h3–h6 stay in Inter). Both are wired via next/font in layout.tsx;
+     code/labels fall back to the platform monospace. */
   --font-sans: var(--font-sans);
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
   --font-heading: var(--font-heading);
@@ -138,14 +154,6 @@
   --animate-table-reveal: table-reveal var(--duration-base) var(--ease-out);
 
   /*
-   * Banner-festive: the slow color drift behind a festive Banner (appearance="festive"). An
-   * oversized, palindromic multi-stop gradient is swept left↔right by animating background-position,
-   * so the loop has no seam. An ambient infinite loop like shimmer, so its calmer cadence lives here
-   * in the token layer, not inline in the component. Honored by reduced-motion in the base layer.
-   */
-  --animate-banner-festive: banner-festive 9s var(--ease-in-out) infinite;
-
-  /*
    * Banner-confetti: one piece's flight for the festive Banner's `confetti` burst. Each piece is
    * spawned imperatively with randomized end vectors (`--cx`/`--cy`/`--cr`) and self-removes on
    * animationend, so this is a one-shot enter (a keyframe, #4), not a transition. A bespoke 900ms
@@ -179,6 +187,7 @@
    */
   --animate-logo-roll-in: logo-roll-in var(--duration-slow) var(--ease-out) both;
   --animate-logo-roll-out: logo-roll-out var(--duration-slow) var(--ease-out) both;
+
 
   /*
    * Chart load reveals: the one-shot intro a Chart's data layers play when they first mount (the
@@ -291,6 +300,79 @@
   }
 }
 
+/* Number roll (AnimatedNumber): outgoing figure lifts up + fades out; incoming rises from below and
+ * fades into place. No clip window: the layers cross-fade on opacity so the change dissolves cleanly.
+ * The travel is a subtle sub-glyph drift (0.44em) that reads as direction, not distance, so nothing
+ * slides past a hard top/bottom edge. Both run at once, so they read as one upward roll. */
+@keyframes number-roll-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.44em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes number-roll-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-0.44em);
+  }
+}
+
+/* Applied by AnimatedNumber. Plain classes (not @theme utilities) so the roll takes effect without
+ * a dev restart; gated on the motion query so it's simply off under reduced-motion. Backed by the
+ * motion tokens (no raw duration/easing in the component). The outgoing layer rests at opacity 0, so
+ * if the animation never runs it stays invisible instead of overlapping the incoming value. */
+@media (prefers-reduced-motion: no-preference) {
+  .number-roll-in {
+    animation: number-roll-in var(--duration-base) var(--ease-out) both;
+  }
+  .number-roll-out {
+    animation: number-roll-out var(--duration-base) var(--ease-out) both;
+  }
+}
+
+/* OrderSummary editable-row exit: a removed line collapses, fades, blurs, and drifts out; the
+ * negative margin-bottom absorbs the flex gap so the rows below glide up without a jump. Longer/softer
+ * than the enter (make-interfaces #6), sharing its opacity + blur(4px) focus-pull (#7). The consumer sets `leaving`, then drops the row from state on
+ * animationend. Under reduced-motion the collapse is instant but still fires the event, so the
+ * removal always completes. */
+@keyframes order-summary-item-leave {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+    max-height: 4.5rem;
+    margin-bottom: 0;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(0.5rem);
+    filter: blur(4px);
+    max-height: 0;
+    margin-bottom: -1.25rem;
+  }
+}
+
+.order-summary-item-leave {
+  overflow: hidden;
+  pointer-events: none;
+  animation: order-summary-item-leave var(--duration-base) var(--ease-out) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .order-summary-item-leave {
+    animation-duration: 1ms;
+  }
+}
+
 /* Chart load reveals. See the --animate-chart-* tokens above for how the four compose on mount. */
 @keyframes chart-draw {
   from {
@@ -349,22 +431,6 @@
 }
 
 /*
- * Banner-festive: sweep an oversized (200%) gradient back and forth so its colors drift behind a
- * festive Banner. The gradient is palindromic (its stop list returns to the first color), so the
- * 0%↔100% position loop never jumps. Position-based (not transform) because it's the *fill* that
- * should flow, not the bar; at this 9s cadence the cost is negligible.
- */
-@keyframes banner-festive {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-/*
  * Banner-confetti: a piece launches from its origin (left/top set inline) toward a randomized
  * vector, tumbling and shrinking as it fades. The vars carry fallbacks so the rule stays valid for
  * a piece that never received them. transform + opacity only, so the GPU composites the swarm.
@@ -413,19 +479,19 @@
 }
 
 /*
- * Festive Banner palette: the default gradient stops for appearance="festive". Theme-independent
- * (like --brand) and deliberately deep/saturated so white text holds AA across all four themes -
- * the semantic hue tokens (--purple, --pink ...) lighten in dark themes and would lose contrast.
- * Override these per-banner (a className or inline style) to theme the bar with brand or flag colors.
+ * Festive Banner palette for appearance="festive". `--banner-festive-via` is the flat bar fill;
+ * `--banner-festive-to` accents the confetti (alongside `via`). Theme-independent (like --brand)
+ * and deliberately deep/saturated so white text holds AA across all four themes - the semantic hue
+ * tokens (--purple, --pink ...) lighten in dark themes and would lose contrast. Override these
+ * per-banner (a className or inline style) to theme the bar and its confetti with brand/flag colors.
  */
 :root {
-  --banner-festive-from: oklch(0.52 0.22 286); /* violet */
-  --banner-festive-via: oklch(0.53 0.24 349); /* fuchsia */
-  --banner-festive-to: oklch(0.56 0.2 25); /* coral */
+  --banner-festive-via: oklch(0.585 0.233 277); /* indigo-500 - the flat bar fill */
+  --banner-festive-to: oklch(0.56 0.2 25); /* coral - confetti accent */
 
   /*
-   * Festive confetti pieces. Lightened toward white so they pop against the saturated gradient
-   * bed, and derived from the same --banner-festive-* stops, so overriding the palette (brand or
+   * Festive confetti pieces. Lightened toward white so they pop against the saturated flat bar,
+   * and derived from the same --banner-festive-* stops, so overriding the palette (brand or
    * flag colors) re-tints the confetti with it. One piece is pure white for sparkle.
    */
   --banner-confetti-1: white;
@@ -489,9 +555,21 @@
   --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.577 0.245 27.325);
-  --success: oklch(0.52 0.15 150);
-  --warning: oklch(0.55 0.13 70);
-  --info: oklch(0.52 0.2 255);
+  /* Status hues anchor to Tailwind's named 500/sky scale so the filled status glyphs
+     (Alert/Toast/Badge icons) read bright and recognizable on light surfaces rather than muddy.
+     Warning uses amber (not pure yellow) to read clearly as caution and stay distinct from the
+     rating gold. Text usages trade a little contrast for this; they're rare and icon-accompanied. */
+  --success: oklch(0.723 0.219 149.579); /* green-500 */
+  --warning: oklch(0.769 0.188 70.08); /* amber-500 */
+  --info: oklch(0.685 0.169 237.323); /* sky-500 */
+  /* Darker text counterparts (see @theme): pull each status hue toward black so soft-badge
+     text reads at ~green-700/amber-700 weight on its /10 tint. Amber needs the strongest pull. */
+  --success-strong: color-mix(in oklch, var(--success), black 30%);
+  --warning-strong: color-mix(in oklch, var(--warning), black 42%);
+  --info-strong: color-mix(in oklch, var(--info), black 30%);
+  --destructive-strong: color-mix(in oklch, var(--destructive), black 22%);
+  /* Hyperlink blue: a saturated blue-600 that holds AA as text on the light background. */
+  --link: oklch(0.52 0.23 262); /* ~blue-600 */
   --purple: oklch(0.52 0.22 310);
   --pink: oklch(0.54 0.21 350);
   --teal: oklch(0.5 0.15 192);
@@ -501,6 +579,9 @@
      are NOT redefined per theme. Brighter than --warning by design (see @theme note above). */
   --rating: oklch(0.8 0.17 82);
   --rating-red: oklch(0.64 0.22 25);
+  /* Chat sent-bubble blue: fixed blue-600, defined once and inherited by every theme (see
+     --rating/--brand). A saturated mid-blue that holds white text at AA on light and dark. */
+  --chat-sent: oklch(0.55 0.21 262); /* ~blue-600 (#2563EB) */
   --syntax-keyword: oklch(0.52 0.24 295);
   --syntax-string: oklch(0.52 0.17 150);
   --syntax-comment: oklch(0.6 0.03 260);
@@ -518,7 +599,7 @@
    * Accent: the single knob. This is the DEFAULT accent (#F84416, "orange"); switch the
    * whole accent palette by setting `data-accent="…"` on <html> (see "Accent presets" below).
    * Themes (dark/moonlight) deliberately DON'T redefine --brand, so accent and theme
-   * are orthogonal axes: any accent works under any of the three themes.
+   * are orthogonal axes: any accent works under any of the four themes.
    */
   --brand: oklch(0.648 0.222 34.2);
   /* Focus ring derives from the accent: same hue at 10% opacity. Set --brand, get this free. */
@@ -553,6 +634,13 @@
   --success: oklch(0.8 0.17 155);
   --warning: oklch(0.84 0.15 85);
   --info: oklch(0.78 0.14 245);
+  /* Soft-badge text equals the base hue on dark surfaces: already bright enough to read (see :root). */
+  --success-strong: var(--success);
+  --warning-strong: var(--warning);
+  --info-strong: var(--info);
+  --destructive-strong: var(--destructive);
+  /* Hyperlink blue: lifted to ~blue-400 so it reads bright on the dark background. */
+  --link: oklch(0.72 0.16 256);
   --purple: oklch(0.78 0.16 310);
   --pink: oklch(0.8 0.17 350);
   --teal: oklch(0.78 0.13 192);
@@ -600,6 +688,13 @@
   --success: oklch(0.8 0.16 158);
   --warning: oklch(0.84 0.14 88);
   --info: oklch(0.8 0.15 248);
+  /* Soft-badge text equals the base hue on dark surfaces: already bright enough to read (see :root). */
+  --success-strong: var(--success);
+  --warning-strong: var(--warning);
+  --info-strong: var(--info);
+  --destructive-strong: var(--destructive);
+  /* Hyperlink blue: a bright, slightly cyan-leaning blue so links stand off the blue-tinted base. */
+  --link: oklch(0.76 0.15 248);
   --purple: oklch(0.78 0.17 308);
   --pink: oklch(0.8 0.18 348);
   --teal: oklch(0.78 0.14 190);
@@ -1020,24 +1115,23 @@
       animation: none;
     }
   }
-  /* Festive Banner drift is purely decorative: hold the gradient static under reduced-motion.
-   * `animation: none` is a no-op on the soft/solid bars (they never animate). */
-  @media (prefers-reduced-motion: reduce) {
-    [data-slot="banner"] {
-      animation: none;
-    }
-  }
   /* polish: balanced headings, no orphans in body copy. */
   h1, h2, h3, h4, h5, h6 {
-    /* Headings/titles are set in DM Sans (body stays Inter). A bare element rule,
-       so a call site can still swap the family with a `font-*` utility if needed. */
-    @apply font-heading;
     text-wrap: balance;
+  }
+  /* Display headings (h1/h2) are set in DM Sans; everything from h3 down stays in
+     Inter, the UI/body face, so the family swaps at the h2/h3 boundary. Bare element
+     rules, so a call site can still swap the family with a `font-*` utility if needed. */
+  h1, h2 {
+    @apply font-heading;
     /* DM Sans sets a touch wider than Inter, so headings want a hair of negative
        tracking to hold together (optical sizing tightens display sizes further on
        top of this). Element-level, so any call site that sets an explicit
        `tracking-*` utility still wins on specificity (class > element). */
     letter-spacing: -0.015em;
+  }
+  h3, h4, h5, h6 {
+    @apply font-sans;
   }
   p {
     text-wrap: pretty;

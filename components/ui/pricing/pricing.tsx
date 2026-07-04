@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils"
 import { createContext } from "@/lib/create-context"
 import { tv, type VariantProps } from "@/lib/tv"
 import { Tooltip } from "@/components/ui/tooltip"
+import { Divider } from "@/components/ui/divider"
 
 /**
  * Pricing: the canonical marketing pricing table: a responsive row of plan cards (tiers),
@@ -73,6 +74,23 @@ export const pricingVariants = tv({
       "[&>svg]:size-4",
       "before:absolute before:left-1/2 before:top-1/2 before:size-9 before:-translate-x-1/2 before:-translate-y-1/2 before:content-['']",
     ],
+    // ── Feature groups: the "features with icons" layout ───────────────────────────────────
+    // An alternative to the flat checklist: features split into labelled sections, each led by a
+    // centred Divider header, each row carrying its own contextual icon (not a status check). It
+    // suits a lifetime / all-in bundle, where the value is a long, categorised inventory rather
+    // than a have/have-not list. Compose with `PricingFeatureGroup` (one per section).
+    // One group: a header rule stacked over its own icon list.
+    featureGroup: "flex flex-col",
+    // The centred label inside the group's Divider: an optional leading icon + the text, held
+    // together so the icon hugs the label between the flanking rules (the icon tracks the label's
+    // muted colour via currentColor).
+    featureGroupLabel: "flex items-center gap-1.5 [&>svg]:size-4",
+    // The group's row list. Rows read at full strength here (text-foreground): the leading icon,
+    // not a dimmed weight, carries the "list" affordance, so the label can sit at full contrast.
+    featureGroupList: "mt-5 flex flex-col gap-3.5 text-sm [&>[data-slot=pricing-feature]]:text-foreground",
+    // A contextual (custom `icon`) glyph: neutral + muted, so it reads as a category marker beside
+    // the label rather than a success check. (The default check/cross keep their success/dim tints.)
+    featureCustomIcon: "text-muted-foreground",
     // The CTA wrapper; the direct child (Button, or a link via asChild) is stretched to the full
     // card width. `mt-auto` (the `bottom` position) is layered on by the `actionPosition` variant
     // so CTAs line up across cards; `top` drops it for an action that sits under the price.
@@ -113,6 +131,9 @@ export const pricingVariants = tv({
         features: "border-white/20",
         feature: "text-white/85",
         featureCheck: "text-white",
+        // Keep grouped rows + their contextual icons legible on the accent fill.
+        featureGroupList: "[&>[data-slot=pricing-feature]]:text-white",
+        featureCustomIcon: "text-white/80",
       },
       muted: { tier: "border-transparent bg-secondary" },
     },
@@ -280,9 +301,17 @@ export function PricingFeature({
     >
       <span
         aria-hidden
-        // Included: add the success/inverse fill. Excluded: leave the glyph at the row's
-        // currentColor so the dimming opacity carries it to a muted token.
-        className={slots.featureIcon({ className: included ? slots.featureCheck() : undefined })}
+        // A custom `icon` is a contextual glyph, so it takes the neutral `featureCustomIcon` tint
+        // (never the success green of a status check). The default glyph keeps the status colour:
+        // the success/inverse fill when included; the row's dimmed currentColor when excluded.
+        className={slots.featureIcon({
+          className:
+            icon != null
+              ? slots.featureCustomIcon()
+              : included
+                ? slots.featureCheck()
+                : undefined,
+        })}
       >
         {icon ?? (included ? <CheckCircle weight="fill" /> : <XCircle weight="fill" />)}
       </span>
@@ -292,12 +321,51 @@ export function PricingFeature({
         {hint != null && (
           <Tooltip content={hint}>
             <button type="button" aria-label={hintLabel} className={slots.featureHint()}>
-              <Info />
+              <Info weight="bold" />
             </button>
           </Tooltip>
         )}
       </span>
     </li>
+  )
+}
+
+export interface PricingFeatureGroupProps extends Omit<React.ComponentProps<"div">, "children"> {
+  /** The group's centred header label, e.g. "What's inside" or "Some gifts included". */
+  label: React.ReactNode
+  /** Optional leading glyph shown beside the label (e.g. a Gift for a "gifts" group). */
+  icon?: React.ReactNode
+  /** The group's rows: `PricingFeature`s, each with its own contextual `icon`. */
+  children?: React.ReactNode
+}
+
+/**
+ * A labelled section of features: a centred Divider header over a list of icon rows. Stack several
+ * inside a tier, in place of a single flat `PricingFeatures`, for the "features with icons" layout
+ * a lifetime / all-in bundle wants, where the value is a long, categorised inventory rather than a
+ * have/have-not checklist. Each child `PricingFeature` carries its own contextual `icon`, and the
+ * rows read at full strength because that icon, not a dimmed weight, marks the line.
+ */
+export function PricingFeatureGroup({
+  label,
+  icon,
+  className,
+  children,
+  ...props
+}: PricingFeatureGroupProps) {
+  const { slots } = usePricingTierContext("PricingFeatureGroup")
+  return (
+    <div data-slot="pricing-feature-group" className={slots.featureGroup({ className })} {...props}>
+      {/* The header is a labelled Divider. `static` keeps it painted: it lands first in the group,
+          where the smart :first-child rule would otherwise auto-collapse it. */}
+      <Divider static>
+        <span className={slots.featureGroupLabel()}>
+          {icon}
+          {label}
+        </span>
+      </Divider>
+      <ul className={slots.featureGroupList()}>{children}</ul>
+    </div>
   )
 }
 

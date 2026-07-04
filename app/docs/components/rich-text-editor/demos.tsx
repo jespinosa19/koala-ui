@@ -114,14 +114,14 @@ function CustomToolbar() {
         pressed={s.bold}
         onClick={() => editor?.chain().focus().toggleBold().run()}
       >
-        <TextB />
+        <TextB weight="bold" />
       </RichTextEditorButton>
       <RichTextEditorButton
         tooltip="Italic"
         pressed={s.italic}
         onClick={() => editor?.chain().focus().toggleItalic().run()}
       >
-        <TextItalic />
+        <TextItalic weight="bold" />
       </RichTextEditorButton>
       <RichTextEditorSeparator />
       <RichTextEditorButton
@@ -129,7 +129,7 @@ function CustomToolbar() {
         pressed={s.strike}
         onClick={() => editor?.chain().focus().toggleStrike().run()}
       >
-        <TextStrikethrough />
+        <TextStrikethrough weight="bold" />
       </RichTextEditorButton>
     </RichTextEditorToolbar>
   )
@@ -151,7 +151,7 @@ const composerSeed = `<h1>Launching Koala UI 1.0</h1>
 <h2>What's inside</h2>
 <ul>
   <li>30+ components built on Radix &amp; Tiptap</li>
-  <li>Three themes and a one-knob accent system</li>
+  <li>Four themes and a one-knob accent system</li>
   <li>A density axis for marketing <em>and</em> dense app UI</li>
 </ul>
 <h2>Getting started</h2>
@@ -204,7 +204,7 @@ function ComposerStatusBar() {
         <span className="tabular-nums">{chars}</span> characters
       </p>
       <Button size="sm" onClick={save}>
-        {saved ? <Check /> : <FloppyDisk />}
+        {saved ? <Check weight="bold" /> : <FloppyDisk weight="bold" />}
         {saved ? "Saved" : "Save draft"}
       </Button>
     </div>

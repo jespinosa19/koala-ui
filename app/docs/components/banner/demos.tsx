@@ -25,12 +25,12 @@ export function DismissibleBannerDemo() {
           className="overflow-hidden rounded-xl"
         >
           <BannerIcon>
-            <Megaphone />
+            <Megaphone weight="bold" />
           </BannerIcon>
-          <BannerContent>Koala UI now available for Mobile Apps!</BannerContent>
+          <BannerContent>New: cream and moonlight themes just landed.</BannerContent>
           <BannerAction href="#">
             Check it out
-            <ArrowRight />
+            <ArrowRight weight="bold" />
           </BannerAction>
         </Banner>
       ) : (
@@ -121,13 +121,13 @@ export function BannerCountdownSection() {
   return (
     <Banner variant="orange" dismissible dismissLabel="Dismiss announcement">
       <BannerIcon>
-        <Tag />
+        <Tag weight="bold" />
       </BannerIcon>
       <BannerContent>Summer sale ends in</BannerContent>
       <BannerCountdown />
       <BannerAction href="#">
         Shop the sale
-        <ArrowRight />
+        <ArrowRight weight="bold" />
       </BannerAction>
     </Banner>
   )

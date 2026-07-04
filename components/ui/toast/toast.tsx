@@ -18,13 +18,16 @@ import { type ToastData, startDismiss } from "./use-toast"
  * motion independent so they never fight each other.
  *
  * polish applied:
- *   #1 : concentric radius: viewport rounded-xl, surface rounded-xl (viewport is not visible so no nesting issue)
- *   #3 : layered box-shadow instead of a plain border for natural depth
- *   #5 : staggered enter: icon, title, description each start slightly offset (via CSS delay)
- *   #6 : subtle exit: slides right (direction-hinting) with a shorter implicit 200 ms
- *   #11 : inner 1 px inset ring (light: black/7%, dark: white/8%) instead of a solid border
- *   #12 : close button uses active:scale-[0.96]
+ *   #1  : concentric radius: viewport rounded-xl, surface rounded-xl (viewport is not visible so no nesting issue)
+ *   #3  : shadow-lg + ring-border (an inset hairline) so every toast reads as a lifted card and
+ *         never gets lost on a blank corner. Status colour is carried by the icon, not the edge
+ *         (matching Alert). Stock utilities, so no arbitrary class needs JIT-generating.
+ *   #6  : subtle exit: slides right (direction-hinting) with a shorter implicit 200 ms
+ *   #11 : surface rests on bg-popover so it reads as elevated above the page (matters in
+ *         dark/cream/moonlight, where popover is lighter than the background).
+ *   #12 : close + action buttons use active:scale-[0.96] (scale is in their transition list)
  *   #14 : transition specifies exact properties, never "all"
+ *   #16 : the 24px close target is padded out to a 40px hit area with a ::before pseudo
  */
 export const toastVariants = tv({
   slots: {
@@ -36,10 +39,12 @@ export const toastVariants = tv({
     ],
     // Visible card surface <div>.
     surface: [
-      "relative flex w-full items-start gap-3 rounded-xl bg-background p-4",
-      // polish/#11: layered shadow + inset ring (no solid border)
-      "[box-shadow:0_8px_24px_-4px_oklch(0_0_0/0.12),0_2px_8px_-2px_oklch(0_0_0/0.08),inset_0_0_0_1px_oklch(0_0_0/0.07)]",
-      "dark:[box-shadow:0_8px_24px_-4px_oklch(0_0_0/0.4),0_2px_8px_-2px_oklch(0_0_0/0.3),inset_0_0_0_1px_oklch(1_0_0/0.08)]",
+      "relative flex w-full items-start gap-3 rounded-xl bg-popover p-4",
+      // polish/#3: a clear theme-aware border + a strong drop shadow so the card always reads
+      // as lifted and never gets lost on a blank corner. Uses stock utilities (shadow + ring,
+      // which compose through Tailwind's ring var system) rather than a bespoke [box-shadow:…]
+      // arbitrary value, so no new class has to be JIT-generated and HMR picks it up at once.
+      "shadow-lg ring-1 ring-inset ring-border",
       // Enter/exit animation only on translate + opacity (never "all").
       "transition-[opacity,translate] duration-300 ease-out",
     ],
@@ -49,49 +54,45 @@ export const toastVariants = tv({
     description: "text-sm text-pretty leading-snug text-muted-foreground",
     close: [
       "absolute top-3 right-3",
-      "grid size-6 shrink-0 place-items-center rounded-md",
+      "grid size-6 shrink-0 cursor-pointer place-items-center rounded-md",
+      // polish/#16: pad the 24px target out to a 40px hit area without changing its look.
+      "before:absolute before:-inset-2 before:content-['']",
       "text-muted-foreground/60",
-      "transition-[color,background-color] duration-fast ease-out",
-      // polish
+      // polish/#14: scale is its own property in v4, so list it or active:scale snaps.
+      "transition-[color,background-color,scale] duration-fast ease-out",
+      // polish/#12
       "active:scale-[0.96]",
       "hover:bg-accent hover:text-foreground",
       "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1",
       "[&_svg]:size-3.5 [&_svg]:pointer-events-none",
     ],
     action: [
-      "mt-2 inline-flex h-7 items-center rounded-md px-2.5 text-xs font-medium",
-      "transition-[color,background-color] duration-fast ease-out",
+      "mt-2 inline-flex h-7 cursor-pointer items-center rounded-md px-2.5 text-xs font-medium",
+      "transition-[color,background-color,scale] duration-fast ease-out",
       "active:scale-[0.96]",
     ],
   },
   variants: {
     variant: {
+      // Every variant shares the same neutral elevation (border + shadow on the base surface);
+      // the status colour is carried by the icon and action button only, matching Alert.
       default: {
-        surface: "",
         iconWrap: "text-muted-foreground",
         action: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
       },
       success: {
-        surface:
-          "[box-shadow:0_8px_24px_-4px_oklch(0_0_0/0.1),0_2px_8px_-2px_oklch(0_0_0/0.06),inset_0_0_0_1px_oklch(var(--success)/0.2)]",
         iconWrap: "text-success",
         action: "bg-success/10 text-success hover:bg-success/20",
       },
       warning: {
-        surface:
-          "[box-shadow:0_8px_24px_-4px_oklch(0_0_0/0.1),0_2px_8px_-2px_oklch(0_0_0/0.06),inset_0_0_0_1px_oklch(var(--warning)/0.2)]",
         iconWrap: "text-warning",
         action: "bg-warning/10 text-warning hover:bg-warning/20",
       },
       destructive: {
-        surface:
-          "[box-shadow:0_8px_24px_-4px_oklch(0_0_0/0.1),0_2px_8px_-2px_oklch(0_0_0/0.06),inset_0_0_0_1px_oklch(var(--destructive)/0.2)]",
         iconWrap: "text-destructive",
         action: "bg-destructive/10 text-destructive hover:bg-destructive/20",
       },
       info: {
-        surface:
-          "[box-shadow:0_8px_24px_-4px_oklch(0_0_0/0.1),0_2px_8px_-2px_oklch(0_0_0/0.06),inset_0_0_0_1px_oklch(var(--info)/0.2)]",
         iconWrap: "text-info",
         action: "bg-info/10 text-info hover:bg-info/20",
       },

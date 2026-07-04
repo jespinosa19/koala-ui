@@ -246,7 +246,7 @@ function PasswordStrengthList({
           <span className={slots.itemIcon()} aria-hidden="true">
             {/* Cross-fade the dot → check with opacity/scale/blur (no motion lib). */}
             <Circle
-              weight="regular"
+              weight="bold"
               className={`absolute size-3 text-muted-foreground transition-[opacity,scale,filter] duration-fast ease-out ${
                 rule.met
                   ? "opacity-0 scale-[0.25] blur-[4px]"

@@ -4,7 +4,7 @@ import * as React from "react"
 import { Slot } from "radix-ui"
 import { CircleNotch } from "@phosphor-icons/react"
 
-import { useDensity } from "@/lib/density"
+import { useControlSize, type Density } from "@/lib/density"
 import { cn } from "@/lib/utils"
 import { tv, type VariantProps } from "@/lib/tv"
 import { Tooltip, type TooltipProps } from "@/components/ui/tooltip/tooltip"
@@ -56,17 +56,26 @@ export const buttonVariants = tv({
       ghost: "hover:bg-accent hover:text-accent-foreground",
       destructive:
         "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/40",
+      // Quiet destructive: a chrome-less ghost in the destructive hue. Red icon/label at rest,
+      // a soft red tint on hover (never a full fill) - the low-emphasis delete affordance for a
+      // remove-line trash in a list/cart, where a solid `destructive` button would shout.
+      destructiveGhost:
+        "text-destructive hover:bg-destructive/10 focus-visible:ring-destructive/40",
       link: "text-primary underline-offset-4 hover:underline",
     },
     // Three sizes: sm 32px, md 36px, lg 40px; label stays text-sm across
-    // the scale. Polish (optical over geometric): an icon reads
-    // lighter than a text edge, so a button carrying a direct `<svg>` trims its horizontal
-    // padding one step (`has-[>svg]:px-*`) to stay optically balanced.
-    // Padding scale: px-3/2.5 (sm), px-4/3 (md), px-6/4 (lg).
+    // the scale. Horizontal padding tracks the height rhythm in lockstep: the heights step
+    // 32→36→40 (+4 each), so the padding steps px-3→px-4→px-5 (12→16→20, +4 each) to match.
+    // lg was px-6 (24px), which overshot the cadence by 4px a side and read chunky next to a
+    // 40px height (a short CTA like "Book a demo" looked wider than its label warranted); px-5
+    // keeps lg substantial without the extra width. Polish (optical over geometric): an icon
+    // reads lighter than a text edge, so a button carrying a direct `<svg>` trims its
+    // horizontal padding one step (`has-[>svg]:px-*`) to stay optically balanced.
+    // Padding scale: px-3/2.5 (sm), px-4/3 (md), px-5/4 (lg).
     size: {
       sm: "h-8 gap-1.5 px-3 has-[>svg]:px-2.5",
       md: "h-9 px-4 py-2 has-[>svg]:px-3",
-      lg: "h-10 px-6 has-[>svg]:px-4",
+      lg: "h-10 px-5 has-[>svg]:px-4",
     },
     // Icon-only collapses the button to a square (width tracks height) and drops the
     // label padding/gap so the glyph optically centers. The squares live in
@@ -75,46 +84,36 @@ export const buttonVariants = tv({
       true: "",
       false: "",
     },
-    // Density is Koala's cross-cutting spacing axis (see lib/density.tsx). `comfortable`
-    // is the marketing default the size values above describe; the `compact` deltas live
-    // in compoundVariants, one tier tighter than the same-named comfortable size.
-    density: {
-      comfortable: "",
-      compact: "",
-    },
   },
   compoundVariants: [
-    // Comfortable, icon-only: collapse to a square that tracks the size's height
-    //   (sm 32 · md 36 · lg 40), zeroing label padding/gap so the glyph optically centers.
-    //   `has-[>svg]:px-0` overrides the size's icon-padding step (an icon-only button always
-    //   has a direct svg, so it would otherwise inherit px-2.5/3/4).
-    { size: "sm", iconOnly: true, density: "comfortable", className: "w-8 gap-0 px-0 has-[>svg]:px-0" },
-    { size: "md", iconOnly: true, density: "comfortable", className: "w-9 gap-0 px-0 has-[>svg]:px-0" },
-    { size: "lg", iconOnly: true, density: "comfortable", className: "w-10 gap-0 px-0 has-[>svg]:px-0" },
+    // Icon-only: collapse to a square that tracks the size's height (sm 32 · md 36 · lg 40),
+    // zeroing label padding/gap so the glyph optically centers. `has-[>svg]:px-0` overrides the
+    // size's icon-padding step (an icon-only button always has a direct svg, so it would
+    // otherwise inherit px-2.5/3/4). sm is under the 40px hit target, so it also carries a
+    // centered box extender.
+    { size: "sm", iconOnly: true, className: `w-8 gap-0 px-0 has-[>svg]:px-0 ${hitBox}` },
+    { size: "md", iconOnly: true, className: "w-9 gap-0 px-0 has-[>svg]:px-0" },
+    { size: "lg", iconOnly: true, className: "w-10 gap-0 px-0 has-[>svg]:px-0" },
 
-    // Compact, text: one tier tighter than the same-named comfortable size, keeping the
-    //   icon-padding step. Every row lands under 40px, so each adds a vertical-only hit
-    //   extender (polish).
-    { size: "sm", iconOnly: false, density: "compact", className: `h-7 px-2.5 text-xs has-[>svg]:px-2 ${hitX}` },
-    { size: "md", iconOnly: false, density: "compact", className: `h-8 px-3 has-[>svg]:px-2.5 ${hitX}` },
-    { size: "lg", iconOnly: false, density: "compact", className: `h-9 px-4 has-[>svg]:px-3 ${hitX}` },
-
-    // Compact, icon-only: square + centered box extender (all under 40px).
-    { size: "sm", iconOnly: true, density: "compact", className: `size-7 gap-0 px-0 has-[>svg]:px-0 ${hitBox}` },
-    { size: "md", iconOnly: true, density: "compact", className: `size-8 gap-0 px-0 has-[>svg]:px-0 ${hitBox}` },
-    { size: "lg", iconOnly: true, density: "compact", className: `size-9 gap-0 px-0 has-[>svg]:px-0 ${hitBox}` },
+    // sm text (32px) is under the 40px hit target, so it gets a vertical-only hit extender.
+    { size: "sm", iconOnly: false, className: hitX },
   ],
   defaultVariants: {
     variant: "primary",
     size: "md",
     iconOnly: false,
-    density: "comfortable",
   },
 })
 
 export interface ButtonProps
   extends React.ComponentProps<"button">,
     VariantProps<typeof buttonVariants> {
+  /**
+   * Spacing tier. Height comes from `size`, not density; this only sets the DEFAULT `size`
+   * when none is given (compact → "sm", comfortable → "md"). Resolves prop > DensityProvider >
+   * "compact". An explicit `size` always wins.
+   */
+  density?: Density
   /** Render the child element as the button (Radix Slot), merging styles onto it. */
   asChild?: boolean
   /** Disable the tactile scale-on-press, e.g. where motion would distract. */
@@ -187,10 +186,10 @@ export function Button({
       data-loading={isLoading || undefined}
       className={buttonVariants({
         variant,
-        size,
+        // Height comes from `size`; density only picks the DEFAULT size when none is given
+        // (compact → sm, comfortable → md). An explicit `size` always wins.
+        size: useControlSize(size, density),
         iconOnly,
-        // Density resolves prop > provider > "comfortable".
-        density: useDensity(density),
         // `static` neutralizes the press scale; `relative` anchors the loading spinner.
         // twMerge keeps this last.
         className: cn(isStatic && "active:scale-100", isLoading && "relative", className),
@@ -200,7 +199,7 @@ export function Button({
       {isLoading ? (
         <>
           {/* Centered spinner; inset-0 + m-auto centers the fixed (size-4) glyph. */}
-          <CircleNotch
+          <CircleNotch weight="bold"
             aria-hidden
             className="absolute inset-0 m-auto animate-spin motion-reduce:animate-none"
           />

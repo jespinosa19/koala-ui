@@ -36,7 +36,7 @@ export function ThemeSwitcher() {
             variant={isActive ? "secondary" : "outline"}
             onClick={() => setTheme(t)}
           >
-            <Icon />
+            <Icon weight="bold" />
           </ButtonGroupItem>
         )
       })}

@@ -4,7 +4,7 @@ import * as React from "react"
 import { Slot } from "radix-ui"
 
 import { createContext } from "@/lib/create-context"
-import { useDensity } from "@/lib/density"
+import { useControlSize, useDensity } from "@/lib/density"
 import { cn } from "@/lib/utils"
 import { tv, type VariantProps } from "@/lib/tv"
 import { buttonVariants, type ButtonProps } from "@/components/ui/button"
@@ -148,9 +148,9 @@ export function ButtonGroupItem({
       data-slot="button-group-item"
       className={buttonVariants({
         variant: variant ?? ctx.variant,
-        size: size ?? ctx.size,
+        // Height comes from size; density only picks the default size when none is given.
+        size: useControlSize(size ?? ctx.size, density ?? ctx.density),
         iconOnly,
-        density: density ?? ctx.density,
         className: cn("active:scale-100", className),
       })}
       {...props}

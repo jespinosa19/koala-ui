@@ -15,7 +15,7 @@ import { tv, type VariantProps } from "@/lib/tv"
  *
  * `variant` tints the media surface from a single semantic token via opacity (the same
  * soft pattern as Badge), so an error/search/success empty state re-themes across all
- * three themes. `density` retunes spacing and the media/title scale only, never color.
+ * four themes. `density` retunes spacing and the media/title scale only, never color.
  */
 export const emptyStateVariants = tv({
   slots: {
@@ -37,7 +37,7 @@ export const emptyStateVariants = tv({
     // Media tint: soft variants derive a background + icon color from one status token
     // via opacity, mirroring Badge so they stay legible in every theme.
     variant: {
-      default: { media: "border-border bg-muted text-muted-foreground" },
+      default: { media: "border-border bg-transparent text-muted-foreground" },
       primary: { media: "border-primary/20 bg-primary/10 text-primary" },
       success: { media: "border-success/20 bg-success/10 text-success" },
       warning: { media: "border-warning/20 bg-warning/10 text-warning" },

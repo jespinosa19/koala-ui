@@ -21,7 +21,7 @@ export function StaggerDemo() {
           Items mount in a cascade, 70&thinsp;ms apart.
         </span>
         <Button size="sm" variant="outline" onClick={() => setRunId((n) => n + 1)}>
-          <ArrowClockwise />
+          <ArrowClockwise weight="bold" />
           Replay
         </Button>
       </div>

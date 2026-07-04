@@ -35,8 +35,8 @@ export default function AccordionDocsPage() {
   <AccordionItem value="themes">
     <AccordionTrigger>How does theming work?</AccordionTrigger>
     <AccordionContent>
-      Every color is a semantic token redefined per theme, so all three themes
-      (light, dark, and moonlight) re-skin automatically.
+      Every color is a semantic token redefined per theme, so all four themes
+      (light, dark, cream, and moonlight) re-skin automatically.
     </AccordionContent>
   </AccordionItem>
   <AccordionItem value="a11y">
@@ -60,8 +60,8 @@ export default function AccordionDocsPage() {
             <AccordionItem value="themes">
               <AccordionTrigger>How does theming work?</AccordionTrigger>
               <AccordionContent>
-                Every color is a semantic token redefined per theme, so all three themes
-                (light, dark, and moonlight) re-skin automatically.
+                Every color is a semantic token redefined per theme, so all four themes
+                (light, dark, cream, and moonlight) re-skin automatically.
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="a11y">

@@ -36,6 +36,44 @@ const CSS_CODE = `:root {
   --primary: oklch(0.7 0.16 256);
 }`
 
+const LONG_CODE = `import * as React from "react"
+
+import { tv } from "@/lib/tv"
+import { Button } from "@/components/ui/button"
+
+type Member = {
+  id: string
+  name: string
+  email: string
+  status: "Active" | "Invited" | "Suspended"
+  balance: number
+}
+
+const columns: ColumnDef<Member>[] = [
+  {
+    accessorKey: "name",
+    header: "Member",
+    cell: ({ row }) => (
+      <TableCellText primary={row.original.name} secondary={row.original.email} />
+    ),
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ getValue }) => <Badge size="sm">{getValue<string>()}</Badge>,
+  },
+  {
+    accessorKey: "balance",
+    header: "Balance",
+    meta: { numeric: true },
+    cell: ({ getValue }) => \`$\${getValue<number>()}\`,
+  },
+]
+
+export function MembersTable({ data }: { data: Member[] }) {
+  return <DataTable columns={columns} data={data} />
+}`
+
 export default function CodeSnippetDocsPage() {
   return (
     <>
@@ -112,6 +150,24 @@ export function Example() {
   }
   return tokens
 }`}
+        />
+      </DocSection>
+
+      <DocSection title="Collapsible">
+        <p className="mt-4 text-pretty text-muted-foreground">
+          Long listings get noisy. Set{" "}
+          <code className="font-mono text-sm">collapsible</code> to clamp the block to{" "}
+          <code className="font-mono text-sm">collapsedHeight</code> (320px by default): the last
+          lines dissolve into a bottom fade and a <em>Show more</em> toggle expands it to full
+          height, animated. The toggle only appears once the content actually overflows the
+          clamp, measured from the DOM, so short blocks are left untouched.
+        </p>
+        <CodeSnippet
+          className="mt-4"
+          filename="members-table.tsx"
+          collapsible
+          showLineNumbers
+          code={LONG_CODE}
         />
       </DocSection>
 
@@ -192,6 +248,23 @@ export function Example() {
                 </td>
               </tr>
               <tr className="border-b border-border/60">
+                <td className="px-4 py-2.5">collapsible</td>
+                <td className="px-4 py-2.5 text-muted-foreground">boolean</td>
+                <td className="px-4 py-2.5 text-muted-foreground">false</td>
+                <td className="px-4 py-2.5 font-sans text-muted-foreground">
+                  Clamp long listings behind a Show more / Show less toggle. The toggle only
+                  appears once the content overflows the clamp.
+                </td>
+              </tr>
+              <tr className="border-b border-border/60">
+                <td className="px-4 py-2.5">collapsedHeight</td>
+                <td className="px-4 py-2.5 text-muted-foreground">number</td>
+                <td className="px-4 py-2.5 text-muted-foreground">320</td>
+                <td className="px-4 py-2.5 font-sans text-muted-foreground">
+                  Clamped height in px when collapsible and collapsed.
+                </td>
+              </tr>
+              <tr className="border-b border-border/60">
                 <td className="px-4 py-2.5">density</td>
                 <td className="px-4 py-2.5 text-muted-foreground">
                   &quot;comfortable&quot; | &quot;compact&quot;
@@ -221,6 +294,7 @@ export function Example() {
             { q: "How do I get the window chrome header?", a: "Pass a filename to add the header bar with a language chip, and add the dots prop for macOS-style window dots. Omit both for a chromeless block." },
             { q: "Will the syntax colors follow my theme?", a: "Yes. Highlighting is driven by syntax tokens (CSS variables), so the code re-themes across all four palettes rather than using fixed colors. Density retunes spacing only, never radius or color." },
             { q: "How do I add a line-number gutter?", a: "Set showLineNumbers to render a tabular-nums gutter, useful for longer listings or when referencing a specific line." },
+            { q: "How do I collapse a long code block?", a: "Set collapsible to clamp the block to collapsedHeight (320px by default). The last lines fade into the surface and a Show more / Show less toggle expands it to full height. The toggle only shows up once the content actually overflows the clamp, so short blocks stay untouched." },
             { q: "There are two CodeSnippets in Koala. Which import do I use?", a: "For app code use the component at @/components/ui/code-snippet. The @/components/docs/code-snippet import is a docs-site wrapper used by these pages." },
             { q: "Is there a copy button?", a: "Yes. The block shows a copy-on-hover control that copies the exact code string you pass, so consumers can grab it without selecting text." },
           ]}

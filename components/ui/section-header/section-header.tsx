@@ -31,19 +31,38 @@ export const sectionHeaderVariants = tv({
     // `split`, and so alignment applies to the text as a unit.
     text: "flex flex-col gap-4",
     heading: "font-semibold tracking-tight text-balance text-foreground",
-    description: "text-pretty text-muted-foreground",
-    actions: "flex flex-wrap items-center gap-3",
+    // `text-balance` (not `text-pretty`) on the lede copy too: a section description is a short
+    // 1–3 line lede inside `max-w-2xl`, not a long body paragraph, so balancing the line lengths
+    // reads better than `pretty`'s greedy-wrap-with-orphan-guard, especially when centered (where
+    // a long first line + a stub last line is most visible). Balance's ~6-line cap never bites a
+    // lede this short.
+    description: "text-balance text-muted-foreground",
+    // On a phone the CTAs stack one under the other and go full-width, the standard mobile CTA layout,
+    // so a two-button pair never sits cramped side by side or wraps awkwardly. From `sm` up they return
+    // to a wrapping row (`sm:flex-row`), vertically centered, and the `align` variant's `justify-*`
+    // takes over the horizontal placement (below `sm` the buttons already fill the row, so justify is
+    // moot and is gated behind `sm:`). `self-stretch` (dropped at `sm:self-auto`) is what actually
+    // reaches 100%: in `align="left"` the root is already `align-items: stretch` so it's a no-op, but in
+    // `center` the root is `items-center`, so without it this actions box shrinks to its buttons' content
+    // width and `items-stretch` only fills *that*. `self-stretch` makes the row own the block's width in
+    // either case; `self-*` (not `w-full`) so a per-instance `max-w-*` cap still wins.
+    actions:
+      "flex flex-col items-stretch gap-3 self-stretch sm:flex-row sm:flex-wrap sm:items-center sm:self-auto",
   },
   variants: {
     align: {
       left: {
         text: "items-start text-left",
-        actions: "justify-start",
+        actions: "sm:justify-start",
       },
       center: {
         root: "items-center",
-        text: "mx-auto max-w-2xl items-center text-center",
-        actions: "justify-center",
+        // `w-full` so the capped block still shrinks to the viewport: as a flex item under the root's
+        // `items-center`, the text would otherwise size to its (max-w-2xl-capped) max-content and
+        // overflow a narrow screen with long copy. `w-full` + `max-w-2xl` = fill-but-cap; `mx-auto`
+        // keeps it centered on wide screens.
+        text: "w-full mx-auto max-w-2xl items-center text-center",
+        actions: "sm:justify-center",
       },
     },
     orientation: {
@@ -70,6 +89,43 @@ export const sectionHeaderVariants = tv({
     },
   ],
   defaultVariants: { align: "left", orientation: "stacked", size: "md" },
+})
+
+/**
+ * The inline media chip you drop *inside* `SectionHeaderHeading`, between the words: a `framed` tile
+ * that holds a logo, icon, or image (the app-icon look, dropped into the headline), or a `bare` glyph
+ * or emoji interleaved with the copy. Everything is sized in `em`, so one chip reads right at any
+ * `size` and breakpoint without per-use tuning: the tile, its radius, the glyph inside, and the
+ * optical nudge all track the heading's font size. Separate single-part recipe (its `variant` axis is
+ * its own, independent of the header's `align`/`orientation`/`size`).
+ */
+export const sectionHeaderChipVariants = tv({
+  base: [
+    // Flows inline with the heading and holds its child centered.
+    "inline-flex shrink-0 items-center justify-center align-middle",
+    // `align-middle` lands the chip on the x-height; nudge it up so it centers on the cap height of
+    // the display text (in `em`, so the nudge scales with the heading too).
+    "-translate-y-[0.06em]",
+  ],
+  variants: {
+    variant: {
+      // A rounded tile (surface + ring + lift) that frames a logo/icon/image inline in the headline.
+      // `overflow-hidden` clips a full-bleed image to the tile's concentric radius; a bare glyph
+      // sits centered on the `bg-card` surface. The `:not([class*='size-'])` guard lets a caller
+      // pass `size-full` (fill the tile) or any explicit size without fighting the default.
+      framed: [
+        "size-[1.16em] overflow-hidden rounded-[0.26em]",
+        "bg-card text-foreground ring-1 ring-border shadow-sm",
+        "[&_svg:not([class*='size-'])]:size-[0.62em] [&_img:not([class*='size-'])]:size-[0.62em]",
+      ],
+      // No box: a bare glyph or emoji scaled to about the cap height, for icons and emoji interleaved
+      // between the words.
+      bare: [
+        "[&_svg:not([class*='size-'])]:size-[0.9em] [&_img:not([class*='size-'])]:size-[0.9em]",
+      ],
+    },
+  },
+  defaultVariants: { variant: "framed" },
 })
 
 /**
@@ -414,6 +470,33 @@ export function SectionHeaderActions({ className, style, ...props }: React.Compo
         className: staggered ? cn(staggerInClass(staggerBlur, staggerPaused), className) : className,
       })}
       style={staggered ? { animationDelay: `${actionsIndex * staggerStep}ms`, ...style } : style}
+      {...props}
+    />
+  )
+}
+
+export interface SectionHeaderChipProps
+  extends React.ComponentProps<"span">,
+    VariantProps<typeof sectionHeaderChipVariants> {}
+
+/**
+ * An inline media chip for the heading: a `framed` tile (default) that holds a logo, icon, or image,
+ * or a `bare` glyph/emoji, dropped between the words of `SectionHeaderHeading` so a mark or emoji
+ * flows inline with the copy. Sized entirely in `em`, so it scales with the heading at every `size`
+ * and breakpoint. Decorative by default (`aria-hidden`, so a screen reader reads the heading as pure
+ * text); pass an `aria-label` when the chip carries meaning the surrounding words don't, and it stays
+ * announced.
+ */
+export function SectionHeaderChip({ variant, className, ...props }: SectionHeaderChipProps) {
+  // Decorative flourish by default (`aria-hidden`, so the heading reads as pure text); an explicit
+  // `aria-label` opts the chip back into the accessible name as an image with that label.
+  const labelled = props["aria-label"] != null
+  return (
+    <span
+      data-slot="section-header-chip"
+      role={labelled ? "img" : undefined}
+      aria-hidden={labelled ? undefined : true}
+      className={sectionHeaderChipVariants({ variant, className })}
       {...props}
     />
   )

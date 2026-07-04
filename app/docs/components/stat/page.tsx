@@ -10,6 +10,7 @@ import {
   AnatomyDemo,
   TrendDemo,
   SparklineDemo,
+  CountUpDemo,
   VariantsDemo,
   DensityDemo,
   InteractiveDemo,
@@ -110,6 +111,27 @@ export default function StatDocsPage() {
         </ComponentPreview>
       </DocSection>
 
+      <DocSection title="Count up">
+        <p className="mt-4 text-pretty text-muted-foreground">
+          Pass <code className="font-mono text-sm">countUp</code> to{" "}
+          <code className="font-mono text-sm">StatValue</code> and the figure counts up from zero to
+          its value the first time it scrolls into view, the same trigger the marketing sections use,
+          re-counting each time it scrolls back in. It climbs fast and decelerates onto the final
+          figure, so it reads as a real count-up. It reads the string children (
+          <code className="font-mono text-sm">&quot;4,100+&quot;</code>,{" "}
+          <code className="font-mono text-sm">&quot;$4.2M&quot;</code>,{" "}
+          <code className="font-mono text-sm">&quot;4.6×&quot;</code>) and preserves the prefix,
+          suffix, and comma/decimal format as it counts, riding the built-in{" "}
+          <code className="font-mono text-sm">tabular-nums</code> so the row never jitters as the count
+          climbs. It no-ops for number-less content and honors{" "}
+          <code className="font-mono text-sm">prefers-reduced-motion</code> by showing the final
+          figure immediately.
+        </p>
+        <ComponentPreview previewClassName="block" code={COUNT_UP_CODE}>
+          <CountUpDemo />
+        </ComponentPreview>
+      </DocSection>
+
       <DocSection title="Variants">
         <p className="mt-4 text-pretty text-muted-foreground">
           <code className="font-mono text-sm">default</code> sits on a hairline border with a soft
@@ -173,7 +195,10 @@ export default function StatDocsPage() {
           <code className="font-mono text-sm">StatCaption</code>,{" "}
           <code className="font-mono text-sm">StatFooter</code>,{" "}
           <code className="font-mono text-sm">StatIcon</code> all forward{" "}
-          <code className="font-mono text-sm">div</code> props.{" "}
+          <code className="font-mono text-sm">div</code> props;{" "}
+          <code className="font-mono text-sm">StatValue</code> adds{" "}
+          <code className="font-mono text-sm">countUp</code> to count a string figure up from zero on
+          scroll.{" "}
           <code className="font-mono text-sm">StatTrend</code> adds{" "}
           <code className="font-mono text-sm">direction</code> (
           <code className="font-mono text-sm">up | down | neutral</code>) and{" "}
@@ -194,6 +219,7 @@ export default function StatDocsPage() {
             { q: "What does the inverted prop on StatTrend do?", a: "By default `StatTrend` colors `up` green and `down` red. For metrics where down is the good outcome, like refunds, churn, or bounce rate, set `inverted` so the color flips to match the meaning while the arrow keeps pointing the honest way." },
             { q: "How do I make a whole tile clickable?", a: "A KPI tile is data, so it is inert by default. Pass `asChild` to render it as a link (wrap an `<a>`) and `interactive` to add the pointer, hover lift, and focus ring; for a per-tile menu instead, drop a `Button` into the `StatHeader`." },
             { q: "How do I color the StatSparkline and theme it?", a: "`StatSparkline` paints in `currentColor`, so set the hue with a text utility like `text-success` or `text-destructive` and it themes across all four palettes for free. Pass `tooltip` to light up each point on hover." },
+            { q: "How do I animate the figures counting up?", a: "Pass `countUp` to `StatValue`. It counts the figure up from zero to its value the first time it scrolls into view (an IntersectionObserver, same trigger as the marketing sections) and re-counts on every re-entry, climbing fast then decelerating onto the final figure. It parses the string children to keep the prefix, suffix, and comma/decimal format: `$4.2M` lands on $4.2M, `4.6×` on 4.6×, `74%` on 74%. It relies on the value's built-in `tabular-nums` so the row never jitters as the count climbs, no-ops for number-less content, and honors `prefers-reduced-motion` by showing the final figure immediately." },
             { q: "Which density should I use for a dashboard?", a: "`compact` is the dashboard default and tunes padding, gap, the icon tile, and the value size down; `comfortable` is roomier. Set it per-tile via the `density` prop or for a whole grid with `DensityProvider`." },
           ]}
         />
@@ -291,6 +317,25 @@ const SPARKLINE_CODE = `// Built on Chart: paints in currentColor, bleeds to the
   <StatValue>1,429</StatValue>
   <StatSparkline data={[18, 22, 19, 27, 24, 31, 29, 38, 42]} tooltip className="mt-3 text-success" />
 </Stat>`
+
+const COUNT_UP_CODE = `// "countUp" counts the figure up from zero to its value the first time it scrolls
+// into view, and re-counts on every re-entry. It parses the string (prefix, number,
+// suffix) and keeps the format, so "$4.2M" lands on $4.2M and "4.6×" on 4.6×.
+// Honors prefers-reduced-motion.
+<StatGroup columns={3}>
+  <Stat density="comfortable" className="items-center gap-1.5 text-center">
+    <StatValue countUp className="text-4xl">4,100+</StatValue>
+    <StatLabel>Teams building on Koala</StatLabel>
+  </Stat>
+  <Stat density="comfortable" className="items-center gap-1.5 text-center">
+    <StatValue countUp className="text-4xl">$4.2M</StatValue>
+    <StatLabel>Engineering time saved</StatLabel>
+  </Stat>
+  <Stat density="comfortable" className="items-center gap-1.5 text-center">
+    <StatValue countUp className="text-4xl">4.6×</StatValue>
+    <StatLabel>Faster to ship</StatLabel>
+  </Stat>
+</StatGroup>`
 
 const VARIANTS_CODE = `<Stat variant="default">…</Stat>
 <Stat variant="outline">…</Stat>

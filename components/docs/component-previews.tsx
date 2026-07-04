@@ -22,10 +22,12 @@ import {
   TextAlignLeft,
   TextAlignCenter,
   TextAlignRight,
+  TextB,
+  TextItalic,
+  TextUnderline,
   Sparkle,
   Storefront,
   Palette,
-  PawPrint,
   ChatCircle,
   CheckCircle,
   UploadSimple,
@@ -48,6 +50,7 @@ import {
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { BrandMark } from "@/components/landing/brand-mark"
 import {
   Card,
   CardHeader,
@@ -120,6 +123,11 @@ import { OTPInput } from "@/components/ui/otp-input"
 import { Pagination } from "@/components/ui/pagination"
 import { Rating } from "@/components/ui/rating"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import {
+  Toolbar,
+  ToolbarButton,
+  ToolbarSeparator,
+} from "@/components/ui/toolbar"
 import { QRCode } from "@/components/ui/qr-code"
 import { BadgeGroup } from "@/components/ui/badge-group"
 import { AvatarGroup } from "@/components/ui/avatar-group"
@@ -138,6 +146,19 @@ import {
   DescriptionTerm,
   DescriptionDetails,
 } from "@/components/ui/description-list"
+import {
+  OrderSummary,
+  OrderSummaryItems,
+  OrderSummaryItem,
+  OrderSummaryItemThumbnail,
+  OrderSummaryItemContent,
+  OrderSummaryItemName,
+  OrderSummaryItemOptions,
+  OrderSummaryItemPrice,
+  OrderSummaryTotals,
+  OrderSummaryRow,
+  OrderSummaryTotal,
+} from "@/components/ui/order-summary"
 import {
   FileCard,
   FileCardIcon,
@@ -458,13 +479,13 @@ export const componentPreviews: Record<string, React.ReactNode> = {
         Online
       </Badge>
       <Badge variant="purple" pill>
-        <Lightning /> Beta
+        <Lightning weight="bold" /> Beta
       </Badge>
       <Badge variant="info" pill>
         v2.4.0
       </Badge>
       <Badge variant="outline">
-        <GitBranch /> main
+        <GitBranch weight="bold" /> main
       </Badge>
     </div>
   ),
@@ -537,7 +558,7 @@ export const componentPreviews: Record<string, React.ReactNode> = {
   kbd: (
     <div className="flex items-center gap-1.5">
       <Kbd>
-        <Command />
+        <Command weight="bold" />
       </Kbd>
       <Kbd>K</Kbd>
       <Kbd variant="outline">Esc</Kbd>
@@ -549,7 +570,7 @@ export const componentPreviews: Record<string, React.ReactNode> = {
     <div className="w-64">
       <InputRoot>
         <InputPrefix>
-          <MagnifyingGlass />
+          <MagnifyingGlass weight="bold" />
         </InputPrefix>
         <InputField placeholder="Search components…" readOnly />
       </InputRoot>
@@ -628,17 +649,17 @@ export const componentPreviews: Record<string, React.ReactNode> = {
     <div className="flex items-center gap-1">
       <Tooltip content="Save changes">
         <Button iconOnly aria-label="Save changes" variant="ghost" size="sm">
-          <FloppyDisk />
+          <FloppyDisk weight="bold" />
         </Button>
       </Tooltip>
       <Tooltip content="New branch">
         <Button iconOnly aria-label="New branch" variant="ghost" size="sm">
-          <GitBranch />
+          <GitBranch weight="bold" />
         </Button>
       </Tooltip>
       <Tooltip content="Command menu">
         <Button iconOnly aria-label="Command menu" variant="ghost" size="sm">
-          <Command />
+          <Command weight="bold" />
         </Button>
       </Tooltip>
     </div>
@@ -649,7 +670,7 @@ export const componentPreviews: Record<string, React.ReactNode> = {
       <StatHeader>
         <StatLabel>Total orders</StatLabel>
         <StatIcon className="bg-primary/10 text-primary">
-          <ShoppingBag />
+          <ShoppingBag weight="bold" />
         </StatIcon>
       </StatHeader>
       <StatValue>1,429</StatValue>
@@ -667,7 +688,7 @@ export const componentPreviews: Record<string, React.ReactNode> = {
       </label>
       <InputRoot>
         <InputPrefix>
-          <EnvelopeSimple />
+          <EnvelopeSimple weight="bold" />
         </InputPrefix>
         <InputField id="p-lbl" placeholder="you@example.com" readOnly />
       </InputRoot>
@@ -701,27 +722,48 @@ export const componentPreviews: Record<string, React.ReactNode> = {
       </ButtonGroup>
       <ButtonGroup size="sm">
         <ButtonGroupItem iconOnly aria-label="Align left">
-          <TextAlignLeft />
+          <TextAlignLeft weight="bold" />
         </ButtonGroupItem>
         <ButtonGroupItem iconOnly aria-label="Align center">
-          <TextAlignCenter />
+          <TextAlignCenter weight="bold" />
         </ButtonGroupItem>
         <ButtonGroupItem iconOnly aria-label="Align right">
-          <TextAlignRight />
+          <TextAlignRight weight="bold" />
         </ButtonGroupItem>
       </ButtonGroup>
     </div>
   ),
 
+  toolbar: (
+    <Toolbar aria-label="Formatting">
+      <ToolbarButton pressed aria-label="Bold">
+        <TextB weight="bold" />
+      </ToolbarButton>
+      <ToolbarButton aria-label="Italic">
+        <TextItalic weight="bold" />
+      </ToolbarButton>
+      <ToolbarButton aria-label="Underline">
+        <TextUnderline weight="bold" />
+      </ToolbarButton>
+      <ToolbarSeparator />
+      <ToolbarButton aria-label="Bullet list">
+        <ListBullets weight="bold" />
+      </ToolbarButton>
+      <ToolbarButton aria-label="Code block">
+        <Code weight="bold" />
+      </ToolbarButton>
+    </Toolbar>
+  ),
+
   "empty-state": (
     <EmptyState className="w-64">
       <EmptyStateMedia>
-        <FolderOpen />
+        <FolderOpen weight="bold" />
       </EmptyStateMedia>
       <EmptyStateTitle>No projects yet</EmptyStateTitle>
       <EmptyStateActions>
         <Button size="sm">
-          <Plus /> New project
+          <Plus weight="bold" /> New project
         </Button>
       </EmptyStateActions>
     </EmptyState>
@@ -786,26 +828,26 @@ export const componentPreviews: Record<string, React.ReactNode> = {
     <List variant="plain" className="w-64">
       <ListItem>
         <ListItemMedia>
-          <User />
+          <User weight="bold" />
         </ListItemMedia>
         <ListItemContent>
           <ListItemTitle>Account</ListItemTitle>
           <ListItemDescription>Profile, email, password</ListItemDescription>
         </ListItemContent>
         <ListItemMeta>
-          <CaretRight />
+          <CaretRight weight="bold" />
         </ListItemMeta>
       </ListItem>
       <ListItem>
         <ListItemMedia>
-          <CreditCard />
+          <CreditCard weight="bold" />
         </ListItemMedia>
         <ListItemContent>
           <ListItemTitle>Billing</ListItemTitle>
           <ListItemDescription>Plan, invoices, payment</ListItemDescription>
         </ListItemContent>
         <ListItemMeta>
-          <CaretRight />
+          <CaretRight weight="bold" />
         </ListItemMeta>
       </ListItem>
     </List>
@@ -815,7 +857,7 @@ export const componentPreviews: Record<string, React.ReactNode> = {
     <DescriptionList divided className="w-64">
       <DescriptionListItem>
         <DescriptionTerm>
-          <CreditCard /> Plan
+          <CreditCard weight="bold" /> Plan
         </DescriptionTerm>
         <DescriptionDetails>
           Pro{" "}
@@ -826,17 +868,61 @@ export const componentPreviews: Record<string, React.ReactNode> = {
       </DescriptionListItem>
       <DescriptionListItem>
         <DescriptionTerm>
-          <UsersThree /> Seats
+          <UsersThree weight="bold" /> Seats
         </DescriptionTerm>
         <DescriptionDetails>12 of 20</DescriptionDetails>
       </DescriptionListItem>
       <DescriptionListItem>
         <DescriptionTerm>
-          <CalendarDots /> Renews
+          <CalendarDots weight="bold" /> Renews
         </DescriptionTerm>
         <DescriptionDetails>Mar 1, 2026</DescriptionDetails>
       </DescriptionListItem>
     </DescriptionList>
+  ),
+
+  "order-summary": (
+    <TallPreview className="w-64">
+      <OrderSummary>
+        <OrderSummaryItems>
+          <OrderSummaryItem>
+            <OrderSummaryItemThumbnail count={2}>
+              {/* eslint-disable-next-line @next/next/no-img-element -- demo imagery */}
+              <img
+                src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=160&h=160&q=80"
+                alt="Retro Sneakers"
+              />
+            </OrderSummaryItemThumbnail>
+            <OrderSummaryItemContent>
+              <OrderSummaryItemName>Retro Sneakers</OrderSummaryItemName>
+              <OrderSummaryItemOptions>Size 10 · Red</OrderSummaryItemOptions>
+            </OrderSummaryItemContent>
+            <OrderSummaryItemPrice>$64.00</OrderSummaryItemPrice>
+          </OrderSummaryItem>
+          <OrderSummaryItem>
+            <OrderSummaryItemThumbnail>
+              {/* eslint-disable-next-line @next/next/no-img-element -- demo imagery */}
+              <img
+                src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=160&h=160&q=80"
+                alt="Chrono Watch"
+              />
+            </OrderSummaryItemThumbnail>
+            <OrderSummaryItemContent>
+              <OrderSummaryItemName>Chrono Watch</OrderSummaryItemName>
+              <OrderSummaryItemOptions>40mm · Leather</OrderSummaryItemOptions>
+            </OrderSummaryItemContent>
+            <OrderSummaryItemPrice>$78.00</OrderSummaryItemPrice>
+          </OrderSummaryItem>
+        </OrderSummaryItems>
+        <OrderSummaryTotals>
+          <OrderSummaryRow label="Subtotal">$142.00</OrderSummaryRow>
+          <OrderSummaryRow label="Shipping" tone="muted">
+            Free
+          </OrderSummaryRow>
+          <OrderSummaryTotal label="Total">$142.00</OrderSummaryTotal>
+        </OrderSummaryTotals>
+      </OrderSummary>
+    </TallPreview>
   ),
 
   "file-card": (
@@ -877,11 +963,11 @@ export const componentPreviews: Record<string, React.ReactNode> = {
   banner: (
     <Banner variant="purple" className="w-72 rounded-lg">
       <BannerIcon>
-        <Megaphone />
+        <Megaphone weight="bold" />
       </BannerIcon>
       <BannerContent>Koala UI now available for Mobile!</BannerContent>
       <BannerAction href="#">
-        <ArrowRight />
+        <ArrowRight weight="bold" />
       </BannerAction>
     </Banner>
   ),
@@ -1024,7 +1110,7 @@ export const componentPreviews: Record<string, React.ReactNode> = {
         <AIPanelHeader>
           <Avatar size="sm">
             <AvatarFallback>
-              <Sparkle />
+              <Sparkle weight="bold" />
             </AvatarFallback>
           </Avatar>
           <AIPanelHeading>
@@ -1055,20 +1141,23 @@ export const componentPreviews: Record<string, React.ReactNode> = {
 
   chat: (
     <div className="w-64">
-      <Conversation>
+      {/* `bubble` variant: every turn is a chat bubble paired with the Koala avatar. The `plain`
+          default drops the bubble + avatar (Notion/ChatGPT document style) and would leave the
+          assistant turn as bare text beside a stray avatar. */}
+      <Conversation variant="bubble">
         <Message role="user">
           <MessageBody>
             <MessageContent>What changed this release?</MessageContent>
           </MessageBody>
         </Message>
         <Message role="assistant">
-          <MessageAvatar name="Koala" />
+          <MessageAvatar name="Koala" src="/koala-logo.webp" />
           <MessageBody>
             <MessageContent>Three key updates landed.</MessageContent>
           </MessageBody>
         </Message>
         <Message role="assistant">
-          <MessageAvatar name="Koala" />
+          <MessageAvatar name="Koala" src="/koala-logo.webp" />
           <MessageBody>
             <MessageContent>
               <MessageTyping />
@@ -1085,7 +1174,7 @@ export const componentPreviews: Record<string, React.ReactNode> = {
         <PromptInputTextarea placeholder="Ask anything…" />
         <PromptInputToolbar>
           <Button iconOnly variant="ghost" size="sm" aria-label="Attach">
-            <Plus />
+            <Plus weight="bold" />
           </Button>
           <PromptInputSubmit />
         </PromptInputToolbar>
@@ -1161,14 +1250,14 @@ export const componentPreviews: Record<string, React.ReactNode> = {
     <Bento className="w-72">
       <BentoItem size="sm" tone="brand">
         <BentoItemIcon>
-          <Storefront />
+          <Storefront weight="bold" />
         </BentoItemIcon>
         <BentoItemTitle>Storefront</BentoItemTitle>
         <BentoItemDescription>Sell anywhere.</BentoItemDescription>
       </BentoItem>
       <BentoItem size="sm" tone="purple">
         <BentoItemIcon>
-          <Palette />
+          <Palette weight="bold" />
         </BentoItemIcon>
         <BentoItemTitle>Themes</BentoItemTitle>
         <BentoItemDescription>Four built in.</BentoItemDescription>
@@ -1237,9 +1326,7 @@ export const componentPreviews: Record<string, React.ReactNode> = {
     <Footer className="w-72 text-xs">
       <FooterTop>
         <FooterBrand>
-          <span className="inline-flex items-center gap-1.5 text-sm font-semibold">
-            <PawPrint /> Koala
-          </span>
+          <BrandMark />
           <FooterTagline>Production-ready UI.</FooterTagline>
         </FooterBrand>
         <FooterColumns>
@@ -1289,8 +1376,8 @@ export const componentPreviews: Record<string, React.ReactNode> = {
   navbar: (
     <Navbar className="w-72">
       <NavbarInner>
-        <NavbarBrand href="#" className="text-sm">
-          <PawPrint /> Koala
+        <NavbarBrand href="#">
+          <BrandMark />
         </NavbarBrand>
         <NavbarNav>
           <NavbarLink href="#">Docs</NavbarLink>
@@ -1311,7 +1398,7 @@ export const componentPreviews: Record<string, React.ReactNode> = {
         <ActivityItem>
           <ActivityMarker>
             <ActivityIcon tone="info">
-              <ChatCircle />
+              <ChatCircle weight="bold" />
             </ActivityIcon>
           </ActivityMarker>
           <ActivityContent>
@@ -1324,7 +1411,7 @@ export const componentPreviews: Record<string, React.ReactNode> = {
         <ActivityItem>
           <ActivityMarker>
             <ActivityIcon tone="success">
-              <CheckCircle />
+              <CheckCircle weight="bold" />
             </ActivityIcon>
           </ActivityMarker>
           <ActivityContent>
@@ -1337,7 +1424,7 @@ export const componentPreviews: Record<string, React.ReactNode> = {
         <ActivityItem>
           <ActivityMarker>
             <ActivityIcon tone="teal">
-              <UploadSimple />
+              <UploadSimple weight="bold" />
             </ActivityIcon>
           </ActivityMarker>
           <ActivityContent>
@@ -1366,11 +1453,11 @@ export const componentPreviews: Record<string, React.ReactNode> = {
   tree: (
     <div className="w-64">
       <Tree defaultValue="button.tsx" defaultExpandedValues={["src"]}>
-        <TreeItem value="src" label="src" icon={<Folder />} expandedIcon={<FolderOpen />}>
-          <TreeItem value="button.tsx" label="button.tsx" icon={<FileCode />} />
-          <TreeItem value="card.tsx" label="card.tsx" icon={<FileCode />} />
+        <TreeItem value="src" label="src" icon={<Folder weight="bold" />} expandedIcon={<FolderOpen weight="bold" />}>
+          <TreeItem value="button.tsx" label="button.tsx" icon={<FileCode weight="bold" />} />
+          <TreeItem value="card.tsx" label="card.tsx" icon={<FileCode weight="bold" />} />
         </TreeItem>
-        <TreeItem value="globals.css" label="globals.css" icon={<FileText />} />
+        <TreeItem value="globals.css" label="globals.css" icon={<FileText weight="bold" />} />
       </Tree>
     </div>
   ),
@@ -1381,16 +1468,16 @@ export const componentPreviews: Record<string, React.ReactNode> = {
         <SidebarContent>
           <SidebarGroup>
             <SidebarItem active>
-              <SquaresFour /> Dashboard
+              <SquaresFour weight="bold" /> Dashboard
             </SidebarItem>
             <SidebarItem>
-              <Tray /> Inbox
+              <Tray weight="bold" /> Inbox
             </SidebarItem>
             <SidebarItem>
-              <Stack /> Projects
+              <Stack weight="bold" /> Projects
             </SidebarItem>
             <SidebarItem>
-              <GearSix /> Settings
+              <GearSix weight="bold" /> Settings
             </SidebarItem>
           </SidebarGroup>
         </SidebarContent>
@@ -1406,13 +1493,13 @@ export const componentPreviews: Record<string, React.ReactNode> = {
         </MultiSelectTrigger>
         <MultiSelectContent>
           <MultiSelectItem value="eng">
-            <Code /> Engineering
+            <Code weight="bold" /> Engineering
           </MultiSelectItem>
           <MultiSelectItem value="design">
-            <PenNib /> Design
+            <PenNib weight="bold" /> Design
           </MultiSelectItem>
           <MultiSelectItem value="marketing">
-            <Megaphone /> Marketing
+            <Megaphone weight="bold" /> Marketing
           </MultiSelectItem>
         </MultiSelectContent>
       </MultiSelect>
@@ -1478,7 +1565,7 @@ export const componentPreviews: Record<string, React.ReactNode> = {
       <FileUpload>
         <FileUploadDropzone>
           <FileUploadIcon>
-            <UploadSimple />
+            <UploadSimple weight="bold" />
           </FileUploadIcon>
           <FileUploadTitle>Drop files or browse</FileUploadTitle>
           <FileUploadDescription>PNG, JPG up to 2 MB</FileUploadDescription>
@@ -1518,10 +1605,10 @@ export const componentPreviews: Record<string, React.ReactNode> = {
         <span className="grid size-7 place-items-center rounded-md text-sm italic">I</span>
         <span className="grid size-7 place-items-center rounded-md text-sm underline">U</span>
         <span className="grid size-7 place-items-center rounded-md">
-          <ListBullets />
+          <ListBullets weight="bold" />
         </span>
         <span className="grid size-7 place-items-center rounded-md">
-          <Code />
+          <Code weight="bold" />
         </span>
       </div>
       <div className="space-y-1.5 pt-3 text-sm">
@@ -1580,14 +1667,14 @@ export const componentPreviews: Record<string, React.ReactNode> = {
     <div className="mx-auto w-52" aria-hidden>
       <div className={dropdownSlots.content()}>
         <div className={dropdownSlots.item()}>
-          <User /> Profile
+          <User weight="bold" /> Profile
         </div>
         <div className={dropdownSlots.item()}>
-          <Gear /> Settings
+          <Gear weight="bold" /> Settings
         </div>
         <div className={dropdownSlots.separator()} />
         <div className={dropdownSlots.item()}>
-          <Copy /> Copy link
+          <Copy weight="bold" /> Copy link
         </div>
       </div>
     </div>
@@ -1597,14 +1684,14 @@ export const componentPreviews: Record<string, React.ReactNode> = {
     <div className="mx-auto w-52" aria-hidden>
       <div className={contextMenuSlots.content()}>
         <div className={contextMenuSlots.item()}>
-          <FolderOpen /> Open
+          <FolderOpen weight="bold" /> Open
         </div>
         <div className={contextMenuSlots.item()}>
-          <Copy /> Duplicate
+          <Copy weight="bold" /> Duplicate
         </div>
         <div className={contextMenuSlots.separator()} />
         <div className={contextMenuSlots.item({ className: "text-destructive" })}>
-          <Trash /> Delete
+          <Trash weight="bold" /> Delete
         </div>
       </div>
     </div>
@@ -1625,7 +1712,7 @@ export const componentPreviews: Record<string, React.ReactNode> = {
     <div className="mx-auto w-64" aria-hidden>
       <div className={commandSlots.root()}>
         <div className={commandSlots.inputWrapper()}>
-          <MagnifyingGlass className={commandSlots.inputIcon()} />
+          <MagnifyingGlass weight="bold" className={commandSlots.inputIcon()} />
           <input
             className={commandSlots.input()}
             placeholder="Type a command…"
@@ -1635,10 +1722,10 @@ export const componentPreviews: Record<string, React.ReactNode> = {
         <div className={commandSlots.list()}>
           <div className={commandSlots.groupHeading()}>Suggestions</div>
           <div className={commandSlots.item()}>
-            <FileText /> New file
+            <FileText weight="bold" /> New file
           </div>
           <div className={commandSlots.item()}>
-            <Gear /> Settings
+            <Gear weight="bold" /> Settings
           </div>
         </div>
       </div>
@@ -1682,7 +1769,7 @@ export const componentPreviews: Record<string, React.ReactNode> = {
       >
         <CookieBanner className="!static !inset-auto !m-0 w-full !max-w-none rounded-xl">
           <CookieBannerIcon>
-            <Cookie />
+            <Cookie weight="bold" />
           </CookieBannerIcon>
           <CookieBannerContent>
             <CookieBannerTitle>We use cookies</CookieBannerTitle>
@@ -1702,11 +1789,11 @@ export const componentPreviews: Record<string, React.ReactNode> = {
   lightbox: (
     <div className="mx-auto flex h-36 w-64 flex-col gap-2" aria-hidden>
       <div className="flex flex-1 items-center justify-center rounded-xl bg-muted">
-        <ImageIcon className="size-10 text-muted-foreground" />
+        <ImageIcon weight="bold" className="size-10 text-muted-foreground" />
       </div>
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>Mountain sunrise · 1 / 8</span>
-        <ImageIcon className="size-4" />
+        <ImageIcon weight="bold" className="size-4" />
       </div>
     </div>
   ),
@@ -1715,7 +1802,7 @@ export const componentPreviews: Record<string, React.ReactNode> = {
     <div className="mx-auto w-72" aria-hidden>
       <div className={toastSlots.surface()}>
         <span className={toastSlots.iconWrap()}>
-          <CheckCircle />
+          <CheckCircle weight="bold" />
         </span>
         <div className={toastSlots.content()}>
           <div className={toastSlots.title()}>Changes saved</div>

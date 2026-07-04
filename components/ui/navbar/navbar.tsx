@@ -33,9 +33,11 @@ export const navbarVariants = tv({
     // transparent and moves the chrome onto the inner card. `group/navbar` lets the inner
     // card react to the root's `data-scrolled` (see the elevateOnScroll variant).
     root: "group/navbar w-full bg-background text-foreground",
-    // The max-width content row. justify is left to NavbarSpacer, so groups sit where the
-    // consumer places them.
-    inner: "mx-auto flex w-full max-w-7xl items-center gap-2",
+    // The max-width content row. Caps at `max-w-8xl` (1440px), the SAME marketing default as
+    // SectionContainer (width="xlarge"), so a bar above a section lands its content on the
+    // section's content edges instead of a narrower 7xl column. justify is left to
+    // NavbarSpacer, so groups sit where the consumer places them.
+    inner: "mx-auto flex w-full max-w-8xl items-center gap-2",
     // Brand / logo lockup. `asChild` lets it become a link without a wrapper element.
     brand:
       "mr-2 inline-flex shrink-0 cursor-pointer items-center gap-2 rounded-md text-base font-semibold tracking-tight text-foreground outline-none transition-opacity duration-fast ease-out hover:opacity-80 focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background [&_svg]:size-6 [&_svg]:shrink-0",
@@ -45,7 +47,7 @@ export const navbarVariants = tv({
     // visual; `after` is the active underline; the caret (if any) flips when its menu opens.
     link: [
       "group relative inline-flex h-9 cursor-pointer items-center gap-1 rounded-md px-3 text-sm font-medium",
-      "text-foreground/70 transition duration-fast ease-out",
+      "text-foreground transition duration-fast ease-out",
       "hover:bg-accent hover:text-foreground",
       "active:scale-[0.96]",
       "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
@@ -75,7 +77,7 @@ export const navbarVariants = tv({
     mobileMenu:
       "flex flex-col gap-0.5 border-t border-border px-4 pb-4 pt-2 md:hidden animate-in fade-in-0 slide-in-from-top-2 duration-base ease-out",
     mobileLink: [
-      "flex h-10 items-center gap-2 rounded-md px-3 text-sm font-medium text-foreground/80",
+      "flex h-10 items-center gap-2 rounded-md px-3 text-sm font-medium text-foreground",
       "transition duration-fast ease-out hover:bg-accent hover:text-foreground active:scale-[0.98]",
       "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-inset",
       "data-[active=true]:text-foreground [&_svg]:size-4 [&_svg]:shrink-0",
@@ -130,15 +132,16 @@ export const navbarVariants = tv({
         ],
       },
     },
-    // Full: the edge bar rests as bare background and grows its bottom rule plus a soft
-    // shadow on scroll, so the header detaches from the content sliding beneath it.
+    // Full: the edge bar rests as bare background (bottom rule hidden) and brings ONLY its
+    // bottom stroke in on scroll: no shadow, just a hairline rule that separates the header
+    // from the content sliding beneath it. (The floating card, by contrast, lifts with a shadow.)
     {
       variant: "full",
       elevateOnScroll: true,
       className: {
         root: [
-          "border-transparent shadow-none transition-[box-shadow,border-color] duration-base ease-out",
-          "data-[scrolled]:border-border data-[scrolled]:shadow-md",
+          "border-transparent transition-[border-color] duration-base ease-out",
+          "data-[scrolled]:border-border",
         ],
       },
     },
@@ -339,7 +342,7 @@ export function NavbarSearch({
       {...props}
     >
       <InputPrefix>
-        <MagnifyingGlass />
+        <MagnifyingGlass weight="bold" />
       </InputPrefix>
       <InputField type="search" placeholder={placeholder} aria-label={placeholder} {...inputProps} />
       {children}

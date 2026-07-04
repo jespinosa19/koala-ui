@@ -66,7 +66,9 @@ export const commandVariants = tv({
       // Highlight is a DOM attribute (data-active), toggled by the roving keyboard/hover.
       "data-[active=true]:bg-accent data-[active=true]:text-accent-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-      "[&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-muted-foreground",
+      // Leading icon reads at 20px (the text-label-row standard); explicitly-sized svgs
+      // (e.g. a trailing <Kbd> glyph) keep their own size via the `:not([class*='size-'])` guard.
+      "[&_svg]:shrink-0 [&_svg]:text-muted-foreground [&_svg:not([class*='size-'])]:size-5",
       "data-[active=true]:[&_svg]:text-accent-foreground",
     ],
     separator: "-mx-1 my-1 h-px bg-border",
@@ -290,7 +292,7 @@ export function CommandInput({ className, placeholder = "Type a command or searc
   const { search, setSearch, slots, inputId, listId, label } = useCommandContext("CommandInput")
   return (
     <div data-slot="command-input-wrapper" className={slots.inputWrapper()}>
-      {!hideIcon && <MagnifyingGlass aria-hidden className={slots.inputIcon()} />}
+      {!hideIcon && <MagnifyingGlass weight="bold" aria-hidden className={slots.inputIcon()} />}
       <input
         data-slot="command-input"
         id={inputId}

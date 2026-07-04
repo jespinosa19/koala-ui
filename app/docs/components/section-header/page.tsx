@@ -1,15 +1,20 @@
+import Image from "next/image"
+import { Lightning } from "@phosphor-icons/react/dist/ssr"
+
 import {
   SectionHeader,
   SectionHeaderText,
   SectionHeaderHeading,
   SectionHeaderDescription,
   SectionHeaderActions,
+  SectionHeaderChip,
 } from "@/components/ui/section-header"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { InputRoot, InputField } from "@/components/ui/input"
 import { Divider } from "@/components/ui/divider"
 import { ComponentPreview } from "@/components/docs/component-preview"
+import { PreviewFrame } from "@/components/docs/preview-frame"
 import { CodeSnippet } from "@/components/docs/code-snippet"
 import { Installation } from "@/components/docs/installation"
 import { DocHeader, DocSection } from "@/components/docs/doc-page"
@@ -295,6 +300,53 @@ export function Example() {
         </ComponentPreview>
       </DocSection>
 
+      <DocSection title="Responsive">
+        <p className="mt-4 text-pretty text-muted-foreground">
+          The header is responsive on every axis at once.{" "}
+          <code className="font-mono text-sm">size</code> steps the heading and description up at{" "}
+          <code className="font-mono text-sm">sm</code> and{" "}
+          <code className="font-mono text-sm">lg</code>; the actions row stacks full-width on a phone
+          (<code className="font-mono text-sm">items-stretch</code>) and returns to a wrapping row from{" "}
+          <code className="font-mono text-sm">sm</code>; a{" "}
+          <code className="font-mono text-sm">split</code> header lays the lede and actions side by
+          side from <code className="font-mono text-sm">lg</code> and falls back to the stacked column
+          below it; a centered block shrinks to the viewport instead of overflowing; and any inline{" "}
+          <code className="font-mono text-sm">SectionHeaderChip</code> rides the heading (it is sized
+          in <code className="font-mono text-sm">em</code>). Drag the frame, or use the mobile /
+          tablet / desktop presets, to watch it recompose.
+        </p>
+        <PreviewFrame
+          src="/preview/section-header"
+          minHeight="32rem"
+          code={`{/* Recomposes across breakpoints: the size scale, the actions row, and the split layout. */}
+<SectionHeader align="left" orientation="split">
+  <SectionHeaderText>
+    <Badge variant="success" dot pill>Best value</Badge>
+    <SectionHeaderHeading>Discover our key features</SectionHeaderHeading>
+    <SectionHeaderDescription>
+      At Koala Studio, we take pride in providing a unique set of essential features
+      that truly distinguish us from the competition.
+    </SectionHeaderDescription>
+  </SectionHeaderText>
+  <SectionHeaderActions>
+    <Button>Get started</Button>
+    <Button variant="outline">Explore features</Button>
+  </SectionHeaderActions>
+</SectionHeader>
+
+{/* Centered headers with em-sized chips ride the heading at each breakpoint. */}
+<SectionHeader align="center" size="lg">
+  <SectionHeaderText>
+    <SectionHeaderHeading level={1}>
+      The daily <SectionHeaderChip variant="bare">📅</SectionHeaderChip> planner to keep{" "}
+      <SectionHeaderChip variant="bare">⚡</SectionHeaderChip> distracted{" "}
+      <SectionHeaderChip variant="bare">🧠</SectionHeaderChip> minds on track
+    </SectionHeaderHeading>
+  </SectionHeaderText>
+</SectionHeader>`}
+        />
+      </DocSection>
+
       <DocSection title="With an email capture">
         <p className="mt-4 text-pretty text-muted-foreground">
           The actions row composes any control, not just buttons: drop an{" "}
@@ -330,6 +382,126 @@ export function Example() {
               <Button>Subscribe</Button>
             </SectionHeaderActions>
           </SectionHeader>
+        </ComponentPreview>
+      </DocSection>
+
+      <DocSection title="Inline media">
+        <p className="mt-4 text-pretty text-muted-foreground">
+          Drop a <code className="font-mono text-sm">SectionHeaderChip</code> between the words of the
+          heading to flow a mark or emoji inline with the copy. A{" "}
+          <code className="font-mono text-sm">framed</code> chip (default) is a rounded tile that holds
+          a logo, icon, or image, the app-icon look set right into the headline; a{" "}
+          <code className="font-mono text-sm">bare</code> chip drops the box for a naked glyph or
+          emoji interleaved with the text. It is sized entirely in{" "}
+          <code className="font-mono text-sm">em</code>, so the tile, its radius, and the glyph inside
+          all scale with the heading at every <code className="font-mono text-sm">size</code> and
+          breakpoint. Chips are decorative by default (
+          <code className="font-mono text-sm">aria-hidden</code>); pass an{" "}
+          <code className="font-mono text-sm">aria-label</code> when one stands in for a word.
+        </p>
+
+        <ComponentPreview
+          previewClassName="block p-6 sm:p-10"
+          code={`<SectionHeader align="center" size="lg">
+  <SectionHeaderText>
+    <SectionHeaderHeading level={1}>
+      Be yourself until you can be a{" "}
+      <SectionHeaderChip aria-label="Koala">
+        <Image src="/koala-logo.webp" alt="" width={80} height={80} className="size-full" />
+      </SectionHeaderChip>
+    </SectionHeaderHeading>
+  </SectionHeaderText>
+</SectionHeader>
+
+{/* A framed chip frames an icon just as well as an image. */}
+<SectionHeader align="center" size="lg">
+  <SectionHeaderText>
+    <SectionHeaderHeading level={1}>
+      Built for <SectionHeaderChip><Lightning weight="bold" /></SectionHeaderChip> fast teams
+    </SectionHeaderHeading>
+  </SectionHeaderText>
+</SectionHeader>`}
+        >
+          <div className="flex w-full flex-col gap-10">
+            <SectionHeader align="center" size="lg">
+              <SectionHeaderText>
+                <SectionHeaderHeading level={1}>
+                  Be yourself until you can be a{" "}
+                  <SectionHeaderChip aria-label="Koala">
+                    <Image src="/koala-logo.webp" alt="" width={80} height={80} className="size-full" />
+                  </SectionHeaderChip>
+                </SectionHeaderHeading>
+              </SectionHeaderText>
+            </SectionHeader>
+
+            <Divider />
+
+            <SectionHeader align="center" size="lg">
+              <SectionHeaderText>
+                <SectionHeaderHeading level={1}>
+                  Built for{" "}
+                  <SectionHeaderChip>
+                    <Lightning weight="bold" />
+                  </SectionHeaderChip>{" "}
+                  fast teams
+                </SectionHeaderHeading>
+              </SectionHeaderText>
+            </SectionHeader>
+          </div>
+        </ComponentPreview>
+
+        <p className="mt-8 text-pretty text-muted-foreground">
+          Drop the frame with <code className="font-mono text-sm">variant=&quot;bare&quot;</code> and
+          the chip is just a glyph or emoji sized to the cap height, so icons and emoji sit inline
+          between the words without a container.
+        </p>
+
+        <ComponentPreview
+          previewClassName="block p-6 sm:p-10"
+          code={`<SectionHeader align="center" size="lg">
+  <SectionHeaderText>
+    <SectionHeaderHeading level={1}>
+      The daily <SectionHeaderChip variant="bare">📅</SectionHeaderChip> planner to keep{" "}
+      <SectionHeaderChip variant="bare">⚡</SectionHeaderChip> distracted{" "}
+      <SectionHeaderChip variant="bare">🧠</SectionHeaderChip> minds on track
+    </SectionHeaderHeading>
+  </SectionHeaderText>
+</SectionHeader>
+
+{/* Mix in any emoji you like: a bare chip keeps them sized and aligned with the copy. */}
+<SectionHeader align="center" size="lg">
+  <SectionHeaderText>
+    <SectionHeaderHeading level={1}>
+      Ship faster <SectionHeaderChip variant="bare">🚀</SectionHeaderChip> sleep better{" "}
+      <SectionHeaderChip variant="bare">😴</SectionHeaderChip>
+    </SectionHeaderHeading>
+  </SectionHeaderText>
+</SectionHeader>`}
+        >
+          <div className="flex w-full flex-col gap-10">
+            <SectionHeader align="center" size="lg">
+              <SectionHeaderText>
+                <SectionHeaderHeading level={1}>
+                  The daily{" "}
+                  <SectionHeaderChip variant="bare">📅</SectionHeaderChip> planner to keep{" "}
+                  <SectionHeaderChip variant="bare">⚡</SectionHeaderChip> distracted{" "}
+                  <SectionHeaderChip variant="bare">🧠</SectionHeaderChip> minds on track
+                </SectionHeaderHeading>
+              </SectionHeaderText>
+            </SectionHeader>
+
+            <Divider />
+
+            <SectionHeader align="center" size="lg">
+              <SectionHeaderText>
+                <SectionHeaderHeading level={1}>
+                  Ship faster{" "}
+                  <SectionHeaderChip variant="bare">🚀</SectionHeaderChip> sleep better{" "}
+                  <SectionHeaderChip variant="bare">😴</SectionHeaderChip>
+                </SectionHeaderHeading>
+              </SectionHeaderText>
+            </SectionHeader>
+          </div>
         </ComponentPreview>
       </DocSection>
 
@@ -463,6 +635,21 @@ export function Example() {
               and aligns with the block.
             </p>
           </div>
+          <div>
+            <h3 className="font-mono font-semibold">SectionHeaderChip</h3>
+            <p className="mt-1 text-pretty text-muted-foreground">
+              An inline media chip for the heading: drop it between the words to flow a logo, icon, or
+              emoji inline with the copy. <code className="font-mono text-sm">variant</code> is{" "}
+              <code className="font-mono text-sm">&quot;framed&quot;</code> (default, a rounded tile
+              that holds the mark) or <code className="font-mono text-sm">&quot;bare&quot;</code> (no
+              box, a naked glyph or emoji). Sized in <code className="font-mono text-sm">em</code> so
+              it scales with the heading. Decorative by default (
+              <code className="font-mono text-sm">aria-hidden</code>); pass an{" "}
+              <code className="font-mono text-sm">aria-label</code> and it is exposed as an image with
+              that name. Forwards native <code className="font-mono text-sm">&lt;span&gt;</code> props
+              and <code className="font-mono text-sm">className</code>.
+            </p>
+          </div>
         </div>
       </DocSection>
 
@@ -484,6 +671,10 @@ export function Example() {
             {
               q: "Why does split stack on mobile?",
               a: "Side-by-side text and actions only fit on wider screens, so `split` becomes a row from the `lg` breakpoint and falls back to the stacked column below it. It is a responsive layout, not a desktop-only one.",
+            },
+            {
+              q: "How do I put a logo or emoji inside the heading?",
+              a: "Drop a `SectionHeaderChip` between the words of `SectionHeaderHeading`. A `framed` chip (default) frames a logo, icon, or image in a rounded tile; `variant=\"bare\"` drops the box for a naked glyph or emoji. It's sized in `em`, so it scales with the heading automatically at every size and breakpoint. It's decorative by default (aria-hidden); pass an `aria-label` when the chip stands in for a word so screen readers still get it.",
             },
             {
               q: "When should I turn on stagger?",

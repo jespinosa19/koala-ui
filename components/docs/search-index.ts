@@ -5,6 +5,9 @@ import {
   Moon,
   CursorClick,
   Timer,
+  Article,
+  ListChecks,
+  Images,
 } from "@phosphor-icons/react/ssr"
 
 /**
@@ -97,7 +100,7 @@ export const SEARCH_ALIASES: Record<string, string[]> = {
   "/docs/components/pricing": ["plans", "tiers", "pricing table", "subscription"],
   "/docs/components/pricing-comparison": ["compare plans", "comparison table", "feature matrix", "pricing matrix", "feature comparison"],
   "/marketing/sections/banner": ["announcement bar", "promo bar", "topbar", "notice", "callout"],
-  "/marketing/sections/hero": ["hero", "header section", "above the fold", "social proof", "logo wall"],
+  "/marketing/sections/hero": ["hero", "header section", "above the fold", "spotlight", "split", "video background", "image background", "full bleed media"],
   "/marketing/sections/feature": ["features", "component showcase", "video", "bento", "feature grid", "feature cards"],
   "/marketing/sections/gallery": ["gallery", "concepts wall", "masonry", "lightbox"],
   "/marketing/sections/testimonials": ["reviews", "quotes", "social proof", "testimonials"],
@@ -108,6 +111,7 @@ export const SEARCH_ALIASES: Record<string, string[]> = {
   "/marketing/sections/cta": ["cta", "call to action", "install", "cli", "get started"],
   "/marketing/sections/footer": ["site footer", "bottom bar"],
   "/marketing/sections/navbar": ["nav", "top nav", "menu bar", "header nav"],
+  "/marketing/pages/blog-post": ["blog post", "article page", "post page", "blog article", "editorial", "long form", "table of contents"],
 }
 
 /**
@@ -148,6 +152,29 @@ export const EXAMPLE_GROUPS: SearchGroup[] = [
         href: "/marketing/sections/banner#banner-countdown",
         icon: Timer,
         keywords: ["banner", "countdown", "timer", "sale", "promo", "limited time", "deadline", "clock"],
+      },
+    ],
+  },
+  {
+    heading: "Blog post pages",
+    items: [
+      {
+        title: "Centered classic",
+        href: "/marketing/pages/blog-post#blog-post-1",
+        icon: Article,
+        keywords: ["blog post", "article page", "centered", "long form", "editorial"],
+      },
+      {
+        title: "With table of contents",
+        href: "/marketing/pages/blog-post#blog-post-2",
+        icon: ListChecks,
+        keywords: ["blog post", "article page", "table of contents", "toc", "sticky sidebar", "scroll spy"],
+      },
+      {
+        title: "Image-led hero",
+        href: "/marketing/pages/blog-post#blog-post-3",
+        icon: Images,
+        keywords: ["blog post", "article page", "hero", "cover image", "full bleed", "overlay"],
       },
     ],
   },

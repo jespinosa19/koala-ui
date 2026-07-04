@@ -67,7 +67,7 @@ export function DataTableFacetedFilter<TData>({
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline" className="gap-2 border-dashed">
-          <FunnelSimple />
+          <FunnelSimple weight="bold" />
           {title}
           {selected.size > 0 && (
             <>
@@ -119,7 +119,7 @@ export function DataTableFacetedFilter<TData>({
                   {isSelected && <Check weight="bold" className="size-3" />}
                 </span>
                 {option.icon && (
-                  <span className="flex shrink-0 items-center text-muted-foreground [&>svg]:size-4">
+                  <span className="flex shrink-0 items-center text-muted-foreground [&>svg]:size-5">
                     {option.icon}
                   </span>
                 )}
@@ -289,7 +289,7 @@ export function DataTableActiveFilters<TData>({
           }}
           className="animate-in fade-in-0 gap-1.5 text-muted-foreground duration-fast ease-out"
         >
-          <X />
+          <X weight="bold" />
           Reset
         </Button>
       )}

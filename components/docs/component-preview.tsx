@@ -56,14 +56,14 @@ export function ComponentPreview({
     <Tabs defaultValue="preview" className="my-6">
       <div className="flex items-center justify-between gap-2">
         <TabsList>
-          <TabsTrigger value="preview"><Eye />Preview</TabsTrigger>
-          <TabsTrigger value="code"><Code />Code</TabsTrigger>
+          <TabsTrigger value="preview"><Eye weight="bold" />Preview</TabsTrigger>
+          <TabsTrigger value="code"><Code weight="bold" />Code</TabsTrigger>
         </TabsList>
 
         {fullscreenHref && (
           <Button asChild variant="ghost" size="sm" className="text-muted-foreground">
             <a href={fullscreenHref} target="_blank" rel="noopener noreferrer">
-              <ArrowSquareOut />
+              <ArrowSquareOut weight="bold" />
               Full screen
             </a>
           </Button>
@@ -93,7 +93,9 @@ export function ComponentPreview({
         {locked ? (
           <PremiumCode style={previewHeight ? { minHeight: previewHeight } : undefined} />
         ) : (
-          <CodeSnippet code={code} filename={filename} />
+          // Collapse long examples behind a Show more / Show less pill. It self-gates, so short
+          // snippets render in full and only the tall ones (cookie-consent, data-table) clamp.
+          <CodeSnippet code={code} filename={filename} collapsible />
         )}
       </TabsContent>
     </Tabs>

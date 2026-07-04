@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Check, Copy } from "@phosphor-icons/react"
+import { CaretDown, Check, Copy } from "@phosphor-icons/react"
 
 import { useDensity } from "@/lib/density"
 import { tv, type VariantProps } from "@/lib/tv"
@@ -13,6 +13,11 @@ import { Button } from "@/components/ui/button"
  * and lightweight syntax highlighting driven by the `--syntax-*` theme tokens (so it
  * re-themes across every theme). The highlighter is a small, self-contained tokenizer
  * scoped to TS/TSX, shell, and CSS, with no external dependency.
+ *
+ * Long listings can be `collapsible`: the block clamps to `collapsedHeight`, the last
+ * lines dissolve into a bottom fade, and a "Show more / Show less" pill floats over that
+ * fade, expanding the whole block to full height (animated). The pill only appears once
+ * the content actually overflows the clamp, measured from the DOM, so short blocks are untouched.
  *
  * Single-element in spirit (one `code` prop drives everything), but styled the house
  * way: one `tv` recipe with `slots`, semantic tokens only, density-aware padding, and
@@ -81,6 +86,13 @@ const GRAMMARS: Record<"tsx" | "bash" | "css", [TokenType, RegExp][]> = {
   ],
 }
 
+// Below this much overflow past the clamp, don't collapse - hiding a line or two isn't worth
+// fading otherwise-visible content and floating a control over it. Roughly two lines.
+const COLLAPSE_MARGIN = 40
+// When expanded, the block grows this much past its content so the floating "Show less" pill has a
+// clear band to sit in and never covers the last line. Fits a sm pill (h-8) at its `bottom-3` offset.
+const COLLAPSE_RESERVE = 56
+
 type Token = { type?: TokenType; value: string }
 
 function tokenize(code: string, lang: "tsx" | "bash" | "css"): Token[] {
@@ -133,6 +145,11 @@ export const codeSnippetVariants = tv({
       "shrink-0 border-r border-border/60 text-right font-mono text-muted-foreground/40 tabular-nums select-none",
     pre: "min-w-0 flex-1 overflow-x-auto",
     code: "font-mono text-foreground",
+    // Collapse chrome. `fade` dissolves the clamped code into the surface (a hint that more sits
+    // below the fold); `toggle` only POSITIONS the canonical Button (a `secondary` pill) so it
+    // floats centered over that fade - and, when expanded, over a reserved band at the foot.
+    fade: "pointer-events-none absolute inset-x-0 bottom-0 z-10 h-28 bg-gradient-to-t from-background via-background/85 to-transparent",
+    toggle: "absolute bottom-3 left-1/2 z-20 -translate-x-1/2",
   },
   variants: {
     // Density retunes only padding (never radius or color). `compact` is the Koala default
@@ -167,6 +184,14 @@ export interface CodeSnippetProps
   dots?: boolean
   /** Render a line-number gutter. */
   showLineNumbers?: boolean
+  /**
+   * Clamp long listings to `collapsedHeight` behind a "Show more / Show less" toggle. The
+   * toggle only appears once the content actually overflows the clamp; shorter blocks render
+   * in full with no chrome added. @default false
+   */
+  collapsible?: boolean
+  /** Clamped height in px when `collapsible` and collapsed. @default 320 */
+  collapsedHeight?: number
 }
 
 export function CodeSnippet({
@@ -175,16 +200,54 @@ export function CodeSnippet({
   filename,
   dots = false,
   showLineNumbers = false,
+  collapsible = false,
+  collapsedHeight = 320,
   density,
   className,
   ...props
 }: CodeSnippetProps) {
   const [copied, setCopied] = React.useState(false)
+  const [expanded, setExpanded] = React.useState(false)
+  // Natural height of the code content, measured from the DOM. `null` until first measured,
+  // so on the server (and the first client paint) the block renders in full and only clamps
+  // once we know it actually overflows - no flash of a wrongly-collapsed block.
+  const [contentHeight, setContentHeight] = React.useState<number | null>(null)
+  const contentRef = React.useRef<HTMLDivElement>(null)
   const slots = codeSnippetVariants({ density: useDensity(density) })
   const grammar =
     lang === "bash" || lang === "sh" ? "bash" : lang === "css" ? "css" : "tsx"
   const tokens = React.useMemo(() => tokenize(code, grammar), [code, grammar])
   const lineCount = code.replace(/\n+$/, "").split("\n").length
+
+  // Measure the content once it's in the DOM and whenever it resizes. The read + single
+  // setState live inside `measure()` (not the effect body) to satisfy the strict react-hooks
+  // lint. Clamping the viewport doesn't shrink this child, so it always reports the full height.
+  React.useLayoutEffect(() => {
+    if (!collapsible) return
+    const el = contentRef.current
+    if (!el) return
+    const measure = () => {
+      const node = contentRef.current
+      if (node) setContentHeight(node.offsetHeight)
+    }
+    measure()
+    const ro = new ResizeObserver(measure)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [collapsible, code])
+
+  // Only collapse when there's enough below the fold to be worth it: a sliver overflow would fade
+  // and float a control over a line or two that would just as easily have fit (see COLLAPSE_MARGIN).
+  const overflows =
+    collapsible &&
+    contentHeight !== null &&
+    contentHeight > collapsedHeight + COLLAPSE_MARGIN
+  // Drive an explicit `height` (not max-height) between the two known values so it animates crisply
+  // AND, when expanded, stretches past the content by COLLAPSE_RESERVE to open the band the floating
+  // pill lives in. When there's nothing to collapse we leave it unstyled so nothing ever clips.
+  const viewportStyle = overflows
+    ? { height: expanded ? (contentHeight ?? 0) + COLLAPSE_RESERVE : collapsedHeight }
+    : undefined
 
   async function copy() {
     await navigator.clipboard.writeText(code)
@@ -216,7 +279,15 @@ export function CodeSnippet({
         </div>
       )}
 
-      <div data-slot="code-snippet-viewport" className={slots.viewport()}>
+      <div
+        data-slot="code-snippet-viewport"
+        className={slots.viewport({
+          className: overflows
+            ? "overflow-hidden transition-[height] duration-slow ease-out motion-reduce:transition-none"
+            : undefined,
+        })}
+        style={viewportStyle}
+      >
         <Button
           iconOnly
           variant="outline"
@@ -229,18 +300,22 @@ export function CodeSnippet({
           {/* #7 contextual icon swap: keep both glyphs mounted and cross-fade (opacity/scale/
               blur) on copy, so the confirmation reads as a transform, not a hard swap. */}
           <span className="relative flex size-4 items-center justify-center">
-            <Copy
+            <Copy weight="bold"
               aria-hidden
               className={`absolute size-4 transition-[opacity,scale,filter] duration-fast ease-out ${copied ? "opacity-0 scale-[0.25] blur-[4px]" : "opacity-100 scale-100 blur-[0px]"}`}
             />
-            <Check
+            <Check weight="bold"
               aria-hidden
               className={`absolute size-4 transition-[opacity,scale,filter] duration-fast ease-out ${copied ? "opacity-100 scale-100 blur-[0px]" : "opacity-0 scale-[0.25] blur-[4px]"}`}
             />
           </span>
         </Button>
 
-        <div data-slot="code-snippet-scroller" className={slots.scroller()}>
+        <div
+          ref={contentRef}
+          data-slot="code-snippet-scroller"
+          className={slots.scroller()}
+        >
           {showLineNumbers && (
             <div data-slot="code-snippet-gutter" aria-hidden className={slots.gutter()}>
               {Array.from({ length: lineCount }, (_, i) => (
@@ -262,6 +337,30 @@ export function CodeSnippet({
             </code>
           </pre>
         </div>
+
+        {/* The fade only paints while collapsed - it dissolves the clamped code into the surface.
+            The pill floats over it (and, expanded, over the reserved band) so it never displaces code. */}
+        {overflows && !expanded && (
+          <span data-slot="code-snippet-fade" aria-hidden className={slots.fade()} />
+        )}
+
+        {overflows && (
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setExpanded((v) => !v)}
+            aria-expanded={expanded}
+            className={slots.toggle()}
+          >
+            {expanded ? "Show less" : "Show more"}
+            {/* one glyph, rotated on toggle - reads as a transform, not a swap (#7) */}
+            <CaretDown
+              weight="bold"
+              aria-hidden
+              className={`size-4 transition-transform duration-base ease-out ${expanded ? "rotate-180" : ""}`}
+            />
+          </Button>
+        )}
       </div>
     </div>
   )
