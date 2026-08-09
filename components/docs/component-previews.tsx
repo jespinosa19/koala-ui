@@ -321,6 +321,16 @@ import {
   ActivityActor,
   ActivityTime,
 } from "@/components/ui/activity-feed"
+import {
+  Checklist,
+  ChecklistHeader,
+  ChecklistTitle,
+  ChecklistProgress,
+  ChecklistItems,
+  ChecklistItem,
+  ChecklistItemContent,
+  ChecklistItemTitle,
+} from "@/components/ui/checklist"
 import { Field, FieldLabel, FieldHint } from "@/components/ui/field"
 import { Tree, TreeItem } from "@/components/ui/tree"
 import {
@@ -1435,6 +1445,34 @@ export const componentPreviews: Record<string, React.ReactNode> = {
           </ActivityContent>
         </ActivityItem>
       </ActivityFeed>
+    </div>
+  ),
+
+  checklist: (
+    <div className="w-64">
+      <Checklist value={1} total={3}>
+        <ChecklistHeader>
+          <ChecklistTitle>Get started</ChecklistTitle>
+          <ChecklistProgress />
+        </ChecklistHeader>
+        <ChecklistItems>
+          <ChecklistItem status="complete" icon={<UsersThree weight="bold" />}>
+            <ChecklistItemContent>
+              <ChecklistItemTitle>Invite your team</ChecklistItemTitle>
+            </ChecklistItemContent>
+          </ChecklistItem>
+          <ChecklistItem status="active" icon={<GitBranch weight="bold" />}>
+            <ChecklistItemContent>
+              <ChecklistItemTitle>Connect a repository</ChecklistItemTitle>
+            </ChecklistItemContent>
+          </ChecklistItem>
+          <ChecklistItem status="todo" icon={<CreditCard weight="bold" />}>
+            <ChecklistItemContent>
+              <ChecklistItemTitle>Set up billing</ChecklistItemTitle>
+            </ChecklistItemContent>
+          </ChecklistItem>
+        </ChecklistItems>
+      </Checklist>
     </div>
   ),
 

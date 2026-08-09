@@ -52,6 +52,7 @@ const variantCounts: Record<string, number> = {
   chart: 0,
   chat: 2,
   checkbox: 2,
+  checklist: 3,
   "code-snippet": 0,
   "color-picker": 0,
   command: 0,

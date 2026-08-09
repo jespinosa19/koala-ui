@@ -429,6 +429,26 @@ export type VideoProps = React.ComponentProps<"video">
 /** The media element. Click toggles play and focuses the player so shortcuts take over. */
 export function Video({ className, onClick, ...props }: VideoProps) {
   const { slots, videoRef, containerRef, togglePlay, sync } = useVideoContext("Video")
+
+  // Recover state that landed BEFORE hydration. With `preload="metadata"` the browser starts
+  // loading metadata the moment the SSR'd <video> is parsed; on a heavy page this component can
+  // hydrate late, so `loadedmetadata`/`durationchange`/`volumechange` fire before the handlers
+  // below are attached and their state is lost. `duration` then stays 0, and since the scrubber is
+  // `disabled={!duration}` it can never be dragged. On mount we read whatever the element already
+  // knows and sync it — idempotent when the events fire normally, a rescue when they beat us.
+  React.useEffect(() => {
+    const v = videoRef.current
+    if (!v) return
+    if (Number.isFinite(v.duration) && v.duration > 0) sync.setDuration(v.duration)
+    sync.setCurrentTime(v.currentTime)
+    sync.setVolume(v.volume)
+    sync.setMuted(v.muted)
+    sync.setPlaying(!v.paused)
+    if (v.buffered.length > 0) sync.setBuffered(v.buffered.end(v.buffered.length - 1))
+    // Mount-only: a one-shot reconciliation against events that may have fired pre-hydration.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <video
       ref={videoRef}

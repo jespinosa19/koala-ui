@@ -434,6 +434,28 @@
       ]
     },
     {
+      "name": "checklist",
+      "type": "component",
+      "tier": "free",
+      "repo": "TheMrdp/koala-ui",
+      "title": "Checklist",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10",
+        "radix-ui": "^1.5.0"
+      },
+      "registryDependencies": [],
+      "libDependencies": [
+        "create-context",
+        "density",
+        "tv",
+        "utils"
+      ],
+      "files": [
+        "components/ui/checklist/checklist.tsx",
+        "components/ui/checklist/index.ts"
+      ]
+    },
+    {
       "name": "code-snippet",
       "type": "component",
       "tier": "free",
@@ -1142,6 +1164,24 @@
       ]
     },
     {
+      "name": "link",
+      "type": "component",
+      "tier": "free",
+      "repo": "TheMrdp/koala-ui",
+      "title": "Link",
+      "dependencies": {
+        "radix-ui": "^1.5.0"
+      },
+      "registryDependencies": [],
+      "libDependencies": [
+        "tv"
+      ],
+      "files": [
+        "components/ui/link/index.ts",
+        "components/ui/link/link.tsx"
+      ]
+    },
+    {
       "name": "list",
       "type": "component",
       "tier": "free",
@@ -1153,7 +1193,6 @@
       "registryDependencies": [],
       "libDependencies": [
         "create-context",
-        "density",
         "tv",
         "utils"
       ],
@@ -1206,6 +1245,7 @@
         "radix-ui": "^1.5.0"
       },
       "registryDependencies": [
+        "animated-number",
         "checkbox",
         "switch"
       ],
@@ -1277,6 +1317,7 @@
         "radix-ui": "^1.5.0"
       },
       "registryDependencies": [
+        "button",
         "input"
       ],
       "libDependencies": [
@@ -1510,7 +1551,6 @@
       "registryDependencies": [],
       "libDependencies": [
         "create-context",
-        "density",
         "tv",
         "utils"
       ],
