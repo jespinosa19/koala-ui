@@ -36,8 +36,10 @@ const DEFAULT_BRANCH = "main"
 // The public site. Every buyer-facing URL hangs off this one constant so moving to a custom
 // domain later is a one-line change.
 const SITE = "https://koala-ui.vercel.app"
-// The entitlement API (Supabase Edge Functions). Override with $KOALAUI_API or --api.
-const DEFAULT_API = "https://api.koalaui.com"
+// The entitlement API. Points at our own site, which proxies to the Supabase Edge Function:
+// this URL ships inside every published copy of the CLI, so it has to be one we control and can
+// repoint without republishing. Override with $KOALAUI_API or --api.
+const DEFAULT_API = `${SITE}/api`
 const PURCHASE_URL = `${SITE}/pro`
 // Where the saved license key lives (set by `koalaui login`).
 const CONFIG_PATH = join(homedir(), ".koalaui", "config.json")

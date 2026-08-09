@@ -6,7 +6,6 @@ import {
   DeviceMobile,
   DeviceTablet,
   Monitor,
-  ArrowsOutLineHorizontal,
   Eye,
   Code,
   Copy,
@@ -76,16 +75,16 @@ interface PreviewFrameProps {
 }
 
 /**
- * Frame width presets. `"fill"` tracks the available column width; `"wide"` (1280) forces a real
- * desktop viewport EVEN WHEN the docs column is narrower, so a slab whose two-column layout only
- * unlocks at `lg` (auth splits, checkout) can be seen without an ultra-wide monitor: the frame
- * renders at 1280 and is scaled down to fit the column (see the `scale` math below).
+ * Frame width presets: the three device tiers. `"desktop"` is `"fill"` (tracks the available column
+ * width); the fixed-width tiers force their viewport EVEN WHEN the docs column is narrower, in which
+ * case the frame renders at its true logical width and is scaled down to fit (see the `scale` math
+ * below), so the slab's media queries still see the real device width. Any width in between is
+ * reached with the drag handle.
  */
 const PRESETS = [
   { id: "mobile", label: "Mobile", icon: DeviceMobile, width: 375 as number | "fill" },
   { id: "tablet", label: "Tablet", icon: DeviceTablet, width: 768 as number | "fill" },
   { id: "desktop", label: "Desktop", icon: Monitor, width: "fill" as number | "fill" },
-  { id: "wide", label: "Wide (1280px)", icon: ArrowsOutLineHorizontal, width: 1280 as number | "fill" },
 ] as const
 
 const MIN_WIDTH = 320
@@ -137,11 +136,11 @@ export function PreviewFrame({
   const basePath = srcOverride ?? `/preview/sections/${slug}`
   const src = `${basePath}?theme=${theme}&accent=${DEFAULT_ACCENT}`
 
-  // The frame emulates a viewport `logicalWidth` px wide. Presets/drag can request a width WIDER
-  // than the docs column (the 1280 "Wide" preset), so a slab's `lg:` breakpoint fires even when the
-  // column is narrower than `lg`. When the request exceeds the column the iframe renders at its true
-  // logical width and is scaled DOWN to fit, so the child viewport (and its media queries) still see
-  // the full width. `fill` and any width the column can hold stay at scale 1 (untouched).
+  // The frame emulates a viewport `logicalWidth` px wide. A fixed preset can request a width WIDER
+  // than the docs column (picking "Tablet" on a narrow screen), so the tier's breakpoints fire even
+  // when the column can't hold them. When the request exceeds the column the iframe renders at its
+  // true logical width and is scaled DOWN to fit, so the child viewport (and its media queries) still
+  // see the full width. `fill` and any width the column can hold stay at scale 1 (untouched).
   const logicalWidth = width === "fill" ? stageWidth : width
   const scale = stageWidth > 0 && logicalWidth > stageWidth ? stageWidth / logicalWidth : 1
   const scaled = scale !== 1
@@ -158,9 +157,7 @@ export function PreviewFrame({
         ? "mobile"
         : width === 768
           ? "tablet"
-          : width === 1280
-            ? "wide"
-            : "custom"
+          : "custom"
 
   // Measure the available column so "fill" knows its width and the drag/keys can clamp to it.
   // Ignore 0-width reports: the stage is `display:none` while the Code tab is open (we hide it
