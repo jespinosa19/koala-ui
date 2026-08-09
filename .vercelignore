@@ -1,0 +1,14 @@
+# Mirrors the "internal tooling: kept out of the public repo" block in .gitignore.
+# The Vercel CLI uploads the working directory, not the git tree, so these have to
+# be excluded again here or a `vercel deploy` from a local checkout would ship them.
+/.claude/
+/.mcp.json
+/skills-lock.json
+/.agents/
+/CLAUDE.md
+/AGENTS.md
+
+# Never needed by the build.
+/test/
+/coverage/
+tsconfig.tsbuildinfo
