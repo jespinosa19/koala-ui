@@ -1,8 +1,8 @@
 {
   "name": "koala-ui",
   "version": "0.1.0",
-  "publicRepo": "TheMrdp/koala-ui",
-  "proRepo": "TheMrdp/koala-ui-pro",
+  "publicRepo": "jespinosa19/koala-ui",
+  "proRepo": "jespinosa19/koala-ui-pro",
   "branch": "main",
   "init": {
     "dependencies": {
@@ -23,7 +23,7 @@
       "name": "accordion",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Accordion",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -44,7 +44,7 @@
       "name": "activity-feed",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Activity Feed",
       "dependencies": {
         "radix-ui": "^1.5.0"
@@ -65,7 +65,7 @@
       "name": "ai-panel",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "AI Panel",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10"
@@ -87,7 +87,7 @@
       "name": "alert",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Alert",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10"
@@ -106,7 +106,7 @@
       "name": "animated-number",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Animated Number",
       "dependencies": {},
       "registryDependencies": [],
@@ -122,7 +122,7 @@
       "name": "auth-form",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Auth Form",
       "dependencies": {},
       "registryDependencies": [
@@ -147,7 +147,7 @@
       "name": "avatar",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Avatar",
       "dependencies": {
         "radix-ui": "^1.5.0"
@@ -167,7 +167,7 @@
       "name": "avatar-group",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Avatar Group",
       "dependencies": {},
       "registryDependencies": [
@@ -185,7 +185,7 @@
       "name": "badge",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Badge",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -205,7 +205,7 @@
       "name": "badge-group",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Badge Group",
       "dependencies": {},
       "registryDependencies": [
@@ -224,7 +224,7 @@
       "name": "banner",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Banner",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -245,7 +245,7 @@
       "name": "bento",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Bento",
       "dependencies": {
         "radix-ui": "^1.5.0"
@@ -264,7 +264,7 @@
       "name": "breadcrumb",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Breadcrumb",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -283,7 +283,7 @@
       "name": "button",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Button",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -308,7 +308,7 @@
       "name": "button-group",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Button Group",
       "dependencies": {
         "radix-ui": "^1.5.0"
@@ -331,7 +331,7 @@
       "name": "card",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Card",
       "dependencies": {
         "radix-ui": "^1.5.0"
@@ -351,7 +351,7 @@
       "name": "carousel",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Carousel",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10"
@@ -373,7 +373,7 @@
       "name": "chart",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Chart",
       "dependencies": {},
       "registryDependencies": [
@@ -395,7 +395,7 @@
       "name": "chat",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Chat",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -419,7 +419,7 @@
       "name": "checkbox",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Checkbox",
       "dependencies": {
         "radix-ui": "^1.5.0"
@@ -437,7 +437,7 @@
       "name": "checklist",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Checklist",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -459,7 +459,7 @@
       "name": "code-snippet",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Code Snippet",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10"
@@ -480,7 +480,7 @@
       "name": "color-picker",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Color Picker",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -516,7 +516,7 @@
       "name": "command",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Command",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -537,7 +537,7 @@
       "name": "contact-form",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Contact Form",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10"
@@ -562,7 +562,7 @@
       "name": "context-menu",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Context Menu",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -585,7 +585,7 @@
       "name": "cookie-consent",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Cookie Consent",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10"
@@ -610,7 +610,7 @@
       "name": "create-context",
       "type": "lib",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "create-context",
       "dependencies": {},
       "registryDependencies": [],
@@ -623,7 +623,7 @@
       "name": "data-table",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Data Table",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -665,7 +665,7 @@
       "name": "date-picker",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Date Picker",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -687,7 +687,7 @@
       "name": "density",
       "type": "lib",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "density",
       "dependencies": {},
       "registryDependencies": [],
@@ -700,7 +700,7 @@
       "name": "description-list",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Description List",
       "dependencies": {
         "radix-ui": "^1.5.0"
@@ -720,7 +720,7 @@
       "name": "dialog",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Dialog",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -743,7 +743,7 @@
       "name": "divider",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Divider",
       "dependencies": {
         "radix-ui": "^1.5.0"
@@ -761,7 +761,7 @@
       "name": "drawer",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Drawer",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -783,7 +783,7 @@
       "name": "dropdown-menu",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Dropdown Menu",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -806,7 +806,7 @@
       "name": "emoji-picker",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Emoji Picker",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -830,7 +830,7 @@
       "name": "empty-state",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Empty State",
       "dependencies": {
         "radix-ui": "^1.5.0"
@@ -850,7 +850,7 @@
       "name": "faqs",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Faqs",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10"
@@ -873,7 +873,7 @@
       "name": "feedback-form",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Feedback Form",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10"
@@ -898,7 +898,7 @@
       "name": "field",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Field",
       "dependencies": {},
       "registryDependencies": [
@@ -917,7 +917,7 @@
       "name": "field-context",
       "type": "lib",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "field-context",
       "dependencies": {},
       "registryDependencies": [],
@@ -930,7 +930,7 @@
       "name": "file-card",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "File Card",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -952,7 +952,7 @@
       "name": "file-upload",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "File Upload",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10"
@@ -974,7 +974,7 @@
       "name": "footer",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Footer",
       "dependencies": {
         "radix-ui": "^1.5.0"
@@ -994,7 +994,7 @@
       "name": "gallery",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Gallery",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -1016,7 +1016,7 @@
       "name": "hero",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Hero",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -1039,7 +1039,7 @@
       "name": "input",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Input",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -1069,7 +1069,7 @@
       "name": "input-group",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Input Group",
       "dependencies": {},
       "registryDependencies": [],
@@ -1088,7 +1088,7 @@
       "name": "kbd",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Kbd",
       "dependencies": {
         "radix-ui": "^1.5.0"
@@ -1106,7 +1106,7 @@
       "name": "label",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Label",
       "dependencies": {},
       "registryDependencies": [],
@@ -1123,7 +1123,7 @@
       "name": "layout",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Layout",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10"
@@ -1146,7 +1146,7 @@
       "name": "lightbox",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Lightbox",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -1167,7 +1167,7 @@
       "name": "link",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Link",
       "dependencies": {
         "radix-ui": "^1.5.0"
@@ -1185,7 +1185,7 @@
       "name": "list",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "List",
       "dependencies": {
         "radix-ui": "^1.5.0"
@@ -1205,7 +1205,7 @@
       "name": "marketing-hero",
       "type": "section",
       "tier": "pro",
-      "repo": "TheMrdp/koala-ui-pro",
+      "repo": "jespinosa19/koala-ui-pro",
       "title": "Marketing Hero",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10"
@@ -1225,7 +1225,7 @@
       "name": "motion",
       "type": "lib",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "motion",
       "dependencies": {},
       "registryDependencies": [],
@@ -1238,7 +1238,7 @@
       "name": "multi-select",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Multi Select",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -1264,7 +1264,7 @@
       "name": "navbar",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Navbar",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -1288,7 +1288,7 @@
       "name": "newsletter-form",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Newsletter Form",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10"
@@ -1310,7 +1310,7 @@
       "name": "order-summary",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Order Summary",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -1335,7 +1335,7 @@
       "name": "otp-input",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "OTP Input",
       "dependencies": {},
       "registryDependencies": [
@@ -1353,7 +1353,7 @@
       "name": "pagination",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Pagination",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10"
@@ -1377,7 +1377,7 @@
       "name": "password-strength",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Password Strength",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10"
@@ -1396,7 +1396,7 @@
       "name": "payment-form",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Payment Form",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10"
@@ -1420,7 +1420,7 @@
       "name": "popover",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Popover",
       "dependencies": {
         "radix-ui": "^1.5.0"
@@ -1439,7 +1439,7 @@
       "name": "pricing",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Pricing",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -1463,7 +1463,7 @@
       "name": "pricing-comparison",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Pricing Comparison",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10"
@@ -1485,7 +1485,7 @@
       "name": "prompt-input",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Prompt Input",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10"
@@ -1507,7 +1507,7 @@
       "name": "qr-code",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Qr Code",
       "dependencies": {},
       "registryDependencies": [],
@@ -1524,7 +1524,7 @@
       "name": "radio-group",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Radio Group",
       "dependencies": {
         "radix-ui": "^1.5.0"
@@ -1543,7 +1543,7 @@
       "name": "ranking",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Ranking",
       "dependencies": {
         "radix-ui": "^1.5.0"
@@ -1563,7 +1563,7 @@
       "name": "rating",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Rating",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -1582,7 +1582,7 @@
       "name": "resizable",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Resizable",
       "dependencies": {
         "radix-ui": "^1.5.0"
@@ -1601,7 +1601,7 @@
       "name": "rich-text-editor",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Rich Text Editor",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -1634,7 +1634,7 @@
       "name": "section",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Section",
       "dependencies": {},
       "registryDependencies": [],
@@ -1651,7 +1651,7 @@
       "name": "section-header",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Section Header",
       "dependencies": {},
       "registryDependencies": [],
@@ -1669,7 +1669,7 @@
       "name": "select",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Select",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -1693,7 +1693,7 @@
       "name": "settings-form",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Settings Form",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10"
@@ -1718,7 +1718,7 @@
       "name": "sidebar",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Sidebar",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -1741,7 +1741,7 @@
       "name": "skeleton",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Skeleton",
       "dependencies": {},
       "registryDependencies": [],
@@ -1758,7 +1758,7 @@
       "name": "slider",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Slider",
       "dependencies": {
         "radix-ui": "^1.5.0"
@@ -1777,7 +1777,7 @@
       "name": "stagger",
       "type": "lib",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "stagger",
       "dependencies": {},
       "registryDependencies": [],
@@ -1792,7 +1792,7 @@
       "name": "stat",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Stat",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -1817,7 +1817,7 @@
       "name": "stepper",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Stepper",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -1839,7 +1839,7 @@
       "name": "suggestions",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Suggestions",
       "dependencies": {},
       "registryDependencies": [
@@ -1860,7 +1860,7 @@
       "name": "survey",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Survey",
       "dependencies": {},
       "registryDependencies": [
@@ -1885,7 +1885,7 @@
       "name": "switch",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Switch",
       "dependencies": {
         "radix-ui": "^1.5.0"
@@ -1904,7 +1904,7 @@
       "name": "tabs",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Tabs",
       "dependencies": {
         "radix-ui": "^1.5.0"
@@ -1925,7 +1925,7 @@
       "name": "testimonials",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Testimonials",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -1945,7 +1945,7 @@
       "name": "textarea",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Textarea",
       "dependencies": {},
       "registryDependencies": [
@@ -1965,7 +1965,7 @@
       "name": "toast",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Toast",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -1987,7 +1987,7 @@
       "name": "toggle-group",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Toggle Group",
       "dependencies": {
         "radix-ui": "^1.5.0"
@@ -2006,7 +2006,7 @@
       "name": "toolbar",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Toolbar",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -2033,7 +2033,7 @@
       "name": "tooltip",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Tooltip",
       "dependencies": {
         "tippy.js": "^6.3.7"
@@ -2051,7 +2051,7 @@
       "name": "tree",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Tree",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -2071,7 +2071,7 @@
       "name": "tv",
       "type": "lib",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "tv",
       "dependencies": {
         "tailwind-variants": "^3.2.2"
@@ -2088,7 +2088,7 @@
       "name": "utils",
       "type": "lib",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "utils",
       "dependencies": {
         "clsx": "^2.1.1",
@@ -2104,7 +2104,7 @@
       "name": "video-player",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Video Player",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
@@ -2126,7 +2126,7 @@
       "name": "waitlist-form",
       "type": "component",
       "tier": "free",
-      "repo": "TheMrdp/koala-ui",
+      "repo": "jespinosa19/koala-ui",
       "title": "Waitlist Form",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10"

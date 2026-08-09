@@ -31,12 +31,15 @@ import { join, dirname, isAbsolute } from "node:path"
 import { homedir } from "node:os"
 import { execSync } from "node:child_process"
 
-const DEFAULT_PUBLIC_REPO = "TheMrdp/koala-ui"
+const DEFAULT_PUBLIC_REPO = "jespinosa19/koala-ui"
 const DEFAULT_BRANCH = "main"
-const CONTACT = "https://github.com/TheMrdp/koala-ui"
+// The public site. Every buyer-facing URL hangs off this one constant so moving to a custom
+// domain later is a one-line change.
+const SITE = "https://koala-ui.vercel.app"
+const CONTACT = "https://github.com/jespinosa19/koala-ui"
 // The entitlement API (Supabase Edge Functions). Override with $KOALAUI_API or --api.
 const DEFAULT_API = "https://api.koalaui.com"
-const PURCHASE_URL = "https://koalaui.com/pro"
+const PURCHASE_URL = `${SITE}/pro`
 // Where the saved license key lives (set by `koalaui login`).
 const CONFIG_PATH = join(homedir(), ".koalaui", "config.json")
 
@@ -102,14 +105,24 @@ function resolveToken(explicit) {
 }
 function requireToken(opts, itemName) {
   const token = resolveToken(opts.token)
-  if (!token)
-    fail(
-      `"${itemName}" is a ${c.bold("PRO")} item - installing it requires repo access.\n` +
-        `  No GitHub token found. Authenticate with one of:\n` +
-        `    ${c.cyan("gh auth login")}   or   ${c.cyan("export KOALAUI_TOKEN=<token>")}\n` +
-        `  Don't have access yet? → ${CONTACT}`
-    )
+  if (!token) paywall(itemName)
   return token
+}
+
+/**
+ * The single message anyone without access to a PRO item should ever see. Every denial funnels
+ * here - a missing license, a token that isn't entitled, GitHub refusing the private repo - so
+ * the paywall always reads as a paywall and always ends in a way to buy.
+ *
+ * `reason` explains what specifically failed, for someone who believes they *should* have access.
+ */
+function paywall(itemName, reason) {
+  fail(
+    `${c.bold(itemName)} is a ${c.bold("PRO")} section - it needs a license.\n` +
+      (reason ? `  ${c.dim(reason)}\n` : "") +
+      `  Activate one:  ${c.cyan("koalaui login <key>")}\n` +
+      `  Get a license → ${PURCHASE_URL}`
+  )
 }
 
 // ── license + config (~/.koalaui/config.json) ────────────────────────────────
@@ -186,12 +199,12 @@ function makeRegistry(opts) {
         "User-Agent": "koalaui-cli",
       },
     })
-    if (res.status === 401 || res.status === 403)
-      fail(
-        `access denied (${res.status}) for ${c.bold("PRO")} item "${itemName}".\n` +
-          `  Your token can't read ${repo}. Need access? → ${CONTACT}`
-      )
-    if (res.status === 404) throw new Error(`not found: ${path} (${repo}@${branch})`)
+    // GitHub answers 404 - not 403 - for a private repo the token cannot see: it hides the
+    // repo's very existence on purpose. So for a PRO item a 404 almost never means "missing
+    // file", it means "not entitled", and it must read as the paywall rather than as a bug.
+    // (Owner debugging a genuinely missing file: use --registry / --pro local mode.)
+    if (res.status === 401 || res.status === 403 || res.status === 404)
+      paywall(itemName, `Your GitHub token can't read ${repo} (${res.status}).`)
     if (!res.ok) throw new Error(`${res.status} fetching ${path}`)
     return res.text()
   }
@@ -231,11 +244,7 @@ function makeRegistry(opts) {
       // A buyer's license is the default gate. A repo token (owner/dev) is the fallback.
       if (license) return proViaLicense(item, path)
       if (resolveToken(opts.token)) return apiPrivate(item.repo, path, item.name)
-      fail(
-        `${c.bold(item.name)} is a ${c.bold("PRO")} section - it needs a license.\n` +
-          `  Activate one:  ${c.cyan("koalaui login <key>")}\n` +
-          `  Get a license → ${PURCHASE_URL}`
-      )
+      paywall(item.name)
     },
   }
 }

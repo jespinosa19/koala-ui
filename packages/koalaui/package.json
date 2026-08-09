@@ -11,7 +11,7 @@
     "README.md",
     "LICENSE"
   ],
-  "author": "Koala UI (https://koalaui.com)",
+  "author": "Koala UI (https://koala-ui.vercel.app)",
   "keywords": [
     "koala-ui",
     "react",
@@ -20,12 +20,12 @@
     "radix",
     "design-system"
   ],
-  "homepage": "https://koalaui.com",
+  "homepage": "https://koala-ui.vercel.app",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TheMrdp/koala-ui.git"
+    "url": "git+https://github.com/jespinosa19/koala-ui.git"
   },
-  "bugs": "https://github.com/TheMrdp/koala-ui/issues",
+  "bugs": "https://github.com/jespinosa19/koala-ui/issues",
   "license": "MIT",
   "engines": {
     "node": ">=18"

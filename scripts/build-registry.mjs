@@ -24,8 +24,8 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..")
 const PRO_DIR = process.env.KOALA_PRO_DIR || join(ROOT, "..", "koala-ui-pro")
 const OUT = join(ROOT, "registry.json")
 
-const PUBLIC_REPO = "TheMrdp/koala-ui"
-const PRO_REPO = "TheMrdp/koala-ui-pro"
+const PUBLIC_REPO = "jespinosa19/koala-ui"
+const PRO_REPO = "jespinosa19/koala-ui-pro"
 const BRANCH = "main"
 
 const pkg = JSON.parse(readFileSync(join(ROOT, "package.json"), "utf8"))
