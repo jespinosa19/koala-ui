@@ -1,0 +1,35 @@
+{
+  "name": "koalaui-cli",
+  "version": "0.3.0",
+  "description": "Add Koala UI components to your React project: copies the source in, you own the code.",
+  "type": "module",
+  "// name": "npm refuses `koalaui`: it is too close to an unrelated package called koala-ui, and the @koalaui scope belongs to someone else. The published name carries the -cli suffix; the command it installs stays `koalaui`, with `koalaui-cli` as an alias so both spellings work.",
+  "bin": {
+    "koalaui": "bin.mjs",
+    "koalaui-cli": "bin.mjs"
+  },
+  "files": [
+    "bin.mjs",
+    "README.md",
+    "LICENSE"
+  ],
+  "author": "Koala UI (https://koala-ui.vercel.app)",
+  "keywords": [
+    "koala-ui",
+    "react",
+    "components",
+    "tailwind",
+    "radix",
+    "design-system"
+  ],
+  "homepage": "https://koala-ui.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jespinosa19/koala-ui.git"
+  },
+  "bugs": "https://github.com/jespinosa19/koala-ui/issues",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  }
+}

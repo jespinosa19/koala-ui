@@ -1,0 +1,17 @@
+export {
+  Faqs,
+  FaqsHeader,
+  FaqsTitle,
+  FaqsDescription,
+  FaqsGroup,
+  FaqsList,
+  FaqsItem,
+  FaqsFeedback,
+  FaqsFooter,
+  faqsVariants,
+  type FaqsProps,
+  type FaqsGroupProps,
+  type FaqsListProps,
+  type FaqsItemProps,
+  type FaqsFeedbackProps,
+} from "./faqs"

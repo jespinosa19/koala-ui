@@ -1,0 +1,81 @@
+Koala UI License
+
+Copyright (c) 2026 Koala UI. All rights reserved except as granted below.
+
+This license covers the Koala UI component library, design tokens, sections, page examples
+and templates ("Koala UI"), however you obtain them: through the koalaui CLI, from this
+repository, or by copying them from the documentation. The koalaui CLI itself
+(packages/koalaui) is licensed separately under the MIT license in that folder.
+
+Koala UI comes in two tiers:
+
+  Free  Everything installable without a license key: the components in components/ui,
+        the helpers in lib, and the tokens in registry/koala.css.
+  Pro   Everything that needs a license key: marketing sections, page examples and
+        templates, including the downloadable source of any template shown as a demo on
+        the Koala UI website.
+
+
+1. WHAT YOU MAY DO
+
+Free tier. You may use, copy and modify the Free tier, at no cost, to build any number of
+websites, applications and other end products, for yourself or for clients, commercial or
+not, including open-source end products.
+
+Pro tier. Buying a license gives you a perpetual, non-exclusive, non-transferable right to
+use, copy and modify the Pro tier to build any number of end products, for yourself or for
+clients, commercial or not. There is no subscription: the license does not expire, and it
+includes the updates published while Koala UI is offered.
+
+An "end product" is a website, application or other work whose value to its users is more
+than Koala UI itself. A client site built with Koala UI is an end product; a template, theme
+or UI kit made from Koala UI is not (see section 2).
+
+Seats. A Pro license covers the number of people its plan states: one person for the
+personal plan, and the number of team members listed for the team plan. Each person
+activates their own seat with the koalaui CLI. You may not share a license key beyond the
+seats you bought.
+
+Clients. You may hand an end product, including its source code, to a client. The client
+may keep using and maintaining that end product, but receives no right to use Koala UI in
+any other project unless they buy their own license.
+
+
+2. WHAT YOU MAY NOT DO
+
+For either tier, you may not:
+
+  a. Sell, license, sublicense or give away Koala UI, in whole or in part, as it is or
+     modified, other than inside an end product as described above.
+  b. Use Koala UI to create a product that competes with it: a component library, UI kit,
+     design system, theme, template, page builder or code generator offered to others.
+  c. Remove or alter the copyright and license notices in the source files.
+
+For the Pro tier, you also may not:
+
+  d. Publish Pro source where people other than your team and your clients can read it,
+     including public code repositories, gists and package registries. An open-source end
+     product may use the Free tier, but not the Pro tier.
+  e. Share, resell or publish your license key, or use it for more seats than you bought.
+
+Pro files carry a comment that identifies the license they were installed with. Removing it
+does not change these terms.
+
+
+3. TERMINATION
+
+If you break these terms, your license ends and you must stop using Koala UI in new work.
+End products that you delivered before the license ended, while it was valid, may keep
+running. A refunded purchase ends the Pro license the same way.
+
+
+4. NO WARRANTY
+
+KOALA UI IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH KOALA UI OR THE USE OR OTHER DEALINGS IN KOALA UI.
+
+
+Questions about what this license allows: https://koala-ui.vercel.app

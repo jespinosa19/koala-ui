@@ -1,0 +1,15 @@
+export {
+  PricingComparison,
+  PricingComparisonHeader,
+  PricingComparisonPlan,
+  PricingComparisonSection,
+  PricingComparisonRow,
+  PricingComparisonCell,
+  pricingComparisonVariants,
+  type PricingComparisonProps,
+  type PricingComparisonHeaderProps,
+  type PricingComparisonPlanProps,
+  type PricingComparisonSectionProps,
+  type PricingComparisonRowProps,
+  type PricingComparisonCellProps,
+} from "./pricing-comparison"
