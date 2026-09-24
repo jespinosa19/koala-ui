@@ -34,7 +34,8 @@ export const radioGroupVariants = tv({
       // Specific transition (never `transition: all`, #14); tactile press scale (#12).
       "transition-colors duration-fast ease-out active:scale-[0.96]",
       "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-      // Checked floods with the accent (brand) exactly like Checkbox; the white dot below is knocked out.
+      // Checked floods with the accent (brand) exactly like Checkbox; the dot below is knocked out in
+      // the accent's ink (--brand-foreground: white, or dark on a light accent like lime).
       "data-[state=checked]:border-brand data-[state=checked]:bg-brand",
       "disabled:cursor-not-allowed disabled:opacity-50",
     ],
@@ -48,7 +49,7 @@ export const radioGroupVariants = tv({
       "data-[state=checked]:scale-100 data-[state=checked]:opacity-100",
     ],
     // White dot knocked out of the brand fill; the indicator above carries the enter/exit motion.
-    dot: "rounded-full bg-white",
+    dot: "rounded-full bg-brand-foreground",
     // RadioSwatch: the colour chip of a product-variant picker. The chip IS the radio, filled with
     // the option's own colour (inline style: a product colour is data, not a token).
     swatch: [
@@ -227,7 +228,7 @@ export const radioCardVariants = tv({
     control:
       "mt-0.5 grid shrink-0 place-items-center self-start rounded-full border border-input bg-[var(--surface,var(--background))] transition-colors duration-fast ease-out group-data-[state=checked]:border-brand group-data-[state=checked]:bg-brand",
     // White dot knocked out of the brand fill; scales + fades in when the card is picked (#4/#15).
-    dot: "rounded-full bg-white scale-50 opacity-0 transition-[scale,opacity] duration-fast ease-out group-data-[state=checked]:scale-100 group-data-[state=checked]:opacity-100",
+    dot: "rounded-full bg-brand-foreground scale-50 opacity-0 transition-[scale,opacity] duration-fast ease-out group-data-[state=checked]:scale-100 group-data-[state=checked]:opacity-100",
   },
   variants: {
     // `md` (default) suits a title + description, so it top-aligns (icon/control to the title's

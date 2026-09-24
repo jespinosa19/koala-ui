@@ -82,8 +82,9 @@ export function BadgeGroup({
   return (
     <div data-slot="badge-group" className={badgeGroupVariants({ wrap, className })} {...props}>
       {visible}
+      {/* A list of badges is a card, not a hint: the graph variant keeps it on the popover surface. */}
       {hidden.length > 0 && (
-        <Tooltip content={overflowContent} interactive={interactive}>
+        <Tooltip variant="graph" content={overflowContent} interactive={interactive}>
           {/* Focusable so the reveal is reachable by keyboard, not just hover; `cursor-help`
               marks it as explanatory, and `tabular-nums` keeps the count aligned. */}
           <Badge

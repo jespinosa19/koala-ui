@@ -76,7 +76,9 @@ export const listVariants = tv({
         // the fill off those edges and the row reads as a floating tile inside the card.
         // Press feedback is the fill deepening instead: hover lands on a half-strength wash,
         // active on the full one. Specific transition, never `all`.
-        item: "cursor-pointer transition-colors duration-fast ease-out hover:bg-muted/60 active:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
+        // `w-full text-left`: a <button> row is inline-block with centred text by default, so without
+        // them it hugs its content and the meta stops short of the right edge.
+        item: "w-full cursor-pointer text-left transition-colors duration-fast ease-out hover:bg-muted/60 active:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
       },
     },
   },
@@ -84,8 +86,9 @@ export const listVariants = tv({
     // Plain rows align flush to the container's left edge (no surface to inset from).
     { variant: "plain", class: { item: "px-0" } },
     // …but an interactive plain row pulls its hover fill back into a detached pill so it
-    // doesn't bleed to the very edge: negative margin keeps the text aligned flush.
-    { variant: "plain", interactive: true, class: { item: "-mx-2 rounded-lg px-2" } },
+    // doesn't bleed to the very edge: negative margin keeps the text aligned flush. The width
+    // grows by the same 1rem, or a <button> row (sized, not stretched) stops 8px short on the right.
+    { variant: "plain", interactive: true, class: { item: "-mx-2 w-[calc(100%+1rem)] rounded-lg px-2" } },
   ],
   defaultVariants: {
     variant: "card",

@@ -8,6 +8,7 @@ import { useDensity, type Density } from "@/lib/density"
 import { tv, type VariantProps } from "@/lib/tv"
 import { cn } from "@/lib/utils"
 import { Drawer, DrawerTrigger, DrawerContent, DrawerTitle } from "@/components/ui/drawer"
+import { NavbarShellContext } from "@/components/ui/navbar"
 import { SidebarShellContext } from "@/components/ui/sidebar"
 
 /**
@@ -54,15 +55,47 @@ import { SidebarShellContext } from "@/components/ui/sidebar"
  * it opts in per instance: `<LayoutContent className="m-2 rounded-2xl shadow-sm ring-1 ring-border
  * lg:ml-0">`. An escape hatch, not a supported structure.
  *
+ * Structures. Every part is droppable, and *which* parts you drop in is the structure; nothing is
+ * switched with a prop. The root reads its children and rearranges itself:
+ *
+ *   rail · sheet            LayoutSidebar + LayoutContent               (the default above)
+ *   top navigation          LayoutTopbar + LayoutContent                (the root turns into a column)
+ *   top bar over the rail   LayoutTopbar + LayoutBody(LayoutSidebar + LayoutContent)
+ *   two-tier rail           LayoutRail + LayoutSidebar collapsible="offcanvas" + LayoutContent
+ *   list · detail           LayoutContent(LayoutPane + LayoutPane …)    (the sheet turns into a row)
+ *
+ * The sheet decorates whichever seam it actually has: a left hairline beside a rail, a top
+ * hairline under a top band, both (with the corner rounded where they meet) under a band *and*
+ * beside a rail. Below `lg`, where the rail moves into the drawer, the left seam goes with it.
+ *
  * Height: defaults to `min-h-svh` so the shell fills the viewport and grows with the
  * page. For content that scrolls independently (sidebar pinned), give the root a fixed
- * height: `<Layout className="h-svh overflow-hidden">`.
+ * height: `<Layout className="h-svh overflow-hidden">`. The shells with a top band are app
+ * shells first: give them that fixed height, so the band stays put and each column scrolls.
  */
 export const layoutVariants = tv({
   slots: {
     // The shell. Its floor colour is per-variant: `docked` recesses onto `bg-canvas` so the
     // content sheet reads as raised without a shadow; the other two keep the page background.
-    root: "flex min-h-svh w-full",
+    // A row by default (rail · sheet); a top band among its children turns it into a column, so
+    // the band spans the window and whatever follows it fills the rest. Keyed on the band being
+    // there, not on a prop: drop `LayoutTopbar` in and the shell rearranges itself.
+    root: "flex min-h-svh w-full has-[>[data-slot=layout-topbar]]:flex-col",
+    // The top band: an app shell's header, spanning the window above the sheet (or above the rail
+    // and the sheet, through `LayoutBody`). A column, so a second bar (a tab row, a toolbar)
+    // stacks under the first inside the same band. It hosts a `Navbar` the way `LayoutSidebar`
+    // hosts a `Sidebar`: the band owns the surface and the bar docks onto it. Sticky, so a
+    // page-scroll shell keeps it on screen; in the fixed-height app shell it never moves anyway.
+    topbar: "sticky top-0 z-30 flex w-full shrink-0 flex-col",
+    // The row under a top band: rail and sheet side by side, filling what the band leaves. The
+    // rail columns stretch to it like they stretch to the root (see `sidebar` below).
+    body: "flex min-h-0 min-w-0 flex-1",
+    // The icon strip of a two-tier rail: the module switcher that sits outside the rail proper
+    // (Slack's workspaces, Discord's servers, an IDE's activity bar). 48px, the width of the
+    // collapsed rail, because that is what a `Sidebar` nested in it becomes: the strip hands it
+    // `collapsed` through the same shell bridge the rail column uses. Pinned, stretched to its row
+    // and capped at the viewport like the rail column, hidden below `lg`.
+    rail: "sticky top-0 hidden max-h-svh w-12 shrink-0 flex-col lg:flex",
     // The rail column. It lives in the canvas gutter and pins to the viewport so it stays put
     // while the content panel scrolls. Hidden below `lg`; drive a mobile drawer from there.
     //
@@ -74,8 +107,14 @@ export const layoutVariants = tv({
     // declares the `--surface` contract for it: surface-aware children in the rail rebase onto
     // the shell floor instead of painting a card-coloured block on it. That value tracks the
     // root's floor, so it is set per `variant` below. See memory `surface-css-var-contract`.
+    //
+    // Height: the column stretches to the row it sits in, capped at the viewport. In a page-scroll
+    // shell the row runs as tall as the page, so the cap is what keeps the rail one screen tall
+    // while `sticky` pins it; in a fixed-height shell (or a framed preview, or the row under a top
+    // band) the row is shorter than the viewport and the rail simply fills it. A fixed `h-svh`
+    // got the first case right and overshot every other one by however much was not viewport.
     sidebar: [
-      "sticky top-0 hidden h-svh shrink-0 flex-col gap-1 lg:flex",
+      "sticky top-0 hidden max-h-svh shrink-0 flex-col gap-1 lg:flex",
       "transition-[width] duration-base ease-out",
     ],
     // The content region. `min-h-0` lets it become a scroll container when the root is given
@@ -83,7 +122,29 @@ export const layoutVariants = tv({
     // elevated indent card (with the `--surface` contract); `flat` stays transparent on the
     // page canvas. polish: in `panel`, a shadow over a hard border gives depth (the ring is
     // the hairline that keeps it crisp where colors tie, e.g. white-on-white in light).
-    content: "flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto",
+    //
+    // Holding a `LayoutPane` turns it into a row of panes (list · detail), each scrolling on its
+    // own, so the sheet itself stops scrolling and just clips them to its rounded corner.
+    content: [
+      "flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto",
+      "has-[>[data-slot=layout-pane]]:flex-row has-[>[data-slot=layout-pane]]:overflow-hidden",
+    ],
+    // A column inside the sheet: the list and the reading pane of a mail client, a chat, a ticket
+    // queue. Each scrolls on its own. Every pane after the first draws the hairline that divides
+    // it from the one before: a sheet → sheet seam, a division *within* one surface, so no radius,
+    // no fill, no gap (see memory `three-pane-seams-differ`). Width is a part-local prop.
+    pane: [
+      "relative flex min-h-0 min-w-0 flex-col overflow-y-auto",
+      "not-first:border-l not-first:border-border",
+    ],
+    // The bar across the top of a pane: the list's title and search, the reading pane's actions.
+    // One height per density for every pane, so side by side their bottom rules meet in a single
+    // straight line across the seams. Sticky over the pane's own scroll, with the translucent
+    // fill the other bars use (the variants below rebase it onto the page where nothing rises).
+    paneHeader: [
+      "sticky top-0 z-20 flex shrink-0 items-center gap-2 border-b border-border",
+      "bg-card/85 backdrop-blur-sm supports-[backdrop-filter]:bg-card/75",
+    ],
     // The right rail: a sticky column for a table-of-contents / "on this page" nav. Hidden
     // below `xl`. Mostly paired with the `flat` (docs) variant, which gives it a left hairline.
     // It renders an <aside> landmark, so put a <nav> (not another aside) inside it.
@@ -135,11 +196,17 @@ export const layoutVariants = tv({
         root: "bg-background",
         content: "[--surface:var(--background)]",
         sidebar: "[--surface:var(--background)]",
+        // The band and the strip stay out of the way here, exactly as the rail column does: they
+        // hand their bars `docked: false`, so a `Navbar` keeps its own rule and a strip `Sidebar`
+        // its own card and hairline, the way each looks standing alone.
+        topbar: "bg-background [--surface:var(--background)]",
+        rail: "[--surface:var(--background)]",
         // Nothing is raised in this shell, so the sticky bars blur over the PAGE, not a card
         // (the sticky header gets the same treatment in the compounds below). Left on bg-card
         // they contradicted the `--background` surface the content declares, and a search
         // field dropped in the bar would have painted the wrong ground.
         mobileBar: "bg-background/85 supports-[backdrop-filter]:bg-background/75",
+        paneHeader: "bg-background/85 supports-[backdrop-filter]:bg-background/75",
       },
       // THE DASHBOARD SHELL: `plain` with the surfaces turned on. Same structure, same parts,
       // same scroll model; what changes is that the rail now recedes and the content rises.
@@ -160,11 +227,33 @@ export const layoutVariants = tv({
       // sets to `--popover`): `--card` makes every opaque, surface-aware child (Input, Select, a
       // minimal DataTable) rebase onto the sheet and read as transparent, while the rail column
       // rebases onto the canvas.
+      //
+      // The seam follows the structure. Under a top band with no rail beside it, the seam turns
+      // horizontal and runs wall to wall: a top hairline and no rounding, because a rounded corner
+      // against the window's side wall is the same mis-clipped notch as one against its floor.
+      // Under a band *and* beside a rail (`LayoutBody`), the sheet has two seams, so it draws both
+      // and rounds the one corner where they meet: the Slack / Discord read. Below `lg` the rail
+      // moves into the drawer, so the left seam (and its corner) go with it and the sheet runs
+      // flush to the window like any phone screen.
+      //
+      // The strip and the band sit on the canvas beside the rail, so they rebase onto it too.
+      // Between a strip and the panel after it there is a hairline (drawn by the panel, so it
+      // vanishes with the panel when that slides shut): two canvas columns with no surface change
+      // between them would otherwise run together into one wide, muddled rail.
       docked: {
         root: "bg-canvas",
-        content:
+        content: [
           "rounded-tl-xl border-l border-border bg-card text-card-foreground [--surface:var(--card)]",
-        sidebar: "[--surface:var(--canvas)]",
+          "max-lg:rounded-none max-lg:border-l-0",
+          "[[data-slot=layout-topbar]~&]:rounded-none [[data-slot=layout-topbar]~&]:border-t [[data-slot=layout-topbar]~&]:border-l-0",
+          "[[data-slot=layout-body]_&]:border-t",
+        ],
+        sidebar: [
+          "[--surface:var(--canvas)]",
+          "[[data-slot=layout-rail]+&]:border-l [[data-slot=layout-rail]+&]:border-border",
+        ],
+        topbar: "bg-canvas [--surface:var(--canvas)]",
+        rail: "[--surface:var(--canvas)]",
       },
       // Content is flat on the page canvas; the sidebar/aside are divided from it by hairlines
       // rather than a raised sheet. The page scrolls as a whole (content is `overflow-visible`,
@@ -175,7 +264,13 @@ export const layoutVariants = tv({
         content: "overflow-visible [--surface:var(--background)]",
         sidebar: "border-r border-border [--surface:var(--background)]",
         aside: "border-l border-border",
+        // Hairlines divide every column here, so the band draws its own bottom rule and blurs
+        // over the page as it scrolls under (this shell scrolls as a whole).
+        topbar:
+          "border-b border-border bg-background/85 backdrop-blur-sm supports-[backdrop-filter]:bg-background/75 [--surface:var(--background)]",
+        rail: "border-r border-border [--surface:var(--background)]",
         mobileBar: "bg-background/85 supports-[backdrop-filter]:bg-background/75",
+        paneHeader: "bg-background/85 supports-[backdrop-filter]:bg-background/75",
         sidebarTrigger: "focus-visible:ring-offset-background",
       },
     },
@@ -193,6 +288,9 @@ export const layoutVariants = tv({
         aside: "px-6 py-6",
         header: "mb-6",
         mobileBar: "h-14 px-3",
+        // The same 56px as the mobile bar and a compact `Navbar`, so a pane header lines up with
+        // the top band it sits beside.
+        paneHeader: "h-14 px-4",
         pageHeader: "mb-6",
         pageHeaderHeading: "text-3xl",
       },
@@ -201,6 +299,7 @@ export const layoutVariants = tv({
         aside: "px-8 py-10",
         header: "mb-8",
         mobileBar: "h-16 px-4",
+        paneHeader: "h-16 px-6",
         pageHeader: "mb-8",
         pageHeaderHeading: "text-4xl",
       },
@@ -212,6 +311,17 @@ export const layoutVariants = tv({
     collapsed: {
       true: { sidebar: "w-12" },
       false: { sidebar: "w-64" },
+    },
+    // What collapsing does to *this* rail, set per `LayoutSidebar`. `icon` folds it to the icon
+    // column above. `offcanvas` slides it shut entirely: the panel of a two-tier rail, where the
+    // `LayoutRail` strip already is the icon column and a second one beside it would be noise.
+    // The column clips while it narrows and the rail inside keeps its full width (`*:min-w-64`),
+    // so the labels slide out of view whole instead of re-wrapping on every frame of the tween.
+    // `visibility` rides the same transition: it holds `visible` until the width reaches zero,
+    // then takes the rows out of the tab order and the accessibility tree.
+    collapsible: {
+      icon: {},
+      offcanvas: { sidebar: "overflow-hidden transition-[width,visibility] *:min-w-64" },
     },
     // Sticky header. When set, `LayoutHeader` pins to the top of the scrolling panel and
     // bleeds to the column's edges with a translucent, blurred fill. The negative margins
@@ -253,13 +363,16 @@ export const layoutVariants = tv({
         header: "bg-background/85 supports-[backdrop-filter]:bg-background/75",
       },
     },
+    // An offcanvas rail, collapsed: all the way to zero, overriding the icon column's `w-12`.
+    { collapsed: true, collapsible: "offcanvas", class: { sidebar: "invisible w-0" } },
   ],
   defaultVariants: {
     // `docked` is the default because it is the house structure: every app screen gets it
-    // without asking. `panel` and `flat` are the deliberate exceptions.
+    // without asking. `plain` and `flat` are the deliberate exceptions.
     variant: "docked",
     density: "compact",
     collapsed: false,
+    collapsible: "icon",
     sticky: false,
   },
 })
@@ -280,8 +393,9 @@ const [LayoutProvider, useLayoutContext] = createContext<{
 export interface LayoutProps
   extends React.ComponentProps<"div">,
     // `collapsed` is shell state with a controlled/uncontrolled pair, not a styling axis you set
-    // once; it's declared as a real prop below. `sticky` is per-`LayoutHeader`.
-    Omit<VariantProps<typeof layoutVariants>, "collapsed" | "sticky"> {
+    // once; it's declared as a real prop below. `sticky` is per-`LayoutHeader`, `collapsible`
+    // per-`LayoutSidebar`.
+    Omit<VariantProps<typeof layoutVariants>, "collapsed" | "sticky" | "collapsible"> {
   /**
    * Collapse the rail to an icon-only column (controlled). Pair with `onCollapsedChange`; omit
    * both for the self-contained default.
@@ -411,23 +525,122 @@ export function useLayoutSidebar() {
  * standalone `Sidebar`, card surface and edge hairline included, so the shell stays out of its
  * way. Either way an individual rail can override with `Sidebar docked` / `docked={false}`, or
  * take the `floating` card treatment.
+ *
+ * `collapsible` says what the shell's collapse does to this rail: fold it to icons (the default),
+ * or slide it shut (`offcanvas`, for the panel beside a `LayoutRail` strip). An offcanvas rail
+ * never hands `collapsed` to the `Sidebar` inside: it keeps its full layout and simply slides out
+ * of view, rather than snapping to icons on the first frame of a column that is leaving anyway.
  */
-export function LayoutSidebar({ className, children, ...props }: React.ComponentProps<"div">) {
-  const { slots, variant, collapsed } = useLayoutContext("LayoutSidebar")
+export interface LayoutSidebarProps extends React.ComponentProps<"div"> {
+  /**
+   * What collapsing the shell (⌘B / `LayoutSidebarTrigger`) does to this rail: `icon` folds it to
+   * the 48px icon column; `offcanvas` slides it shut entirely. Use `offcanvas` for the panel of a
+   * two-tier rail, where the `LayoutRail` strip already is the icon column. @default "icon"
+   */
+  collapsible?: "icon" | "offcanvas"
+}
+
+export function LayoutSidebar({
+  className,
+  collapsible = "icon",
+  children,
+  ...props
+}: LayoutSidebarProps) {
+  const { density, variant, collapsed } = useLayoutContext("LayoutSidebar")
+  // Recomputed here (like `LayoutHeader`) so the per-instance `collapsible` folds in.
+  const slots = layoutVariants({ density, variant, collapsed, collapsible })
   // `variant` is undefined when the caller leaves it to the recipe default, which is `docked`.
   const docked = variant !== "plain"
+  const iconRail = collapsible === "icon" && collapsed
   // Memoized so the nested Sidebar doesn't re-render on every unrelated Layout render.
-  const shell = React.useMemo(() => ({ docked, collapsed }), [docked, collapsed])
+  const shell = React.useMemo(() => ({ docked, collapsed: iconRail }), [docked, iconRail])
   return (
     <div
       data-slot="layout-sidebar"
       data-collapsed={collapsed || undefined}
+      data-collapsible={collapsible}
       className={slots.sidebar({ className })}
       {...props}
     >
       <SidebarShellContext.Provider value={shell}>{children}</SidebarShellContext.Provider>
     </div>
   )
+}
+
+// Module-level: the strip's bridge never varies within a variant, so it needs no memo and never
+// re-renders the strip. Always collapsed, because an icon column is what a strip is.
+const dockedStrip = { docked: true, collapsed: true }
+const plainStrip = { docked: false, collapsed: true }
+
+/**
+ * The icon strip of a two-tier rail: the module switcher to the left of the rail proper, as in
+ * Slack's workspaces, Discord's servers, or an IDE's activity bar. Put a `Sidebar` inside and it
+ * comes out as the collapsed icon rail with no props (the strip publishes `collapsed` through the
+ * same shell bridge `LayoutSidebar` uses), so every row needs a `label` for its tooltip and name:
+ *
+ *   <Layout>
+ *     <LayoutRail>
+ *       <Sidebar aria-label="Apps">…modules…</Sidebar>
+ *     </LayoutRail>
+ *     <LayoutSidebar collapsible="offcanvas">
+ *       <Sidebar aria-label="Projects">…the module's own nav…</Sidebar>
+ *     </LayoutSidebar>
+ *     <LayoutContent>…</LayoutContent>
+ *   </Layout>
+ *
+ * A strip on its own, with no panel after it, is a legitimate shell too (an icon-only app).
+ * Renders a plain `<div>`: the landmark comes from the `Sidebar` inside, as with `LayoutSidebar`.
+ */
+export function LayoutRail({ className, children, ...props }: React.ComponentProps<"div">) {
+  const { slots, variant } = useLayoutContext("LayoutRail")
+  return (
+    <div data-slot="layout-rail" className={slots.rail({ className })} {...props}>
+      <SidebarShellContext.Provider value={variant === "plain" ? plainStrip : dockedStrip}>
+        {children}
+      </SidebarShellContext.Provider>
+    </div>
+  )
+}
+
+const dockedBar = { docked: true }
+const plainBar = { docked: false }
+
+/**
+ * The top band: an app shell's header, spanning the whole window. Drop it in as the first child of
+ * `Layout` and the shell turns into a column: the band on top, the sheet (or a `LayoutBody` row of
+ * rail and sheet) filling the rest. Stack more than one bar inside it for a tab row or a toolbar.
+ *
+ *   <Layout className="h-svh overflow-hidden">
+ *     <LayoutTopbar>
+ *       <Navbar density="compact">…brand · links · search · account…</Navbar>
+ *     </LayoutTopbar>
+ *     <LayoutContent>…</LayoutContent>
+ *   </Layout>
+ *
+ * It is the `Navbar`'s host the way `LayoutSidebar` is the `Sidebar`'s: it publishes
+ * `NavbarShellContext`, so a bar inside docks onto the band (no fill, no bottom rule, a full-width
+ * row) with no props. The seam under the band belongs to the sheet, which draws it as its own top
+ * hairline. Renders a plain `<div>`, since the `Navbar` inside is already the `<header>` landmark.
+ */
+export function LayoutTopbar({ className, children, ...props }: React.ComponentProps<"div">) {
+  const { slots, variant } = useLayoutContext("LayoutTopbar")
+  return (
+    <div data-slot="layout-topbar" className={slots.topbar({ className })} {...props}>
+      <NavbarShellContext.Provider value={variant === "plain" ? plainBar : dockedBar}>
+        {children}
+      </NavbarShellContext.Provider>
+    </div>
+  )
+}
+
+/**
+ * The row under a `LayoutTopbar` that holds the rail and the sheet side by side: the "top bar over
+ * the rail" shell (Slack, YouTube, an IDE). Without a top band you don't need it; the `Layout` root
+ * is already that row.
+ */
+export function LayoutBody({ className, ...props }: React.ComponentProps<"div">) {
+  const { slots } = useLayoutContext("LayoutBody")
+  return <div data-slot="layout-body" className={slots.body({ className })} {...props} />
 }
 
 export interface LayoutSidebarTriggerProps extends React.ComponentProps<"button"> {
@@ -515,6 +728,67 @@ export function LayoutContainer({
       className={slots.container({ className: cn(layoutContainerWidths[width], className) })}
       {...props}
     />
+  )
+}
+
+/** A pane's width. Fixed columns never shrink; `fill` takes whatever the fixed ones leave, so a
+ *  row of panes should hold exactly one. Complete class strings the compiler can see. */
+const layoutPaneWidths = {
+  sm: "w-64 shrink-0",
+  md: "w-80 shrink-0",
+  lg: "w-96 shrink-0",
+  fill: "flex-1",
+} as const
+
+export interface LayoutPaneProps extends React.ComponentProps<"section"> {
+  /**
+   * The pane's width: `sm` (256px), `md` (320px), `lg` (384px), or `fill` to take the rest of
+   * the sheet. Give one pane in the row `fill`. @default "fill"
+   */
+  width?: keyof typeof layoutPaneWidths
+}
+
+/**
+ * A column inside the sheet, for the list · detail screens: a mail client's list and reading
+ * pane, a chat's conversations and thread, a ticket queue with its inspector. Put two or more
+ * straight inside `LayoutContent` and the sheet lays them out as a row; each scrolls on its own
+ * and every pane after the first draws the dividing hairline.
+ *
+ *   <LayoutContent>
+ *     <LayoutPane width="md" aria-label="Inbox">
+ *       <LayoutPaneHeader>…title · search…</LayoutPaneHeader>
+ *       …the list…
+ *     </LayoutPane>
+ *     <LayoutPane aria-label="Message">
+ *       <LayoutPaneHeader>…actions…</LayoutPaneHeader>
+ *       …the reading pane…
+ *     </LayoutPane>
+ *   </LayoutContent>
+ *
+ * Renders a `<section>`: give it an `aria-label` and it becomes a region a screen-reader user can
+ * jump between. Which pane shows on a phone is the screen's call (a list *or* its detail), so
+ * hide the rest below a breakpoint yourself (`hidden md:flex`).
+ */
+export function LayoutPane({ className, width = "fill", ...props }: LayoutPaneProps) {
+  const { slots } = useLayoutContext("LayoutPane")
+  return (
+    <section
+      data-slot="layout-pane"
+      className={slots.pane({ className: cn(layoutPaneWidths[width], className) })}
+      {...props}
+    />
+  )
+}
+
+/**
+ * The bar across the top of a `LayoutPane`: the list's title and search, the reading pane's
+ * actions. Sticky over the pane's scroll, and one height per density across every pane, so the
+ * bars of side-by-side panes share a single bottom line.
+ */
+export function LayoutPaneHeader({ className, ...props }: React.ComponentProps<"div">) {
+  const { slots } = useLayoutContext("LayoutPaneHeader")
+  return (
+    <div data-slot="layout-pane-header" className={slots.paneHeader({ className })} {...props} />
   )
 }
 

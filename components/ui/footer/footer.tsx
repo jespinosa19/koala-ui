@@ -32,10 +32,14 @@ export const footerVariants = tv({
     top: "flex flex-col gap-10 lg:flex-row lg:justify-between",
     brand: "flex flex-col gap-4 lg:max-w-xs",
     tagline: "text-sm text-pretty text-muted-foreground",
-    // Link columns: a 2/3-up grid on small screens, a single row on lg. The `layout` variant below
-    // decides how much of that row they own; `justify-between` spreads them inside it and `gap-16`
-    // is the floor, not the rhythm.
-    columns: "grid grid-cols-2 gap-8 sm:grid-cols-3 lg:flex lg:justify-between lg:gap-16",
+    // Link columns: a 2/3-up grid on small screens, a single row on lg. Exactly four groups (the
+    // usual count) go 4-up from sm instead, since 3-up would strand the last one on its own row.
+    // The `layout` variant below decides how much of the lg row they own; `justify-between`
+    // spreads them inside it and `gap-16` is the floor, not the rhythm.
+    columns: [
+      "grid grid-cols-2 gap-8 sm:grid-cols-3 sm:has-[>:nth-child(4):last-child]:grid-cols-4",
+      "lg:flex lg:justify-between lg:gap-16",
+    ],
     column: "flex flex-col gap-3",
     // `font-sans` opts this h3 out of the DM Sans heading face: it caps a list of `text-sm`
     // Inter links at the same size, so weight alone separates them. A face change there

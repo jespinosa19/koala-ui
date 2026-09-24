@@ -428,7 +428,7 @@ export const heroVariants = tv({
     // A HeroCursor's fill. Semantic roles only (the same tints Badge/Avatar use), so each cursor
     // tracks all four themes. The arrow and ripple read `currentColor` off the cursor root.
     cursorColor: {
-      brand: { cursor: "text-brand", cursorLabel: "bg-brand text-white" },
+      brand: { cursor: "text-brand", cursorLabel: "bg-brand text-brand-foreground" },
       purple: { cursor: "text-purple", cursorLabel: "bg-purple" },
       teal: { cursor: "text-teal", cursorLabel: "bg-teal" },
       pink: { cursor: "text-pink", cursorLabel: "bg-pink" },
@@ -495,7 +495,7 @@ export const heroVariants = tv({
      */
     spreadTone: {
       brand: {
-        spreadPanel: "bg-brand text-white [--surface:var(--brand)]",
+        spreadPanel: "bg-brand text-brand-foreground [--surface:var(--brand)]",
         // The chip's label is `brand-strong`, not `brand`: contrast is symmetric, so a raw-accent
         // label on white is the same 3.6:1 as white on the accent, and the darker step is what
         // carries it to AA on all eight presets. Same call the on-media Button makes.

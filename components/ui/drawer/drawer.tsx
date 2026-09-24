@@ -55,7 +55,8 @@ export const drawerVariants = tv({
     // past 40px (polish) so it's easy to grab with a thumb.
     handle: [
       "mx-auto h-1.5 w-12 shrink-0 cursor-grab rounded-full bg-border transition-colors duration-fast ease-out active:cursor-grabbing hover:bg-muted-foreground/40",
-      "relative before:absolute before:-inset-x-6 before:-inset-y-2.5 before:content-['']",
+      // 96 × 40 px: the bar is 6px tall, the pseudo-element adds 17px above and below it.
+      "relative before:absolute before:-inset-x-6 before:-inset-y-[17px] before:content-['']",
     ],
     close: [
       "absolute top-4 right-4 z-10 inline-flex cursor-pointer items-center justify-center rounded-md",

@@ -177,17 +177,19 @@ export const bannerVariants = tv({
         close: "text-background/70 hover:bg-background/10 hover:text-background focus-visible:ring-background/50",
       },
     },
-    // Solid: brand accent bar. `brand` is constant across themes, so white text reads the same in
-    // all four (3.6:1 on the default orange: AA for large text, a deliberate brand call).
+    // Solid: brand accent bar. `brand` is constant across themes, so its ink (--brand-foreground,
+    // white on every accent but lime) reads the same in all four (3.6:1 on the default orange: AA
+    // for large text, a deliberate brand call).
     {
       appearance: "solid",
       variant: "brand",
       class: {
-        root: "bg-brand text-white [--surface:var(--brand)]",
-        icon: "text-white",
-        content: "text-white",
-        action: "text-white hover:opacity-80 focus-visible:ring-white/60",
-        close: "text-white/80 hover:bg-white/10 hover:text-white focus-visible:ring-white/60",
+        root: "bg-brand text-brand-foreground [--surface:var(--brand)]",
+        icon: "text-brand-foreground",
+        content: "text-brand-foreground",
+        action: "text-brand-foreground hover:opacity-80 focus-visible:ring-brand-foreground/60",
+        close:
+          "text-brand-foreground/80 hover:bg-brand-foreground/10 hover:text-brand-foreground focus-visible:ring-brand-foreground/60",
       },
     },
     // Keep the centered message clear of the absolute close button on both sides.

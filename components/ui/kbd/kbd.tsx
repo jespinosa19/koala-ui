@@ -35,18 +35,38 @@ export const kbdVariants = tv({
       // `--accent` equals `--muted` in most themes, so a flat muted key would vanish on a
       // highlighted menu row. A tint composes over whatever it sits on (page, card, tooltip,
       // hovered row) and always reads one step darker.
-      default: "border-transparent bg-foreground/8 text-muted-foreground",
+      //
+      // The one ground it can't compose over is the text Tooltip, an inverted chip whose fill IS
+      // the foreground: a foreground tint vanishes there. So every variant carries a second set
+      // of classes, scoped to `[data-slot=tooltip][data-variant=text]`, that swaps the roles and
+      // builds the key from the chip's own ink (the page background) instead.
+      default: [
+        "border-transparent bg-foreground/8 text-muted-foreground",
+        "[[data-slot=tooltip][data-variant=text]_&]:bg-background/15 [[data-slot=tooltip][data-variant=text]_&]:text-background/80",
+      ],
       // Alias of the default chip. It used to be the filled option when the default was an
       // outline cap; kept so existing call sites keep compiling and render the same gray key.
-      soft: "border-transparent bg-foreground/8 text-muted-foreground",
+      soft: [
+        "border-transparent bg-foreground/8 text-muted-foreground",
+        "[[data-slot=tooltip][data-variant=text]_&]:bg-background/15 [[data-slot=tooltip][data-variant=text]_&]:text-background/80",
+      ],
       // Hairline cap over a transparent fill, for a key that should read lighter than the chip.
-      outline: "border-border bg-transparent text-muted-foreground",
+      outline: [
+        "border-border bg-transparent text-muted-foreground",
+        "[[data-slot=tooltip][data-variant=text]_&]:border-background/25 [[data-slot=tooltip][data-variant=text]_&]:text-background/80",
+      ],
       // Inverted, high-contrast cap, for callouts and onboarding hints.
-      solid: "border-transparent bg-foreground text-background shadow-xs",
+      solid: [
+        "border-transparent bg-foreground text-background shadow-xs",
+        "[[data-slot=tooltip][data-variant=text]_&]:bg-background [[data-slot=tooltip][data-variant=text]_&]:text-foreground",
+      ],
       // No keycap at all, just the glyph as muted mono text. For inline ⌘K hints inside
       // buttons/inputs where a raised cap would read as a second, competing control.
       // The box sizing (height/min-width/padding) is stripped per size below.
-      ghost: "border-transparent bg-transparent text-muted-foreground shadow-none",
+      ghost: [
+        "border-transparent bg-transparent text-muted-foreground shadow-none",
+        "[[data-slot=tooltip][data-variant=text]_&]:text-background/70",
+      ],
     },
     size: {
       // Radius scales with the cap: a constant 0.25x of the height (6px at the md default),

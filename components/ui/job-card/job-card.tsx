@@ -120,7 +120,7 @@ export const jobCardVariants = tv({
      */
     interactive: {
       true: {
-        root: "cursor-pointer transition-colors duration-fast ease-out hover:bg-muted/60 active:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
+        root: "cursor-pointer text-left transition-colors duration-fast ease-out hover:bg-muted/60 active:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
       },
     },
   },

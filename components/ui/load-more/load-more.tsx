@@ -65,13 +65,15 @@ export const loadMoreVariants = tv({
     //
     // The dissolve is DEEP on purpose: `--fade-size` defaults to a 40px edge tuck, which is right
     // for a marquee bleeding past its container but reads as a slab cut on a clamp that is hundreds
-    // of pixels tall - the last row sits at full strength and then stops. 22% of the clamp (up to
-    // 7rem) gives the cut row most of its own height to disappear over, so the grid trails off
-    // instead of ending. Capped in rem so a very tall clamp does not swallow the row above it, and
-    // proportional below that so short regions keep the same feel. Override per instance with a
-    // later `[--fade-size:…]` on LoadMoreContent.
+    // of pixels tall - the last row sits at full strength and then stops. 40% of the clamp (up to
+    // 16rem) gives the cut row ALL of its visible height to disappear over, so the grid trails off
+    // instead of ending. The first cut (22%, up to 7rem) still read harsh on a row of bright
+    // screenshots: a 370px picture went from full white to the band in about 100px. Capped in rem so
+    // a very tall clamp does not swallow the row above it, and proportional below that so short
+    // regions keep the same feel. Override per instance with a later `[--fade-size:…]` on
+    // LoadMoreContent.
     content:
-      "[--fade-size:min(7rem,22%)] transition-[max-height] duration-slow ease-out motion-reduce:transition-none",
+      "[--fade-size:min(16rem,40%)] transition-[max-height] duration-slow ease-out motion-reduce:transition-none",
     // The trigger's row. Always in flow (never absolute over the fade), so the button is a real
     // hit target at a real position and the reveal doesn't shift the page around it.
     trigger: "mt-10 flex",

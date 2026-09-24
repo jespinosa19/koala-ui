@@ -11,4 +11,5 @@ export {
   type SocialLink,
   type SocialNetwork,
   type AuthProvider,
+  type AuthFormLabels,
 } from "./auth-form"

@@ -29,9 +29,10 @@ export const checkboxVariants = tv({
       // Specific transition (never `transition: all`, #14); tactile press scale (#12).
       "transition-colors duration-fast ease-out active:scale-[0.96]",
       "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-      // Checked and indeterminate both fill with the accent (brand); the indicator inherits the fg.
-      "data-[state=checked]:border-brand data-[state=checked]:bg-brand data-[state=checked]:text-white",
-      "data-[state=indeterminate]:border-brand data-[state=indeterminate]:bg-brand data-[state=indeterminate]:text-white",
+      // Checked and indeterminate both fill with the accent (brand); the indicator inherits the fg,
+      // the accent's own ink (--brand-foreground), so a light accent like lime keeps its tick.
+      "data-[state=checked]:border-brand data-[state=checked]:bg-brand data-[state=checked]:text-brand-foreground",
+      "data-[state=indeterminate]:border-brand data-[state=indeterminate]:bg-brand data-[state=indeterminate]:text-brand-foreground",
       "disabled:cursor-not-allowed disabled:opacity-50",
     ],
     indicator: "flex items-center justify-center text-current",

@@ -81,7 +81,7 @@ export interface SettingsFormProps
   defaultValues?: Partial<SettingsFormData>
   /** Avatar image src; falls back to initials when absent. */
   avatarSrc?: string
-  /** Prefix shown before the username (e.g. `"koala.ui/"`). */
+  /** Prefix shown before the username (e.g. `"acme.com/"`). */
   usernamePrefix?: string
   /** Called with the full form data on save. Return a promise to drive the spinner. */
   onSave?: (data: SettingsFormData) => void | Promise<void>
@@ -93,7 +93,7 @@ export function SettingsForm({
   description = "This information will be displayed publicly on your profile.",
   defaultValues,
   avatarSrc,
-  usernamePrefix = "koala.ui/",
+  usernamePrefix = "acme.com/",
   density,
   onSave,
   onCancel,

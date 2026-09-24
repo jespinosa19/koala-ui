@@ -163,8 +163,12 @@ export const sidebarVariants = tv({
     // content gutter, vertically centered); the offset is tuned per density in compoundVariants
     // (this base matches the `compact` p-2 gutter). The per-row bar is suppressed in this mode
     // (see the `indicator` variant) so there's only ever the one sliding bar.
+    //
+    // The size tweens with the slide: a nested `SidebarCollapsible` row is narrower than a
+    // top-level one, and a width that snapped while the pill was still in flight would poke past
+    // the rail's edge for the length of the glide.
     indicator: [
-      "pointer-events-none absolute left-0 top-0 rounded-md bg-accent will-change-transform transition-transform duration-base ease-out",
+      "pointer-events-none absolute left-0 top-0 rounded-md bg-accent will-change-transform transition-[transform,width,height] duration-base ease-out",
       "before:absolute before:-left-2 before:top-1/2 before:h-4 before:w-[3px] before:-translate-y-1/2",
       "before:rounded-r-full before:bg-brand before:content-['']",
     ],
@@ -416,7 +420,8 @@ export const SidebarShellContext = React.createContext<{
 // Collapsible panel. A plain context with a default (not the throwing `createContext`) because
 // these parts are valid in an ordinary, non-collapsible group too: `SidebarGroup` always
 // provides it, so the default only guards a label/content used loose.
-const SidebarGroupContext = React.createContext<{ collapsible: boolean }>({ collapsible: false })
+const NOT_COLLAPSIBLE = { collapsible: false }
+const SidebarGroupContext = React.createContext<{ collapsible: boolean }>(NOT_COLLAPSIBLE)
 
 export interface SidebarProps
   extends React.ComponentProps<"aside">,
@@ -512,6 +517,12 @@ export function SidebarHeader({ className, ...props }: React.ComponentProps<"div
   return <div data-slot="sidebar-header" className={slots.header({ className })} {...props} />
 }
 
+// The collapsible panels a row can be folded away inside: a `SidebarGroup collapsible` body and a
+// `SidebarCollapsible` sub-list. Scoped to the panels by slot, because the trigger rows carry a
+// Radix `data-state` of their own.
+const FOLDED_PANEL =
+  '[data-slot="sidebar-group-content"][data-state="closed"], [data-slot="sidebar-sub"][data-state="closed"]'
+
 export function SidebarContent({ className, children, ...props }: React.ComponentProps<"div">) {
   const { slots, indicator } = useSidebarContext("SidebarContent")
   const ref = React.useRef<HTMLDivElement>(null)
@@ -525,12 +536,18 @@ export function SidebarContent({ className, children, ...props }: React.Componen
   // Measure the active row's box relative to the (scrollable, positioned) content so the pill
   // can be placed and slide to it. Adding scrollTop/Left keeps it pinned when the rail scrolls.
   // Named fn (not inlined into the effect) per the repo's set-state-in-effect lint rule.
+  //
+  // A row inside a folded panel doesn't count: the moment a collapsible group or sub-list starts
+  // closing (Radix flips its `data-state` before the height tween), its rows are on their way out
+  // of view, and a pill left on one would float over the rows sliding up beneath it. The first
+  // active row still on show wins, so a folded `SidebarCollapsible` marked `active` catches the
+  // pill as its child folds away, and with no row on show the pill simply goes.
   function syncPill() {
     const container = ref.current
     if (!container) return
-    const active = container.querySelector<HTMLElement>(
-      '[data-slot="sidebar-item"][data-active="true"]',
-    )
+    const active = Array.from(
+      container.querySelectorAll<HTMLElement>('[data-slot="sidebar-item"][data-active="true"]'),
+    ).find((row) => !row.closest(FOLDED_PANEL))
     if (!active) {
       setPill(null)
       return
@@ -558,7 +575,8 @@ export function SidebarContent({ className, children, ...props }: React.Componen
     mo.observe(container, {
       subtree: true,
       attributes: true,
-      attributeFilter: ["data-active"],
+      // `data-state` too: folding a panel hides its active row without touching `data-active`.
+      attributeFilter: ["data-active", "data-state"],
       childList: true,
     })
     const ro = new ResizeObserver(syncPill)
@@ -866,7 +884,8 @@ export interface SidebarCollapsibleProps {
  * A nested, collapsible navigation section. The parent row toggles a sub-list of `SidebarItem`s
  * that slides open beneath it, indented under the label and traced by a hairline guide rail.
  * Built on Radix Collapsible (it owns the open/close a11y + the height tween); the caret flips
- * with the panel.
+ * with the panel. A long sub-list can be split under `SidebarGroupLabel` sub-headings, which
+ * render as plain labels here.
  *
  * In the collapsed icon rail there's no room to nest, so it falls back to a single icon row
  * (with the `label` as a hover tooltip) and the children are dropped.
@@ -929,7 +948,9 @@ export function SidebarCollapsible({
         </CollapsiblePrimitive.Trigger>
         <CollapsiblePrimitive.Content asChild>
           <div data-slot="sidebar-sub" className={slots.sub()}>
-            {children}
+            {/* A `SidebarGroupLabel` in here heads a run of sub-rows, so it stays a plain label
+                even when this section sits inside a collapsible group, whose toggle it isn't. */}
+            <SidebarGroupContext.Provider value={NOT_COLLAPSIBLE}>{children}</SidebarGroupContext.Provider>
           </div>
         </CollapsiblePrimitive.Content>
       </div>

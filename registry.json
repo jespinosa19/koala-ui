@@ -26,7 +26,7 @@
       "utils",
       "tv"
     ],
-    "hash": "36ffb98bd251f3b4"
+    "hash": "d7d9a7d43ab602e4"
   },
   "items": [
     {
@@ -71,7 +71,7 @@
         "components/ui/activity-feed/activity-feed.tsx",
         "components/ui/activity-feed/index.ts"
       ],
-      "hash": "1f09855c03476af1"
+      "hash": "378b179c2db375a3"
     },
     {
       "name": "ai-panel",
@@ -173,6 +173,41 @@
       "hash": "c7ef2cae03de89bd"
     },
     {
+      "name": "auth-community",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Auth Community",
+      "dependencies": {},
+      "registryDependencies": [
+        "auth-form"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/pages/auth-community/auth-community.tsx",
+        "components/pages/auth-community/index.ts"
+      ],
+      "hash": "aff47f067475788d"
+    },
+    {
+      "name": "auth-community-split",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Auth Community Split",
+      "dependencies": {},
+      "registryDependencies": [
+        "auth-form",
+        "layout"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/pages/auth-community-split/auth-community-split.tsx",
+        "components/pages/auth-community-split/index.ts"
+      ],
+      "hash": "0168cb6ffb3348e6"
+    },
+    {
       "name": "auth-form",
       "type": "component",
       "tier": "free",
@@ -197,7 +232,105 @@
         "components/ui/auth-form/brand-logos.tsx",
         "components/ui/auth-form/index.ts"
       ],
-      "hash": "b7e81b78f399c0eb"
+      "hash": "08e7420a91298e91"
+    },
+    {
+      "name": "auth-login-centered",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Auth Login Centered",
+      "dependencies": {},
+      "registryDependencies": [
+        "auth-form"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/pages/auth-login-centered/auth-login-centered.tsx",
+        "components/pages/auth-login-centered/index.ts"
+      ],
+      "hash": "30ea2c08e324d8c3"
+    },
+    {
+      "name": "auth-login-split",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Auth Login Split",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "auth-form",
+        "layout"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/pages/auth-login-split/auth-login-split.tsx",
+        "components/pages/auth-login-split/index.ts"
+      ],
+      "hash": "e290d319ca78ed0f"
+    },
+    {
+      "name": "auth-provider-stack",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Auth Provider Stack",
+      "dependencies": {},
+      "registryDependencies": [
+        "auth-form"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/pages/auth-provider-stack/auth-provider-stack.tsx",
+        "components/pages/auth-provider-stack/index.ts"
+      ],
+      "hash": "a8e9675dc1c3e3ef"
+    },
+    {
+      "name": "auth-signup-centered",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Auth Signup Centered",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "auth-form",
+        "badge"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/pages/auth-signup-centered/auth-signup-centered.tsx",
+        "components/pages/auth-signup-centered/index.ts"
+      ],
+      "hash": "1ff50ada031cf325"
+    },
+    {
+      "name": "auth-signup-split",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Auth Signup Split",
+      "dependencies": {},
+      "registryDependencies": [
+        "auth-form",
+        "layout"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/pages/auth-signup-split/auth-signup-split.tsx",
+        "components/pages/auth-signup-split/index.ts"
+      ],
+      "hash": "a9e9ab8d951b3e1a"
     },
     {
       "name": "avatar",
@@ -278,7 +411,7 @@
         "components/ui/badge-group/badge-group.tsx",
         "components/ui/badge-group/index.ts"
       ],
-      "hash": "d102c50672334696"
+      "hash": "3c02ab5736187209"
     },
     {
       "name": "banner",
@@ -301,7 +434,103 @@
         "components/ui/banner/banner.tsx",
         "components/ui/banner/index.ts"
       ],
-      "hash": "d0158c4009021016"
+      "hash": "74d7b6f057d719a8"
+    },
+    {
+      "name": "banner-section-1",
+      "type": "section",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "Banner Section 1",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "banner"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/banner-section-1/banner-section-1.tsx",
+        "components/sections/banner-section-1/index.ts"
+      ],
+      "hash": "0e951c5e9e288cd9"
+    },
+    {
+      "name": "banner-section-2",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Banner Section 2",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "banner"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/banner-section-2/banner-section-2.tsx",
+        "components/sections/banner-section-2/index.ts"
+      ],
+      "hash": "d23ed3569cb00067"
+    },
+    {
+      "name": "banner-section-3",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Banner Section 3",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "banner"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/banner-section-3/banner-section-3.tsx",
+        "components/sections/banner-section-3/index.ts"
+      ],
+      "hash": "c2c582110b086b6f"
+    },
+    {
+      "name": "banner-section-4",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Banner Section 4",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "banner",
+        "button"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/banner-section-4/banner-section-4.tsx",
+        "components/sections/banner-section-4/index.ts"
+      ],
+      "hash": "0264f27a18de14cd"
+    },
+    {
+      "name": "banner-section-5",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Banner Section 5",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "banner"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/banner-section-5/banner-section-5.tsx",
+        "components/sections/banner-section-5/index.ts"
+      ],
+      "hash": "907c9f4fbf614c83"
     },
     {
       "name": "bento",
@@ -315,13 +544,236 @@
       "registryDependencies": [],
       "libDependencies": [
         "create-context",
-        "tv"
+        "tv",
+        "utils"
       ],
       "files": [
         "components/ui/bento/bento.tsx",
         "components/ui/bento/index.ts"
       ],
-      "hash": "63de7d720110adf3"
+      "hash": "ca120e3e18124cbb"
+    },
+    {
+      "name": "blog-post-1",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Blog Post 1",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "avatar",
+        "avatar-group",
+        "badge",
+        "breadcrumb",
+        "button",
+        "card",
+        "dropdown-menu",
+        "footer",
+        "navbar",
+        "newsletter-form",
+        "progress",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/pages/blog-post-1/article.tsx",
+        "components/pages/blog-post-1/blog-post-1.tsx",
+        "components/pages/blog-post-1/footer.tsx",
+        "components/pages/blog-post-1/index.ts",
+        "components/pages/blog-post-1/navbar.tsx",
+        "components/pages/blog-post-1/newsletter-cta.tsx",
+        "components/pages/blog-post-1/reading-progress.tsx",
+        "components/pages/blog-post-1/related-posts.tsx"
+      ],
+      "hash": "aa0d9cfcbb0de3fd"
+    },
+    {
+      "name": "blog-post-2",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Blog Post 2",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "avatar",
+        "avatar-group",
+        "badge",
+        "button",
+        "card",
+        "dropdown-menu",
+        "footer",
+        "navbar",
+        "newsletter-form",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/pages/blog-post-2/article.tsx",
+        "components/pages/blog-post-2/blog-post-2.tsx",
+        "components/pages/blog-post-2/footer.tsx",
+        "components/pages/blog-post-2/index.ts",
+        "components/pages/blog-post-2/navbar.tsx",
+        "components/pages/blog-post-2/newsletter-cta.tsx",
+        "components/pages/blog-post-2/related-posts.tsx",
+        "components/pages/blog-post-2/table-of-contents.tsx"
+      ],
+      "hash": "1025bc45fa749c1a"
+    },
+    {
+      "name": "blog-post-3",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Blog Post 3",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "avatar",
+        "avatar-group",
+        "badge",
+        "button",
+        "card",
+        "dropdown-menu",
+        "footer",
+        "navbar",
+        "newsletter-form",
+        "progress",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/pages/blog-post-3/article.tsx",
+        "components/pages/blog-post-3/blog-post-3.tsx",
+        "components/pages/blog-post-3/footer.tsx",
+        "components/pages/blog-post-3/index.ts",
+        "components/pages/blog-post-3/navbar.tsx",
+        "components/pages/blog-post-3/newsletter-cta.tsx",
+        "components/pages/blog-post-3/reading-progress.tsx",
+        "components/pages/blog-post-3/related-posts.tsx"
+      ],
+      "hash": "6afd1b503bddd8fb"
+    },
+    {
+      "name": "blog-section-1",
+      "type": "section",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "Blog Section 1",
+      "dependencies": {},
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "section",
+        "section-header",
+        "toggle-group"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/blog-section-1/blog-section-1.tsx",
+        "components/sections/blog-section-1/index.ts"
+      ],
+      "hash": "6848cb94fe35000b"
+    },
+    {
+      "name": "blog-section-2",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Blog Section 2",
+      "dependencies": {},
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/blog-section-2/blog-section-2.tsx",
+        "components/sections/blog-section-2/index.ts"
+      ],
+      "hash": "ff4bfc7abf06ee31"
+    },
+    {
+      "name": "blog-section-3",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Blog Section 3",
+      "dependencies": {},
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/blog-section-3/blog-section-3.tsx",
+        "components/sections/blog-section-3/index.ts"
+      ],
+      "hash": "2eaff57091244e77"
+    },
+    {
+      "name": "blog-section-4",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Blog Section 4",
+      "dependencies": {},
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "section",
+        "section-header",
+        "toggle-group"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/blog-section-4/blog-section-4.tsx",
+        "components/sections/blog-section-4/index.ts"
+      ],
+      "hash": "065020f9b34bcc86"
+    },
+    {
+      "name": "blog-section-5",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Blog Section 5",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/blog-section-5/blog-section-5.tsx",
+        "components/sections/blog-section-5/index.ts"
+      ],
+      "hash": "855d5c0859cac35f"
     },
     {
       "name": "breadcrumb",
@@ -370,7 +822,7 @@
         "components/ui/button/social-button.tsx",
         "components/ui/button/social-logos.tsx"
       ],
-      "hash": "c54165a782009d25"
+      "hash": "cf69463c027dab2e"
     },
     {
       "name": "button-group",
@@ -394,7 +846,7 @@
         "components/ui/button-group/button-group.tsx",
         "components/ui/button-group/index.ts"
       ],
-      "hash": "0cab07abe3f38c0a"
+      "hash": "1cfc7feb2778e002"
     },
     {
       "name": "card",
@@ -710,6 +1162,121 @@
       "hash": "7ded52b4977a4b55"
     },
     {
+      "name": "changelog-section-1",
+      "type": "section",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "Changelog Section 1",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "button",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/changelog-section-1/changelog-section-1.tsx",
+        "components/sections/changelog-section-1/index.ts"
+      ],
+      "hash": "c41b3df93b174742"
+    },
+    {
+      "name": "changelog-section-2",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Changelog Section 2",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "activity-feed",
+        "badge",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/changelog-section-2/changelog-section-2.tsx",
+        "components/sections/changelog-section-2/index.ts"
+      ],
+      "hash": "5f5b5caa77e2ed44"
+    },
+    {
+      "name": "changelog-section-3",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Changelog Section 3",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "button",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/changelog-section-3/changelog-section-3.tsx",
+        "components/sections/changelog-section-3/index.ts"
+      ],
+      "hash": "25785bc1068790d7"
+    },
+    {
+      "name": "changelog-section-4",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Changelog Section 4",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "button",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/changelog-section-4/changelog-section-4.tsx",
+        "components/sections/changelog-section-4/index.ts"
+      ],
+      "hash": "b7e71f1d4007d08b"
+    },
+    {
+      "name": "changelog-section-6",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Changelog Section 6",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "button",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/changelog-section-6/changelog-section-6.tsx",
+        "components/sections/changelog-section-6/index.ts"
+      ],
+      "hash": "00a6d12a26d12ff2"
+    },
+    {
       "name": "chart",
       "type": "component",
       "tier": "free",
@@ -730,7 +1297,7 @@
         "components/ui/chart/chart.tsx",
         "components/ui/chart/index.ts"
       ],
-      "hash": "8ea073c851bc42d3"
+      "hash": "480b0cceac38e9b2"
     },
     {
       "name": "chat",
@@ -778,7 +1345,7 @@
         "components/ui/checkbox/checkbox.tsx",
         "components/ui/checkbox/index.ts"
       ],
-      "hash": "52ef1b30e73352c6"
+      "hash": "53657c717fe6849a"
     },
     {
       "name": "checklist",
@@ -802,6 +1369,65 @@
         "components/ui/checklist/index.ts"
       ],
       "hash": "ca42e417009c0bd1"
+    },
+    {
+      "name": "checkout-billing-split",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Checkout Billing Split",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "breadcrumb",
+        "button",
+        "field",
+        "form",
+        "input",
+        "input-group",
+        "layout",
+        "order-summary",
+        "radio-group"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/pages/checkout-billing-split/checkout-billing-split.tsx",
+        "components/pages/checkout-billing-split/index.ts"
+      ],
+      "hash": "8b389424c4a8d1c1"
+    },
+    {
+      "name": "checkout-cart",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Checkout Cart",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "breadcrumb",
+        "button",
+        "field",
+        "form",
+        "input",
+        "input-group",
+        "layout",
+        "order-summary",
+        "radio-group"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/pages/checkout-cart/checkout-cart.tsx",
+        "components/pages/checkout-cart/index.ts"
+      ],
+      "hash": "011a8cd57ddd99ed"
     },
     {
       "name": "code-snippet",
@@ -913,7 +1539,94 @@
         "components/ui/contact-form/contact-form.tsx",
         "components/ui/contact-form/index.ts"
       ],
-      "hash": "62877218cba9b2d4"
+      "hash": "10e9efce39d76ca5"
+    },
+    {
+      "name": "contact-section-1",
+      "type": "section",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "Contact Section 1",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "button",
+        "contact-form",
+        "hero"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/contact-section-1/contact-section-1.tsx",
+        "components/sections/contact-section-1/index.ts"
+      ],
+      "hash": "14c94165fd2f8cea"
+    },
+    {
+      "name": "contact-section-2",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Contact Section 2",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "contact-form",
+        "link",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/contact-section-2/contact-section-2.tsx",
+        "components/sections/contact-section-2/index.ts"
+      ],
+      "hash": "55ff85b69a52ab41"
+    },
+    {
+      "name": "contact-section-3",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Contact Section 3",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "contact-form",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/contact-section-3/contact-section-3.tsx",
+        "components/sections/contact-section-3/index.ts"
+      ],
+      "hash": "a3f2d87fb92d2640"
+    },
+    {
+      "name": "contact-section-4",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Contact Section 4",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "card",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/contact-section-4/contact-section-4.tsx",
+        "components/sections/contact-section-4/index.ts"
+      ],
+      "hash": "3cdbc3fe460e633c"
     },
     {
       "name": "context-menu",
@@ -967,6 +1680,56 @@
       "hash": "4bab095122655558"
     },
     {
+      "name": "course-craft",
+      "type": "template",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Course Craft",
+      "demo": "https://koala-ui.vercel.app/demo/course-craft",
+      "dependencies": {},
+      "registryDependencies": [],
+      "libDependencies": [],
+      "assets": {
+        "count": 54,
+        "bytes": 1698404
+      },
+      "files": [
+        "templates/course-craft/.gitignore",
+        "templates/course-craft/LICENSE",
+        "templates/course-craft/README.md",
+        "templates/course-craft/THIRD_PARTY.md",
+        "templates/course-craft/app/(site)/[...slug]/page.tsx",
+        "templates/course-craft/app/(site)/admin/styleguide/page.tsx",
+        "templates/course-craft/app/(site)/contact/page.tsx",
+        "templates/course-craft/app/(site)/course/page.tsx",
+        "templates/course-craft/app/(site)/craft.css",
+        "templates/course-craft/app/(site)/layout.tsx",
+        "templates/course-craft/app/(site)/not-found.tsx",
+        "templates/course-craft/app/(site)/page.tsx",
+        "templates/course-craft/app/(site)/styleguide/page.tsx",
+        "templates/course-craft/app/globals.css",
+        "templates/course-craft/app/koala.css",
+        "templates/course-craft/app/layout.tsx",
+        "templates/course-craft/components/craft/chrome.tsx",
+        "templates/course-craft/components/craft/data.ts",
+        "templates/course-craft/components/craft/home.tsx",
+        "templates/course-craft/components/craft/interactive.tsx",
+        "templates/course-craft/components/craft/pages.tsx",
+        "templates/course-craft/components/craft/primitives.tsx",
+        "templates/course-craft/components/craft/styleguide.ts",
+        "templates/course-craft/components/styleguide.tsx",
+        "templates/course-craft/koala.json",
+        "templates/course-craft/lib/utils.ts",
+        "templates/course-craft/next.config.ts",
+        "templates/course-craft/package-lock.json",
+        "templates/course-craft/package.json",
+        "templates/course-craft/postcss.config.mjs",
+        "templates/course-craft/template.json",
+        "templates/course-craft/tsconfig.json"
+      ],
+      "hash": "9c3d1802a16e911a"
+    },
+    {
       "name": "create-context",
       "type": "lib",
       "tier": "free",
@@ -979,6 +1742,53 @@
         "lib/create-context.tsx"
       ],
       "hash": "363a11bacbd17e5c"
+    },
+    {
+      "name": "creative-shutter",
+      "type": "template",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Creative Shutter",
+      "demo": "https://koala-ui.vercel.app/demo/creative-shutter",
+      "dependencies": {},
+      "registryDependencies": [],
+      "libDependencies": [],
+      "assets": {
+        "count": 26,
+        "bytes": 4028385
+      },
+      "files": [
+        "templates/creative-shutter/.gitignore",
+        "templates/creative-shutter/LICENSE",
+        "templates/creative-shutter/README.md",
+        "templates/creative-shutter/THIRD_PARTY.md",
+        "templates/creative-shutter/app/(site)/[...slug]/page.tsx",
+        "templates/creative-shutter/app/(site)/admin/styleguide/page.tsx",
+        "templates/creative-shutter/app/(site)/layout.tsx",
+        "templates/creative-shutter/app/(site)/not-found.tsx",
+        "templates/creative-shutter/app/(site)/page.tsx",
+        "templates/creative-shutter/app/(site)/shutter.css",
+        "templates/creative-shutter/app/(site)/styleguide/page.tsx",
+        "templates/creative-shutter/app/globals.css",
+        "templates/creative-shutter/app/koala.css",
+        "templates/creative-shutter/app/layout.tsx",
+        "templates/creative-shutter/components/shutter/chrome.tsx",
+        "templates/creative-shutter/components/shutter/data.ts",
+        "templates/creative-shutter/components/shutter/home.tsx",
+        "templates/creative-shutter/components/shutter/interactive.tsx",
+        "templates/creative-shutter/components/shutter/primitives.tsx",
+        "templates/creative-shutter/components/shutter/styleguide.ts",
+        "templates/creative-shutter/components/styleguide.tsx",
+        "templates/creative-shutter/koala.json",
+        "templates/creative-shutter/lib/utils.ts",
+        "templates/creative-shutter/next.config.ts",
+        "templates/creative-shutter/package-lock.json",
+        "templates/creative-shutter/package.json",
+        "templates/creative-shutter/postcss.config.mjs",
+        "templates/creative-shutter/template.json",
+        "templates/creative-shutter/tsconfig.json"
+      ],
+      "hash": "f47f3e58992ccb76"
     },
     {
       "name": "cta-section-1",
@@ -1016,6 +1826,9 @@
         "section-header"
       ],
       "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
       "files": [
         "components/sections/cta-section-10/cta-section-10.tsx",
         "components/sections/cta-section-10/index.ts"
@@ -1037,6 +1850,9 @@
         "section-header"
       ],
       "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
       "files": [
         "components/sections/cta-section-11/cta-section-11.tsx",
         "components/sections/cta-section-11/index.ts"
@@ -1078,6 +1894,9 @@
         "section-header"
       ],
       "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
       "files": [
         "components/sections/cta-section-13/cta-section-13.tsx",
         "components/sections/cta-section-13/index.ts"
@@ -1096,6 +1915,9 @@
         "section-header"
       ],
       "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
       "files": [
         "components/sections/cta-section-14/cta-section-14.tsx",
         "components/sections/cta-section-14/index.ts"
@@ -1117,6 +1939,9 @@
         "section-header"
       ],
       "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
       "files": [
         "components/sections/cta-section-15/cta-section-15.tsx",
         "components/sections/cta-section-15/index.ts"
@@ -1139,6 +1964,9 @@
         "section-header"
       ],
       "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
       "files": [
         "components/sections/cta-section-2/cta-section-2.tsx",
         "components/sections/cta-section-2/index.ts"
@@ -1182,11 +2010,14 @@
         "section-header"
       ],
       "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
       "files": [
         "components/sections/cta-section-4/cta-section-4.tsx",
         "components/sections/cta-section-4/index.ts"
       ],
-      "hash": "d1d111758e4fae4e"
+      "hash": "7ce4480505e19a2b"
     },
     {
       "name": "cta-section-5",
@@ -1202,6 +2033,9 @@
         "section-header"
       ],
       "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
       "files": [
         "components/sections/cta-section-5/cta-section-5.tsx",
         "components/sections/cta-section-5/index.ts"
@@ -1221,6 +2055,9 @@
         "section-header"
       ],
       "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
       "files": [
         "components/sections/cta-section-6/cta-section-6.tsx",
         "components/sections/cta-section-6/index.ts"
@@ -1243,6 +2080,9 @@
         "section-header"
       ],
       "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
       "files": [
         "components/sections/cta-section-7/cta-section-7.tsx",
         "components/sections/cta-section-7/index.ts"
@@ -1283,11 +2123,47 @@
         "section-header"
       ],
       "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
       "files": [
         "components/sections/cta-section-9/cta-section-9.tsx",
         "components/sections/cta-section-9/index.ts"
       ],
-      "hash": "c44861adc2aaf337"
+      "hash": "cdc3e901e9f4ac9b"
+    },
+    {
+      "name": "dashboard-overview",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Dashboard Overview",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "breadcrumb",
+        "button",
+        "card",
+        "chart",
+        "data-table",
+        "dropdown-menu",
+        "layout",
+        "ranking",
+        "select",
+        "sidebar",
+        "stat"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/pages/dashboard-overview/dashboard-overview.tsx",
+        "components/pages/dashboard-overview/index.ts"
+      ],
+      "hash": "7a245a019d0aaf26"
     },
     {
       "name": "data-table",
@@ -1333,7 +2209,7 @@
         "components/ui/data-table/index.ts",
         "components/ui/data-table/table.tsx"
       ],
-      "hash": "fd0841878f42a36b"
+      "hash": "16f27d8742b1ed40"
     },
     {
       "name": "date-picker",
@@ -1358,7 +2234,7 @@
         "components/ui/date-picker/date-picker.tsx",
         "components/ui/date-picker/index.ts"
       ],
-      "hash": "66ff89991764aff3"
+      "hash": "97c9906e996174f8"
     },
     {
       "name": "density",
@@ -1488,7 +2364,7 @@
         "components/ui/drawer/drawer.tsx",
         "components/ui/drawer/index.ts"
       ],
-      "hash": "4a11be14523f7628"
+      "hash": "409e25d369e80b15"
     },
     {
       "name": "dropdown-menu",
@@ -1514,6 +2390,56 @@
         "components/ui/dropdown-menu/index.ts"
       ],
       "hash": "738169b48ac35b08"
+    },
+    {
+      "name": "elevate-b2b",
+      "type": "template",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Elevate B2B",
+      "demo": "https://koala-ui.vercel.app/demo/elevate-b2b",
+      "dependencies": {},
+      "registryDependencies": [],
+      "libDependencies": [],
+      "assets": {
+        "count": 35,
+        "bytes": 3195411
+      },
+      "files": [
+        "templates/elevate-b2b/.gitignore",
+        "templates/elevate-b2b/LICENSE",
+        "templates/elevate-b2b/README.md",
+        "templates/elevate-b2b/THIRD_PARTY.md",
+        "templates/elevate-b2b/app/(site)/[...slug]/page.tsx",
+        "templates/elevate-b2b/app/(site)/admin/styleguide/page.tsx",
+        "templates/elevate-b2b/app/(site)/elevate.css",
+        "templates/elevate-b2b/app/(site)/layout.tsx",
+        "templates/elevate-b2b/app/(site)/not-found.tsx",
+        "templates/elevate-b2b/app/(site)/page.tsx",
+        "templates/elevate-b2b/app/(site)/pricing/page.tsx",
+        "templates/elevate-b2b/app/(site)/styleguide/page.tsx",
+        "templates/elevate-b2b/app/globals.css",
+        "templates/elevate-b2b/app/koala.css",
+        "templates/elevate-b2b/app/layout.tsx",
+        "templates/elevate-b2b/components/elevate/chrome.tsx",
+        "templates/elevate-b2b/components/elevate/data.ts",
+        "templates/elevate-b2b/components/elevate/home.tsx",
+        "templates/elevate-b2b/components/elevate/icons.tsx",
+        "templates/elevate-b2b/components/elevate/interactive.tsx",
+        "templates/elevate-b2b/components/elevate/pricing.tsx",
+        "templates/elevate-b2b/components/elevate/primitives.tsx",
+        "templates/elevate-b2b/components/elevate/styleguide.ts",
+        "templates/elevate-b2b/components/styleguide.tsx",
+        "templates/elevate-b2b/koala.json",
+        "templates/elevate-b2b/lib/utils.ts",
+        "templates/elevate-b2b/next.config.ts",
+        "templates/elevate-b2b/package-lock.json",
+        "templates/elevate-b2b/package.json",
+        "templates/elevate-b2b/postcss.config.mjs",
+        "templates/elevate-b2b/template.json",
+        "templates/elevate-b2b/tsconfig.json"
+      ],
+      "hash": "146ec275068731b9"
     },
     {
       "name": "emoji-picker",
@@ -1873,6 +2799,415 @@
       "hash": "0558b06937b98fe2"
     },
     {
+      "name": "feature-section-1",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Feature Section 1",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "accordion",
+        "auth-form",
+        "avatar",
+        "avatar-group",
+        "badge",
+        "badge-group",
+        "banner",
+        "button",
+        "card",
+        "chart",
+        "chat",
+        "checkbox",
+        "color-picker",
+        "data-table",
+        "file-card",
+        "otp-input",
+        "pricing",
+        "ranking",
+        "section",
+        "section-header",
+        "slider",
+        "stat",
+        "switch",
+        "tabs",
+        "testimonials",
+        "toggle-group"
+      ],
+      "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/feature-section-1/feature-section-1.tsx",
+        "components/sections/feature-section-1/index.ts",
+        "components/sections/feature-section-1/tiles.tsx"
+      ],
+      "hash": "f34126c5946495c4"
+    },
+    {
+      "name": "feature-section-10",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Feature Section 10",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "button",
+        "card",
+        "input",
+        "list",
+        "section",
+        "section-header",
+        "stat",
+        "tabs"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/feature-section-10/feature-section-10.tsx",
+        "components/sections/feature-section-10/index.ts"
+      ],
+      "hash": "8e705bc216a23e4b"
+    },
+    {
+      "name": "feature-section-11",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Feature Section 11",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "button",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/feature-section-11/feature-section-11.tsx",
+        "components/sections/feature-section-11/index.ts"
+      ],
+      "hash": "f0c999eaa6859a19"
+    },
+    {
+      "name": "feature-section-13",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Feature Section 13",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "button",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/feature-section-13/feature-section-13.tsx",
+        "components/sections/feature-section-13/index.ts"
+      ],
+      "hash": "8d2821369aacedb9"
+    },
+    {
+      "name": "feature-section-14",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Feature Section 14",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "button",
+        "kbd",
+        "list",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/feature-section-14/feature-section-14.tsx",
+        "components/sections/feature-section-14/index.ts"
+      ],
+      "hash": "ee89b0e95f944aee"
+    },
+    {
+      "name": "feature-section-15",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Feature Section 15",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "section",
+        "section-header",
+        "tabs"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/feature-section-15/feature-section-15.tsx",
+        "components/sections/feature-section-15/index.ts"
+      ],
+      "hash": "c31190fccf2c3968"
+    },
+    {
+      "name": "feature-section-16",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Feature Section 16",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/feature-section-16/feature-section-16.tsx",
+        "components/sections/feature-section-16/index.ts"
+      ],
+      "hash": "bb2a38b0d53ef560"
+    },
+    {
+      "name": "feature-section-17",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Feature Section 17",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "card",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/feature-section-17/feature-section-17.tsx",
+        "components/sections/feature-section-17/index.ts"
+      ],
+      "hash": "e74c95a06846f54c"
+    },
+    {
+      "name": "feature-section-18",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Feature Section 18",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/feature-section-18/feature-section-18.tsx",
+        "components/sections/feature-section-18/index.ts"
+      ],
+      "hash": "08821681b79dc041"
+    },
+    {
+      "name": "feature-section-19",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Feature Section 19",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "button",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/feature-section-19/feature-section-19.tsx",
+        "components/sections/feature-section-19/index.ts"
+      ],
+      "hash": "cad970960ddaa577"
+    },
+    {
+      "name": "feature-section-20",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Feature Section 20",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [],
+      "libDependencies": [],
+      "files": [
+        "components/sections/feature-section-20/feature-section-20.tsx",
+        "components/sections/feature-section-20/index.ts"
+      ],
+      "hash": "165d64d2234db1aa"
+    },
+    {
+      "name": "feature-section-21",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Feature Section 21",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "animated-label",
+        "animated-number",
+        "avatar",
+        "badge",
+        "button",
+        "chat",
+        "field",
+        "input",
+        "list",
+        "prompt-input",
+        "section",
+        "section-header",
+        "stat",
+        "switch",
+        "tabs"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/feature-section-21/feature-section-21.tsx",
+        "components/sections/feature-section-21/index.ts",
+        "components/sections/feature-section-21/screens.tsx"
+      ],
+      "hash": "b6a625822cedd14b"
+    },
+    {
+      "name": "feature-section-3",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Feature Section 3",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "bento",
+        "button",
+        "input",
+        "order-summary",
+        "section",
+        "section-header",
+        "switch"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/feature-section-3/feature-section-3.tsx",
+        "components/sections/feature-section-3/index.ts",
+        "components/sections/feature-section-3/shots.tsx"
+      ],
+      "hash": "39c75a863244bd3f"
+    },
+    {
+      "name": "feature-section-4",
+      "type": "section",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "Feature Section 4",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/feature-section-4/feature-section-4.tsx",
+        "components/sections/feature-section-4/index.ts"
+      ],
+      "hash": "226991cdbbffa67e"
+    },
+    {
+      "name": "feature-section-5",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Feature Section 5",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/feature-section-5/feature-section-5.tsx",
+        "components/sections/feature-section-5/index.ts"
+      ],
+      "hash": "1034b66a5fdd3792"
+    },
+    {
+      "name": "feature-section-6",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Feature Section 6",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/feature-section-6/feature-section-6.tsx",
+        "components/sections/feature-section-6/index.ts"
+      ],
+      "hash": "404b9e6b813b7e0a"
+    },
+    {
       "name": "feedback-form",
       "type": "component",
       "tier": "free",
@@ -1973,7 +3308,7 @@
         "components/ui/file-card/file-card.tsx",
         "components/ui/file-card/index.ts"
       ],
-      "hash": "0b3cbec87d9c217e"
+      "hash": "9ab5dc16cc574ae2"
     },
     {
       "name": "file-upload",
@@ -2018,7 +3353,103 @@
         "components/ui/footer/footer.tsx",
         "components/ui/footer/index.ts"
       ],
-      "hash": "25b8ca042c48019e"
+      "hash": "98315374bef6b526"
+    },
+    {
+      "name": "footer-section-1",
+      "type": "section",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "Footer Section 1",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "footer"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/footer-section-1/footer-section-1.tsx",
+        "components/sections/footer-section-1/index.ts"
+      ],
+      "hash": "8decfeb177afce05"
+    },
+    {
+      "name": "footer-section-2",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Footer Section 2",
+      "dependencies": {},
+      "registryDependencies": [
+        "footer"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/footer-section-2/footer-section-2.tsx",
+        "components/sections/footer-section-2/index.ts"
+      ],
+      "hash": "00f7e9ed43a2e17c"
+    },
+    {
+      "name": "footer-section-3",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Footer Section 3",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "footer",
+        "newsletter-form"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/footer-section-3/footer-section-3.tsx",
+        "components/sections/footer-section-3/index.ts"
+      ],
+      "hash": "8414a940af5e55be"
+    },
+    {
+      "name": "footer-section-4",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Footer Section 4",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "footer",
+        "newsletter-form"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/footer-section-4/footer-section-4.tsx",
+        "components/sections/footer-section-4/index.ts"
+      ],
+      "hash": "199deb73c13239ea"
+    },
+    {
+      "name": "footer-section-5",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Footer Section 5",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "footer",
+        "newsletter-form"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/footer-section-5/footer-section-5.tsx",
+        "components/sections/footer-section-5/index.ts"
+      ],
+      "hash": "e4324d290ff8be8a"
     },
     {
       "name": "form",
@@ -2227,7 +3658,7 @@
         "components/sections/gallery-section-7/gallery-section-7.tsx",
         "components/sections/gallery-section-7/index.ts"
       ],
-      "hash": "506d07b7fa9c35e4"
+      "hash": "577cbec87ce319e7"
     },
     {
       "name": "gallery-section-8",
@@ -2248,7 +3679,7 @@
         "components/sections/gallery-section-8/gallery-section-8.tsx",
         "components/sections/gallery-section-8/index.ts"
       ],
-      "hash": "3e47dc7ae48bb14b"
+      "hash": "c8cf9cd0b63699ce"
     },
     {
       "name": "gallery-section-9",
@@ -2267,7 +3698,7 @@
         "components/sections/gallery-section-9/gallery-section-9.tsx",
         "components/sections/gallery-section-9/index.ts"
       ],
-      "hash": "76a040ebcb8ed77c"
+      "hash": "8692b30a2d987f11"
     },
     {
       "name": "generation",
@@ -2313,6 +3744,251 @@
       "hash": "069b28e26a66f812"
     },
     {
+      "name": "header-section-1",
+      "type": "section",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "Header Section 1",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "button",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/header-section-1/header-section-1.tsx",
+        "components/sections/header-section-1/index.ts"
+      ],
+      "hash": "eff9003eac641237"
+    },
+    {
+      "name": "header-section-2",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Header Section 2",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "button",
+        "input",
+        "link",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "hit-area"
+      ],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/header-section-2/header-section-2.tsx",
+        "components/sections/header-section-2/index.ts"
+      ],
+      "hash": "58891e1c42cf39b1"
+    },
+    {
+      "name": "header-section-3",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Header Section 3",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "button",
+        "placeholder-logos",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/header-section-3/header-section-3.tsx",
+        "components/sections/header-section-3/index.ts"
+      ],
+      "hash": "60d069b5483cce29"
+    },
+    {
+      "name": "header-section-4",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Header Section 4",
+      "dependencies": {},
+      "registryDependencies": [
+        "button",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/header-section-4/header-section-4.tsx",
+        "components/sections/header-section-4/index.ts"
+      ],
+      "hash": "b4211fda5c8a863c"
+    },
+    {
+      "name": "header-section-5",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Header Section 5",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "button",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/header-section-5/header-section-5.tsx",
+        "components/sections/header-section-5/index.ts"
+      ],
+      "hash": "223bda8756fc1942"
+    },
+    {
+      "name": "header-section-6",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Header Section 6",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "button",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/header-section-6/header-section-6.tsx",
+        "components/sections/header-section-6/index.ts"
+      ],
+      "hash": "867fa45cd20c4634"
+    },
+    {
+      "name": "header-section-7",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Header Section 7",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "button",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/header-section-7/header-section-7.tsx",
+        "components/sections/header-section-7/index.ts"
+      ],
+      "hash": "b87e98128f7a2dda"
+    },
+    {
+      "name": "header-section-8",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Header Section 8",
+      "dependencies": {},
+      "registryDependencies": [
+        "breadcrumb",
+        "button",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/header-section-8/header-section-8.tsx",
+        "components/sections/header-section-8/index.ts"
+      ],
+      "hash": "455102193df1d77e"
+    },
+    {
+      "name": "heaven-auto",
+      "type": "template",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Heaven Auto",
+      "demo": "https://koala-ui.vercel.app/demo/heaven-auto",
+      "dependencies": {},
+      "registryDependencies": [],
+      "libDependencies": [],
+      "assets": {
+        "count": 36,
+        "bytes": 3064076
+      },
+      "files": [
+        "templates/heaven-auto/.gitignore",
+        "templates/heaven-auto/LICENSE",
+        "templates/heaven-auto/README.md",
+        "templates/heaven-auto/THIRD_PARTY.md",
+        "templates/heaven-auto/app/(site)/[...slug]/page.tsx",
+        "templates/heaven-auto/app/(site)/admin/styleguide/page.tsx",
+        "templates/heaven-auto/app/(site)/contact/page.tsx",
+        "templates/heaven-auto/app/(site)/heaven.css",
+        "templates/heaven-auto/app/(site)/layout.tsx",
+        "templates/heaven-auto/app/(site)/models/page.tsx",
+        "templates/heaven-auto/app/(site)/not-found.tsx",
+        "templates/heaven-auto/app/(site)/page.tsx",
+        "templates/heaven-auto/app/(site)/services/page.tsx",
+        "templates/heaven-auto/app/(site)/styleguide/page.tsx",
+        "templates/heaven-auto/app/globals.css",
+        "templates/heaven-auto/app/koala.css",
+        "templates/heaven-auto/app/layout.tsx",
+        "templates/heaven-auto/components/heaven/chrome.tsx",
+        "templates/heaven-auto/components/heaven/data.ts",
+        "templates/heaven-auto/components/heaven/home.tsx",
+        "templates/heaven-auto/components/heaven/interactive.tsx",
+        "templates/heaven-auto/components/heaven/pages-data.ts",
+        "templates/heaven-auto/components/heaven/pages.tsx",
+        "templates/heaven-auto/components/heaven/primitives.tsx",
+        "templates/heaven-auto/components/heaven/styleguide.ts",
+        "templates/heaven-auto/components/styleguide.tsx",
+        "templates/heaven-auto/koala.json",
+        "templates/heaven-auto/lib/utils.ts",
+        "templates/heaven-auto/next.config.ts",
+        "templates/heaven-auto/package-lock.json",
+        "templates/heaven-auto/package.json",
+        "templates/heaven-auto/postcss.config.mjs",
+        "templates/heaven-auto/template.json",
+        "templates/heaven-auto/tsconfig.json"
+      ],
+      "hash": "2559cd1c1bdd8e09"
+    },
+    {
       "name": "hero",
       "type": "component",
       "tier": "free",
@@ -2335,7 +4011,7 @@
         "components/ui/hero/hero.tsx",
         "components/ui/hero/index.ts"
       ],
-      "hash": "9a56a07faf4213c3"
+      "hash": "6ccb1179a9e891f7"
     },
     {
       "name": "hero-section-1",
@@ -2487,14 +4163,112 @@
       "registryDependencies": [
         "badge",
         "button",
-        "hero"
+        "hero",
+        "placeholder-logos"
       ],
       "libDependencies": [],
       "files": [
         "components/sections/hero-section-16/hero-section-16.tsx",
         "components/sections/hero-section-16/index.ts"
       ],
-      "hash": "647b5b8be8735031"
+      "hash": "2774c907ee219ef9"
+    },
+    {
+      "name": "hero-section-17",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Hero Section 17",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "button",
+        "hero"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/hero-section-17/hero-section-17.tsx",
+        "components/sections/hero-section-17/index.ts"
+      ],
+      "hash": "d63b25c00329283d"
+    },
+    {
+      "name": "hero-section-20",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Hero Section 20",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "button",
+        "hero"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/hero-section-20/hero-section-20.tsx",
+        "components/sections/hero-section-20/index.ts"
+      ],
+      "hash": "339cafc2175d42a8"
+    },
+    {
+      "name": "hero-section-24",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Hero Section 24",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "button",
+        "hero"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/hero-section-24/hero-section-24.tsx",
+        "components/sections/hero-section-24/index.ts"
+      ],
+      "hash": "e311d4e8059d3fab"
+    },
+    {
+      "name": "hero-section-25",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Hero Section 25",
+      "dependencies": {},
+      "registryDependencies": [
+        "announcement",
+        "badge",
+        "button",
+        "hero",
+        "navbar"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/hero-section-25/hero-section-25.tsx",
+        "components/sections/hero-section-25/index.ts"
+      ],
+      "hash": "b83bc2f79779ab02"
+    },
+    {
+      "name": "hero-section-27",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Hero Section 27",
+      "dependencies": {},
+      "registryDependencies": [
+        "hero"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/hero-section-27/hero-section-27.tsx",
+        "components/sections/hero-section-27/index.ts"
+      ],
+      "hash": "5d124707c679c0db"
     },
     {
       "name": "hero-section-3",
@@ -2506,14 +4280,71 @@
       "registryDependencies": [
         "badge",
         "button",
-        "hero"
+        "hero",
+        "placeholder-logos"
       ],
       "libDependencies": [],
       "files": [
         "components/sections/hero-section-3/hero-section-3.tsx",
         "components/sections/hero-section-3/index.ts"
       ],
-      "hash": "ced71b4c2c273006"
+      "hash": "63b1b3ebc024f05c"
+    },
+    {
+      "name": "hero-section-30",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Hero Section 30",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "button",
+        "hero"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/hero-section-30/hero-section-30.tsx",
+        "components/sections/hero-section-30/index.ts"
+      ],
+      "hash": "1607df1a15db3085"
+    },
+    {
+      "name": "hero-section-31",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Hero Section 31",
+      "dependencies": {},
+      "registryDependencies": [
+        "button",
+        "hero"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/hero-section-31/hero-section-31.tsx",
+        "components/sections/hero-section-31/index.ts"
+      ],
+      "hash": "9e855fc936e8f666"
+    },
+    {
+      "name": "hero-section-32",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Hero Section 32",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "button",
+        "hero"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/hero-section-32/hero-section-32.tsx",
+        "components/sections/hero-section-32/index.ts"
+      ],
+      "hash": "21dbb7025fc0b0be"
     },
     {
       "name": "hero-section-4",
@@ -2535,7 +4366,7 @@
         "components/sections/hero-section-4/hero-section-4.tsx",
         "components/sections/hero-section-4/index.ts"
       ],
-      "hash": "b9a43692aa63da24"
+      "hash": "11807a8abc40dffc"
     },
     {
       "name": "hero-section-6",
@@ -2566,14 +4397,15 @@
       "registryDependencies": [
         "announcement",
         "button",
-        "hero"
+        "hero",
+        "placeholder-logos"
       ],
       "libDependencies": [],
       "files": [
         "components/sections/hero-section-7/hero-section-7.tsx",
         "components/sections/hero-section-7/index.ts"
       ],
-      "hash": "3e96ef245a182ce4"
+      "hash": "ad92df55fd8a1eea"
     },
     {
       "name": "hero-section-8",
@@ -2594,7 +4426,7 @@
         "components/sections/hero-section-8/hero-section-8.tsx",
         "components/sections/hero-section-8/index.ts"
       ],
-      "hash": "da3f3879704a1365"
+      "hash": "ead3341041988c59"
     },
     {
       "name": "hero-section-9",
@@ -2715,7 +4547,7 @@
         "components/ui/job-card/index.ts",
         "components/ui/job-card/job-card.tsx"
       ],
-      "hash": "e21bb66709a35817"
+      "hash": "3b8a834ead73f9a0"
     },
     {
       "name": "kbd",
@@ -2734,7 +4566,7 @@
         "components/ui/kbd/index.ts",
         "components/ui/kbd/kbd.tsx"
       ],
-      "hash": "3577fc87fea7bd6f"
+      "hash": "fde004bb39fcb4d5"
     },
     {
       "name": "label",
@@ -2766,6 +4598,7 @@
       },
       "registryDependencies": [
         "drawer",
+        "navbar",
         "sidebar"
       ],
       "libDependencies": [
@@ -2778,7 +4611,45 @@
         "components/ui/layout/index.ts",
         "components/ui/layout/layout.tsx"
       ],
-      "hash": "8624650c49255bec"
+      "hash": "de57d2ece84cf4db"
+    },
+    {
+      "name": "legal-section-1",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Legal Section 1",
+      "dependencies": {},
+      "registryDependencies": [
+        "prose",
+        "section"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/legal-section-1/index.ts",
+        "components/sections/legal-section-1/legal-section-1.tsx"
+      ],
+      "hash": "7dae885e376a8e40"
+    },
+    {
+      "name": "legal-section-2",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Legal Section 2",
+      "dependencies": {},
+      "registryDependencies": [
+        "prose",
+        "section"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/legal-section-2/index.ts",
+        "components/sections/legal-section-2/legal-section-2.tsx"
+      ],
+      "hash": "8d18f72937c78c07"
     },
     {
       "name": "lightbox",
@@ -2840,7 +4711,7 @@
         "components/ui/list/index.ts",
         "components/ui/list/list.tsx"
       ],
-      "hash": "2746d94457fd3b14"
+      "hash": "dfa30772da7de1fa"
     },
     {
       "name": "load-more",
@@ -2864,7 +4735,7 @@
         "components/ui/load-more/index.ts",
         "components/ui/load-more/load-more.tsx"
       ],
-      "hash": "0bb0e3e34d12f4e4"
+      "hash": "b353eff8d5b97a59"
     },
     {
       "name": "marketing-hero",
@@ -2966,7 +4837,139 @@
         "components/ui/navbar/index.ts",
         "components/ui/navbar/navbar.tsx"
       ],
-      "hash": "624d4402c10f511c"
+      "hash": "129fed559777d832"
+    },
+    {
+      "name": "navbar-section-1",
+      "type": "section",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "Navbar Section 1",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "button",
+        "dropdown-menu",
+        "navbar"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/navbar-section-1/index.ts",
+        "components/sections/navbar-section-1/navbar-section-1.tsx"
+      ],
+      "hash": "e6daf8563ef8ead4"
+    },
+    {
+      "name": "navbar-section-2",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Navbar Section 2",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "button",
+        "dropdown-menu",
+        "navbar"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/navbar-section-2/index.ts",
+        "components/sections/navbar-section-2/navbar-section-2.tsx"
+      ],
+      "hash": "71697b69a0157937"
+    },
+    {
+      "name": "navbar-section-3",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Navbar Section 3",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "button",
+        "dropdown-menu",
+        "navbar"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/navbar-section-3/index.ts",
+        "components/sections/navbar-section-3/navbar-section-3.tsx"
+      ],
+      "hash": "43fe4fdda32cd1fd"
+    },
+    {
+      "name": "navbar-section-4",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Navbar Section 4",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "button",
+        "dropdown-menu",
+        "navbar"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/navbar-section-4/index.ts",
+        "components/sections/navbar-section-4/navbar-section-4.tsx"
+      ],
+      "hash": "ceedd317f9107dfb"
+    },
+    {
+      "name": "navbar-section-5",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Navbar Section 5",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "avatar",
+        "button",
+        "dropdown-menu",
+        "input",
+        "kbd",
+        "navbar"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/navbar-section-5/index.ts",
+        "components/sections/navbar-section-5/navbar-section-5.tsx"
+      ],
+      "hash": "82623cb3080fcc27"
+    },
+    {
+      "name": "navbar-section-6",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Navbar Section 6",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "button",
+        "divider",
+        "dropdown-menu",
+        "navbar"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/navbar-section-6/index.ts",
+        "components/sections/navbar-section-6/navbar-section-6.tsx"
+      ],
+      "hash": "e3ef5fa022561b58"
     },
     {
       "name": "newsletter-form",
@@ -3112,6 +5115,80 @@
       "hash": "6bc41cf0945ff122"
     },
     {
+      "name": "pipeline-b2b",
+      "type": "template",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Pipeline B2B",
+      "demo": "https://koala-ui.vercel.app/demo/pipeline-b2b",
+      "dependencies": {},
+      "registryDependencies": [],
+      "libDependencies": [],
+      "assets": {
+        "count": 47,
+        "bytes": 1451831
+      },
+      "files": [
+        "templates/pipeline-b2b/.gitignore",
+        "templates/pipeline-b2b/LICENSE",
+        "templates/pipeline-b2b/README.md",
+        "templates/pipeline-b2b/THIRD_PARTY.md",
+        "templates/pipeline-b2b/app/(site)/[...slug]/page.tsx",
+        "templates/pipeline-b2b/app/(site)/about/page.tsx",
+        "templates/pipeline-b2b/app/(site)/admin/styleguide/page.tsx",
+        "templates/pipeline-b2b/app/(site)/blog/[slug]/page.tsx",
+        "templates/pipeline-b2b/app/(site)/blog/page.tsx",
+        "templates/pipeline-b2b/app/(site)/contact/page.tsx",
+        "templates/pipeline-b2b/app/(site)/layout.tsx",
+        "templates/pipeline-b2b/app/(site)/not-found.tsx",
+        "templates/pipeline-b2b/app/(site)/page.tsx",
+        "templates/pipeline-b2b/app/(site)/pipeline.css",
+        "templates/pipeline-b2b/app/(site)/services/page.tsx",
+        "templates/pipeline-b2b/app/(site)/styleguide/page.tsx",
+        "templates/pipeline-b2b/app/globals.css",
+        "templates/pipeline-b2b/app/koala.css",
+        "templates/pipeline-b2b/app/layout.tsx",
+        "templates/pipeline-b2b/components/pipeline/about.tsx",
+        "templates/pipeline-b2b/components/pipeline/article-body.ts",
+        "templates/pipeline-b2b/components/pipeline/article.tsx",
+        "templates/pipeline-b2b/components/pipeline/blog.tsx",
+        "templates/pipeline-b2b/components/pipeline/chrome.tsx",
+        "templates/pipeline-b2b/components/pipeline/contact.tsx",
+        "templates/pipeline-b2b/components/pipeline/data.ts",
+        "templates/pipeline-b2b/components/pipeline/home.tsx",
+        "templates/pipeline-b2b/components/pipeline/primitives.tsx",
+        "templates/pipeline-b2b/components/pipeline/services.tsx",
+        "templates/pipeline-b2b/components/pipeline/styleguide.ts",
+        "templates/pipeline-b2b/components/styleguide.tsx",
+        "templates/pipeline-b2b/koala.json",
+        "templates/pipeline-b2b/lib/utils.ts",
+        "templates/pipeline-b2b/next.config.ts",
+        "templates/pipeline-b2b/package-lock.json",
+        "templates/pipeline-b2b/package.json",
+        "templates/pipeline-b2b/postcss.config.mjs",
+        "templates/pipeline-b2b/template.json",
+        "templates/pipeline-b2b/tsconfig.json"
+      ],
+      "hash": "f7fdd628d4f747e0"
+    },
+    {
+      "name": "placeholder-logos",
+      "type": "component",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "Placeholder Logos",
+      "dependencies": {},
+      "registryDependencies": [],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/ui/placeholder-logos/index.ts",
+        "components/ui/placeholder-logos/placeholder-logos.tsx"
+      ],
+      "hash": "4f6b76c80d3ce9b0"
+    },
+    {
       "name": "plan",
       "type": "component",
       "tier": "free",
@@ -3119,8 +5196,7 @@
       "title": "Plan",
       "dependencies": {
         "@phosphor-icons/react": "^2.1.10",
-        "radix-ui": "^1.5.0",
-        "{count} more": "latest"
+        "radix-ui": "^1.5.0"
       },
       "registryDependencies": [
         "badge",
@@ -3161,6 +5237,127 @@
       "hash": "9542104884bcec09"
     },
     {
+      "name": "portfolio-section-1",
+      "type": "section",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "Portfolio Section 1",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "button",
+        "list",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/portfolio-section-1/index.ts",
+        "components/sections/portfolio-section-1/portfolio-section-1.tsx"
+      ],
+      "hash": "70ca0db28d709c84"
+    },
+    {
+      "name": "portfolio-section-2",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Portfolio Section 2",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "button",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/portfolio-section-2/index.ts",
+        "components/sections/portfolio-section-2/portfolio-section-2.tsx"
+      ],
+      "hash": "f4257670458c0ae5"
+    },
+    {
+      "name": "portfolio-section-3",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Portfolio Section 3",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "button",
+        "load-more",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "stagger",
+        "utils"
+      ],
+      "files": [
+        "components/sections/portfolio-section-3/index.ts",
+        "components/sections/portfolio-section-3/portfolio-section-3.tsx"
+      ],
+      "hash": "fac66dba97070b5e"
+    },
+    {
+      "name": "portfolio-section-4",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Portfolio Section 4",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "lightbox",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/portfolio-section-4/index.ts",
+        "components/sections/portfolio-section-4/portfolio-section-4.tsx"
+      ],
+      "hash": "47abac175f83bf5b"
+    },
+    {
+      "name": "portfolio-section-5",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Portfolio Section 5",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "button",
+        "carousel",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/portfolio-section-5/index.ts",
+        "components/sections/portfolio-section-5/portfolio-section-5.tsx"
+      ],
+      "hash": "cb6ac59f55b077c5"
+    },
+    {
       "name": "pricing",
       "type": "component",
       "tier": "free",
@@ -3184,7 +5381,7 @@
         "components/ui/pricing/index.ts",
         "components/ui/pricing/pricing.tsx"
       ],
-      "hash": "b932e20119ba4751"
+      "hash": "b25d24bd501b280b"
     },
     {
       "name": "pricing-comparison",
@@ -3209,6 +5406,197 @@
         "components/ui/pricing-comparison/pricing-comparison.tsx"
       ],
       "hash": "c523ec2a83b5aa28"
+    },
+    {
+      "name": "pricing-section-2",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Pricing Section 2",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "button",
+        "pricing-comparison",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/pricing-section-2/index.ts",
+        "components/sections/pricing-section-2/pricing-section-2.tsx"
+      ],
+      "hash": "625662381ccbd716"
+    },
+    {
+      "name": "product-list-section-1",
+      "type": "section",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "Product List Section 1",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "button",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/product-list-section-1/index.ts",
+        "components/sections/product-list-section-1/product-card.tsx",
+        "components/sections/product-list-section-1/product-list-section-1.tsx"
+      ],
+      "hash": "7d549d3015749ebf"
+    },
+    {
+      "name": "product-list-section-2",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Product List Section 2",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "button",
+        "rating",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/product-list-section-2/add-to-cart.tsx",
+        "components/sections/product-list-section-2/index.ts",
+        "components/sections/product-list-section-2/product-card.tsx",
+        "components/sections/product-list-section-2/product-list-section-2.tsx"
+      ],
+      "hash": "78401ed62d133761"
+    },
+    {
+      "name": "product-list-section-3",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Product List Section 3",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "accordion",
+        "animated-number",
+        "badge",
+        "button",
+        "checkbox",
+        "drawer",
+        "empty-state",
+        "section",
+        "section-header",
+        "select",
+        "slider"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/product-list-section-3/data.ts",
+        "components/sections/product-list-section-3/filter-panel.tsx",
+        "components/sections/product-list-section-3/index.ts",
+        "components/sections/product-list-section-3/product-card.tsx",
+        "components/sections/product-list-section-3/product-list-section-3.tsx"
+      ],
+      "hash": "e9cbc468cec2ee7c"
+    },
+    {
+      "name": "product-overview-section-1",
+      "type": "section",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "Product Overview Section 1",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "accordion",
+        "breadcrumb",
+        "button",
+        "carousel",
+        "field",
+        "radio-group",
+        "rating",
+        "section",
+        "toggle-group"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/product-overview-section-1/index.ts",
+        "components/sections/product-overview-section-1/product-actions.tsx",
+        "components/sections/product-overview-section-1/product-overview-section-1.tsx"
+      ],
+      "hash": "4bf8a41596ca38dd"
+    },
+    {
+      "name": "product-overview-section-2",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Product Overview Section 2",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "button",
+        "description-list",
+        "field",
+        "lightbox",
+        "radio-group",
+        "rating",
+        "section",
+        "toggle-group"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/product-overview-section-2/index.ts",
+        "components/sections/product-overview-section-2/product-actions.tsx",
+        "components/sections/product-overview-section-2/product-overview-section-2.tsx"
+      ],
+      "hash": "5d7e6d825e9e5fb8"
+    },
+    {
+      "name": "product-overview-section-3",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Product Overview Section 3",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "alert",
+        "animated-number",
+        "badge",
+        "button",
+        "drawer",
+        "field",
+        "link",
+        "radio-group",
+        "rating",
+        "toggle-group"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/product-overview-section-3/data.ts",
+        "components/sections/product-overview-section-3/index.ts",
+        "components/sections/product-overview-section-3/photo-rail.tsx",
+        "components/sections/product-overview-section-3/product-overview-section-3.tsx",
+        "components/sections/product-overview-section-3/size-guide.tsx"
+      ],
+      "hash": "c653674aa3f397e4"
     },
     {
       "name": "progress",
@@ -3311,7 +5699,7 @@
         "components/ui/qr-code/qr-code.tsx",
         "components/ui/qr-code/qr-encoder.ts"
       ],
-      "hash": "5e3835869587528d"
+      "hash": "f9cb2d9b372d7d3d"
     },
     {
       "name": "radio-group",
@@ -3333,7 +5721,7 @@
         "components/ui/radio-group/index.ts",
         "components/ui/radio-group/radio-group.tsx"
       ],
-      "hash": "791127df497cfa8b"
+      "hash": "ffd0e0c7f1521f42"
     },
     {
       "name": "ranking",
@@ -3523,7 +5911,81 @@
         "components/ui/settings-form/index.ts",
         "components/ui/settings-form/settings-form.tsx"
       ],
-      "hash": "afe839ba9ce58414"
+      "hash": "6489745eb6b4c789"
+    },
+    {
+      "name": "sheet",
+      "type": "component",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "Sheet",
+      "dependencies": {},
+      "registryDependencies": [],
+      "libDependencies": [
+        "create-context",
+        "density",
+        "tv",
+        "utils"
+      ],
+      "files": [
+        "components/ui/sheet/index.ts",
+        "components/ui/sheet/sheet.tsx"
+      ],
+      "hash": "72a089eb6f60eeed"
+    },
+    {
+      "name": "shopping-cart-drawer",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Shopping Cart Drawer",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "animated-number",
+        "badge",
+        "button",
+        "drawer",
+        "empty-state",
+        "navbar",
+        "order-summary",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/pages/shopping-cart-drawer/index.ts",
+        "components/pages/shopping-cart-drawer/shopping-cart-drawer.tsx"
+      ],
+      "hash": "9355450750d7902a"
+    },
+    {
+      "name": "shopping-cart-section-1",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Shopping Cart Section 1",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "animated-number",
+        "badge",
+        "button",
+        "empty-state",
+        "input",
+        "input-group",
+        "order-summary",
+        "progress",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/shopping-cart-section-1/index.ts",
+        "components/sections/shopping-cart-section-1/shopping-cart-section-1.tsx"
+      ],
+      "hash": "45314d1d41e63e67"
     },
     {
       "name": "sidebar",
@@ -3547,7 +6009,7 @@
         "components/ui/sidebar/index.ts",
         "components/ui/sidebar/sidebar.tsx"
       ],
-      "hash": "710436c2dfc78910"
+      "hash": "e8be19076d0d607e"
     },
     {
       "name": "skeleton",
@@ -3590,7 +6052,117 @@
         "components/ui/slider/slider-input.tsx",
         "components/ui/slider/slider.tsx"
       ],
-      "hash": "7af885cc19fe528e"
+      "hash": "072760109b2d177a"
+    },
+    {
+      "name": "social-proof-section-1",
+      "type": "section",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "Social Proof Section 1",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/social-proof-section-1/index.ts",
+        "components/sections/social-proof-section-1/logos.tsx",
+        "components/sections/social-proof-section-1/social-proof-section-1.tsx"
+      ],
+      "hash": "73e22a5511068d7f"
+    },
+    {
+      "name": "social-proof-section-2",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Social Proof Section 2",
+      "dependencies": {},
+      "registryDependencies": [
+        "section"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/social-proof-section-2/index.ts",
+        "components/sections/social-proof-section-2/logos.tsx",
+        "components/sections/social-proof-section-2/social-proof-section-2.tsx"
+      ],
+      "hash": "2f37c2713c3fc090"
+    },
+    {
+      "name": "social-proof-section-3",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Social Proof Section 3",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/social-proof-section-3/index.ts",
+        "components/sections/social-proof-section-3/logos.tsx",
+        "components/sections/social-proof-section-3/social-proof-section-3.tsx"
+      ],
+      "hash": "f8710f43d383cb56"
+    },
+    {
+      "name": "social-proof-section-4",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Social Proof Section 4",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/social-proof-section-4/index.ts",
+        "components/sections/social-proof-section-4/logos.tsx",
+        "components/sections/social-proof-section-4/social-proof-section-4.tsx"
+      ],
+      "hash": "7e067e062034dc2e"
+    },
+    {
+      "name": "social-proof-section-5",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Social Proof Section 5",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "button",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/social-proof-section-5/index.ts",
+        "components/sections/social-proof-section-5/logos.tsx",
+        "components/sections/social-proof-section-5/social-proof-section-5.tsx"
+      ],
+      "hash": "7935e6422ee75f8a"
     },
     {
       "name": "spinner",
@@ -3609,7 +6181,7 @@
         "components/ui/spinner/index.ts",
         "components/ui/spinner/spinner.tsx"
       ],
-      "hash": "4147f37c069e39d3"
+      "hash": "5cd7308d27def7cb"
     },
     {
       "name": "stagger",
@@ -3673,7 +6245,7 @@
         "components/sections/stats-section-1/index.ts",
         "components/sections/stats-section-1/stats-section-1.tsx"
       ],
-      "hash": "f7de2c70f6517c1c"
+      "hash": "12a0fda4082675af"
     },
     {
       "name": "stats-section-10",
@@ -3709,12 +6281,17 @@
         "section-header",
         "stat"
       ],
-      "libDependencies": [],
+      "libDependencies": [
+        "in-view",
+        "motion",
+        "stagger",
+        "utils"
+      ],
       "files": [
         "components/sections/stats-section-11/index.ts",
         "components/sections/stats-section-11/stats-section-11.tsx"
       ],
-      "hash": "2d6f97719464e368"
+      "hash": "df7079663c8fb438"
     },
     {
       "name": "stats-section-2",
@@ -3735,7 +6312,7 @@
         "components/sections/stats-section-2/index.ts",
         "components/sections/stats-section-2/stats-section-2.tsx"
       ],
-      "hash": "277382fb4faa29e9"
+      "hash": "01a915ef8e0157b9"
     },
     {
       "name": "stats-section-3",
@@ -3777,7 +6354,7 @@
         "components/sections/stats-section-4/index.ts",
         "components/sections/stats-section-4/stats-section-4.tsx"
       ],
-      "hash": "7fc44c507d9e65f7"
+      "hash": "99bbd2dfed0cec4d"
     },
     {
       "name": "stats-section-5",
@@ -3797,7 +6374,7 @@
         "components/sections/stats-section-5/index.ts",
         "components/sections/stats-section-5/stats-section-5.tsx"
       ],
-      "hash": "df99b545c347ea39"
+      "hash": "d89d1376a68058fe"
     },
     {
       "name": "stats-section-6",
@@ -3817,7 +6394,7 @@
         "components/sections/stats-section-6/index.ts",
         "components/sections/stats-section-6/stats-section-6.tsx"
       ],
-      "hash": "7daca7144f3aa964"
+      "hash": "10c5992bf56bef27"
     },
     {
       "name": "stats-section-7",
@@ -3838,7 +6415,7 @@
         "components/sections/stats-section-7/index.ts",
         "components/sections/stats-section-7/stats-section-7.tsx"
       ],
-      "hash": "5aecc7e62e6b74b4"
+      "hash": "6666c4b03b68750b"
     },
     {
       "name": "stats-section-8",
@@ -3861,7 +6438,7 @@
         "components/sections/stats-section-8/index.ts",
         "components/sections/stats-section-8/stats-section-8.tsx"
       ],
-      "hash": "4551d3d518195143"
+      "hash": "3e2412a40553237a"
     },
     {
       "name": "stats-section-9",
@@ -3883,7 +6460,87 @@
         "components/sections/stats-section-9/index.ts",
         "components/sections/stats-section-9/stats-section-9.tsx"
       ],
-      "hash": "18ca4100de2da0fd"
+      "hash": "9cf6d947aa3e3946"
+    },
+    {
+      "name": "status-section-1",
+      "type": "section",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "Status Section 1",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "button",
+        "input",
+        "link",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [
+        "hit-area"
+      ],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/status-section-1/index.ts",
+        "components/sections/status-section-1/status-section-1.tsx"
+      ],
+      "hash": "b0efb80e08a1d576"
+    },
+    {
+      "name": "status-section-2",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Status Section 2",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "button",
+        "link",
+        "section-header"
+      ],
+      "libDependencies": [
+        "hit-area"
+      ],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/status-section-2/index.ts",
+        "components/sections/status-section-2/status-section-2.tsx"
+      ],
+      "hash": "7ac186d648df441f"
+    },
+    {
+      "name": "status-section-3",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Status Section 3",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "button",
+        "newsletter-form",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/status-section-3/index.ts",
+        "components/sections/status-section-3/status-section-3.tsx"
+      ],
+      "hash": "5af4704939364dc6"
     },
     {
       "name": "stepper",
@@ -4008,6 +6665,215 @@
       "hash": "a5797eb71218602a"
     },
     {
+      "name": "team-member",
+      "type": "component",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "Team Member",
+      "dependencies": {
+        "radix-ui": "^1.5.0"
+      },
+      "registryDependencies": [],
+      "libDependencies": [
+        "create-context",
+        "hit-area",
+        "tv"
+      ],
+      "files": [
+        "components/ui/team-member/index.ts",
+        "components/ui/team-member/team-member.tsx"
+      ],
+      "hash": "50754b2ef7753e3c"
+    },
+    {
+      "name": "team-section-1",
+      "type": "section",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "Team Section 1",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "button",
+        "section",
+        "section-header",
+        "team-member"
+      ],
+      "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/team-section-1/index.ts",
+        "components/sections/team-section-1/team-section-1.tsx"
+      ],
+      "hash": "7c190ee5d9cab943"
+    },
+    {
+      "name": "team-section-2",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Team Section 2",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "section",
+        "section-header",
+        "team-member"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/team-section-2/index.ts",
+        "components/sections/team-section-2/team-section-2.tsx"
+      ],
+      "hash": "adbbc6bafe8fad27"
+    },
+    {
+      "name": "team-section-3",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Team Section 3",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "button",
+        "section",
+        "section-header",
+        "team-member"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/team-section-3/index.ts",
+        "components/sections/team-section-3/team-section-3.tsx"
+      ],
+      "hash": "ad2e984ff92b7447"
+    },
+    {
+      "name": "team-section-4",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Team Section 4",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "section",
+        "section-header",
+        "team-member"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/team-section-4/index.ts",
+        "components/sections/team-section-4/team-section-4.tsx"
+      ],
+      "hash": "81f41b5ebeb7f977"
+    },
+    {
+      "name": "team-section-5",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Team Section 5",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "button",
+        "section",
+        "section-header",
+        "team-member"
+      ],
+      "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/team-section-5/index.ts",
+        "components/sections/team-section-5/team-section-5.tsx"
+      ],
+      "hash": "2bdc8ac163418541"
+    },
+    {
+      "name": "team-section-6",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Team Section 6",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "section",
+        "section-header",
+        "team-member"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/team-section-6/index.ts",
+        "components/sections/team-section-6/team-section-6.tsx"
+      ],
+      "hash": "1f48eea061447ffd"
+    },
+    {
+      "name": "team-section-7",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Team Section 7",
+      "dependencies": {},
+      "registryDependencies": [
+        "badge",
+        "button",
+        "section",
+        "section-header",
+        "team-member"
+      ],
+      "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/team-section-7/index.ts",
+        "components/sections/team-section-7/team-section-7.tsx"
+      ],
+      "hash": "300c0b988496d8e2"
+    },
+    {
+      "name": "team-section-8",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Team Section 8",
+      "dependencies": {},
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "button",
+        "job-card",
+        "section",
+        "section-header"
+      ],
+      "libDependencies": [],
+      "frameworks": [
+        "next"
+      ],
+      "files": [
+        "components/sections/team-section-8/index.ts",
+        "components/sections/team-section-8/team-section-8.tsx"
+      ],
+      "hash": "57f46b46459f1d74"
+    },
+    {
       "name": "testimonials",
       "type": "component",
       "tier": "free",
@@ -4027,6 +6893,54 @@
         "components/ui/testimonials/testimonials.tsx"
       ],
       "hash": "9e83681a10abc447"
+    },
+    {
+      "name": "testimonials-section-1",
+      "type": "section",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "Testimonials Section 1",
+      "dependencies": {},
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "section",
+        "section-header",
+        "testimonials"
+      ],
+      "libDependencies": [],
+      "files": [
+        "components/sections/testimonials-section-1/index.ts",
+        "components/sections/testimonials-section-1/testimonials-section-1.tsx"
+      ],
+      "hash": "b7c1add1795bdd9d"
+    },
+    {
+      "name": "testimonials-section-3",
+      "type": "section",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Testimonials Section 3",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "badge",
+        "button",
+        "carousel",
+        "section",
+        "section-header",
+        "testimonials"
+      ],
+      "libDependencies": [
+        "utils"
+      ],
+      "files": [
+        "components/sections/testimonials-section-3/index.ts",
+        "components/sections/testimonials-section-3/logos.tsx",
+        "components/sections/testimonials-section-3/testimonials-section-3.tsx"
+      ],
+      "hash": "21f375a44a932673"
     },
     {
       "name": "textarea",
@@ -4146,7 +7060,7 @@
         "components/ui/tooltip/index.ts",
         "components/ui/tooltip/tooltip.tsx"
       ],
-      "hash": "eff67be204a934fb"
+      "hash": "3b3abbb93b8f5c4a"
     },
     {
       "name": "tree",
@@ -4188,6 +7102,76 @@
       "hash": "fb8d0022288749d4"
     },
     {
+      "name": "urban-luxe-neo",
+      "type": "template",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Urban Luxe Neo",
+      "demo": "https://koala-ui.vercel.app/demo/urban-luxe-neo",
+      "dependencies": {},
+      "registryDependencies": [],
+      "libDependencies": [],
+      "assets": {
+        "count": 89,
+        "bytes": 10827158
+      },
+      "files": [
+        "templates/urban-luxe-neo/.gitignore",
+        "templates/urban-luxe-neo/LICENSE",
+        "templates/urban-luxe-neo/README.md",
+        "templates/urban-luxe-neo/THIRD_PARTY.md",
+        "templates/urban-luxe-neo/app/(site)/[...slug]/page.tsx",
+        "templates/urban-luxe-neo/app/(site)/about/page.tsx",
+        "templates/urban-luxe-neo/app/(site)/admin/styleguide/page.tsx",
+        "templates/urban-luxe-neo/app/(site)/blog-article/[slug]/page.tsx",
+        "templates/urban-luxe-neo/app/(site)/blog/page.tsx",
+        "templates/urban-luxe-neo/app/(site)/contact/page.tsx",
+        "templates/urban-luxe-neo/app/(site)/layout.tsx",
+        "templates/urban-luxe-neo/app/(site)/not-found.tsx",
+        "templates/urban-luxe-neo/app/(site)/page.tsx",
+        "templates/urban-luxe-neo/app/(site)/pricing/page.tsx",
+        "templates/urban-luxe-neo/app/(site)/projects/[slug]/page.tsx",
+        "templates/urban-luxe-neo/app/(site)/projects/page.tsx",
+        "templates/urban-luxe-neo/app/(site)/styleguide/page.tsx",
+        "templates/urban-luxe-neo/app/(site)/urban.css",
+        "templates/urban-luxe-neo/app/globals.css",
+        "templates/urban-luxe-neo/app/koala.css",
+        "templates/urban-luxe-neo/app/layout.tsx",
+        "templates/urban-luxe-neo/components/styleguide.tsx",
+        "templates/urban-luxe-neo/components/theme-provider.tsx",
+        "templates/urban-luxe-neo/components/ui/lightbox/index.ts",
+        "templates/urban-luxe-neo/components/ui/lightbox/lightbox.tsx",
+        "templates/urban-luxe-neo/components/ui/placeholder-logos/index.ts",
+        "templates/urban-luxe-neo/components/ui/placeholder-logos/placeholder-logos.tsx",
+        "templates/urban-luxe-neo/components/urban/article-bodies.ts",
+        "templates/urban-luxe-neo/components/urban/blog.tsx",
+        "templates/urban-luxe-neo/components/urban/chrome.tsx",
+        "templates/urban-luxe-neo/components/urban/data.ts",
+        "templates/urban-luxe-neo/components/urban/home.tsx",
+        "templates/urban-luxe-neo/components/urban/interactive.tsx",
+        "templates/urban-luxe-neo/components/urban/pages.tsx",
+        "templates/urban-luxe-neo/components/urban/partners.tsx",
+        "templates/urban-luxe-neo/components/urban/primitives.tsx",
+        "templates/urban-luxe-neo/components/urban/project.tsx",
+        "templates/urban-luxe-neo/components/urban/reveal.tsx",
+        "templates/urban-luxe-neo/components/urban/styleguide.ts",
+        "templates/urban-luxe-neo/components/urban/theme-switch.tsx",
+        "templates/urban-luxe-neo/components/urban/zoom.tsx",
+        "templates/urban-luxe-neo/koala.json",
+        "templates/urban-luxe-neo/lib/create-context.tsx",
+        "templates/urban-luxe-neo/lib/glide.ts",
+        "templates/urban-luxe-neo/lib/tv.ts",
+        "templates/urban-luxe-neo/lib/utils.ts",
+        "templates/urban-luxe-neo/next.config.ts",
+        "templates/urban-luxe-neo/package-lock.json",
+        "templates/urban-luxe-neo/package.json",
+        "templates/urban-luxe-neo/postcss.config.mjs",
+        "templates/urban-luxe-neo/template.json",
+        "templates/urban-luxe-neo/tsconfig.json"
+      ],
+      "hash": "5e68d9f459d692ce"
+    },
+    {
       "name": "utils",
       "type": "lib",
       "tier": "free",
@@ -4227,6 +7211,72 @@
         "components/ui/video-player/video-player.tsx"
       ],
       "hash": "12074815e4d92005"
+    },
+    {
+      "name": "vital-360",
+      "type": "template",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Vital 360",
+      "demo": "https://koala-ui.vercel.app/demo/vital-360",
+      "dependencies": {},
+      "registryDependencies": [],
+      "libDependencies": [],
+      "assets": {
+        "count": 33,
+        "bytes": 4168688
+      },
+      "files": [
+        "templates/vital-360/.gitignore",
+        "templates/vital-360/LICENSE",
+        "templates/vital-360/README.md",
+        "templates/vital-360/THIRD_PARTY.md",
+        "templates/vital-360/app/(site)/404/page.tsx",
+        "templates/vital-360/app/(site)/[...slug]/page.tsx",
+        "templates/vital-360/app/(site)/about/page.tsx",
+        "templates/vital-360/app/(site)/access-denied/page.tsx",
+        "templates/vital-360/app/(site)/admin/styleguide/page.tsx",
+        "templates/vital-360/app/(site)/blog-2/page.tsx",
+        "templates/vital-360/app/(site)/blog/[slug]/page.tsx",
+        "templates/vital-360/app/(site)/blog/page.tsx",
+        "templates/vital-360/app/(site)/contact/page.tsx",
+        "templates/vital-360/app/(site)/home-2/page.tsx",
+        "templates/vital-360/app/(site)/layout.tsx",
+        "templates/vital-360/app/(site)/log-in/page.tsx",
+        "templates/vital-360/app/(site)/not-found.tsx",
+        "templates/vital-360/app/(site)/page.tsx",
+        "templates/vital-360/app/(site)/pricing-2/page.tsx",
+        "templates/vital-360/app/(site)/pricing/page.tsx",
+        "templates/vital-360/app/(site)/reset-password/page.tsx",
+        "templates/vital-360/app/(site)/services/[slug]/page.tsx",
+        "templates/vital-360/app/(site)/services/page.tsx",
+        "templates/vital-360/app/(site)/sign-up/page.tsx",
+        "templates/vital-360/app/(site)/styleguide/page.tsx",
+        "templates/vital-360/app/(site)/update-password/page.tsx",
+        "templates/vital-360/app/(site)/vital.css",
+        "templates/vital-360/app/globals.css",
+        "templates/vital-360/app/koala.css",
+        "templates/vital-360/app/layout.tsx",
+        "templates/vital-360/components/styleguide.tsx",
+        "templates/vital-360/components/vital/blog.tsx",
+        "templates/vital-360/components/vital/chrome.tsx",
+        "templates/vital-360/components/vital/data.ts",
+        "templates/vital-360/components/vital/home-two.tsx",
+        "templates/vital-360/components/vital/home.tsx",
+        "templates/vital-360/components/vital/interactive.tsx",
+        "templates/vital-360/components/vital/pages.tsx",
+        "templates/vital-360/components/vital/primitives.tsx",
+        "templates/vital-360/components/vital/styleguide.ts",
+        "templates/vital-360/koala.json",
+        "templates/vital-360/lib/utils.ts",
+        "templates/vital-360/next.config.ts",
+        "templates/vital-360/package-lock.json",
+        "templates/vital-360/package.json",
+        "templates/vital-360/postcss.config.mjs",
+        "templates/vital-360/template.json",
+        "templates/vital-360/tsconfig.json"
+      ],
+      "hash": "df7e7050930e23bf"
     },
     {
       "name": "waitlist-form",

@@ -90,7 +90,7 @@ export const sliderVariants = tv({
       brand: {
         range: "bg-brand",
         thumb: "border-brand",
-        tooltip: "bg-brand text-white",
+        tooltip: "bg-brand text-brand-foreground",
       },
       success: {
         range: "bg-success",

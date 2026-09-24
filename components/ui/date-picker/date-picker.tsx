@@ -191,11 +191,11 @@ export const calendarVariants = tv({
       // Disabled: inert + struck-through-faint.
       "data-[disabled]:pointer-events-none data-[disabled]:text-muted-foreground/30 data-[disabled]:line-through data-[disabled]:after:hidden",
       // Selected day / range endpoint: solid brand chip (wins over today + hover).
-      "data-[selected]:bg-brand data-[selected]:text-white data-[selected]:font-medium data-[selected]:hover:bg-brand",
+      "data-[selected]:bg-brand data-[selected]:text-brand-foreground data-[selected]:font-medium data-[selected]:hover:bg-brand",
       // Today-and-selected: the solid chip already conveys "today", so drop the
-      // underdot and force the label white. The compound selector outranks
+      // underdot and force the label to the accent's ink. The compound selector outranks
       // data-[today]:text-brand regardless of Tailwind's class ordering.
-      "data-[selected]:after:hidden data-[selected]:data-[today]:text-white",
+      "data-[selected]:after:hidden data-[selected]:data-[today]:text-brand-foreground",
     ],
     // Months / years grid (the alternate caption views).
     gridCells: "grid grid-cols-3 gap-2 pt-2",
@@ -204,8 +204,8 @@ export const calendarVariants = tv({
       "transition-[background-color,color,scale] duration-fast ease-out",
       "hover:bg-accent active:scale-[0.96]",
       "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 focus-visible:ring-offset-background",
-      "data-[selected]:bg-brand data-[selected]:text-white data-[selected]:font-medium data-[selected]:hover:bg-brand",
-      "data-[current]:font-semibold data-[current]:text-brand data-[current]:data-[selected]:text-white",
+      "data-[selected]:bg-brand data-[selected]:text-brand-foreground data-[selected]:font-medium data-[selected]:hover:bg-brand",
+      "data-[current]:font-semibold data-[current]:text-brand data-[current]:data-[selected]:text-brand-foreground",
     ],
   },
   variants: {

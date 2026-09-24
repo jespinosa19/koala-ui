@@ -9,6 +9,10 @@ import { cn } from "@/lib/utils"
 import { tv, type VariantProps } from "@/lib/tv"
 import { buttonVariants, type ButtonProps } from "@/components/ui/button"
 
+// Every bundler (Next, Vite, webpack) replaces `process.env.NODE_ENV` at build time. Declared here so
+// a project without Node's types, like a Vite app, still typechecks the dev-only warning below.
+declare const process: { env: { NODE_ENV?: string } }
+
 // ─── Structural recipe ────────────────────────────────────────────────────────
 //
 // Only container shape lives here. Variant/size/density flow via context so

@@ -110,7 +110,7 @@ export const pricingVariants = tv({
       "flex h-full flex-col rounded-[calc(var(--radius-2xl)+2px)] bg-brand p-0.5",
       "[&>[data-slot=pricing-tier]]:flex-1 [&>[data-slot=pricing-tier]]:bg-background",
     ],
-    bannerLabel: "py-2 text-center text-sm font-semibold text-white",
+    bannerLabel: "py-2 text-center text-sm font-semibold text-brand-foreground",
   },
   variants: {
     // How many tiers sit in a row at the `lg` breakpoint. Always one column on mobile and two
@@ -122,23 +122,23 @@ export const pricingVariants = tv({
     },
     // The card's surface treatment, orthogonal to `featured` (the recommended ring), so the two
     // can combine. `default` is the white card; `outline` swaps the hairline for a brand edge;
-    // `solid` fills the card with the accent and flips every part to inverse text/glyphs; `muted`
+    // `solid` fills the card with the accent and flips every part to the accent's ink; `muted`
     // sits the card on a soft grey panel. For the "banner behind" look, wrap a tier in
     // `PricingTierBanner` (a separate part) instead of a tone, so any tone can carry a banner.
     tone: {
       default: {},
       outline: { tier: "border-brand" },
       solid: {
-        tier: "border-brand bg-brand text-white",
-        description: "text-white/80",
-        amount: "text-white",
-        period: "text-white/80",
-        features: "border-white/20",
-        feature: "text-white/85",
-        featureCheck: "text-white",
+        tier: "border-brand bg-brand text-brand-foreground",
+        description: "text-brand-foreground/80",
+        amount: "text-brand-foreground",
+        period: "text-brand-foreground/80",
+        features: "border-brand-foreground/20",
+        feature: "text-brand-foreground/85",
+        featureCheck: "text-brand-foreground",
         // Keep grouped rows + their contextual icons legible on the accent fill.
-        featureGroupList: "[&>[data-slot=pricing-feature]]:text-white",
-        featureCustomIcon: "text-white/80",
+        featureGroupList: "[&>[data-slot=pricing-feature]]:text-brand-foreground",
+        featureCustomIcon: "text-brand-foreground/80",
       },
       muted: { tier: "border-transparent bg-secondary" },
       // A plan that is not a product off the shelf ("We build it for you", a custom quote): the same

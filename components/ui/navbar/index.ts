@@ -10,6 +10,7 @@ export {
   NavbarMobileToggle,
   NavbarMobileMenu,
   NavbarMobileLink,
+  NavbarShellContext,
   navbarVariants,
   type NavbarProps,
   type NavbarBrandProps,

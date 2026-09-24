@@ -309,6 +309,7 @@
   --color-ring: var(--ring);
   --color-brand: var(--brand);
   --color-brand-strong: var(--brand-strong);
+  --color-brand-foreground: var(--brand-foreground);
   /* Chat sent-bubble fill: a fixed saturated blue-600 (theme-agnostic, like --brand/--rating), so
      the "you" turn reads the same friendly blue under every theme and carries white text at AA on
      any surface. Distinct from --link, which tracks the accent (see above). */
@@ -1285,6 +1286,11 @@
      raw --brand by design (white text on it is 3.6:1 on orange: AA for large text only).
      Theme-agnostic like --brand: the chip is white in every theme, so no theme redefines it. */
   --brand-strong: color-mix(in oklch, var(--brand), black 24%);
+  /* Brand foreground: the ink that sits ON a brand fill (a primary Button label, a checked
+     Checkbox tick, a selected day, a brand Banner). White for every mid-lightness accent; a light
+     accent (lime) swaps in a dark ink from its preset. Theme-agnostic like --brand. On `bg-brand`,
+     write `text-brand-foreground`, never `text-white`, or a light accent loses its labels. */
+  --brand-foreground: oklch(1 0 0);
   /* The single radius knob. 1rem (16px) anchors the lg step; the quarter-step scale above
      keeps every rounded-* utility on the 4px grid as this value re-rounds the whole system. */
   --radius: 1rem;
@@ -1466,13 +1472,20 @@
 
 
 /* ─── Accent presets ("color modes") ─────────────────────────────────────────
- * The accent is a single knob: every preset sets ONLY --brand. --ring-brand and
- * --brand-strong derive from it (see :root), and every component reads the accent through
+ * The accent is a single knob: a preset sets --brand, and --ring-brand, --brand-strong and
+ * --link derive from it (see :root), and every component reads the accent through
  * `bg-brand` / `border-brand` / `ring-brand` / `--ring-brand`, so one variable
  * recolors the whole system. Apply by setting `data-accent="<name>"` on <html>
- * (the AccentProvider does this and persists the choice). Tuned to one vivid,
- * accessible lightness (~L 0.6) so each reads well on light AND dark surfaces.
- * To add an accent: append a preset here and a name to ACCENTS in lib/accent.tsx.
+ * (the AccentProvider does this and persists the choice). The first eight are tuned to one
+ * vivid, accessible lightness (~L 0.6) so each reads well on light AND dark surfaces and holds
+ * white text on its fill.
+ *
+ * Lime is the one LIGHT accent, so it is the one preset that follows the theme. On the light
+ * themes it is lime-600, deep enough to hold as text on white (3.1:1, the ground the default
+ * orange stands on at 3.6:1), so every `text-brand` in the system still reads and --brand-strong
+ * keeps deriving; on the dark themes it is the vivid lime-400. Its fill always carries lime-950
+ * (--brand-foreground), never white, and its link is pulled to 25% black (~5:1 on white).
+ * To add an accent: append a preset here and a name to ACCENTS in components/accent-provider.tsx.
  * ──────────────────────────────────────────────────────────────────────────── */
 [data-accent="orange"] { --brand: oklch(0.648 0.222 34.2); } /* #F84416, default */
 [data-accent="red"]    { --brand: oklch(0.585 0.222 27); }
@@ -1482,6 +1495,17 @@
 [data-accent="blue"]   { --brand: oklch(0.55 0.2 255); }
 [data-accent="violet"] { --brand: oklch(0.52 0.23 285); }
 [data-accent="pink"]   { --brand: oklch(0.59 0.23 354); }
+[data-accent="lime"] {
+  --brand: oklch(0.648 0.2 131.684); /* lime-600, #65A30D: the light themes */
+  --brand-foreground: oklch(0.274 0.072 132.109); /* lime-950 */
+  --link: color-mix(in oklch, var(--brand), black 25%);
+}
+/* The dark themes, on the page and on any nested dark band. */
+[data-accent="lime"]:is(.dark, .moonlight),
+[data-accent="lime"] :is(.dark, .moonlight) {
+  --brand: oklch(0.841 0.238 128.85); /* lime-400, #A3E635 */
+  --link: var(--brand);
+}
 
 /* ─── Ring: the canonical accent halo ─────────────────────────────────────────
  * One definition for the soft ring shared across the system instead of repeating the

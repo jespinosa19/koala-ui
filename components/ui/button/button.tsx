@@ -11,6 +11,10 @@ import { Spinner } from "@/components/ui/spinner"
 import { Tooltip, type TooltipProps } from "@/components/ui/tooltip/tooltip"
 import { hitBox, hitCoarse, hitX } from "@/lib/hit-area"
 
+// Every bundler (Next, Vite, webpack) replaces `process.env.NODE_ENV` at build time. Declared here so
+// a project without Node's types, like a Vite app, still typechecks the dev-only warning below.
+declare const process: { env: { NODE_ENV?: string } }
+
 /**
  * Button: the reference single-element component. Pattern: one `tv` recipe, Radix
  * `Slot` for `asChild`, semantic tokens only, `className` merged last. See
@@ -48,7 +52,7 @@ export const buttonVariants = tv({
       // the 3:1 large-text floor but not the 4.5:1 AA floor for this 14px label (amber: 2.7:1).
       // The raw accent is kept as a brand decision; see `--brand-strong` in globals.css for the
       // darker step used where brand-colored text sits on white.
-      primary: "bg-brand text-white shadow-xs hover:bg-brand/90",
+      primary: "bg-brand text-brand-foreground shadow-xs hover:bg-brand/90",
       secondary:
         "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
       // The achromatic solid: an ink-colored fill with the page ground as its label, so it is black

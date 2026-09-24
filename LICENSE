@@ -10,10 +10,11 @@ repository, or by copying them from the documentation. The koalaui CLI itself
 Koala UI comes in two tiers:
 
   Free  Everything installable without a license key: the components in components/ui,
-        the helpers in lib, and the tokens in registry/koala.css.
-  Pro   Everything that needs a license key: marketing sections, page examples and
-        templates, including the downloadable source of any template shown as a demo on
-        the Koala UI website.
+        the helpers in lib, the tokens in registry/koala.css, and the one sample section
+        of each section family that the Koala UI website shows with its source.
+  Pro   Everything that needs a license key: every other section, the page examples, the
+        source of the templates shown as demos on the Koala UI website, and the Figma
+        library.
 
 
 1. WHAT YOU MAY DO
@@ -31,10 +32,16 @@ An "end product" is a website, application or other work whose value to its user
 than Koala UI itself. A client site built with Koala UI is an end product; a template, theme
 or UI kit made from Koala UI is not (see section 2).
 
-Seats. A Pro license covers the number of people its plan states: one person for the
-personal plan, and the number of team members listed for the team plan. Each person
-activates their own seat with the koalaui CLI. You may not share a license key beyond the
-seats you bought.
+Seats. A Pro license covers the number of people its plan states: one person for Solo, and
+up to six people for Agency. Each person activates their own seat with the koalaui CLI; a
+continuous-integration job run for a licensed person may use one of that person's seats.
+Unlocking the source on the Koala UI website uses no seat, and is limited to the people the
+plan covers. You may not share a license key, or the activation ids issued for it, beyond
+the seats you bought.
+
+Third parties. Fonts, photographs and other assets that a template or section loads from
+third-party services are licensed by their owners under their own terms, not by this
+license.
 
 Clients. You may hand an end product, including its source code, to a client. The client
 may keep using and maintaining that end product, but receives no right to use Koala UI in
@@ -56,7 +63,8 @@ For the Pro tier, you also may not:
   d. Publish Pro source where people other than your team and your clients can read it,
      including public code repositories, gists and package registries. An open-source end
      product may use the Free tier, but not the Pro tier.
-  e. Share, resell or publish your license key, or use it for more seats than you bought.
+  e. Share, resell or publish your license key or its activation ids, or use them for more
+     seats than you bought.
 
 Pro files carry a comment that identifies the license they were installed with. Removing it
 does not change these terms.

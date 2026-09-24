@@ -116,7 +116,7 @@ export const fileCardVariants = tv({
       true: {
         // A full card scaling 0.96 reads janky; 0.98 gives press feedback on a large
         // surface while staying above the 0.95 floor. `transition` is curated, not `all`.
-        root: "cursor-pointer transition duration-fast ease-out hover:shadow-md active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        root: "cursor-pointer text-left transition duration-fast ease-out hover:shadow-md active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
       },
     },
     /**

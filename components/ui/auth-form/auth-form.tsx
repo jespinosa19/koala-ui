@@ -48,8 +48,10 @@ export const authFormVariants = tv({
     title: "font-semibold tracking-tight text-foreground text-balance",
     description: "text-sm text-pretty text-muted-foreground",
     // Provider icons stack in one column on narrow screens (a phone / a split pane below the fold)
-    // and spread to a 3-up row once there's room at `sm`, so they never crowd a 320px viewport.
-    social: "grid grid-cols-1 gap-2 sm:grid-cols-3",
+    // and spread to one row once there's room at `sm`, so they never crowd a 320px viewport. The
+    // row takes one track per provider (`--auth-providers`, written by the row itself).
+    social:
+      "grid grid-cols-1 gap-2 sm:grid-cols-[repeat(var(--auth-providers,3),minmax(0,1fr))]",
     // Provider-first (`ProviderForm`): a vertical stack of full-width "Continue with X" buttons,
     // the legal line under them, and the social footer rail.
     providerStack: "flex flex-col gap-2.5",
@@ -110,11 +112,88 @@ const PROVIDER_META: Record<AuthProvider, { label: string; icon: typeof GoogleLo
 // The icon-grid row (LoginForm / SignUpForm) shows the three classic web providers.
 const PROVIDERS: AuthProvider[] = ["google", "github", "apple"]
 
+/**
+ * Every string the three blocks print, in one dictionary so a translation is written once and
+ * handed to all of them (`labels={es}` on LoginForm, SignUpForm and ProviderForm alike). Pass only
+ * the keys you change; the rest keep the English defaults below. `{provider}` in the two provider
+ * phrases is replaced with the provider's name ("Discord"), wherever the language puts it.
+ *
+ * The consent sentences are not keys: they carry links, and a translation reorders the words
+ * around them, so they are whole nodes instead (`termsLabel` on SignUpForm and ProviderForm).
+ */
+export interface AuthFormLabels {
+  /** A provider button's name: its accessible name in the icon row, its label in a stack. */
+  continueWith: string
+  /** ProviderForm with `action="sign-in"`. */
+  signInWith: string
+  email: string
+  emailPlaceholder: string
+  password: string
+  /** LoginForm's password placeholder. */
+  passwordPlaceholder: string
+  /** SignUpForm's password placeholder. */
+  newPasswordPlaceholder: string
+  /** SignUpForm's hint under the strength meter, before anything is typed. */
+  passwordHint: string
+  name: string
+  namePlaceholder: string
+  forgotPassword: string
+  rememberMe: string
+  /** LoginForm's submit, and SignUpForm's cross-link back to it. */
+  signIn: string
+  /** LoginForm's cross-link to SignUpForm. */
+  signUp: string
+  /** SignUpForm's submit. */
+  createAccount: string
+  noAccount: string
+  haveAccount: string
+  /** The rule between the provider row and the email core, on LoginForm and SignUpForm. */
+  loginDivider: string
+  signUpDivider: string
+  /** ProviderForm's rule above the magic-link email. */
+  or: string
+  /** The accessible name of ProviderForm's community link rail. */
+  socialLinks: string
+}
+
+const DEFAULT_LABELS: AuthFormLabels = {
+  continueWith: "Continue with {provider}",
+  signInWith: "Sign in with {provider}",
+  email: "Email",
+  emailPlaceholder: "you@company.com",
+  password: "Password",
+  passwordPlaceholder: "Enter your password",
+  newPasswordPlaceholder: "Create a password",
+  passwordHint: "Use 8+ characters with a mix of letters, numbers & symbols.",
+  name: "Full name",
+  namePlaceholder: "Jane Cooper",
+  forgotPassword: "Forgot password?",
+  rememberMe: "Remember me for 30 days",
+  signIn: "Sign in",
+  signUp: "Sign up",
+  createAccount: "Create account",
+  noAccount: "Don't have an account?",
+  haveAccount: "Already have an account?",
+  loginDivider: "or continue with email",
+  signUpDivider: "or sign up with email",
+  or: "or",
+  socialLinks: "Social links",
+}
+
+/** A provider phrase with the provider's name put where the language wants it. */
+function withProvider(phrase: string, provider: string) {
+  return phrase.replace("{provider}", provider)
+}
+
 function SocialRow({
   onProvider,
+  providers,
+  labels,
   slots,
 }: {
   onProvider?: (provider: AuthProvider) => void
+  providers: AuthProvider[]
+  labels: AuthFormLabels
   slots: ReturnType<typeof authFormVariants>
 }) {
   return (
@@ -122,15 +201,21 @@ function SocialRow({
     // form's control size and its buttons fell back to the ambient density: a 32px provider row
     // stacked straight onto 40px fields, one Divider apart. It imposes the same `lg` tier itself.
     <ControlSizeProvider size="lg">
-      <div className={slots.social()} data-control-size="lg">
-        {PROVIDERS.map((id) => {
+      <div
+        className={slots.social()}
+        data-control-size="lg"
+        // One track per provider from `sm` up, so two providers split the row in halves and four in
+        // quarters instead of leaving a hole in a fixed three-up grid.
+        style={{ ["--auth-providers" as string]: providers.length }}
+      >
+        {providers.map((id) => {
           const { label, icon: Icon } = PROVIDER_META[id]
           return (
             <Button
               key={id}
               type="button"
               variant="outline"
-              aria-label={`Continue with ${label}`}
+              aria-label={withProvider(labels.continueWith, label)}
               onClick={() => onProvider?.(id)}
             >
               <Icon />
@@ -162,6 +247,8 @@ export interface LoginFormProps extends Omit<React.ComponentProps<"div">, "onSub
   density?: Density
   /** Show the social provider row above the email form. */
   showSocial?: boolean
+  /** Providers in the social row, left to right. Defaults to Google, GitHub and Apple. */
+  providers?: AuthProvider[]
   /** Called with the credentials on submit. Return a promise to drive the spinner. */
   onSubmit?: (data: LoginFormData) => void | Promise<void>
   onProvider?: (provider: AuthProvider) => void
@@ -169,23 +256,28 @@ export interface LoginFormProps extends Omit<React.ComponentProps<"div">, "onSub
   forgotHref?: string
   /** Target for the "Sign up" cross-link. */
   signUpHref?: string
+  /** The block's strings, for a translation. Pass only the keys you change. */
+  labels?: Partial<AuthFormLabels>
 }
 
 export function LoginForm({
   title = "Welcome back",
   description = "Sign in to your account to continue.",
   showSocial = true,
+  providers = PROVIDERS,
   variant,
   density,
   onSubmit,
   onProvider,
   forgotHref = "#",
   signUpHref = "#",
+  labels: labelsProp,
   className,
   ...props
 }: LoginFormProps) {
   const resolvedDensity = useDensity(density)
   const slots = authFormVariants({ variant, density: resolvedDensity })
+  const labels = { ...DEFAULT_LABELS, ...labelsProp }
   const [data, setData] = React.useState<LoginFormData>({
     email: "",
     password: "",
@@ -215,19 +307,19 @@ export function LoginForm({
 
       {showSocial && (
         <>
-          <SocialRow onProvider={onProvider} slots={slots} />
-          <Divider>or continue with email</Divider>
+          <SocialRow onProvider={onProvider} providers={providers} labels={labels} slots={slots} />
+          <Divider>{labels.loginDivider}</Divider>
         </>
       )}
 
       <Form density={resolvedDensity} onSubmit={handleSubmit}>
         <Field>
-          <FieldLabel required>Email</FieldLabel>
+          <FieldLabel required>{labels.email}</FieldLabel>
           <InputRoot>
             <InputField
               type="email"
               autoComplete="email"
-              placeholder="you@company.com"
+              placeholder={labels.emailPlaceholder}
               required
               value={data.email}
               onChange={(event) => update("email", event.target.value)}
@@ -237,14 +329,14 @@ export function LoginForm({
 
         <Field>
           <div className={slots.labelRow()}>
-            <FieldLabel required>Password</FieldLabel>
+            <FieldLabel required>{labels.password}</FieldLabel>
             <a href={forgotHref} className={slots.forgot()}>
-              Forgot password?
+              {labels.forgotPassword}
             </a>
           </div>
           <PasswordInput
             autoComplete="current-password"
-            placeholder="Enter your password"
+            placeholder={labels.passwordPlaceholder}
             required
             value={data.password}
             onChange={(event) => update("password", event.target.value)}
@@ -256,20 +348,20 @@ export function LoginForm({
             checked={data.remember}
             onCheckedChange={(checked) => update("remember", checked === true)}
           />
-          Remember me for 30 days
+          {labels.rememberMe}
         </label>
 
         <FormActions align="stack">
           <Button type="submit" loading={loading}>
-            Sign in
+            {labels.signIn}
           </Button>
         </FormActions>
       </Form>
 
       <p className={slots.footer()}>
-        Don&apos;t have an account?{" "}
+        {labels.noAccount}{" "}
         <a href={signUpHref} className={slots.footerLink()}>
-          Sign up
+          {labels.signUp}
         </a>
       </p>
     </div>
@@ -293,6 +385,8 @@ export interface SignUpFormProps extends Omit<React.ComponentProps<"div">, "onSu
   /** Spacing axis: `compact` (16px, default) or `comfortable` (24px). Falls back to the nearest DensityProvider. */
   density?: Density
   showSocial?: boolean
+  /** Providers in the social row, left to right. Defaults to Google, GitHub and Apple. */
+  providers?: AuthProvider[]
   onSubmit?: (data: SignUpFormData) => void | Promise<void>
   onProvider?: (provider: AuthProvider) => void
   /** Target for the "Sign in" cross-link. */
@@ -300,12 +394,21 @@ export interface SignUpFormProps extends Omit<React.ComponentProps<"div">, "onSu
   /** Targets for the terms / privacy links. */
   termsHref?: string
   privacyHref?: string
+  /**
+   * The consent sentence beside the checkbox. Defaults to an "I agree to the Terms and Privacy
+   * Policy." line linking `termsHref` / `privacyHref`; pass your own node for a translation (the
+   * words move around the links, so the sentence is replaced whole).
+   */
+  termsLabel?: React.ReactNode
+  /** The block's strings, for a translation. Pass only the keys you change. */
+  labels?: Partial<AuthFormLabels>
 }
 
 export function SignUpForm({
   title = "Create your account",
   description = "Start your free trial. No credit card required.",
   showSocial = true,
+  providers = PROVIDERS,
   variant,
   density,
   onSubmit,
@@ -313,11 +416,14 @@ export function SignUpForm({
   signInHref = "#",
   termsHref = "#",
   privacyHref = "#",
+  termsLabel,
+  labels: labelsProp,
   className,
   ...props
 }: SignUpFormProps) {
   const resolvedDensity = useDensity(density)
   const slots = authFormVariants({ variant, density: resolvedDensity })
+  const labels = { ...DEFAULT_LABELS, ...labelsProp }
   const [data, setData] = React.useState<SignUpFormData>({
     name: "",
     email: "",
@@ -348,18 +454,18 @@ export function SignUpForm({
 
       {showSocial && (
         <>
-          <SocialRow onProvider={onProvider} slots={slots} />
-          <Divider>or sign up with email</Divider>
+          <SocialRow onProvider={onProvider} providers={providers} labels={labels} slots={slots} />
+          <Divider>{labels.signUpDivider}</Divider>
         </>
       )}
 
       <Form density={resolvedDensity} onSubmit={handleSubmit}>
         <Field>
-          <FieldLabel required>Full name</FieldLabel>
+          <FieldLabel required>{labels.name}</FieldLabel>
           <InputRoot>
             <InputField
               autoComplete="name"
-              placeholder="Jane Cooper"
+              placeholder={labels.namePlaceholder}
               required
               value={data.name}
               onChange={(event) => update("name", event.target.value)}
@@ -368,12 +474,12 @@ export function SignUpForm({
         </Field>
 
         <Field>
-          <FieldLabel required>Email</FieldLabel>
+          <FieldLabel required>{labels.email}</FieldLabel>
           <InputRoot>
             <InputField
               type="email"
               autoComplete="email"
-              placeholder="you@company.com"
+              placeholder={labels.emailPlaceholder}
               required
               value={data.email}
               onChange={(event) => update("email", event.target.value)}
@@ -382,17 +488,17 @@ export function SignUpForm({
         </Field>
 
         <Field>
-          <FieldLabel required>Password</FieldLabel>
+          <FieldLabel required>{labels.password}</FieldLabel>
           <PasswordInput
             autoComplete="new-password"
-            placeholder="Create a password"
+            placeholder={labels.newPasswordPlaceholder}
             required
             value={data.password}
             onChange={(event) => update("password", event.target.value)}
           />
           <PasswordStrength value={data.password} className="mt-1.5">
             <PasswordStrengthMeter />
-            <PasswordStrengthLabel placeholder="Use 8+ characters with a mix of letters, numbers & symbols." />
+            <PasswordStrengthLabel placeholder={labels.passwordHint} />
           </PasswordStrength>
         </Field>
 
@@ -403,15 +509,19 @@ export function SignUpForm({
             onCheckedChange={(checked) => update("acceptedTerms", checked === true)}
           />
           <span className="text-pretty">
-            I agree to the{" "}
-            <a href={termsHref} className={slots.footerLink()}>
-              Terms
-            </a>{" "}
-            and{" "}
-            <a href={privacyHref} className={slots.footerLink()}>
-              Privacy Policy
-            </a>
-            .
+            {termsLabel ?? (
+              <>
+                I agree to the{" "}
+                <a href={termsHref} className={slots.footerLink()}>
+                  Terms
+                </a>{" "}
+                and{" "}
+                <a href={privacyHref} className={slots.footerLink()}>
+                  Privacy Policy
+                </a>
+                .
+              </>
+            )}
           </span>
         </label>
 
@@ -421,15 +531,15 @@ export function SignUpForm({
             loading={loading}
             disabled={!data.acceptedTerms}
           >
-            Create account
+            {labels.createAccount}
           </Button>
         </FormActions>
       </Form>
 
       <p className={slots.footer()}>
-        Already have an account?{" "}
+        {labels.haveAccount}{" "}
         <a href={signInHref} className={slots.footerLink()}>
-          Sign in
+          {labels.signIn}
         </a>
       </p>
     </div>
@@ -500,6 +610,12 @@ export interface ProviderFormProps extends Omit<React.ComponentProps<"div">, "on
   footer?: React.ReactNode
   /** Social rail at the very bottom: community links (Twitter / Discord / YouTube / …). */
   social?: SocialLink[]
+  /**
+   * The block's strings, for a translation. Pass only the keys you change. The provider buttons
+   * read `continueWith` (or `signInWith` under `action="sign-in"`), so a translation keeps the
+   * verb the `action` picked.
+   */
+  labels?: Partial<AuthFormLabels>
 }
 
 export function ProviderForm({
@@ -520,11 +636,13 @@ export function ProviderForm({
   onSubmit,
   footer,
   social,
+  labels: labelsProp,
   className,
   ...props
 }: ProviderFormProps) {
   const resolvedDensity = useDensity(density)
   const slots = authFormVariants({ variant, density: resolvedDensity })
+  const labels = { ...DEFAULT_LABELS, ...labelsProp }
   const [email, setEmail] = React.useState("")
   const [accepted, setAccepted] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
@@ -532,7 +650,7 @@ export function ProviderForm({
   // When consent is required, every action stays inert until the box is ticked.
   const gated = requireTerms && !accepted
 
-  const verb = action === "sign-in" ? "Sign in with" : "Continue with"
+  const phrase = action === "sign-in" ? labels.signInWith : labels.continueWith
 
   // The consent sentence: a custom node, the default Terms/Privacy line, or nothing.
   const termsContent =
@@ -597,7 +715,7 @@ export function ProviderForm({
                 {/* Mark rides next to the label; the pair centers together (never pinned to the
                     edge). */}
                 <Icon className="size-5" />
-                {verb} {label}
+                {withProvider(phrase, label)}
               </Button>
             )
           })}
@@ -606,15 +724,15 @@ export function ProviderForm({
 
       {showEmail && (
         <>
-          <Divider>or</Divider>
+          <Divider>{labels.or}</Divider>
           <Form density={resolvedDensity} onSubmit={handleEmail}>
             <Field>
-              <FieldLabel>Email</FieldLabel>
+              <FieldLabel>{labels.email}</FieldLabel>
               <InputRoot>
                 <InputField
                   type="email"
                   autoComplete="email"
-                  placeholder="you@company.com"
+                  placeholder={labels.emailPlaceholder}
                   required
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
@@ -637,7 +755,7 @@ export function ProviderForm({
       {footer != null && <div className={slots.footer()}>{footer}</div>}
 
       {social && social.length > 0 && (
-        <nav className={slots.socialFooter()} aria-label="Social links">
+        <nav className={slots.socialFooter()} aria-label={labels.socialLinks}>
           {social.map(({ network, href, label }) => {
             const { label: defaultLabel, icon: Icon } = SOCIAL_META[network]
             return (

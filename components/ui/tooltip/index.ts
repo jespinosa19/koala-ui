@@ -11,6 +11,7 @@ export {
   TooltipStat,
   tooltipVariants,
   tooltipGraphVariants,
+  type TooltipAnchor,
   type TooltipProps,
   type TooltipGroupProps,
   type TooltipTone,

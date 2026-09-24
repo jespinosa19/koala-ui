@@ -20,13 +20,17 @@ import { tv } from "@/lib/tv"
  *
  * Wrap a set of tooltips in {@link TooltipGroup} to share ONE bubble that *glides* between
  * triggers (Tippy singleton): the smooth way to tooltip a toolbar or an avatar stack.
+ *
+ * Two escape hatches for what hover-on-an-element can't reach: `open` drives the bubble from
+ * outside, and `anchor` hangs it on a point or box in the viewport instead of a child element
+ * (a pin on a map, a point on a chart, the cursor over a canvas). Together they make the hover
+ * card of anything that isn't a DOM element.
  */
 export const tooltipVariants = tv({
   base: [
     "flex",
-    // 12px label on the popover surface, hairline + soft shadow for depth.
-    "rounded-md border border-border bg-popover text-popover-foreground text-xs",
-    "max-w-xs text-pretty shadow-md select-none",
+    // 12px text; the surface belongs to the variant (an inverted chip or the popover card).
+    "max-w-xs text-xs text-pretty select-none",
     // Interruptible transition: `transition` names opacity+scale+translate (never `transition: all`).
     "transition duration-fast ease-out",
     "data-[state=hidden]:opacity-0",
@@ -41,12 +45,16 @@ export const tooltipVariants = tv({
     // shown over a chart bar), so it drops the centering for a left-aligned block and
     // trades the tight label padding for room to breathe.
     variant: {
-      // Spec: centered, gap 4px, padding 2px 6px.
-      text: "items-center justify-center gap-1 px-1.5 py-0.5",
-      // Left-aligned block; padding 8px 12px so multi-line content isn't cramped. The gap
+      // The hint: an inverted chip, the page's ink as its ground and no border, so a short label
+      // reads at a glance and never passes for a card (the same call AlignUI, Untitled UI and
+      // Linear make). Centered, gap 4px, padding 4px 8px, medium weight: 12px stays legible on
+      // the inverted ground.
+      text: "items-center justify-center gap-1 rounded-md bg-foreground px-2 py-1 font-medium text-background shadow-md [--surface:var(--foreground)]",
+      // The card: Popover's own shell (soft border, lg radius, lg shadow on the popover
+      // surface), left-aligned, padding 8px 12px so multi-line content isn't cramped. The gap
       // spaces stacked content blocks (header / separator / sections) when composing the
       // graph parts below; single-child content (a plain card) is unaffected.
-      graph: "flex-col items-start gap-2 px-3 py-2 text-left",
+      graph: "flex-col items-start gap-2 rounded-lg border border-border-soft bg-popover px-3 py-2 text-left text-popover-foreground shadow-lg [--surface:var(--popover)]",
     },
     transition: {
       // ShiftAway: scale down + slide away from the trigger on exit.
@@ -128,6 +136,8 @@ function TooltipBubble({
     <div
       role="tooltip"
       data-slot="tooltip"
+      // Parts nested in the bubble (a Kbd) key off the variant: the text chip inverts the ink.
+      data-variant={variant ?? "text"}
       data-state="hidden"
       tabIndex={-1}
       className={tooltipVariants({ className, variant, transition })}
@@ -146,11 +156,31 @@ function TooltipBubble({
 type RegisterTrigger = (instance: Instance) => () => void
 const TooltipGroupContext = React.createContext<RegisterTrigger | null>(null)
 
+/**
+ * Where an anchored tooltip points, in viewport (client) coordinates: a point (`{ x, y }`, the
+ * cursor or a pin) or a box (`{ x, y, width, height }`, a map feature's screen bounds).
+ */
+export type TooltipAnchor = { x: number; y: number; width?: number; height?: number }
+
 export interface TooltipProps {
   /** The hint contents: text, or text plus a small leading glyph (the 4px gap). */
   content: React.ReactNode
-  /** The trigger. Must be a single element that forwards its ref to a DOM node. */
-  children: React.ReactElement
+  /**
+   * The trigger. Must be a single element that forwards its ref to a DOM node. Optional only
+   * with `anchor`, which replaces it.
+   */
+  children?: React.ReactElement
+  /**
+   * Controlled visibility. Leave it unset for the usual hover/focus tooltip; set it and the
+   * trigger events switch off, so the bubble shows exactly while `open` is true.
+   */
+  open?: boolean
+  /**
+   * Hang the bubble on a point or box in the viewport instead of on `children`, for things that
+   * have no element of their own. Moving the anchor re-positions the open bubble without
+   * re-mounting it. Usually paired with `open`; without it, an anchored tooltip is shown.
+   */
+  anchor?: TooltipAnchor
   /**
    * Content shape: `text` (default) is a single centered label; `graph` is a roomier
    * left-aligned block for a multi-line data card (e.g. a stat readout over a chart bar).
@@ -183,6 +213,8 @@ export interface TooltipProps {
 export function Tooltip({
   content,
   children,
+  open,
+  anchor,
   variant,
   placement = "top",
   delay = [150, 0],
@@ -194,6 +226,22 @@ export function Tooltip({
   className,
 }: TooltipProps) {
   const register = React.useContext(TooltipGroupContext)
+
+  // Anchored: no trigger element, so no group either; the bubble hangs on the point.
+  if (anchor) {
+    return (
+      <AnchoredTooltip
+        content={content}
+        anchor={anchor}
+        open={open ?? true}
+        variant={variant}
+        placement={placement}
+        offset={offset}
+        className={className}
+      />
+    )
+  }
+  if (!children) return null
 
   // Inside a group: register this trigger with the group's shared (singleton) bubble.
   // Like the standalone path, this owns the trigger ref the React 19 way (children.props.ref),
@@ -210,6 +258,7 @@ export function Tooltip({
   return (
     <StandaloneTooltip
       content={content}
+      open={open}
       variant={variant}
       placement={placement}
       delay={delay}
@@ -236,6 +285,7 @@ export function Tooltip({
 function StandaloneTooltip({
   content,
   children,
+  open,
   variant,
   placement = "top",
   delay = [150, 0],
@@ -283,8 +333,9 @@ function StandaloneTooltip({
       delay: delay as Props["delay"],
       offset: offset as [number, number],
       interactive: interactive ?? false,
-      trigger: trigger ?? "mouseenter focus",
-      hideOnClick: hideOnClick ?? true,
+      // Controlled: the owner shows and hides it (the effect below), so no event may.
+      trigger: open !== undefined ? "manual" : (trigger ?? "mouseenter focus"),
+      hideOnClick: open !== undefined ? false : (hideOnClick ?? true),
       animation: true,
       onMount: handleMount,
       onHide: handleHide,
@@ -312,17 +363,27 @@ function StandaloneTooltip({
   React.useEffect(() => {
     const inst = instanceRef.current
     if (!inst) return
+    const controlled = open !== undefined
     inst.setProps({
       placement,
       delay: delay as Props["delay"],
       offset: offset as [number, number],
       interactive: interactive ?? false,
-      trigger: trigger ?? "mouseenter focus",
-      hideOnClick: hideOnClick ?? true,
+      trigger: controlled ? "manual" : (trigger ?? "mouseenter focus"),
+      hideOnClick: controlled ? false : (hideOnClick ?? true),
     })
     if (disabled) inst.disable()
     else inst.enable()
-  }, [placement, delay, offset, interactive, trigger, hideOnClick, disabled])
+  }, [placement, delay, offset, interactive, trigger, hideOnClick, disabled, open])
+
+  // Controlled visibility. `container` is in the deps so a tooltip created open shows as soon
+  // as its instance exists.
+  React.useEffect(() => {
+    const inst = instanceRef.current
+    if (!inst || open === undefined) return
+    if (open) inst.show()
+    else inst.hide()
+  }, [open, container])
 
   // Pass our stable ref callback to the trigger child.
   // `cloneElement` here only SETS `ref`; it never reads `element.ref`, so no React 19 warning.
@@ -336,6 +397,122 @@ function StandaloneTooltip({
         createPortal(
           // attrs is empty here; handleMount stamps data-placement on this element
           // from the Popper.js-computed placement so CSS origin/translate rules fire correctly.
+          <TooltipBubble attrs={{}} className={className} variant={variant}>
+            {content}
+          </TooltipBubble>,
+          container,
+        )}
+    </>
+  )
+}
+
+/** Tippy reads the anchor through `getReferenceClientRect`; a plain rect-shaped object will do. */
+function rectOf(a: TooltipAnchor): DOMRect {
+  const width = a.width ?? 0
+  const height = a.height ?? 0
+  return {
+    x: a.x,
+    y: a.y,
+    left: a.x,
+    top: a.y,
+    right: a.x + width,
+    bottom: a.y + height,
+    width,
+    height,
+    toJSON() {
+      return this
+    },
+  } as DOMRect
+}
+
+/**
+ * A tooltip hung on a point or box instead of an element. Tippy still needs a reference node,
+ * so a zero-size, inert span stands in for one, and `getReferenceClientRect` answers with the
+ * anchor. The latest anchor is kept in a ref (written in an effect, read lazily by Popper), so
+ * moving it re-positions the open bubble without re-creating the instance. The bubble takes no
+ * pointer events: a hover card that follows the cursor must never steal the `mousemove` it
+ * follows.
+ */
+function AnchoredTooltip({
+  content,
+  anchor,
+  open,
+  variant,
+  placement = "top",
+  offset = [0, 6],
+  className,
+}: {
+  content: React.ReactNode
+  anchor: TooltipAnchor
+  open: boolean
+  variant?: "text" | "graph"
+  placement?: Props["placement"]
+  offset?: Props["offset"]
+  className?: string
+}) {
+  const [reference, setReference] = React.useState<HTMLSpanElement | null>(null)
+  const [container, setContainer] = React.useState<HTMLDivElement | null>(null)
+  const instanceRef = React.useRef<Instance | null>(null)
+  const anchorRef = React.useRef(anchor)
+
+  React.useEffect(() => {
+    if (!reference) return
+    const popperEl = document.createElement("div")
+    popperEl.style.pointerEvents = "none"
+    const instance = tippy(reference, {
+      render: () => ({ popper: popperEl }),
+      getReferenceClientRect: () => rectOf(anchorRef.current),
+      placement,
+      offset: offset as [number, number],
+      trigger: "manual",
+      hideOnClick: false,
+      interactive: false,
+      animation: true,
+      onMount: handleMount,
+      onHide: handleHide,
+    }) as Instance
+    instanceRef.current = instance
+    const ro = new ResizeObserver(() => instance.popperInstance?.forceUpdate())
+    ro.observe(popperEl)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setContainer(popperEl)
+    return () => {
+      ro.disconnect()
+      instance.destroy()
+      instanceRef.current = null
+      setContainer(null)
+    }
+    // placement/offset are synced below; only a new reference node re-creates the instance.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reference])
+
+  React.useEffect(() => {
+    instanceRef.current?.setProps({ placement, offset: offset as [number, number] })
+  }, [placement, offset])
+
+  // Follow the anchor: store it, then ask Popper to measure again.
+  React.useEffect(() => {
+    anchorRef.current = anchor
+    instanceRef.current?.popperInstance?.update()
+  }, [anchor])
+
+  React.useEffect(() => {
+    const inst = instanceRef.current
+    if (!inst) return
+    if (open) inst.show()
+    else inst.hide()
+  }, [open, container])
+
+  return (
+    <>
+      <span
+        ref={setReference}
+        aria-hidden
+        data-slot="tooltip-anchor"
+        className="pointer-events-none fixed top-0 left-0 size-0"
+      />
+      {container &&
+        createPortal(
           <TooltipBubble attrs={{}} className={className} variant={variant}>
             {content}
           </TooltipBubble>,
@@ -429,7 +606,11 @@ export interface TooltipGroupProps {
   children: React.ReactNode
   /** Content shape of the shared bubble: `text` (default) or `graph`. See {@link TooltipProps.variant}. */
   variant?: "text" | "graph"
-  /** Hover-intent delay shared by the group, in ms: `[open, close]` or a single number. */
+  /**
+   * Hover-intent delay shared by the group, in ms: `[open, close]` or a single number. The
+   * default close delay (200ms) is the grace period that lets the pointer cross the gap to the
+   * next trigger while the bubble is still up, so it glides instead of closing and re-opening.
+   */
   delay?: Props["delay"]
   /** Distance from each trigger as `[skidding, distance]`. */
   offset?: Props["offset"]
@@ -451,7 +632,7 @@ export interface TooltipGroupProps {
 export function TooltipGroup({
   children,
   variant,
-  delay = [150, 0],
+  delay = [150, 200],
   offset = [0, 6],
   disabled,
   className,
@@ -489,8 +670,9 @@ export function TooltipGroup({
       overrides: ["placement"],
       delay: delay as Props["delay"],
       offset: offset as [number, number],
-      // The glide: animate the popper's move between triggers (named prop, not `all`).
-      moveTransition: "transform var(--duration-fast) var(--ease-out)",
+      // The glide: animate the popper's move between triggers (named prop, not `all`), at the
+      // base duration so the eye can follow it from one trigger to the next.
+      moveTransition: "transform var(--duration-base) var(--ease-out)",
       onMount: handleMount,
       onHide: handleHide,
       render: () => ({

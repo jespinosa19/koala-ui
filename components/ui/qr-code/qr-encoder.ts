@@ -289,7 +289,7 @@ function drawMatrix(
   // Reserve the format-info modules now (drawn for real after masking) so the data routing
   // skips them; pass a dummy mask here.
   drawFormatBits(modules, isFunction, ecc, 0, true)
-  drawVersionInfo(modules, setFunction, version)
+  drawVersionInfo(setFunction, version)
 
   // Route data + ECC codewords through the free modules in the zig-zag order.
   drawCodewords(modules, isFunction, size, allCodewords)
@@ -364,11 +364,7 @@ function drawFormatBits(
   isFunction[size - 8][8] = true
 }
 
-function drawVersionInfo(
-  modules: boolean[][],
-  setFunction: (x: number, y: number, dark: boolean) => void,
-  version: number,
-) {
+function drawVersionInfo(setFunction: (x: number, y: number, dark: boolean) => void, version: number) {
   if (version < 7) return
   const size = version * 4 + 17
   // 18-bit version info = 6 data bits + 12-bit BCH.

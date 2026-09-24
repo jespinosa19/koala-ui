@@ -48,7 +48,7 @@ export function StatsSection1() {
             <Stat
               key={metric.label}
               density="comfortable"
-              className="items-center gap-1.5 rounded-none border-0 bg-background p-8 text-center shadow-none"
+              className="items-center gap-1.5 rounded-none border-0 ring-0 bg-background p-8 text-center shadow-none"
             >
               <StatValue countUp className="text-3xl sm:text-4xl">
                 {metric.value}

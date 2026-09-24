@@ -188,6 +188,19 @@ export const navbarVariants = tv({
         mobileMenu: "md:flex lg:hidden",
       },
     },
+    // Docked into an app shell's top band (`LayoutTopbar`), the Linear/Vercel read. The shell owns
+    // the surface there: the band sits on the recessed canvas and the seam under it is the sheet's
+    // own top hairline, so the bar paints no fill and draws no bottom rule of its own (a second
+    // line would stack on the seam and read as 2px). It also drops the marketing column: an app
+    // bar spans the window, its brand on the left edge and its account cluster on the right.
+    //
+    // Declared after `variant` so its `border-b-0` wins the merge over `full`'s rule. Like the
+    // Sidebar's `docked`, it is inherited from the shell through `NavbarShellContext`, so a bar
+    // dropped into a `LayoutTopbar` needs no props and no className overrides.
+    docked: {
+      true: { root: "border-b-0 bg-transparent", inner: "max-w-none" },
+      false: {},
+    },
   },
   compoundVariants: [
     // 24px, then 32px from `sm`: the marketing gutter `SectionContainer` uses, so the bar's content
@@ -241,6 +254,7 @@ export const navbarVariants = tv({
     density: "comfortable",
     elevateOnScroll: false,
     collapseAt: "md",
+    docked: false,
   },
 })
 
@@ -251,6 +265,20 @@ const [NavbarProvider, useNavbarContext] = createContext<{
   setOpen: (open: boolean) => void
 }>("Navbar")
 
+/**
+ * Shell bridge, the top-band twin of `SidebarShellContext`. An app shell (the DS `Layout`, through
+ * `LayoutTopbar`) publishes whether the bars inside it are `docked` on the shell's own surface, and
+ * a `Navbar` reads it as a *default*:
+ *
+ *   <LayoutTopbar>
+ *     <Navbar>…</Navbar>      // docked: no fill, no bottom rule, full-width row
+ *   </LayoutTopbar>
+ *
+ * An explicit `docked` prop still wins. `null` (no shell) is the ordinary case, a standalone bar,
+ * which is why this is a plain context with a default rather than the throwing helper.
+ */
+export const NavbarShellContext = React.createContext<{ docked?: boolean } | null>(null)
+
 export interface NavbarProps
   extends Omit<React.ComponentProps<"header">, "onChange">,
     VariantProps<typeof navbarVariants> {
@@ -260,6 +288,13 @@ export interface NavbarProps
   defaultOpen?: boolean
   /** Notified when the mobile disclosure opens or closes. */
   onOpenChange?: (open: boolean) => void
+  /**
+   * Sit the bar on an app shell's surface instead of painting its own: no fill, no bottom rule,
+   * and a full-width row. Inherited from an enclosing `LayoutTopbar`, so you rarely pass it; set
+   * `docked={false}` to keep a bar's standalone chrome inside a shell.
+   * @default inherited from the shell, else false
+   */
+  docked?: boolean
 }
 
 export function Navbar({
@@ -269,12 +304,15 @@ export function Navbar({
   density,
   elevateOnScroll = false,
   collapseAt,
+  docked,
   open: openProp,
   defaultOpen = false,
   onOpenChange,
   children,
   ...props
 }: NavbarProps) {
+  const shell = React.useContext(NavbarShellContext)
+  const isDocked = docked ?? shell?.docked ?? false
   // Density resolves prop > provider > "comfortable"; compute the slots once, every part
   // reads them from context (the Card/Tabs pattern).
   const slots = navbarVariants({
@@ -283,6 +321,7 @@ export function Navbar({
     density: useDensity(density),
     elevateOnScroll,
     collapseAt,
+    docked: isDocked,
   })
 
   // Uncontrolled by default, controllable when `open` is supplied, the Radix convention.

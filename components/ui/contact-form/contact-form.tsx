@@ -425,7 +425,7 @@ export function LeadForm({
             <InputField
               type="email"
               autoComplete="email"
-              placeholder="isaacreed@koalaui.com"
+              placeholder="isaacreed@company.com"
               required
               value={data.email}
               onChange={(event) => update("email", event.target.value)}

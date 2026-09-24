@@ -170,7 +170,9 @@ export const activityFeedVariants = tv({
         // rows. The negative margin turns the fill into a pill that breathes past the text without
         // moving it: -mx-2 and px-2 cancel, so an interactive row's marker still lines up with an
         // inert one's. Specific transition, never `all`.
-        item: "-mx-2 cursor-pointer rounded-lg px-2 transition-colors duration-fast ease-out hover:bg-muted/60 active:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
+        // The width grows by the same 1rem, or a <button> row (sized, not stretched) stops 8px
+        // short on the right; text-left, or its content centres.
+        item: "-mx-2 w-[calc(100%+1rem)] cursor-pointer rounded-lg px-2 text-left transition-colors duration-fast ease-out hover:bg-muted/60 active:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
       },
     },
   },

@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import { SlidersHorizontal, Rows, SquaresFour } from "@phosphor-icons/react"
 import type { Column, Table } from "@tanstack/react-table"
 

@@ -3,7 +3,6 @@
 // Spinner has no state of its own, but like Kbd it has to be embeddable anywhere, including slots a
 // client component renders lazily (Tooltip content, a toast, a menu row). A server-only component
 // placed in such a slot resolves to `undefined` on the client, so Spinner opts into the client graph.
-import * as React from "react"
 import { CircleNotch, type IconProps } from "@phosphor-icons/react"
 
 import { tv, type VariantProps } from "@/lib/tv"

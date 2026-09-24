@@ -1,11 +1,11 @@
 "use client"
 
 import * as React from "react"
-import Image, { type ImageProps } from "next/image"
 import { Slot } from "radix-ui"
 
 import { createContext } from "@/lib/create-context"
 import { tv, type VariantProps } from "@/lib/tv"
+import { cn } from "@/lib/utils"
 
 /**
  * Bento: an asymmetric marketing grid of feature tiles (the "deliver fast without sacrificing
@@ -18,9 +18,10 @@ import { tv, type VariantProps } from "@/lib/tv"
  * tint), then composes a tinted `BentoItemIcon`, a `BentoItemTitle`, a `BentoItemDescription`,
  * and either a `BentoItemImage` (a screenshot clipped by the tile edge: a framed window that
  * peeks up from the bottom, or with `imageFit="bleed"` bare art that runs off the tile and
- * dissolves) or a freeform `BentoItemMedia`. Marketing is comfortable by nature, so there's no
- * density axis; `scale="lg"` on `Bento` is the landing step (32px tiles, 18px descriptions) for a
- * board that is the page's feature story rather than a block among many.
+ * dissolves; give it a `darkSrc` and the shot follows the theme) or a freeform `BentoItemMedia`.
+ * Marketing is comfortable by nature, so there's no density axis; `scale="lg"` on `Bento` is the
+ * landing step (32px tiles, 18px descriptions) for a board that is the page's feature story rather
+ * than a block among many.
  */
 export const bentoVariants = tv({
   slots: {
@@ -48,7 +49,8 @@ export const bentoVariants = tv({
     // The art window. Always bled to the tile's bottom edge (-mb-6 cancels the tile padding) and
     // clipped there by the tile's own overflow-hidden; what it looks like is the `imageFit` axis.
     imageFrame: "relative mt-auto -mb-6 shrink-0 overflow-hidden",
-    image: "object-cover",
+    // The shot fills the window it peeks from and crops to it.
+    image: "absolute inset-0 size-full object-cover",
   },
   variants: {
     // How many cells the tile claims, plus how tall its peeking image is. `feature` is the
@@ -236,7 +238,24 @@ export function BentoItemMedia({ className, ...props }: React.ComponentProps<"di
   return <div data-slot="bento-item-media" className={slots.media({ className })} {...props} />
 }
 
-export interface BentoItemImageProps extends Omit<ImageProps, "fill" | "children"> {
+/**
+ * A picture: its URL, or what a bundler's static image import returns (an object with `src`, as
+ * Next and the Vite image plugins give), so `import shot from "./shot.webp"` passes straight in.
+ */
+export type BentoImageSource = string | { src: string }
+
+const srcOf = (source: BentoImageSource) => (typeof source === "string" ? source : source.src)
+
+export interface BentoItemImageProps extends Omit<React.ComponentProps<"img">, "src" | "children"> {
+  src: BentoImageSource
+  /**
+   * The same shot taken in a dark theme. With it, `src` shows on the light themes (light, cream)
+   * and `darkSrc` on the dark ones (dark, moonlight), so a screenshot sits in the page's own theme
+   * instead of glaring out of it. The swap is the `dark:` variant, so it honours the nearest theme
+   * scope, and only the visible shot loads: both are lazy, and a browser never fetches a lazy
+   * image that is `display: none`. Every other prop (`alt`, `sizes`, `className`…) applies to both.
+   */
+  darkSrc?: BentoImageSource
   /** Extra classes for the art window (height, width of the bleed, etc.). */
   frameClassName?: string
   /**
@@ -250,27 +269,44 @@ export interface BentoItemImageProps extends Omit<ImageProps, "fill" | "children
 /**
  * A screenshot/preview clipped at the tile edge. With the tile's `imageFit="frame"` (default) it
  * peeks up from the bottom in a floating window; with `"bleed"` it runs off the tile and dissolves.
- * Built on `next/image` (`fill`), so pass `src`/`alt`. Height (and the bleed's width) comes from
- * the tile `size`; override via `frameClassName`.
+ * A plain lazy `<img>` filling the window, so it runs in any React app; pass `src`/`alt`, plus
+ * `darkSrc` for a shot that follows the theme, and `srcSet`/`sizes` for responsive sources. Height
+ * (and the bleed's width) comes from the tile `size`; override via `frameClassName`.
  */
 export function BentoItemImage({
   className,
   frameClassName,
-  sizes,
+  src,
   alt,
+  darkSrc,
+  loading = "lazy",
+  decoding = "async",
   children,
   ...props
 }: BentoItemImageProps) {
   const { slots } = useBentoItemContext("BentoItemImage")
   return (
     <div data-slot="bento-item-image" className={slots.imageFrame({ className: frameClassName })}>
-      <Image
-        fill
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={srcOf(src)}
         alt={alt}
-        sizes={sizes ?? "(min-width: 1024px) 33vw, 100vw"}
-        className={slots.image({ className })}
+        loading={loading}
+        decoding={decoding}
+        className={slots.image({ className: cn(darkSrc != null && "dark:hidden", className) })}
         {...props}
       />
+      {darkSrc != null && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          alt={alt}
+          loading={loading}
+          decoding={decoding}
+          className={slots.image({ className: cn("hidden dark:block", className) })}
+          {...props}
+          src={srcOf(darkSrc)}
+        />
+      )}
       {children}
     </div>
   )

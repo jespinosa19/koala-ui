@@ -1339,7 +1339,9 @@ export function ChartTooltip({
 
   return (
     <g data-slot="chart-tooltip">
-      <TooltipGroup className={cn("px-2.5 py-2", className)} offset={[0, 10]}>
+      {/* A data card, not a hint: the graph variant keeps it on the popover surface its ink is
+          tuned for (muted labels, popover-foreground values). */}
+      <TooltipGroup variant="graph" className={cn("px-2.5 py-2", className)} offset={[0, 10]}>
         {data.map((row, i) => {
           const raw = (index ? row[index] : i + 1) ?? i + 1
           const heading = labelFormatter ? labelFormatter(raw) : String(raw)
