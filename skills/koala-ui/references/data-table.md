@@ -42,10 +42,10 @@ A data grid built on TanStack Table for behavior (sorting, grouping, row selecti
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add data-table
+npx koalaui-cli@latest add data-table
 ```
 
 Manual: run `npm install @tanstack/react-table radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/data-table/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -124,6 +124,8 @@ Left at its default, the table drops straight into the page section it belongs t
 </section>
 ```
 
+Flush edges leave no padding to absorb a control’s invisible hit area, so the first and last cells clip sideways: an icon button in the last column grows its 40px target without nudging a table that fits into scrolling by a few pixels. Nothing you could see is cut (the scroll box already ended there), and hit areas still reach up and down between rows.
+
 ## Toolbar
 
 The control rail above the table is built in and toggled with simple booleans, no wiring. `searchable` adds a search box that filters every column (TanStack’s global filter), and `toolbarActions` is a right-side slot for your own buttons (filter, export, a primary action). The search and any icon buttons are Koala natives ([Input](https://koala-ui.vercel.app/docs/components/input.md) and [Button](https://koala-ui.vercel.app/docs/components/button.md)), so they share the system’s focus rings, density, and press feedback.
@@ -145,6 +147,8 @@ The control rail above the table is built in and toggled with simple booleans, n
   }
 />
 ```
+
+On a phone the rail reflows by itself: the search takes the first row at full width, and the filters and the right-hand actions share the next one, filters from the left and actions pushed to the right edge. A single view-options button never ends up alone on a row of its own, so there is nothing to override and no control to drop for small screens.
 
 Need a layout the toggles don’t cover? The parts: `DataTableToolbar`, `DataTableToolbarSection`, and `DataTableSearch` are exported, so you can compose your own rail and drop it above a plain `DataTable`.
 
@@ -244,6 +248,55 @@ const columns = [
 
 The parts are exported too: `DataTableFacetedFilter` and `DataTableActiveFilters`, for hand-composed toolbars over a table instance you own.
 
+## Tabs
+
+Line tabs over a table split one list into views (All, Active, Invited), each with its count. Wrap the table in `DataTableTabs`, put a `DataTableTabsList` of `DataTableTab`s above it, and hand each tab its `count`. The rows stay yours to filter, from the same place the counts come from; the parts own the rest. The table becomes the panel the tabs control, so a screen reader hears which view it is in, and switching views takes it back to its first page while the search, the sort and the selection that still applies stay put. No remounting the table with a `key` to reset the page, and nothing lost when you do.
+
+```tsx
+import {
+  DataTable,
+  DataTableTabs,
+  DataTableTabsList,
+  DataTableTab,
+} from "@/components/ui/data-table"
+
+const views = [
+  { value: "all", label: "All" },
+  { value: "Active", label: "Active" },
+  { value: "Invited", label: "Invited" },
+  { value: "Suspended", label: "Suspended" },
+]
+
+const inView = (view: string) =>
+  view === "all" ? members : members.filter((member) => member.status === view)
+
+function Members() {
+  const [view, setView] = useState("all")
+  const rows = useMemo(() => inView(view), [view])
+  return (
+    <DataTableTabs value={view} onValueChange={setView} className="w-full">
+      <DataTableTabsList aria-label="Member status">
+        {views.map((item) => (
+          <DataTableTab key={item.value} value={item.value} count={inView(item.value).length}>
+            {item.label}
+          </DataTableTab>
+        ))}
+      </DataTableTabsList>
+      <DataTable
+        columns={columns}
+        data={rows}
+        getRowId={(row) => row.id}
+        enableSorting
+        enableRowSelection
+        searchable
+        enablePagination
+        pageSize={6}
+      />
+    </DataTableTabs>
+  )
+}
+```
+
 ## Remembering view state
 
 Pass a `persistKey` and the table remembers how the user left it (which columns are visible, their order, the sort, the rows/cards layout, and the page size) by writing them to `localStorage` under that key. It’s SSR-safe: the server renders the defaults and the saved state is applied after mount, so hydration stays clean. Hide a column or switch to cards below, then reload the page, and it comes back the same.
@@ -322,6 +375,8 @@ const columns: ColumnDef<Member>[] = [
 
 Two per-column hints ride along on `meta`, both backed by the shared [Tooltip](https://koala-ui.vercel.app/docs/components/tooltip.md). `headerTooltip` appends a small info icon after the header label, for explaining what a column measures without crowding the title (hover the Balance header). `cellTooltip` is a function given the cell context that returns the hint to show for each cell. Return `null` to skip one. It pairs naturally with a clamped column: truncate the cell and reveal the full value on hover or focus (hover a member name). Both triggers are keyboard-reachable.
 
+The cell hint fills the cell exactly as its content would, so it never changes the column’s layout: a full-width [Progress](https://koala-ui.vercel.app/docs/components/progress.md) keeps its width (hover an Onboarding bar), text keeps the column’s alignment, and a truncated cell still truncates.
+
 ```tsx
 const columns: ColumnDef<Member>[] = [
   {
@@ -335,6 +390,24 @@ const columns: ColumnDef<Member>[] = [
       <span className="block max-w-[12rem] truncate">
         {row.original.name} · {row.original.email}
       </span>
+    ),
+  },
+  {
+    accessorKey: "role",
+    header: "Role",
+    cell: ({ getValue }) => <span className="text-muted-foreground">{getValue<string>()}</span>,
+  },
+  {
+    id: "onboarding",
+    accessorFn: (row) => row.onboarding,
+    header: "Onboarding",
+    // The hint wraps the cell without resizing it, so a full-width Progress keeps its width.
+    meta: {
+      label: "Onboarding",
+      cellTooltip: ({ getValue }) => `${getValue<number>()} of 5 steps done`,
+    },
+    cell: ({ row, getValue }) => (
+      <Progress value={getValue<number>()} max={5} aria-label={`${row.original.name}'s onboarding`} />
     ),
   },
   {
@@ -551,6 +624,82 @@ With selection on, pass `renderSelectionActions` and a floating pill rises while
 />
 ```
 
+## Opening a row
+
+The record-list pattern: click a row and the screen shows that record, in a pane beside the table, a drawer or a page of its own. Pass `onRowClick` and every row opens on a click anywhere across it, while the controls inside keep their own jobs (the checkbox checks, the row menu opens, a link navigates) and a drag that selects text is left alone. Rows become focusable with a brand ring, and `Enter` on a focused row opens it, so the keyboard gets the same path as the pointer.
+
+Tell the table which record is open with `activeRowId`. That row takes a brand tint, deliberately a different color from the checkbox-selected fill, since a row can be picked for a bulk action and open at once, and it carries `aria-current`. To walk the list from the pane, `onDisplayedRowsChange` hands you the rows in the order the table shows them, search and sort included, so previous and next follow the screen. Search, re-sort, then step through below.
+
+```tsx
+function Members() {
+  const [openId, setOpenId] = useState<string | null>("2")
+  // The rows in the order the table shows them, search and sort included.
+  const [shown, setShown] = useState<Member[]>([])
+  const open = members.find((member) => member.id === openId) ?? null
+  const position = shown.findIndex((member) => member.id === openId)
+
+  const step = (delta: -1 | 1) => {
+    const next = shown[position + delta]
+    if (next) setOpenId(next.id)
+  }
+
+  return (
+    <div className="flex w-full flex-col gap-4">
+      <DataTable
+        columns={columns}
+        data={members}
+        getRowId={(row) => row.id}
+        enableSorting
+        enableRowSelection
+        searchable
+        onRowClick={(row) => setOpenId(row.id)}
+        activeRowId={openId}
+        onDisplayedRowsChange={(rows) => setShown(rows.map((row) => row.original))}
+      />
+      {open ? (
+        <Card aria-label="Open member">
+          <CardHeader>
+            <CardTitle>{open.name}</CardTitle>
+            <CardDescription>{open.email}</CardDescription>
+            <CardAction className="flex items-center gap-1">
+              <span className="mr-1 text-sm text-muted-foreground tabular-nums">
+                {position >= 0 ? `${position + 1} of ${shown.length}` : "Not in view"}
+              </span>
+              <Button variant="ghost" size="sm" iconOnly aria-label="Previous member"
+                disabled={position <= 0} onClick={() => step(-1)}>
+                <CaretUp />
+              </Button>
+              <Button variant="ghost" size="sm" iconOnly aria-label="Next member"
+                disabled={position < 0 || position >= shown.length - 1} onClick={() => step(1)}>
+                <CaretDown />
+              </Button>
+            </CardAction>
+          </CardHeader>
+          <CardContent>
+            <DescriptionList>
+              <DescriptionListItem>
+                <DescriptionTerm>Role</DescriptionTerm>
+                <DescriptionDetails>{open.role}</DescriptionDetails>
+              </DescriptionListItem>
+              <DescriptionListItem>
+                <DescriptionTerm>Team</DescriptionTerm>
+                <DescriptionDetails>{open.team}</DescriptionDetails>
+              </DescriptionListItem>
+              <DescriptionListItem>
+                <DescriptionTerm>Balance</DescriptionTerm>
+                <DescriptionDetails className="tabular-nums">
+                  {currency.format(open.balance)}
+                </DescriptionDetails>
+              </DescriptionListItem>
+            </DescriptionList>
+          </CardContent>
+        </Card>
+      ) : null}
+    </div>
+  )
+}
+```
+
 ## Sticky header
 
 `stickyHeader` pins the header while the body scrolls. Cap the scroll container’s height with `containerClassName` (e.g. `max-h-72`) to create the scroll.
@@ -603,6 +752,44 @@ const columns: ColumnDef<Member>[] = [
   pageSize={8}
   pageSizeOptions={[8, 16, 24, 50, 100]}
 />
+```
+
+The page never points past the end. When `data` shrinks under it (a delete, a filter your screen applies itself) the table steps back to the last page that still exists, and an edit that keeps the row count keeps the page. The rows-per-page select always offers the size in use: left out of `pageSizeOptions`, it is merged in and sorted, and with no options at all they are built around `pageSize` (one, two and three pages, then 50 and 100). Go to page 3 below, then remove rows.
+
+```tsx
+function Members() {
+  const [rows, setRows] = useState(() => members.slice(0, 14))
+  return (
+    <div className="flex w-full flex-col gap-3">
+      <div className="flex flex-wrap gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={rows.length === 0}
+          onClick={() => setRows((current) => current.slice(0, -5))}
+        >
+          Remove 5 rows
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          disabled={rows.length === 14}
+          onClick={() => setRows(members.slice(0, 14))}
+        >
+          Restore
+        </Button>
+      </div>
+      {/* No pageSizeOptions: the select offers 5, 10, 15, 50 and 100. */}
+      <DataTable
+        columns={columns}
+        data={rows}
+        getRowId={(row) => row.id}
+        enablePagination
+        pageSize={5}
+      />
+    </div>
+  )
+}
 ```
 
 ## Load on scroll
@@ -669,6 +856,66 @@ function MembersTable() {
       onSortingChange={(sorting) => load({ sorting, pageIndex: 0 })}
       onPaginationChange={(p) => load({ sorting, pageIndex: p.pageIndex })}
     />
+  )
+}
+```
+
+## Controlled state
+
+The table keeps its own state until you want it. Pass `sorting`, `globalFilter` or `columnVisibility` with the matching `on*Change` and that piece is yours: reset it from a button, keep it in the URL, or drive the search from a field elsewhere on the screen (a controlled `globalFilter` filters with or without the built-in box). Left uncontrolled, every `on*Change` still reports each change, the built-in search box included, and always after the table has committed it, never from inside a state update, so setting your own state straight from one is safe.
+
+`onDisplayedRowsChange` reads the other way: it hands you the rows the table is showing, in its order, across every page, after mount and whenever that list changes. Use it for a summary, an export of the current view, or previous and next in a detail pane. Sort or search below and the line under the table follows.
+
+```tsx
+const BALANCE_FIRST: SortingState = [{ id: "balance", desc: true }]
+
+function Members() {
+  const [query, setQuery] = useState("")
+  const [sorting, setSorting] = useState<SortingState>(BALANCE_FIRST)
+  const [shown, setShown] = useState<Member[]>([])
+  const total = shown.reduce((sum, member) => sum + member.balance, 0)
+  const changed = query !== "" || sorting !== BALANCE_FIRST
+
+  return (
+    <div className="flex w-full flex-col gap-4">
+      <DataTableToolbar>
+        <DataTableToolbarSection>
+          <DataTableSearch
+            placeholder="Search members"
+            shortcut={false}
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+          />
+        </DataTableToolbarSection>
+        <DataTableToolbarSection>
+          <Button
+            variant="outline"
+            disabled={!changed}
+            onClick={() => {
+              setQuery("")
+              setSorting(BALANCE_FIRST)
+            }}
+          >
+            Reset view
+          </Button>
+        </DataTableToolbarSection>
+      </DataTableToolbar>
+      <DataTable
+        columns={columns}
+        data={members}
+        getRowId={(row) => row.id}
+        enableSorting
+        sorting={sorting}
+        onSortingChange={setSorting}
+        globalFilter={query}
+        onGlobalFilterChange={setQuery}
+        onDisplayedRowsChange={(rows) => setShown(rows.map((row) => row.original))}
+      />
+      <p className="text-sm text-pretty text-muted-foreground tabular-nums">
+        {shown.length} of {members.length} members on show, {currency.format(total)} outstanding.
+        {shown[0] ? ` First in line: ${shown[0].name}.` : ""}
+      </p>
+    </div>
   )
 }
 ```
@@ -773,6 +1020,14 @@ No. onRowReorder reports the move as fromIndex and toIndex, both indices into th
 
 Selection is keyed by row id, so without a stable key TanStack falls back to the row index and the selection no longer follows the row. Pass a stable getRowId, for example getRowId={(r) => r.id}, and the selection (and grouping) survives re-sorts.
 
+### How do I open a row in a detail pane without the checkbox or the row menu opening it too?
+
+Pass onRowClick. It fires for a click anywhere on the row except on a control inside it (a button, link, checkbox, input, label or menu item), and for Enter on a focused row. Then pass the open record's id as activeRowId: that row takes a brand tint distinct from the selected fill and carries aria-current, and onDisplayedRowsChange gives you the rows in display order for previous and next.
+
+### Can I set my own state from onSortingChange, onRowSelectionChange or the other callbacks?
+
+Yes. Every on*Change fires after the table has committed the change, never from inside a state update, so calling setState from it is safe and it fires once, even under StrictMode. To own a piece of state outright, pass sorting, globalFilter or columnVisibility alongside its callback and the table follows your value.
+
 ### How do I build a custom toolbar instead of using the searchable and toolbarActions toggles?
 
 Compose the exported parts: DataTableToolbar, DataTableToolbarSection, and DataTableSearch for the rail, plus DataTableFacetedFilter and DataTableActiveFilters for filters. Drop your rail above a plain DataTable when the built-in booleans do not cover the layout you need.
@@ -787,10 +1042,10 @@ No, they are mutually exclusive. Setting onLoadMore (with hasMore and loadingMor
 
 ## Exports and dependencies
 
-`npx koalaui-cli add data-table` writes `components/ui/data-table/`. Import from `@/components/ui/data-table`:
+`npx koalaui-cli@latest add data-table` writes `components/ui/data-table/`. Import from `@/components/ui/data-table`:
 
-- Components and helpers: `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`, `TableCellText`, `TableEmpty`, `tableVariants`, `DataTable`, `DataTableFacetedFilter`, `DataTableActiveFilters`, `DataTableSelectionBar`, `DataTableToolbar`, `DataTableToolbarSection`, `DataTableSearch`, `DataTableViewOptions`, `columnLabel`, `DataTableEmpty`, `DataTableGrip`, `moveItem`
-- Types: `TableProps`, `TableRowProps`, `TableHeadProps`, `TableCellProps`, `DataTableProps`, `DataTableRowReorder`, `ColumnDef`, `ColumnFiltersState`, `PaginationState`, `SortingState`, `GroupingState`, `RowSelectionState`, `DataTableFilterOption`, `DataTableFilterField`, `DataTableSelectionBarProps`, `DataTableToolbarProps`, `DataTableToolbarSectionProps`, `DataTableSearchProps`, `DataTableViewOptionsProps`, `DataTableLayout`, `DataTableEmptyProps`, `DataTableGripProps`
-- Koala components it installs with it: `badge`, `button`, `card`, `checkbox`, `dropdown-menu`, `empty-state`, `input`, `kbd`, `pagination`, `popover`, `skeleton`, `spinner`, `tooltip`
+- Components and helpers: `Table`, `TableHeader`, `TableBody`, `TableFooter`, `TableRow`, `TableHead`, `TableCell`, `TableCaption`, `TableCellText`, `TableEmpty`, `tableVariants`, `DataTable`, `DataTableFacetedFilter`, `DataTableActiveFilters`, `DataTableSelectionBar`, `DataTableToolbar`, `DataTableToolbarSection`, `DataTableSearch`, `DataTableViewOptions`, `columnLabel`, `DataTableEmpty`, `DataTableGrip`, `moveItem`, `DataTableTabs`, `DataTableTabsList`, `DataTableTab`, `useDataTableTabs`
+- Types: `TableProps`, `TableRowProps`, `TableHeadProps`, `TableCellProps`, `DataTableProps`, `DataTableRowReorder`, `ColumnDef`, `ColumnFiltersState`, `PaginationState`, `SortingState`, `GroupingState`, `Row`, `RowSelectionState`, `VisibilityState`, `DataTableFilterOption`, `DataTableFilterField`, `DataTableSelectionBarProps`, `DataTableToolbarProps`, `DataTableToolbarSectionProps`, `DataTableSearchProps`, `DataTableViewOptionsProps`, `DataTableLayout`, `DataTableEmptyProps`, `DataTableGripProps`, `DataTableTabsProps`, `DataTableTabProps`
+- Koala components it installs with it: `badge`, `button`, `card`, `checkbox`, `dropdown-menu`, `empty-state`, `input`, `kbd`, `pagination`, `popover`, `skeleton`, `spinner`, `tabs`, `tooltip`
 - Koala lib helpers it uses: `create-context`, `density`, `motion`, `stagger`, `tv`, `utils`
 - npm packages: `@phosphor-icons/react`, `@tanstack/react-table`

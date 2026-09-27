@@ -18,10 +18,10 @@ A compound text field with a label, optional hint, prefix icons, suffix icons, p
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add input
+npx koalaui-cli@latest add input
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/input/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -63,7 +63,7 @@ The props dress the shell; the parts are everything around the field. A label, a
   <InputRoot>
     <InputField
       id="workspace"
-      placeholder="acme-inc"
+      placeholder="koala-ui"
       aria-describedby="workspace-hint"
     />
   </InputRoot>
@@ -299,7 +299,7 @@ The frame takes a 6% brand tint over whatever surface it sits on, and the text k
 
 ## Exports and dependencies
 
-`npx koalaui-cli add input` writes `components/ui/input/`. Import from `@/components/ui/input`:
+`npx koalaui-cli@latest add input` writes `components/ui/input/`. Import from `@/components/ui/input`:
 
 - Components and helpers: `InputRoot`, `InputField`, `InputLabel`, `InputHint`, `InputPrefix`, `InputSuffix`, `InputPrefixLabel`, `InputSuffixButton`, `PasswordInput`, `inputVariants`, `NumberInput`, `PhoneInput`, `CountrySelect`, `COUNTRIES`, `COUNTRY_BY_ISO2`
 - Types: `InputRootProps`, `InputFieldProps`, `InputLabelProps`, `InputHintProps`, `InputPrefixProps`, `InputSuffixProps`, `InputPrefixLabelProps`, `InputSuffixButtonProps`, `PasswordInputProps`, `NumberInputProps`, `PhoneInputProps`, `PhoneChangePayload`, `CountrySelectProps`, `Country`

@@ -46,10 +46,10 @@ The uploading experience: a drag-and-drop dropzone, a browse trigger, import sho
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add file-upload
+npx koalaui-cli@latest add file-upload
 ```
 
 Manual: run `npm install @phosphor-icons/react radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/file-upload/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -350,7 +350,7 @@ Set `density` to `compact` on the root (the default is `comfortable`), which tig
 
 ## Exports and dependencies
 
-`npx koalaui-cli add file-upload` writes `components/ui/file-upload/`. Import from `@/components/ui/file-upload`:
+`npx koalaui-cli@latest add file-upload` writes `components/ui/file-upload/`. Import from `@/components/ui/file-upload`:
 
 - Components and helpers: `FileUpload`, `FileUploadDropzone`, `FileUploadIcon`, `FileUploadTitle`, `FileUploadDescription`, `FileUploadLink`, `FileUploadTrigger`, `FileUploadSources`, `FileUploadSource`, `FileUploadList`, `FileUploadGrid`, `fileUploadVariants`, `formatBytes`
 - Types: `FileUploadProps`, `FileUploadDropzoneProps`, `FileUploadIconProps`, `FileUploadLinkProps`, `FileUploadTriggerProps`, `FileUploadSourcesProps`, `FileUploadSourceProps`, `FileUploadListProps`, `FileUploadGridProps`, `FileRejection`, `FileRejectionReason`

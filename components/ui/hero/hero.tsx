@@ -234,12 +234,13 @@ export const heroVariants = tv({
     // to. The ratio steps 4:3 → 16:9 so a phone gets a portrait-ish frame worth looking at and a
     // tablet gets a letterbox instead of half a screen of photograph.
     spreadMedia:
-      "relative isolate aspect-[4/3] overflow-hidden bg-muted sm:aspect-[16/9] lg:aspect-auto lg:min-h-[42rem] [&>img]:absolute [&>img]:inset-0 [&>img]:size-full [&>img]:object-cover [&>video]:absolute [&>video]:inset-0 [&>video]:size-full [&>video]:object-cover",
+      "relative isolate aspect-[4/3] overflow-hidden bg-muted sm:aspect-[16/9] lg:aspect-auto lg:min-h-[56rem] [&>img]:absolute [&>img]:inset-0 [&>img]:size-full [&>img]:object-cover [&>video]:absolute [&>video]:inset-0 [&>video]:size-full [&>video]:object-cover",
     // The inked half: the headline holds the TOP edge, the reading copy sits at the FOOT, and the
     // space between them is left empty on purpose, which is the whole move of a printed spread.
     // `justify-between` is the layout, so give the panel exactly two groups and let its height do
     // the spacing; the `gap` is only the floor for a short panel on a phone.
-    spreadPanel: "relative flex flex-col justify-between gap-16 p-8 sm:p-12 lg:min-h-[42rem] lg:p-16",
+    spreadPanel:
+      "relative flex flex-col justify-between gap-16 px-8 pt-8 pb-6 sm:px-12 sm:pt-12 sm:pb-8 lg:min-h-[56rem] lg:px-16 lg:pt-16 lg:pb-10",
     // The chapter mark in the panel's outer corner: editorial furniture, the one element here that
     // says "page" rather than "product". `tabular-nums` so 01 → 02 never nudges it sideways, and it
     // sits on the same rhythm as the panel's own padding at every width.

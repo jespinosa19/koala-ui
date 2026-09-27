@@ -4,6 +4,7 @@ import * as React from "react"
 
 import { tv, type VariantProps } from "@/lib/tv"
 import { AvatarRoot, AvatarFallback } from "@/components/ui/avatar"
+import { TooltipGroup } from "@/components/ui/tooltip"
 
 /**
  * AvatarGroup: an overlapping stack of `Avatar`s with a `+N` overflow chip. The cluster
@@ -18,6 +19,10 @@ import { AvatarRoot, AvatarFallback } from "@/components/ui/avatar"
  * count with `max`; the rest collapse into a chip. Use `total` when the real count is larger
  * than the avatars you render (e.g. a server count), and `renderOverflow` to swap the chip for
  * a richer affordance (a Tooltip listing the hidden people, a popover, a link).
+ *
+ * Tooltips are a singleton: the stack wraps its children in a `TooltipGroup` (no DOM node), so
+ * any `Tooltip` on an avatar or on the overflow shares ONE bubble that glides across the stack
+ * instead of each fading out and in.
  */
 export const avatarGroupVariants = tv({
   base: [
@@ -72,18 +77,21 @@ export function AvatarGroup({
 
   return (
     <div data-slot="avatar-group" className={avatarGroupVariants({ size, className })} {...props}>
-      {shown}
-      {overflow > 0 &&
-        (renderOverflow ? (
-          renderOverflow(overflow)
-        ) : (
-          <AvatarRoot size={size} aria-label={`${overflow} more`}>
-            {/* maxInitials so the count isn't trimmed to a single glyph on xs/sm boxes. */}
-            <AvatarFallback maxInitials={4} className="tabular-nums">
-              {`+${overflow}`}
-            </AvatarFallback>
-          </AvatarRoot>
-        ))}
+      {/* One shared, gliding tooltip across the stack (Tippy singleton). */}
+      <TooltipGroup>
+        {shown}
+        {overflow > 0 &&
+          (renderOverflow ? (
+            renderOverflow(overflow)
+          ) : (
+            <AvatarRoot size={size} aria-label={`${overflow} more`}>
+              {/* maxInitials so the count isn't trimmed to a single glyph on xs/sm boxes. */}
+              <AvatarFallback maxInitials={4} className="tabular-nums">
+                {`+${overflow}`}
+              </AvatarFallback>
+            </AvatarRoot>
+          ))}
+      </TooltipGroup>
     </div>
   )
 }

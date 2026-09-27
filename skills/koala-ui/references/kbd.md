@@ -15,10 +15,10 @@ A keyboard key indicator for documenting shortcuts. Renders a native <kbd>; the 
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add kbd
+npx koalaui-cli@latest add kbd
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/kbd/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -106,7 +106,7 @@ Yes. It uses semantic tokens only: the default fill is `bg-foreground/8`, a tran
 
 ## Exports and dependencies
 
-`npx koalaui-cli add kbd` writes `components/ui/kbd/`. Import from `@/components/ui/kbd`:
+`npx koalaui-cli@latest add kbd` writes `components/ui/kbd/`. Import from `@/components/ui/kbd`:
 
 - Components and helpers: `Kbd`, `kbdVariants`
 - Types: `KbdProps`

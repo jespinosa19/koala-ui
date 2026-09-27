@@ -53,10 +53,10 @@ The card an assistant hands you before it acts: what it intends to do, as a shor
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add plan
+npx koalaui-cli@latest add plan
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/plan/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -381,7 +381,7 @@ Yes. Every color is a semantic token — brand, success, destructive, muted, bor
 
 ## Exports and dependencies
 
-`npx koalaui-cli add plan` writes `components/ui/plan/`. Import from `@/components/ui/plan`:
+`npx koalaui-cli@latest add plan` writes `components/ui/plan/`. Import from `@/components/ui/plan`:
 
 - Components and helpers: `Plan`, `PlanHeader`, `PlanIcon`, `PlanLabel`, `PlanActions`, `PlanHeading`, `PlanTitle`, `PlanDescription`, `PlanStatus`, `PlanGroup`, `PlanGroupHeader`, `PlanGroupTitle`, `PlanGroupCount`, `PlanSteps`, `PlanStep`, `PlanStepContent`, `PlanStepTitle`, `PlanStepDescription`, `PlanStepTrigger`, `PlanStepDetail`, `PlanTasks`, `PlanTask`, `PlanStepInput`, `PlanStepAction`, `PlanStepEdit`, `PlanStepSkeleton`, `PlanAddStep`, `PlanMore`, `PlanFooter`, `PlanSummary`, `planVariants`
 - Types: `PlanProps`, `PlanTitleProps`, `PlanStatusProps`, `PlanStepProps`, `PlanStepInputProps`, `PlanStepSkeletonProps`, `PlanAddStepProps`, `PlanMoreProps`, `PlanTaskProps`, `PlanState`, `PlanStepState`

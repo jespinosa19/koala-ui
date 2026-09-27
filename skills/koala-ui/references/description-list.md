@@ -46,10 +46,10 @@ A semantic key/value detail view for records: profiles, invoices, settings read-
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add description-list
+npx koalaui-cli@latest add description-list
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/description-list/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -78,7 +78,7 @@ export function Example() {
 
 ## Layout
 
-`row` (default) places the term in a fixed-width column with the value beside it, splitting at the `sm` breakpoint and stacking on mobile. `stack` keeps the term above the value at every width, better for narrow surfaces and long values.
+`row` (default) places the term in a fixed-width column with the value beside it, splitting at the `sm` breakpoint and stacking on mobile. `stack` keeps the term above the value at every width, better for narrow surfaces and long values. `auto` and `inline` follow below. A term that leads with an icon keeps the value on its text's baseline, not the icon's edge.
 
 ```tsx
 <DescriptionList layout="row">
@@ -94,6 +94,101 @@ export function Example() {
 
 <DescriptionList layout="stack">
   {/* term sits above the value */}
+</DescriptionList>
+```
+
+## Values with pictures
+
+A value can lead with an Avatar, a Flag, a logo or icon, a Badge or a Select, and the row still reads on the text: the name sits on the term's baseline and the picture is centred on that line, 8px from the text after it. Put them straight in `DescriptionDetails` with no `flex` or alignment classes: a flex value takes its baseline from its first item, so a leading picture would hand the row its bottom edge and drop the text below the term.
+
+```tsx
+<DescriptionListItem>
+  <DescriptionTerm><User /> Owner</DescriptionTerm>
+  <DescriptionDetails>
+    <AvatarRoot size="xs">
+      <AvatarImage src={owner.photo} alt="" />
+      <AvatarFallback>AT</AvatarFallback>
+    </AvatarRoot>
+    Ana Torres
+  </DescriptionDetails>
+</DescriptionListItem>
+<DescriptionListItem>
+  <DescriptionTerm><MapPin /> Location</DescriptionTerm>
+  <DescriptionDetails>
+    <Flag code="ES" shape="circle" size="sm" />
+    Barcelona
+  </DescriptionDetails>
+</DescriptionListItem>
+<DescriptionListItem>
+  <DescriptionTerm><Buildings /> Company</DescriptionTerm>
+  <DescriptionDetails>
+    <PlaceholderLogo brand={brand} variant="mark" className="size-4" />
+    Vela
+  </DescriptionDetails>
+</DescriptionListItem>
+<DescriptionListItem>
+  <DescriptionTerm><Tag /> Plan</DescriptionTerm>
+  <DescriptionDetails>
+    <Badge variant="purple" size="sm" dot>Enterprise</Badge>
+  </DescriptionDetails>
+</DescriptionListItem>
+<DescriptionListItem>
+  <DescriptionTerm><Receipt /> Invoice</DescriptionTerm>
+  <DescriptionDetails>
+    <Select value={invoice} onValueChange={setInvoice}>
+      <SelectTrigger size="sm" aria-label="Invoice status" className="w-40">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>…</SelectContent>
+    </Select>
+  </DescriptionDetails>
+</DescriptionListItem>
+```
+
+## Auto layout
+
+`layout="auto"` splits by the list's own width instead of the viewport's. The term asks for `--dl-term` (12rem) and the value for `--dl-value` (10rem); when both fit on one line they sit side by side, and when they don't, the value wraps under its term. So a narrow card on a wide screen stacks, a phone drawer with a short term keeps its rows, and the switch point moves with the term column you set. The same list is shown below in a 20rem and a 28rem column.
+
+```tsx
+<DescriptionList layout="auto" divided>
+  <DescriptionListItem>
+    <DescriptionTerm><EnvelopeSimple /> Email</DescriptionTerm>
+    <DescriptionDetails>jordi@koalaui.com</DescriptionDetails>
+  </DescriptionListItem>
+  <DescriptionListItem>
+    <DescriptionTerm><MapPin /> Location</DescriptionTerm>
+    <DescriptionDetails>Barcelona, Spain</DescriptionDetails>
+  </DescriptionListItem>
+</DescriptionList>
+
+{/* A shorter term column keeps rows in a narrower space */}
+<DescriptionList layout="auto" style={{ "--dl-term": "7rem" }}>…</DescriptionList>
+```
+
+## Inline
+
+`layout="inline"` flows the pairs along a line, each term straight before its value, and wraps when the line runs out: a strip of facts under a heading or inside a row. The pairs carry no row padding and no rule; the gaps between them do the separating.
+
+```tsx
+<DescriptionList layout="inline">
+  <DescriptionListItem>
+    <DescriptionTerm>Fine</DescriptionTerm>
+    <DescriptionDetails className="font-semibold">$150</DescriptionDetails>
+  </DescriptionListItem>
+  <DescriptionListItem>
+    <DescriptionTerm>Points</DescriptionTerm>
+    <DescriptionDetails className="font-semibold">2</DescriptionDetails>
+  </DescriptionListItem>
+  <DescriptionListItem>
+    <DescriptionTerm>Suspension</DescriptionTerm>
+    <DescriptionDetails className="font-semibold">30 days</DescriptionDetails>
+  </DescriptionListItem>
+  <DescriptionListItem>
+    <DescriptionTerm className="sr-only">Class</DescriptionTerm>
+    <DescriptionDetails>
+      <Badge variant="warning" dot>Misdemeanor</Badge>
+    </DescriptionDetails>
+  </DescriptionListItem>
 </DescriptionList>
 ```
 
@@ -144,11 +239,12 @@ In `row` layout the term column width is the CSS variable `--dl-term` (default `
 
 The root `<dl>`. Forwards all native `<dl>` props.
 
-- `layout`: `"row"` (default) | `"stack"`.
+- `layout`: `"row"` (default, splits at the `sm` viewport) | `"stack"` | `"auto"` (splits by the list's own width) | `"inline"` (pairs flow along a line).
 - `divided`: `boolean`; hairline rule between rows.
 - `density`: `"compact"` (default) | `"comfortable"`; honors `DensityProvider`.
 - `asChild`: `boolean`; render via Radix Slot.
-- `--dl-term` (CSS var): term column width in `row` layout (default `12rem`).
+- `--dl-term` (CSS var): term column width in `row` and `auto` layouts (default `12rem`).
+- `--dl-value` (CSS var): in `auto` layout, the least room a value needs beside its term before it wraps under it (default `10rem`).
 
 ### DescriptionListItem
 
@@ -172,6 +268,18 @@ Use DescriptionList for the fields of a single record, like a profile, invoice, 
 
 `row` (the default) puts the term in a fixed-width column with the value beside it, splitting at the `sm` breakpoint and stacking on mobile. `stack` keeps the term above the value at every width, which reads better on narrow surfaces and for long values like URLs or tokens.
 
+### Why does my value with an avatar sit lower than its term?
+
+Because the value was made a flex row (`flex items-center gap-2`). A flex box takes its baseline from its first item, and a picture's baseline is its bottom edge, so the row lined the term up with the bottom of the avatar. Drop the flex classes: DescriptionDetails keeps its content in inline flow, centres a leading Avatar, Flag, svg, img, Badge or Select trigger on the text line, and spaces a picture 8px from the text after it. Use `text-right` rather than `flex justify-end` to right-align a value.
+
+### How do I make rows follow the card instead of the screen?
+
+Use `layout="auto"`. It puts the term and value side by side when the list itself has room for both (`--dl-term` plus `--dl-value`, 12rem and 10rem by default) and wraps the value under its term when it doesn't, so a narrow card on a wide screen stacks and a phone drawer with a short term column keeps its rows. `row` keeps its viewport `sm` split.
+
+### How do I show a few facts on one line?
+
+Use `layout="inline"`: the pairs flow along a line, each term straight before its value, and wrap when the line runs out. There is no row padding and no rule, so it sits under a heading or inside a list row without overrides.
+
 ### How do I assemble a row from the named parts?
 
 Wrap each pair in DescriptionListItem, then place a DescriptionTerm (the `<dt>` label) and a DescriptionDetails (the `<dd>` value) inside it. Import the parts as named exports rather than dot-notation, since `DescriptionList.Item` style statics do not survive the RSC server to client boundary.
@@ -190,7 +298,7 @@ The `density` prop tunes the per-row vertical padding, defaulting to `compact` f
 
 ## Exports and dependencies
 
-`npx koalaui-cli add description-list` writes `components/ui/description-list/`. Import from `@/components/ui/description-list`:
+`npx koalaui-cli@latest add description-list` writes `components/ui/description-list/`. Import from `@/components/ui/description-list`:
 
 - Components and helpers: `DescriptionList`, `DescriptionListItem`, `DescriptionTerm`, `DescriptionDetails`, `descriptionListVariants`
 - Types: `DescriptionListProps`, `DescriptionListItemProps`

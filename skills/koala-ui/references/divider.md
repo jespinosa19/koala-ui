@@ -15,10 +15,10 @@ A thin rule that separates content, optionally with a centered label. Smart by d
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add divider
+npx koalaui-cli@latest add divider
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/divider/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -138,7 +138,7 @@ Pass `decorative` when the rule is purely visual and carries no structural meani
 
 ## Exports and dependencies
 
-`npx koalaui-cli add divider` writes `components/ui/divider/`. Import from `@/components/ui/divider`:
+`npx koalaui-cli@latest add divider` writes `components/ui/divider/`. Import from `@/components/ui/divider`:
 
 - Components and helpers: `Divider`, `dividerVariants`
 - Types: `DividerProps`

@@ -31,10 +31,10 @@ The content half of every marketing section: a full-bleed band and a centered 12
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add section
+npx koalaui-cli@latest add section
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/section/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -150,7 +150,7 @@ Yes. Section and SectionContainer are pure layout with no client state, so they 
 
 ## Exports and dependencies
 
-`npx koalaui-cli add section` writes `components/ui/section/`. Import from `@/components/ui/section`:
+`npx koalaui-cli@latest add section` writes `components/ui/section/`. Import from `@/components/ui/section`:
 
 - Components and helpers: `Section`, `SectionContainer`, `sectionVariants`
 - Types: `SectionProps`, `SectionContainerProps`

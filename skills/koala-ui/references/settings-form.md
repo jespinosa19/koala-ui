@@ -12,10 +12,10 @@ An account-profile editing block: an avatar with change and remove controls, a n
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add settings-form
+npx koalaui-cli@latest add settings-form
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/settings-form/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -34,7 +34,7 @@ export function Example() {
 
   return (
     <SettingsForm
-      defaultValues={{ firstName: "Ana", lastName: "Ruiz", email: "ana@acme.com" }}
+      defaultValues={{ firstName: "Ana", lastName: "Ruiz", email: "ana@koalaui.com" }}
       onSave={save}
     />
   )
@@ -49,7 +49,7 @@ Composes [Avatar](https://koala-ui.vercel.app/docs/components/avatar.md), [Field
 
 - `defaultValues`: `Partial<{ firstName, lastName, username, email, bio }>`.
 - `onSave`: `(data: SettingsFormData) => void | Promise<void>`; `onCancel`: `() => void`.
-- `avatarSrc`, `usernamePrefix` (default `"acme.com/"`), `title`, `description`.
+- `avatarSrc`, `usernamePrefix` (default `"koalaui.com/"`), `title`, `description`.
 
 ## FAQ
 
@@ -63,7 +63,7 @@ Pass `defaultValues` (a `Partial` of `{ firstName, lastName, username, email, bi
 
 ### What does usernamePrefix do?
 
-`usernamePrefix` renders a static prefix before the username input (defaulting to `acme.com/`), so the row reads as a full handle. Override it with your own domain or namespace.
+`usernamePrefix` renders a static prefix before the username input (defaulting to `koalaui.com/`), so the row reads as a full handle. Override it with your own domain or namespace.
 
 ### How do I customize the heading and the avatar?
 
@@ -75,7 +75,7 @@ The root is a `<form>` that composes `Avatar`, `Field`, `Input`, and `Textarea`,
 
 ## Exports and dependencies
 
-`npx koalaui-cli add settings-form` writes `components/ui/settings-form/`. Import from `@/components/ui/settings-form`:
+`npx koalaui-cli@latest add settings-form` writes `components/ui/settings-form/`. Import from `@/components/ui/settings-form`:
 
 - Components and helpers: `SettingsForm`, `settingsFormVariants`
 - Types: `SettingsFormProps`, `SettingsFormData`

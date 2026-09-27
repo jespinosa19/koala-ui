@@ -17,10 +17,10 @@ A multi-line text field built from slots and Context: pairs with a label and hin
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add textarea
+npx koalaui-cli@latest add textarea
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/textarea/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -210,7 +210,7 @@ On a touch screen, `sm` and `md` switch from 14px to 16px text, because iOS zoom
 
 ## Exports and dependencies
 
-`npx koalaui-cli add textarea` writes `components/ui/textarea/`. Import from `@/components/ui/textarea`:
+`npx koalaui-cli@latest add textarea` writes `components/ui/textarea/`. Import from `@/components/ui/textarea`:
 
 - Components and helpers: `TextareaRoot`, `TextareaField`, `TextareaFooter`, `TextareaCount`, `TextareaLabel`, `TextareaHint`, `textareaVariants`
 - Types: `TextareaRootProps`, `TextareaFieldProps`, `TextareaFooterProps`, `TextareaCountProps`, `TextareaLabelProps`, `TextareaHintProps`

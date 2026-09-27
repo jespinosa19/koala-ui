@@ -20,10 +20,10 @@ A complete card-checkout block. The number, expiry and CVC are masked as you typ
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add payment-form
+npx koalaui-cli@latest add payment-form
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/payment-form/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -94,7 +94,7 @@ Set `density` to `compact` (16px, the default) or `comfortable` (24px). Omit it 
 
 ## Exports and dependencies
 
-`npx koalaui-cli add payment-form` writes `components/ui/payment-form/`. Import from `@/components/ui/payment-form`:
+`npx koalaui-cli@latest add payment-form` writes `components/ui/payment-form/`. Import from `@/components/ui/payment-form`:
 
 - Components and helpers: `PaymentForm`, `paymentFormVariants`
 - Types: `PaymentFormProps`, `PaymentFormData`, `PaymentPromoCode`

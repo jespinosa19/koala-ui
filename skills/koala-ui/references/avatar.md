@@ -16,10 +16,10 @@ Represents a user with an image, initials fallback, and optional presence status
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add avatar
+npx koalaui-cli@latest add avatar
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/avatar/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -302,7 +302,7 @@ Wrap the avatars in `AvatarGroup`. It owns the overlap, the `ring-background` se
 
 ## Exports and dependencies
 
-`npx koalaui-cli add avatar` writes `components/ui/avatar/`. Import from `@/components/ui/avatar`:
+`npx koalaui-cli@latest add avatar` writes `components/ui/avatar/`. Import from `@/components/ui/avatar`:
 
 - Components and helpers: `Avatar`, `AvatarRoot`, `AvatarImage`, `AvatarFallback`, `AvatarStatus`, `AvatarBadge`, `avatarVariants`
 - Types: `AvatarProps`, `AvatarFallbackProps`, `AvatarStatusProps`, `AvatarBadgeProps`

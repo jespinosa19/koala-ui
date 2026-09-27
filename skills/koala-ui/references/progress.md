@@ -12,10 +12,10 @@ A bar that reports how far along something is. Built on Radix Progress, so the v
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add progress
+npx koalaui-cli@latest add progress
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/progress/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -72,6 +72,47 @@ The fill takes any of the semantic roles, so a bar can report health as well as 
 <Progress value={40} tone="foreground" />
 ```
 
+## Vertical
+
+`orientation="vertical"` stands the bar up for the things that fill from the floor: a tank, a level meter, a quota per volume. The fill rises from the bottom, `size` sets the bar’s width instead of its height, and the header parts stack centred above it, so `ProgressLabel` still names the bar. The bar is as tall as the root: give it a height with `className` (it is 128px otherwise), or let its parent size it, a column flex parent included: `h-auto flex-1` takes what the column leaves. The semantics do not change: the root is still a Radix progressbar reading the value, and it carries `data-orientation` as a styling hook. There is no `aria-orientation`, since ARIA does not allow it on a progressbar.
+
+```tsx
+<Progress orientation="vertical" size="lg" value={40} tone="success" className="h-40">
+  <ProgressLabel>Tank 3</ProgressLabel>
+  <ProgressValue />
+</Progress>
+```
+
+For a tank gauge rather than a line, restyle the track through its `data-slot`: it fills the root’s width and becomes a ringed well, and padding on it insets the fill, which rises as a share of the well’s inner height (no `calc()` to write). Step the radii down concentrically: a 24px well with an 8px inset holds a 16px fill. The fill takes the track’s corners, so without the inset a low level in a round-cornered track is carved by the track’s own outline; the inset keeps it a clean pill at any height. Here each gauge is a flex item of a column, taking whatever height the column leaves it. The fill and the indeterminate sweep work the same at any width.
+
+```tsx
+// The gauge flexes into its column: no height on the Progress itself.
+<div className="flex h-64 w-24 flex-col items-center gap-2">
+  <Progress
+    orientation="vertical"
+    value={64}
+    tone="success"
+    aria-label="Unleaded tank"
+    className="h-auto w-full flex-1 [&_[data-slot=progress-indicator]]:rounded-lg [&_[data-slot=progress-track]]:w-full [&_[data-slot=progress-track]]:rounded-2xl [&_[data-slot=progress-track]]:bg-[var(--surface,var(--background))] [&_[data-slot=progress-track]]:p-2 [&_[data-slot=progress-track]]:ring-1 [&_[data-slot=progress-track]]:ring-border"
+  >
+    <ProgressValue />
+  </Progress>
+  <span className="text-sm font-medium text-foreground">Unleaded</span>
+</div>
+```
+
+## On a muted ground
+
+The track is a relative tint of the foreground rather than the opaque muted token, so it always sits one step off whatever is behind it: on a card it reads as the muted groove it always was, and on a muted ground (a selected table row, a muted panel) it still shows, where a muted groove would vanish into the row. Nothing to set: it is how the track paints.
+
+```tsx
+// The selected row paints bg-muted, as a selected DataTable row does.
+<li data-selected className="flex items-center justify-between gap-4 rounded-lg px-3 py-2.5 data-selected:bg-muted">
+  <span>Vitals</span>
+  <Progress value={60} aria-label="Vitals: 60% done" className="w-24" />
+</li>
+```
+
 ## A running task
 
 Between discrete steps the fill glides rather than snapping, so a jump from 24% to 36% reads as movement. Start the upload to watch it climb and land on `tone="success"`.
@@ -96,10 +137,11 @@ Pass `value={null}` when there is no percentage to report. The fill becomes a sh
 
 ## Reading progress
 
-`useScrollProgress()` returns how far the document has been scrolled, 0 to 100. Feed it to a `chrome` bar and you get the reading indicator that rides under a navbar: no track, square ends, and `transition="none"` so the fill is welded to the scrollbar. A transition here would trail the page by 300ms and read as lag, not polish. Scroll the panel below to see it work; the [blog post page](https://koala-ui.vercel.app/marketing/pages/blog-post.md) ships it.
+`useScrollProgress()` returns how far the document has been scrolled, 0 to 100. Feed it to a `chrome` bar and you get the reading indicator that rides under a navbar: no track, square ends, and `transition="none"` so the fill is welded to the scrollbar. A transition here would trail the page by 300ms and read as lag, not polish. Pass it a ref to follow a scroll container instead (a reader pane, a modal body), which is what the panel below does. The [blog post page](https://koala-ui.vercel.app/marketing/pages/blog-post.md) ships the document version.
 
 ```tsx
-const progress = useScrollProgress()
+const progress = useScrollProgress()        // the document
+// const progress = useScrollProgress(paneRef) // or a scroll container
 
 <Progress
   value={progress}
@@ -133,15 +175,23 @@ It drops the muted track and squares off the ends. A bar that spans the full vie
 
 Yes. Pass `max` and the value is read against it, so `value={3} max={8}` is a step counter. The default readout still prints a percentage; pass a function to `ProgressValue` to phrase it as "3 of 8" instead.
 
+### How do I make a vertical bar?
+
+Pass `orientation="vertical"` and give the root a height (`className="h-40"`, 128px by default), or let a parent size it: inside a column flex parent, `className="h-auto flex-1"`. The fill rises from the bottom, `size` sets the bar's width, and `ProgressLabel` and `ProgressValue` stack above it. For a wide gauge, widen the track with `[&_[data-slot=progress-track]]:w-full` on the root.
+
+### Why does the track stay visible on a selected table row?
+
+It paints a relative tint of the foreground (4% in the light themes, 6% in the dark ones, the Tabs pill track's ink) instead of the opaque muted token. On a card that lands on the muted groove; on a muted ground it still sits one step darker (or lighter, in dark), so the bar never loses its track.
+
 ### Why width instead of a transform?
 
 Scaling a rounded bar squashes its pill caps into ellipses at low values, which is visible on the larger sizes. The fill is a single element inside a fixed-height, overflow-hidden track, so animating width costs nothing measurable and keeps the ends honest.
 
 ## Exports and dependencies
 
-`npx koalaui-cli add progress` writes `components/ui/progress/`. Import from `@/components/ui/progress`:
+`npx koalaui-cli@latest add progress` writes `components/ui/progress/`. Import from `@/components/ui/progress`:
 
 - Components and helpers: `Progress`, `ProgressLabel`, `ProgressValue`, `progressVariants`, `useScrollProgress`
 - Types: `ProgressProps`, `ProgressLabelProps`, `ProgressValueProps`
-- Koala lib helpers it uses: `create-context`, `tv`
+- Koala lib helpers it uses: `create-context`, `tv`, `utils`
 - npm packages: `radix-ui`

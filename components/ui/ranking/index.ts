@@ -18,4 +18,5 @@ export {
   type RankingItemProps,
   type RankingRankProps,
   type RankingBarProps,
+  type RankingTone,
 } from "./ranking"

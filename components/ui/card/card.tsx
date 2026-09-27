@@ -19,11 +19,26 @@ export const cardVariants = tv({
     // nested radius stays concentric with the card (docs/FOUNDATIONS.md, "Shadows over borders").
     root: "flex flex-col rounded-xl text-card-foreground",
     // Header is a grid so an optional Action sits top-right, optically aligned.
-    header:
+    //
+    // An action opted into `wrap="narrow"` makes the header a size container, and every child spans
+    // the full row once that container is under 24rem: the action drops under the title and
+    // description instead of squeezing them. A header can't query its own width, so the header only
+    // declares the container and the rules land on its children (their nearest `card-header`
+    // container is this header). Opt-in, never automatic: a desktop card can be 130px of header
+    // with a 16px icon action that must stay beside the title, and a container width alone can't
+    // tell that card from a phone card with a wide segmented control.
+    header: [
       "grid auto-rows-min items-start gap-1.5 [&:has([data-slot=card-action])]:grid-cols-[1fr_auto]",
+      "[&:has(>[data-slot=card-action][data-wrap=narrow])]:@container/card-header @max-sm/card-header:[&>*]:col-span-full",
+    ],
     title: "font-semibold leading-none",
-    description: "text-sm text-pretty text-muted-foreground",
-    action: "col-start-2 row-span-2 row-start-1 self-start justify-self-end",
+    // `text-pretty` rides a zero-specificity `:where()` so it stays a default: the `text-wrap`
+    // shorthand resets `text-wrap-mode`, so at full strength it beat a consumer's `truncate`.
+    description: "text-sm text-muted-foreground [:where(&)]:text-pretty",
+    // In a narrow header (see `header`) the action leaves the second column, follows the copy in
+    // DOM order and starts flush left, 14px under the description (the gap's 6 plus 8).
+    action:
+      "col-start-2 row-span-2 row-start-1 self-start justify-self-end @max-sm/card-header:row-auto @max-sm/card-header:mt-2 @max-sm/card-header:justify-self-start",
     content: "",
     footer: "flex items-center",
     // Inset media (docs/ARCHITECTURE.md): a photo never bleeds to the card's edges. It sits 8px in
@@ -75,10 +90,34 @@ export const cardVariants = tv({
         media: "first:-mt-4 last:-mb-4",
       },
     },
+    // A card that IS the link or the button (a task on a board, a template in a gallery): pair it
+    // with `asChild` around an `<a>` or `<button>`. Pointer, a hover that answers the pointer and a
+    // focus ring; no press scale (feedback is the ring and the lift). Only the box-shadow moves, and
+    // both the edge ring and the lift live in it, so it is the one property transitioned. How the
+    // hover answers depends on the variant (compounds below): the edge darkens where there is one to
+    // darken, since a lift alone barely reads on the dark themes.
+    interactive: {
+      true: {
+        root: [
+          "cursor-pointer text-left outline-none",
+          "transition-[box-shadow] duration-fast ease-out motion-reduce:transition-none",
+          "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+        ],
+      },
+      false: {},
+    },
   },
+  // The edge answers in `foreground` at 20%, not `ring-border`: on the dark themes `--edge` already
+  // IS `--border`, so a border-colored hover would not move at all there.
+  compoundVariants: [
+    { variant: "default", interactive: true, class: { root: "hover:shadow-md hover:ring-foreground/20" } },
+    { variant: "outline", interactive: true, class: { root: "hover:shadow-sm hover:ring-foreground/20" } },
+    { variant: "elevated", interactive: true, class: { root: "hover:shadow-xl" } },
+  ],
   defaultVariants: {
     variant: "default",
     density: "compact",
+    interactive: false,
   },
 })
 
@@ -100,12 +139,13 @@ export function Card({
   className,
   variant,
   density,
+  interactive,
   asChild = false,
   ...props
 }: CardProps) {
   // Density resolves prop > provider > "compact"; compute the slots once, every part
   // reads them from context.
-  const slots = cardVariants({ variant, density: useDensity(density) })
+  const slots = cardVariants({ variant, density: useDensity(density), interactive })
   const Comp = asChild ? Slot.Root : "div"
   return (
     <CardProvider slots={slots}>
@@ -131,9 +171,28 @@ export function CardDescription({ className, ...props }: React.ComponentProps<"d
   )
 }
 
-export function CardAction({ className, ...props }: React.ComponentProps<"div">) {
+export interface CardActionProps extends React.ComponentProps<"div"> {
+  /**
+   * What the action does when the card is narrow. `"never"` keeps it top-right at every width.
+   * `"narrow"` drops it under the title and description once the card header is under 24rem (a
+   * phone-width card): measured on the header with a container query, so it follows the card, not
+   * the viewport. Opt in when the action is wide (a segmented control, a select); an icon button
+   * reads best beside the title at any width. The card needs its width from the layout (a grid
+   * track, `w-full`, a `max-w`): the header stops sizing the card from its content. @default "never"
+   */
+  wrap?: "never" | "narrow"
+}
+
+export function CardAction({ className, wrap = "never", ...props }: CardActionProps) {
   const { slots } = useCardContext("CardAction")
-  return <div data-slot="card-action" className={slots.action({ className })} {...props} />
+  return (
+    <div
+      data-slot="card-action"
+      data-wrap={wrap === "narrow" ? "narrow" : undefined}
+      className={slots.action({ className })}
+      {...props}
+    />
+  )
 }
 
 export function CardContent({ className, ...props }: React.ComponentProps<"div">) {

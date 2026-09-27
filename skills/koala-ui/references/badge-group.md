@@ -18,10 +18,10 @@ A cluster of badges with built-in overflow. Cap how many show inline and the res
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add badge-group
+npx koalaui-cli@latest add badge-group
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/badge-group/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -155,7 +155,7 @@ Yes. Pass `renderOverflow`, which receives the full `items` array and the `hidde
 
 ## Exports and dependencies
 
-`npx koalaui-cli add badge-group` writes `components/ui/badge-group/`. Import from `@/components/ui/badge-group`:
+`npx koalaui-cli@latest add badge-group` writes `components/ui/badge-group/`. Import from `@/components/ui/badge-group`:
 
 - Components and helpers: `BadgeGroup`, `badgeGroupVariants`
 - Types: `BadgeGroupProps`

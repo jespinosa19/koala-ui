@@ -15,10 +15,10 @@ A control for a binary or tri-state choice, built on Radix Checkbox. Supports th
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add checkbox
+npx koalaui-cli@latest add checkbox
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/checkbox/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -123,7 +123,7 @@ Yes. It is built on Radix Checkbox, so use defaultChecked for uncontrolled, or c
 
 ## Exports and dependencies
 
-`npx koalaui-cli add checkbox` writes `components/ui/checkbox/`. Import from `@/components/ui/checkbox`:
+`npx koalaui-cli@latest add checkbox` writes `components/ui/checkbox/`. Import from `@/components/ui/checkbox`:
 
 - Components and helpers: `Checkbox`, `checkboxVariants`
 - Types: `CheckboxProps`

@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import tippy, { createSingleton } from "tippy.js/headless"
+import tippy, { createSingleton, sticky } from "tippy.js/headless"
 import { createPortal } from "react-dom"
 import type { Instance, Props, Content, CreateSingletonInstance } from "tippy.js"
 
@@ -75,8 +75,79 @@ export const tooltipVariants = tv({
   },
 })
 
-/** Stash the in-flight exit cleanup on the instance so a re-show can cancel it. */
-type TooltipInstance = Instance & { _koalaCancelExit?: () => void }
+/** Stash the in-flight exit cleanup on the instance so a re-show can cancel it, and the trigger
+ *  when the pending show came from a focus that was not keyboard focus (see `focusGate`). */
+type TooltipInstance = Instance & { _koalaCancelExit?: () => void; _koalaPointerFocus?: Element }
+
+/**
+ * How the user last reached for the page: a pointer (mouse, pen, touch) or the keyboard. Focus
+ * opens a hint only when it is keyboard focus. A click or a tap focuses what it lands on, and a
+ * dialog or drawer opened by one moves focus inside by script; neither asked for a bubble, and
+ * the drawer's would open while its trigger is still sliding in. Read from the input events
+ * themselves (React Aria's call) rather than `:focus-visible`, which each browser guesses
+ * differently for scripted focus and jsdom never matches. It starts as keyboard, so focus on a
+ * page nobody has touched yet still hints. One pair of capture listeners for the whole page,
+ * installed by the first tooltip that mounts.
+ */
+let pointerModality = false
+let watchingModality = false
+
+function watchModality() {
+  if (watchingModality || typeof document === "undefined") return
+  watchingModality = true
+  const onPointer = () => {
+    pointerModality = true
+  }
+  document.addEventListener("pointerdown", onPointer, true)
+  document.addEventListener("mousedown", onPointer, true)
+  document.addEventListener(
+    "keydown",
+    () => {
+      pointerModality = false
+    },
+    true,
+  )
+}
+
+/**
+ * Lifecycle hooks that drop a show triggered by focus that did not come from the keyboard. Unless
+ * the pointer is over the trigger: a listbox or a menu focuses the row you hover (Radix Select
+ * does, right after the `mouseenter`), and that focus is the hover, so it must not cancel it.
+ */
+const focusGate: Pick<Props, "onTrigger" | "onShow"> = {
+  onTrigger(instance, event) {
+    ;(instance as TooltipInstance)._koalaPointerFocus =
+      event.type === "focus" && pointerModality ? (event.currentTarget as Element) : undefined
+  },
+  onShow(instance) {
+    const target = (instance as TooltipInstance)._koalaPointerFocus
+    ;(instance as TooltipInstance)._koalaPointerFocus = undefined
+    if (target && !target.matches(":hover")) return false
+  },
+}
+
+/**
+ * How every bubble is placed. `fixed`, never Popper's default `absolute`: an absolute bubble on
+ * <body> is part of the page's scrollable overflow, so one placed past the screen edge (its
+ * trigger still sliding in with a drawer, or hugging the edge of a phone) widened the page and
+ * let it scroll sideways. A fixed bubble is only ever clipped by the viewport. `sticky` measures
+ * the trigger each frame while the bubble is up and re-places it when the trigger moves under it
+ * (a sheet sliding in, a row that grows), so it never hangs where the trigger used to be.
+ */
+const positioning: Pick<Props, "popperOptions" | "plugins" | "sticky"> = {
+  popperOptions: { strategy: "fixed" },
+  plugins: [sticky],
+  sticky: "reference",
+}
+
+/**
+ * Where a bubble mounts, asked each time it shows: the body, or the element that is full screen at
+ * that moment. The browser paints only the full-screen element's subtree over everything else, so a
+ * bubble left on <body> would be hidden behind a full-screen player or file preview.
+ */
+function mountPoint(): Element {
+  return document.fullscreenElement ?? document.body
+}
 
 function box(instance: Instance): HTMLElement | null {
   return instance.popper.firstElementChild as HTMLElement | null
@@ -196,8 +267,9 @@ export interface TooltipProps {
   interactive?: boolean
   /**
    * Space-separated event names that open the tooltip. Defaults to `"mouseenter focus"`.
-   * Use `"mouseenter"` to suppress focus-triggered tooltips (e.g. inside dialogs where
-   * Radix auto-focuses the first interactive element on open).
+   * Focus only opens it when it is keyboard focus: the focus a click or a tap gives, and the
+   * focus a dialog or drawer opened by one moves inside, show nothing. Use `"mouseenter"` to
+   * drop focus-triggered hints altogether.
    */
   trigger?: string
   /**
@@ -326,13 +398,17 @@ function StandaloneTooltip({
   // Prop changes are handled by the sync effect below.
   React.useEffect(() => {
     if (!triggerEl) return
+    watchModality()
     const popperEl = document.createElement("div")
     const instance = tippy(triggerEl, {
       render: () => ({ popper: popperEl }),
+      ...positioning,
+      ...focusGate,
       placement,
       delay: delay as Props["delay"],
       offset: offset as [number, number],
       interactive: interactive ?? false,
+      appendTo: mountPoint,
       // Controlled: the owner shows and hides it (the effect below), so no event may.
       trigger: open !== undefined ? "manual" : (trigger ?? "mouseenter focus"),
       hideOnClick: open !== undefined ? false : (hideOnClick ?? true),
@@ -461,12 +537,15 @@ function AnchoredTooltip({
     popperEl.style.pointerEvents = "none"
     const instance = tippy(reference, {
       render: () => ({ popper: popperEl }),
+      // Fixed like every bubble; no `sticky`, since the anchor effect below re-places it.
+      popperOptions: positioning.popperOptions,
       getReferenceClientRect: () => rectOf(anchorRef.current),
       placement,
       offset: offset as [number, number],
       trigger: "manual",
       hideOnClick: false,
       interactive: false,
+      appendTo: mountPoint,
       animation: true,
       onMount: handleMount,
       onHide: handleHide,
@@ -664,12 +743,18 @@ export function TooltipGroup({
   )
 
   React.useEffect(() => {
+    watchModality()
     const popperEl = document.createElement("div")
     const singleton = createSingleton(instancesRef.current, {
+      // The shared bubble takes the triggers' events, so the focus gate and the placement rules
+      // live here; the per-trigger instances are disabled and never show.
+      ...positioning,
+      ...focusGate,
       // Per-trigger placement wins; `content` always tracks the hovered trigger.
       overrides: ["placement"],
       delay: delay as Props["delay"],
       offset: offset as [number, number],
+      appendTo: mountPoint,
       // The glide: animate the popper's move between triggers (named prop, not `all`), at the
       // base duration so the eye can follow it from one trigger to the next.
       moveTransition: "transform var(--duration-base) var(--ease-out)",

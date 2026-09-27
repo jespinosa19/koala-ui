@@ -70,7 +70,7 @@ const spotify = BRAND_LOGOS.find((b) => b.name === "Spotify")!
 
 ## Exports and dependencies
 
-`npx koalaui-cli add placeholder-logos` writes `components/ui/placeholder-logos/`. Import from `@/components/ui/placeholder-logos`:
+`npx koalaui-cli@latest add placeholder-logos` writes `components/ui/placeholder-logos/`. Import from `@/components/ui/placeholder-logos`:
 
 - Components and helpers: `PLACEHOLDER_BRANDS`, `PLACEHOLDER_BRANDS_VARIED`, `PlaceholderLogo`, `RotatingPlaceholderLogo`, `useLogoSwap`, `LOGO_ROTATE_SLOTS`, `LOGO_ROTATE_HOLD_BRISK`
 - Types: `PlaceholderBrand`, `PlaceholderLogoVariant`

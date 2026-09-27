@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Slot } from "radix-ui"
+import { Checkbox as CheckboxPrimitive, Slot } from "radix-ui"
 import { Check } from "@phosphor-icons/react"
 
 import { cn } from "@/lib/utils"
@@ -18,31 +18,36 @@ import { tv, type VariantProps } from "@/lib/tv"
  *
  * The progress is *derived*, not decorated: pass `value` (completed count) and `total` on
  * the root and `ChecklistProgress` renders the labeled bar and the "3 of 6" read-out
- * itself, tabular so a step flipping done never reflows the line. The bar fills brand while
- * there's work left and shifts to success-green the moment everything's done, so the panel
- * rewards completion without any per-call-site wiring.
+ * itself, tabular so a step flipping done never reflows the line. Leave them out and the
+ * Checklist counts its own items instead (each `ChecklistItem` reports whether it is done).
+ * The bar fills brand while there's work left and shifts to success-green the moment
+ * everything's done, so the panel rewards completion without any per-call-site wiring.
  *
  * Each `ChecklistItem` carries a `status` (`todo` | `active` | `complete`) that styles the
  * row and auto-renders its indicator: the task's own `icon` for a pending step, cross-faded
  * to a check the instant it completes (the password-strength icon-swap, no motion lib). The
  * one recommended next step takes `active` for a soft brand highlight; completed rows
  * de-emphasize their title via a `data-status` group selector, no second context.
+ *
+ * Give an item `checked` / `defaultChecked` / `onCheckedChange` and it becomes a task the
+ * reader ticks: the indicator turns into a real Radix checkbox named by the item's title, the
+ * whole row is its hit area, and a done title is struck through.
  */
 export const checklistVariants = tv({
   slots: {
-    // The outer contour. Concentric anchor: 2xl (24px) so nested item pills step down to xl and
-    // their buttons to md. The edge is an `--edge` ring plus the xs lift, not a border, so it takes
-    // no layout (docs/FOUNDATIONS.md, "Shadows over borders"). No fill: fill is elevation, so it
-    // takes the ground it sits on.
-    root: "rounded-2xl text-card-foreground shadow-xs ring-1 ring-edge",
+    // The outer contour lives on the `variant` axis (card by default, none for `plain`).
+    root: "text-card-foreground",
     // The header block: heading, description, then the progress bar.
     header: "flex flex-col gap-1.5",
     title: "text-balance text-base font-semibold text-foreground",
     description: "text-pretty text-sm text-muted-foreground",
     // The labeled progress bar. `mt-4` separates it from the description without inflating the
-    // tight title↔description gap above it.
-    progress: "mt-4 flex flex-col gap-2",
-    progressMeta: "flex items-center justify-between gap-3 text-sm",
+    // tight title↔description gap above it; `first:mt-0` when it leads the header on its own
+    // (a plain Checklist under a Card's own title), so it inherits no gap meant for a sibling.
+    progress: "mt-4 flex flex-col gap-2 first:mt-0",
+    // Fades in when a self-counting Checklist has heard from its items (see `pending`), so a
+    // server render never flashes "0 of 0" before the real count.
+    progressMeta: "flex items-center justify-between gap-3 text-sm transition-opacity duration-base ease-out",
     // The completed count. tabular-nums (#9) so "3 of 6" → "4 of 6" never nudges the row.
     progressLabel: "flex items-center gap-1.5 font-medium tabular-nums text-foreground",
     progressPercent: "tabular-nums text-muted-foreground",
@@ -63,15 +68,31 @@ export const checklistVariants = tv({
     // Title + description column. min-w-0 lets a long title wrap instead of shoving the action
     // off the row. pt-0.5 optically centers the first line against the 28px indicator.
     content: "flex min-w-0 flex-1 flex-col gap-0.5 pt-0.5",
-    // Completed titles de-emphasize; the transition makes the flip feel deliberate.
-    itemTitle:
+    // Completed titles de-emphasize; the transition makes the flip feel deliberate. On a row the
+    // reader ticks (it carries `data-state`), the title is also struck through: the line is always
+    // drawn and only its colour moves, transparent while open, the muted ink once done, so the
+    // strike fades in with the colour (\`transition-colors\` carries text-decoration-color).
+    itemTitle: [
       "text-pretty text-sm font-medium text-foreground transition-colors duration-base ease-out group-data-[status=complete]/item:text-muted-foreground",
+      "group-data-[state]/item:line-through group-data-[state=unchecked]/item:decoration-transparent group-data-[state=checked]/item:decoration-muted-foreground",
+    ],
     itemDescription: "text-pretty text-sm text-muted-foreground",
     // Trailing action slot: a Button ("Start", "Set up"), a Badge, or nothing on a done row.
-    // self-center rides the action on the row's optical middle; ml-auto pins it right.
-    action: "ml-auto flex shrink-0 items-center self-center pl-3",
+    // self-center rides the action on the row's optical middle; ml-auto pins it right. On a row
+    // the reader ticks, `relative` lifts it above the row-wide hit area so it stays its own target.
+    action: "ml-auto flex shrink-0 items-center self-center pl-3 group-data-[state]/item:relative",
   },
   variants: {
+    // `card` is the panel on its own: a 2xl contour (so nested item pills step down to xl and
+    // their buttons to md), the edge an `--edge` ring plus the xs lift, not a border, so it takes
+    // no layout (docs/FOUNDATIONS.md, "Shadows over borders"). No fill: fill is elevation.
+    // `plain` drops the contour and the outer padding, for a Checklist that sits inside a Card
+    // (or any surface that already frames it): the rows then line their indicator up with the
+    // surface's own copy and bleed their pill into its padding, the way List's plain rows do.
+    variant: {
+      card: { root: "rounded-2xl shadow-xs ring-1 ring-edge" },
+      plain: {},
+    },
     // Density is Koala's cross-cutting spacing axis (lib/density.tsx). For the Checklist it
     // tunes the card padding and the per-row padding; the indicator footprint stays fixed so
     // the left rail aligns identically at both densities. comfortable reproduces the default.
@@ -87,13 +108,42 @@ export const checklistVariants = tv({
         item: "gap-3 p-2.5",
       },
     },
+    // Set per row by {@link ChecklistItem} when it is a task the reader ticks. The indicator is
+    // the checkbox, and its `::after` stretches over the whole row (it is `static`, so the pseudo
+    // anchors to the `relative` row), so a click anywhere on the row toggles it. The glyphs stack
+    // on a grid rather than `absolute`, which would anchor to the row too. The row answers the
+    // pointer with the List wash (hover half, press full, no scale) and shows the focus ring for
+    // its checkbox, since a ring on a 28px circle is easy to miss.
+    toggleable: {
+      true: {
+        item: [
+          "hover:bg-muted/60 active:bg-muted",
+          "has-[[data-slot=checklist-indicator]:focus-visible]:ring-2 has-[[data-slot=checklist-indicator]:focus-visible]:ring-ring",
+        ],
+        indicator:
+          "static grid cursor-pointer place-items-center outline-none after:absolute after:inset-0 after:content-['']",
+      },
+    },
   },
+  compoundVariants: [
+    // Plain: no contour, so no inset from one either. The row pills pull out by their own
+    // horizontal padding, so the indicator lines up with the surface's copy, and round to lg,
+    // concentric with a Card whose padding they bleed into.
+    { variant: "plain", class: { header: "px-0 pt-0", items: "px-0 pb-0" } },
+    { variant: "plain", density: "comfortable", class: { item: "-mx-3 rounded-lg" } },
+    { variant: "plain", density: "compact", class: { item: "-mx-2.5 rounded-lg" } },
+  ],
   defaultVariants: {
+    variant: "card",
     density: "comfortable",
   },
 })
 
 type ChecklistSlots = ReturnType<typeof checklistVariants>
+type ChecklistConfig = {
+  variant: NonNullable<VariantProps<typeof checklistVariants>["variant"]>
+  density: NonNullable<VariantProps<typeof checklistVariants>["density"]>
+}
 
 /** A task's state in the checklist. */
 export type ChecklistStatus = "todo" | "active" | "complete"
@@ -119,19 +169,33 @@ const INDICATOR_STATUS: Record<ChecklistStatus, string> = {
 
 const [ChecklistProvider, useChecklistContext] = createContext<{
   slots: ChecklistSlots
+  config: ChecklistConfig
   value: number
   total: number
   percent: number
   complete: boolean
+  /** True while a self-counting Checklist has not heard from its items yet (the server render). */
+  pending: boolean
+  report: (id: string, complete: boolean) => void
+  forget: (id: string) => void
 }>("Checklist")
+
+/** Per-item wiring the parts read without a second provider layer: ids that name the checkbox. */
+const ChecklistItemContext = React.createContext<{ titleId: string; toggleable: boolean } | null>(
+  null,
+)
 
 export interface ChecklistProps
   extends React.ComponentProps<"div">,
-    VariantProps<typeof checklistVariants> {
-  /** Number of completed tasks. Drives the progress bar and the "{value} of {total}" read-out. */
-  value: number
-  /** Total number of tasks. */
-  total: number
+    Omit<VariantProps<typeof checklistVariants>, "toggleable"> {
+  /**
+   * Number of completed tasks. Drives the progress bar and the "{value} of {total}" read-out.
+   * Leave it out and the Checklist counts its own complete items (a `status="complete"` row, or a
+   * checked one), so a list the reader ticks keeps its progress with no wiring.
+   */
+  value?: number
+  /** Total number of tasks. Leave it out and the Checklist counts its `ChecklistItem`s. */
+  total?: number
   asChild?: boolean
 }
 
@@ -144,14 +208,40 @@ export function Checklist({
   className,
   value,
   total,
+  variant,
   density,
   asChild = false,
   ...props
 }: ChecklistProps) {
-  const slots = checklistVariants({ density: useDensity(density) })
+  const config: ChecklistConfig = { variant: variant ?? "card", density: useDensity(density) }
+  const slots = checklistVariants(config)
+
+  // What the items report: id → done. Only read when `value` or `total` is left out, but always
+  // kept, so switching a Checklist between counted and supplied numbers needs nothing else. Each
+  // item reports from a layout effect, so on the client the count lands before the first paint.
+  const [reported, setReported] = React.useState<Record<string, boolean>>({})
+  const report = React.useCallback(
+    (id: string, done: boolean) =>
+      setReported((current) => (current[id] === done ? current : { ...current, [id]: done })),
+    [],
+  )
+  const forget = React.useCallback(
+    (id: string) =>
+      setReported((current) => {
+        if (!(id in current)) return current
+        const next = { ...current }
+        delete next[id]
+        return next
+      }),
+    [],
+  )
+  const states = Object.values(reported)
+  const counted = value === undefined || total === undefined
+  const pending = counted && states.length === 0
+
   // Clamp so a bad count can never overrun the bar or report >100%.
-  const safeTotal = Math.max(0, total)
-  const safeValue = Math.min(Math.max(0, value), safeTotal)
+  const safeTotal = Math.max(0, total ?? states.length)
+  const safeValue = Math.min(Math.max(0, value ?? states.filter(Boolean).length), safeTotal)
   const percent = safeTotal === 0 ? 0 : Math.round((safeValue / safeTotal) * 100)
   const complete = safeTotal > 0 && safeValue >= safeTotal
   const Comp = asChild ? Slot.Root : "div"
@@ -159,10 +249,14 @@ export function Checklist({
   return (
     <ChecklistProvider
       slots={slots}
+      config={config}
       value={safeValue}
       total={safeTotal}
       percent={percent}
       complete={complete}
+      pending={pending}
+      report={report}
+      forget={forget}
     >
       <Comp data-slot="checklist" className={slots.root({ className })} {...props} />
     </ChecklistProvider>
@@ -208,7 +302,8 @@ export interface ChecklistProgressProps extends React.ComponentProps<"div"> {
  * brand to success at 100%. The count and percentage are tabular so the line never reflows.
  */
 export function ChecklistProgress({ className, label, ...props }: ChecklistProgressProps) {
-  const { slots, value, total, percent, complete } = useChecklistContext("ChecklistProgress")
+  const { slots, value, total, percent, complete, pending } =
+    useChecklistContext("ChecklistProgress")
   const defaultLabel = complete ? (
     <>
       <Check weight="bold" className="size-4 text-success" aria-hidden />
@@ -220,12 +315,15 @@ export function ChecklistProgress({ className, label, ...props }: ChecklistProgr
 
   return (
     <div data-slot="checklist-progress" className={slots.progress({ className })} {...props}>
-      <div className={slots.progressMeta()}>
+      <div className={slots.progressMeta({ className: pending ? "opacity-0" : undefined })}>
         <span className={slots.progressLabel()}>{label ?? defaultLabel}</span>
         <span className={slots.progressPercent()}>{percent}%</span>
       </div>
+      {/* Named, so the bar is more than a bare number to a screen reader (axe's
+          aria-progressbar-name); the value text carries the count. */}
       <div
         role="progressbar"
+        aria-label="Progress"
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={percent}
@@ -254,14 +352,28 @@ const STATUS_LABEL: Record<ChecklistStatus, string> = {
   complete: "Completed",
 }
 
-export interface ChecklistItemProps extends React.ComponentProps<"li"> {
-  /** The task's state. Styles the row and its indicator. @default "todo" */
+export interface ChecklistItemProps extends Omit<React.ComponentProps<"li">, "defaultChecked"> {
+  /**
+   * The task's state. Styles the row and its indicator. On a row the reader ticks, `checked`
+   * decides `complete`, and `status` only picks between `todo` and `active` while it is open.
+   * @default "todo"
+   */
   status?: ChecklistStatus
   /**
    * The task's glyph, shown in the indicator while pending and cross-faded to a check once
    * complete. Optional: without it a pending row shows an empty circle carrying just the status.
    */
   icon?: React.ReactNode
+  /**
+   * Make the row a task the reader ticks, controlled. The indicator becomes a real checkbox
+   * (Radix, named by the `ChecklistItemTitle`), the whole row toggles it, and a checked row
+   * completes with its title struck through. Pair it with `onCheckedChange`.
+   */
+  checked?: boolean
+  /** The uncontrolled version of `checked`: the row keeps its own state from this start. */
+  defaultChecked?: boolean
+  /** Called with the new state when the reader ticks or unticks the row. */
+  onCheckedChange?: (checked: boolean) => void
 }
 
 /**
@@ -269,57 +381,113 @@ export interface ChecklistItemProps extends React.ComponentProps<"li"> {
  * cross-fading to a check on completion), then lays out the composed `ChecklistItemContent`
  * and `ChecklistItemAction`. Sets `data-status` so descendants (the title) can react without a
  * second context, and an sr-only status so the row's state is announced, not just colored.
+ *
+ * With `checked`, `defaultChecked` or `onCheckedChange` the row is one the reader ticks: the
+ * indicator is a checkbox (it announces its own state, so the sr-only status is dropped) and the
+ * row also carries `data-state="checked" | "unchecked"`.
  */
 export function ChecklistItem({
   className,
   status = "todo",
   icon,
+  checked,
+  defaultChecked,
+  onCheckedChange,
   children,
   ...props
 }: ChecklistItemProps) {
-  const { slots } = useChecklistContext("ChecklistItem")
-  const isComplete = status === "complete"
+  const { config, report, forget } = useChecklistContext("ChecklistItem")
+  const id = React.useId()
+  const titleId = `${id}-title`
+
+  const toggleable =
+    checked !== undefined || defaultChecked !== undefined || onCheckedChange !== undefined
+  const [uncontrolled, setUncontrolled] = React.useState(defaultChecked ?? false)
+  const isChecked = checked ?? uncontrolled
+  const setChecked = (next: boolean) => {
+    if (checked === undefined) setUncontrolled(next)
+    onCheckedChange?.(next)
+  }
+
+  // A ticked row is complete whatever `status` says, and an unticked one can't be.
+  const resolved: ChecklistStatus = toggleable
+    ? isChecked
+      ? "complete"
+      : status === "complete"
+        ? "todo"
+        : status
+    : status
+  const isComplete = resolved === "complete"
+
+  // Tell the root whether this task is done, so a Checklist without value/total counts itself.
+  // A layout effect, so the count is there before the first client paint.
+  React.useLayoutEffect(() => {
+    report(id, isComplete)
+  }, [report, id, isComplete])
+  React.useLayoutEffect(() => () => forget(id), [forget, id])
+
+  const slots = checklistVariants({ ...config, toggleable })
+
+  const checkGlyph = (
+    <Check
+      weight="bold"
+      className={cn(
+        toggleable ? "col-start-1 row-start-1" : "absolute inset-0 m-auto",
+        "transition-[opacity,scale,filter] duration-base ease-out",
+        isComplete ? "opacity-100 scale-100 blur-[0px]" : "opacity-0 scale-[0.25] blur-[4px]",
+      )}
+    />
+  )
+  const iconGlyph =
+    icon != null ? (
+      <span
+        className={cn(
+          toggleable ? "col-start-1 row-start-1" : "absolute inset-0",
+          "flex items-center justify-center transition-[opacity,scale,filter] duration-base ease-out",
+          isComplete ? "opacity-0 scale-[0.25] blur-[4px]" : "opacity-100 scale-100 blur-[0px]",
+        )}
+      >
+        {icon}
+      </span>
+    ) : null
 
   return (
-    <li
-      data-slot="checklist-item"
-      data-status={status}
-      className={cn("group/item", slots.item({ className: [ITEM_STATUS[status], className] }))}
-      {...props}
-    >
-      <span
-        data-slot="checklist-indicator"
-        aria-hidden
-        className={slots.indicator({ className: INDICATOR_STATUS[status] })}
+    <ChecklistItemContext.Provider value={{ titleId, toggleable }}>
+      <li
+        data-slot="checklist-item"
+        data-status={resolved}
+        data-state={toggleable ? (isChecked ? "checked" : "unchecked") : undefined}
+        className={cn("group/item", slots.item({ className: [ITEM_STATUS[resolved], className] }))}
+        {...props}
       >
-        {/* Cross-fade icon → check with opacity/scale/blur (the password-strength swap, no
-            motion lib). Both stay mounted and absolutely stacked (inset-0 so each layer fills
-            the circle and centers its glyph) so nothing reflows on the flip. */}
-        <Check
-          weight="bold"
-          className={cn(
-            "absolute inset-0 m-auto transition-[opacity,scale,filter] duration-base ease-out",
-            isComplete
-              ? "opacity-100 scale-100 blur-[0px]"
-              : "opacity-0 scale-[0.25] blur-[4px]",
-          )}
-        />
-        {icon != null && (
-          <span
-            className={cn(
-              "absolute inset-0 flex items-center justify-center transition-[opacity,scale,filter] duration-base ease-out",
-              isComplete
-                ? "opacity-0 scale-[0.25] blur-[4px]"
-                : "opacity-100 scale-100 blur-[0px]",
-            )}
+        {toggleable ? (
+          <CheckboxPrimitive.Root
+            data-slot="checklist-indicator"
+            checked={isChecked}
+            onCheckedChange={(next) => setChecked(next === true)}
+            aria-labelledby={titleId}
+            className={slots.indicator({ className: INDICATOR_STATUS[resolved] })}
           >
-            {icon}
+            {checkGlyph}
+            {iconGlyph}
+          </CheckboxPrimitive.Root>
+        ) : (
+          <span
+            data-slot="checklist-indicator"
+            aria-hidden
+            className={slots.indicator({ className: INDICATOR_STATUS[resolved] })}
+          >
+            {/* Cross-fade icon → check with opacity/scale/blur (the password-strength swap, no
+                motion lib). Both stay mounted and absolutely stacked (inset-0 so each layer fills
+                the circle and centers its glyph) so nothing reflows on the flip. */}
+            {checkGlyph}
+            {iconGlyph}
           </span>
         )}
-      </span>
-      {children}
-      <span className="sr-only">{STATUS_LABEL[status]}</span>
-    </li>
+        {children}
+        {toggleable ? null : <span className="sr-only">{STATUS_LABEL[resolved]}</span>}
+      </li>
+    </ChecklistItemContext.Provider>
   )
 }
 
@@ -331,10 +499,21 @@ export function ChecklistItemContent({ className, ...props }: React.ComponentPro
   )
 }
 
-/** The task name. Auto-mutes on a completed row via the item's `data-status` group selector. */
-export function ChecklistItemTitle({ className, ...props }: React.ComponentProps<"div">) {
+/**
+ * The task name. Auto-mutes on a completed row via the item's `data-status` group selector, and
+ * is struck through once a row the reader ticks is checked. On such a row it names the checkbox.
+ */
+export function ChecklistItemTitle({ className, id, ...props }: React.ComponentProps<"div">) {
   const { slots } = useChecklistContext("ChecklistItemTitle")
-  return <div data-slot="checklist-item-title" className={slots.itemTitle({ className })} {...props} />
+  const item = React.useContext(ChecklistItemContext)
+  return (
+    <div
+      data-slot="checklist-item-title"
+      id={id ?? (item?.toggleable ? item.titleId : undefined)}
+      className={slots.itemTitle({ className })}
+      {...props}
+    />
+  )
 }
 
 /** The muted secondary line under the task name. */
@@ -352,6 +531,7 @@ export function ChecklistItemDescription({ className, ...props }: React.Componen
 /**
  * The trailing action slot: drop a `Button` ("Start", "Set up") for a pending task, or leave it
  * off a completed row. When `status` is `active` the recommended CTA typically goes brand-primary.
+ * On a row the reader ticks it sits above the row's hit area, so its button stays its own target.
  */
 export function ChecklistItemAction({ className, ...props }: React.ComponentProps<"div">) {
   const { slots } = useChecklistContext("ChecklistItemAction")

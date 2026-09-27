@@ -43,10 +43,10 @@ The canonical vertical list group: stacked rows with leading media, a title and 
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add list
+npx koalaui-cli@latest add list
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/list/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -130,6 +130,57 @@ Rows compose any Koala part in the meta slot. Here each row stays inert (it isn'
 </List>
 ```
 
+## Current row
+
+In a list-detail screen one row is the record the rest of the screen is showing: the open thread, the chapter being read. Mark it with `current` on `ListItem`. It answers on two channels a hover never touches, so the two can't be confused in any theme: the fill goes to full strength and stays there under the pointer, and a brand bar sits on the row's leading edge, the same mark the Sidebar's active row carries. It also sets `aria-current` on the row surface (the `<button>` or `<a>` under `asChild`); pass `current="page"` when the rows are navigation links.
+
+```tsx
+<List variant="plain">
+  {threads.map((thread) => (
+    <ListItem key={thread.id} asChild current={thread.id === openId}>
+      <button type="button" onClick={() => setOpenId(thread.id)}>
+        <ListItemMedia>
+          <AvatarRoot size="sm">
+            <AvatarImage src={thread.photo} alt="" />
+            <AvatarFallback>{thread.initials}</AvatarFallback>
+          </AvatarRoot>
+        </ListItemMedia>
+        <ListItemContent>
+          <ListItemTitle>{thread.name}</ListItemTitle>
+          <ListItemDescription lines={1}>{thread.excerpt}</ListItemDescription>
+        </ListItemContent>
+        <ListItemMeta className="self-start">{thread.time}</ListItemMeta>
+      </button>
+    </ListItem>
+  ))}
+</List>
+
+<List>
+  <ListItem asChild current="page">
+    <a href="/settings/account">…</a>
+  </ListItem>
+</List>
+```
+
+## Lines
+
+`lines` sets how many lines the title and the description may take. The title defaults to `1`, one line with an ellipsis, so a long name never pushes the meta off the row; the description defaults to `"none"` and wraps in full. Pass `1` to keep an excerpt on one line, `2` or `3` to clamp at a word, or `"none"` on a title that is the content itself, like a pinned note. A `truncate` class on a description works too: its pretty wrapping is only ever a default.
+
+```tsx
+<ListItem>
+  <ListItemMedia><PushPin /></ListItemMedia>
+  <ListItemContent>
+    <ListItemTitle lines="none">
+      Freeze on the billing service from Thursday 18:00 until the migration lands.
+    </ListItemTitle>
+    <ListItemDescription>Ana Torres, pinned today</ListItemDescription>
+  </ListItemContent>
+</ListItem>
+
+<ListItemTitle lines={2}>…</ListItemTitle>
+<ListItemDescription lines={1}>…</ListItemDescription>
+```
+
 ## API reference
 
 ### List
@@ -146,6 +197,11 @@ One row (`<li>`). Forwards native `<li>` props.
 
 - `asChild`: render the row surface as the single child (`<a>`/`<button>`) while keeping the `<li>` wrapper. Implies `interactive`.
 - `interactive`: `boolean`; hover/press/focus affordance (defaults to `true` when `asChild` is set).
+- `current`: `boolean | "page" | "step" | "location" | "date" | "time"`; the row the rest of the screen shows. Full fill, brand bar, and `aria-current` on the row surface.
+
+### ListItemTitle, ListItemDescription
+
+- `lines`: `1 | 2 | 3 | "none"`; how many lines the text may take. Title defaults to `1`, description to `"none"`.
 
 ### ListItemMedia, ListItemContent, ListItemTitle, ListItemDescription, ListItemMeta
 
@@ -167,7 +223,11 @@ Pass `asChild` on `ListItem` with a single `<a>` (or `<button>`) child. The `<li
 
 ### How do I compose the row parts?
 
-Put a `ListItemMedia` (icon or Avatar) first, a `ListItemContent` wrapping `ListItemTitle` and `ListItemDescription` in the middle, and a `ListItemMeta` for trailing badges, a chevron, or a Switch. The title truncates rather than pushing the meta off the row.
+Put a `ListItemMedia` (icon or Avatar) first, a `ListItemContent` wrapping `ListItemTitle` and `ListItemDescription` in the middle, and a `ListItemMeta` for trailing badges, a chevron, or a Switch. The title keeps to one line rather than pushing the meta off the row; set `lines` on it (or on the description) to clamp at two or three lines, or to let it wrap.
+
+### How do I show which row is open?
+
+Pass `current` on that `ListItem`. The row takes a full-strength fill that a hover never lightens and a brand bar on its leading edge, so it reads differently from a hovered row in every theme, and `aria-current` lands on the row surface for assistive tech. Use `current="page"` for navigation links.
 
 ### What is the difference between the card and plain variants?
 
@@ -175,9 +235,9 @@ Put a `ListItemMedia` (icon or Avatar) first, a `ListItemContent` wrapping `List
 
 ## Exports and dependencies
 
-`npx koalaui-cli add list` writes `components/ui/list/`. Import from `@/components/ui/list`:
+`npx koalaui-cli@latest add list` writes `components/ui/list/`. Import from `@/components/ui/list`:
 
 - Components and helpers: `List`, `ListItem`, `ListItemMedia`, `ListItemContent`, `ListItemTitle`, `ListItemDescription`, `ListItemMeta`, `listVariants`
-- Types: `ListProps`, `ListItemProps`
+- Types: `ListProps`, `ListItemProps`, `ListItemTitleProps`, `ListItemDescriptionProps`, `ListItemLines`
 - Koala lib helpers it uses: `create-context`, `tv`, `utils`
 - npm packages: `radix-ui`

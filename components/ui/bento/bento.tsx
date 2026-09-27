@@ -18,7 +18,8 @@ import { cn } from "@/lib/utils"
  * tint), then composes a tinted `BentoItemIcon`, a `BentoItemTitle`, a `BentoItemDescription`,
  * and either a `BentoItemImage` (a screenshot clipped by the tile edge: a framed window that
  * peeks up from the bottom, or with `imageFit="bleed"` bare art that runs off the tile and
- * dissolves; give it a `darkSrc` and the shot follows the theme) or a freeform `BentoItemMedia`.
+ * dissolves; give it a `darkSrc` and the shot follows the theme), a `BentoItemArt` (that same
+ * window holding live components instead of a picture) or a freeform `BentoItemMedia`.
  * Marketing is comfortable by nature, so there's no density axis; `scale="lg"` on `Bento` is the
  * landing step (32px tiles, 18px descriptions) for a board that is the page's feature story rather
  * than a block among many.
@@ -230,6 +231,19 @@ export function BentoItemDescription({ className, ...props }: React.ComponentPro
   return (
     <p data-slot="bento-item-description" className={slots.description({ className })} {...props} />
   )
+}
+
+/**
+ * The art window with live content in it instead of a picture: the same window `BentoItemImage`
+ * paints its shot into (a floating frame by default, and with `imageFit="bleed"` bare art pinned to
+ * the copy's left edge that runs off the tile's right and bottom edges and dissolves), holding real
+ * components. Position the composition yourself; the window clips it, and in `bleed` it is wider
+ * than the tile, so anything past the tile's edge is cut there. Height (and the bleed's width) comes
+ * from the tile `size`, like the image's; override via `className`.
+ */
+export function BentoItemArt({ className, ...props }: React.ComponentProps<"div">) {
+  const { slots } = useBentoItemContext("BentoItemArt")
+  return <div data-slot="bento-item-art" className={slots.imageFrame({ className })} {...props} />
 }
 
 /** The bottom-aligned freeform visual region (a stat, a swatch row, custom markup). */

@@ -66,6 +66,13 @@ export const buttonVariants = tv({
       outline:
         "border border-border bg-transparent shadow-xs hover:bg-accent hover:text-accent-foreground",
       ghost: "hover:bg-accent hover:text-accent-foreground",
+      // A dark chip that carries its own scrim, for an action placed straight on a picture: a
+      // thumbnail's corner button, a remove control on an uploaded image. `tone="onMedia"` assumes
+      // the ground is dark or saturated; this makes no assumption, so a white frame under it can't
+      // swallow the glyph. The same recipe as Badge's `overlay`, with a deeper step on hover, and
+      // the focus ring re-pointed to white on a transparent offset like the on-media tones.
+      overlay:
+        "border border-white/15 bg-black/45 text-white shadow-xs hover:bg-black/65 hover:text-white focus-visible:ring-white focus-visible:ring-offset-transparent",
       // The destructive action is a SOFT fill, not a solid red slab: the hue at /10 behind the
       // darker `-strong` label, which is the same tinted recipe as a destructive Badge, a
       // negative Stat chip, or a Toast action (see docs/FOUNDATIONS.md). It reads unmistakably

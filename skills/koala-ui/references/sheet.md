@@ -28,10 +28,10 @@ A panel that stays open over a full-bleed canvas like a map: a floating card on 
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add sheet
+npx koalaui-cli@latest add sheet
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/sheet/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -135,7 +135,7 @@ In `SheetFooter`. It is pinned to the sheet's bottom edge, which on a bottom she
 
 ## Exports and dependencies
 
-`npx koalaui-cli add sheet` writes `components/ui/sheet/`. Import from `@/components/ui/sheet`:
+`npx koalaui-cli@latest add sheet` writes `components/ui/sheet/`. Import from `@/components/ui/sheet`:
 
 - Components and helpers: `Sheet`, `SheetHandle`, `SheetHeader`, `SheetTitle`, `SheetDescription`, `SheetBody`, `SheetFooter`, `useSheet`, `sheetVariants`
 - Types: `SheetProps`, `SheetHandleProps`, `SheetDetent`, `SheetLayout`, `SheetSide`, `SheetInsets`

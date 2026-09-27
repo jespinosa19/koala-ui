@@ -19,10 +19,10 @@ Clamps a long region to a couple of rows, fades its cut edge, and puts one revea
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add load-more
+npx koalaui-cli@latest add load-more
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/load-more/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -147,7 +147,7 @@ It uses the shared fade-b mask utility, set here to 40% of the clamp (up to 16re
 
 ## Exports and dependencies
 
-`npx koalaui-cli add load-more` writes `components/ui/load-more/`. Import from `@/components/ui/load-more`:
+`npx koalaui-cli@latest add load-more` writes `components/ui/load-more/`. Import from `@/components/ui/load-more`:
 
 - Components and helpers: `LoadMore`, `LoadMoreContent`, `LoadMoreTrigger`, `loadMoreVariants`
 - Types: `LoadMoreProps`, `LoadMoreContentProps`, `LoadMoreTriggerProps`

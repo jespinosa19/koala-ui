@@ -29,10 +29,10 @@ The in-app feature promotion for dashboards: a product eyebrow, a short pitch an
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add promo-card
+npx koalaui-cli@latest add promo-card
 ```
 
 Manual: run `npm install @phosphor-icons/react radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/promo-card/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -188,7 +188,7 @@ A promo points at a feature; it isn't the page's main task. PromoCardActions imp
 
 ## Exports and dependencies
 
-`npx koalaui-cli add promo-card` writes `components/ui/promo-card/`. Import from `@/components/ui/promo-card`:
+`npx koalaui-cli@latest add promo-card` writes `components/ui/promo-card/`. Import from `@/components/ui/promo-card`:
 
 - Components and helpers: `PromoCard`, `PromoCardContent`, `PromoCardEyebrow`, `PromoCardIcon`, `PromoCardTitle`, `PromoCardDescription`, `PromoCardActions`, `PromoCardMedia`, `PromoCardClose`, `promoCardVariants`
 - Types: `PromoCardProps`, `PromoCardActionsProps`, `PromoCardCloseProps`

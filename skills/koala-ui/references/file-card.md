@@ -31,10 +31,10 @@ A card for a single file: a realistic file-type illustration or image thumbnail,
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add file-card
+npx koalaui-cli@latest add file-card
 ```
 
 Manual: run `npm install @phosphor-icons/react radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/file-card/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -93,7 +93,7 @@ A row reads left-to-right: a `FileCardIcon` (or `FileCardThumbnail`) leads, a `F
 
 ## File types
 
-Pass `type` to `FileCardIcon` and it renders a realistic file illustration: a sheet with a dog-eared corner and a colored band stamped with the extension. The tone re-themes across all four palettes: PDFs read red, images purple, sheets green, and so on. The band shows a short stand-in (PDF, XLS, IMG…) by default; pass `label` to stamp the real extension (the demo below shows `DOCX`, `XLSX`, `TSX`). Don’t know the type up front? Derive it from the filename with `fileTypeFromName(file.name)`.
+Pass `type` to `FileCardIcon` and it renders a realistic file illustration: a sheet with a dog-eared corner and a colored band stamped with the extension. The tone re-themes across all four palettes: PDFs read red, images purple, sheets green, and so on. The band shows a short stand-in (PDF, XLS, IMG…) by default; pass `label` to stamp the real extension (the demo below shows `DOCX`, `XLSX`, `TSX`). Don’t know the type up front? Derive it from the filename with `fileTypeFromName(file.name)`. The illustration is `FileIcon`, also usable on its own: every extension, its soft and solid variants and SVG downloads live on [File Icons](https://koala-ui.vercel.app/docs/foundations/file-icons.md).
 
 ```tsx
 // type picks the tone + a default band label
@@ -274,10 +274,10 @@ Density tunes the padding, gap, and media tile size. `compact` is the dense app 
 
 ## Exports and dependencies
 
-`npx koalaui-cli add file-card` writes `components/ui/file-card/`. Import from `@/components/ui/file-card`:
+`npx koalaui-cli@latest add file-card` writes `components/ui/file-card/`. Import from `@/components/ui/file-card`:
 
 - Components and helpers: `FileCard`, `FileCardIcon`, `FileCardThumbnail`, `FileCardContent`, `FileCardName`, `FileCardMeta`, `FileCardValue`, `FileCardActions`, `FileCardProgress`, `FileCardStatus`, `fileCardVariants`, `fileTypeFromName`
 - Types: `FileCardProps`, `FileCardIconProps`, `FileCardThumbnailProps`, `FileCardProgressProps`, `FileCardStatusProps`, `FileCardType`
-- Koala components it installs with it: `progress`, `spinner`
+- Koala components it installs with it: `file-icon`, `progress`, `spinner`
 - Koala lib helpers it uses: `create-context`, `density`, `tv`, `utils`
 - npm packages: `@phosphor-icons/react`, `radix-ui`

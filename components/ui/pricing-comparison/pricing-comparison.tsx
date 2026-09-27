@@ -63,6 +63,11 @@ export const pricingComparisonVariants = tv({
     // `relative z-10` lifts the plan content above the featured column's tint overlay.
     planInner: "relative z-10 flex flex-col items-start gap-3",
     planMeta: "flex flex-col gap-1",
+    // The column's mark, above the name: a product logo in a versus matrix, a plan glyph in a
+    // pricing one. A bare icon takes a 24px box; a logo lockup brings its own size.
+    planIcon: "mb-2 flex shrink-0 items-center text-foreground [&>svg]:shrink-0 [&>svg:not([class*='size-'])]:size-6",
+    // The name and its optional badge, on one line.
+    planTitle: "flex items-center gap-2",
     planName: "text-sm font-semibold text-foreground text-balance",
     planPrice: "flex flex-wrap items-baseline gap-x-1 gap-y-0.5",
     planAmount: "text-2xl font-semibold tracking-tight tabular-nums text-foreground",
@@ -90,9 +95,24 @@ export const pricingComparisonVariants = tv({
     cell: "px-5 py-3.5 text-center align-middle tabular-nums text-muted-foreground",
     cellIcon: "inline-flex size-5 items-center justify-center [&>svg]:size-5",
   },
-  // A booleanless recipe: `featured` highlighting is applied per-cell from the root index
-  // (positional, see below), not as a variant axis, so there are no variants to declare.
-  variants: {},
+  // `featured` highlighting is applied per-cell from the root index (positional, see below), not as
+  // a variant axis. The one axis is where the plan headers sit in their columns.
+  variants: {
+    align: {
+      // Left-aligned headers over full-width CTAs: the pricing matrix, where the button is the
+      // column's anchor and a left edge reads the name and price like a card.
+      start: {},
+      // Centered on the column, the same axis as the checks and values under it: a versus matrix
+      // with no CTAs, where the mark and name should stand over their column like a label.
+      center: {
+        planInner: "items-center text-center",
+        planMeta: "items-center",
+        planTitle: "justify-center",
+        planPrice: "justify-center",
+      },
+    },
+  },
+  defaultVariants: { align: "start" },
 })
 
 type PricingComparisonSlots = ReturnType<typeof pricingComparisonVariants>
@@ -191,9 +211,11 @@ export interface PricingComparisonProps
  * The matrix root: a horizontally-scrollable `<table>`. Parts are exported individually (not
  * `PricingComparison.Plan` dot-notation): namespaced statics don't survive the RSC
  * server→client boundary. Compose as `<PricingComparison><PricingComparisonHeader>…`.
+ * `align` places every plan header in its column (`start` by default, `center` for a versus
+ * matrix), set once here so the columns can never disagree.
  */
-export function PricingComparison({ className, featured, children, ...props }: PricingComparisonProps) {
-  const slots = pricingComparisonVariants()
+export function PricingComparison({ className, featured, align, children, ...props }: PricingComparisonProps) {
+  const slots = pricingComparisonVariants({ align })
   const ft = featured ?? null
   const viewportRef = React.useRef<HTMLDivElement>(null)
   const { style, ready } = useFeaturedColumn(viewportRef, ft)
@@ -249,6 +271,11 @@ export function PricingComparisonHeader({ label, className, children, ...props }
 
 export interface PricingComparisonPlanProps extends Omit<React.ComponentProps<"th">, "children"> {
   name: React.ReactNode
+  /**
+   * A mark above the name: the product's logo in a versus matrix, a plan glyph in a pricing one.
+   * Decorative, the `name` stays the column's label, so pass it `aria-hidden` content.
+   */
+  icon?: React.ReactNode
   /** The headline price (`tabular-nums`), e.g. "$29" or "Custom". */
   price?: React.ReactNode
   /** The muted suffix after the price, e.g. "/mo". */
@@ -264,6 +291,7 @@ export interface PricingComparisonPlanProps extends Omit<React.ComponentProps<"t
 /** One plan column header. */
 export function PricingComparisonPlan({
   name,
+  icon,
   price,
   period,
   badge,
@@ -284,7 +312,12 @@ export function PricingComparisonPlan({
     >
       <div className={slots.planInner()}>
         <div className={slots.planMeta()}>
-          <div className="flex items-center gap-2">
+          {icon != null && (
+            <span data-slot="pricing-comparison-plan-icon" aria-hidden className={slots.planIcon()}>
+              {icon}
+            </span>
+          )}
+          <div className={slots.planTitle()}>
             <span className={slots.planName()}>{name}</span>
             {badge}
           </div>

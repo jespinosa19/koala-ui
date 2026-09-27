@@ -25,7 +25,9 @@ export {
   type PaginationState,
   type SortingState,
   type GroupingState,
+  type Row,
   type RowSelectionState,
+  type VisibilityState,
 } from "./data-table"
 
 export {
@@ -63,3 +65,12 @@ export {
   moveItem,
   type DataTableGripProps,
 } from "./data-table-reorder"
+
+export {
+  DataTableTabs,
+  DataTableTabsList,
+  DataTableTab,
+  useDataTableTabs,
+  type DataTableTabsProps,
+  type DataTableTabProps,
+} from "./data-table-tabs"

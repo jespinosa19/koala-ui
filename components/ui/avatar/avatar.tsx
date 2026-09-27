@@ -19,7 +19,10 @@ import { tv, type VariantProps } from "@/lib/tv"
 export const avatarVariants = tv({
   slots: {
     root: [
-      "relative inline-flex shrink-0 select-none items-center justify-center align-middle",
+      // `isolate`: the root is its own stacking context, so the `z-10` on Status/Badge only
+      // lifts them above this avatar's image, never above a neighbour. In an AvatarGroup the
+      // next avatar then covers this one's corner mark the same way it covers the photo.
+      "relative isolate inline-flex shrink-0 select-none items-center justify-center align-middle",
       "bg-muted",
       // polish: image outline, a hairline over the image edge so it
       // doesn't float against light surfaces.

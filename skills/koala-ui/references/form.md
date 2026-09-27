@@ -59,10 +59,10 @@ The anatomy layer above Field. Field solves one labelled control; Form owns ever
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add form
+npx koalaui-cli@latest add form
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/form/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -346,7 +346,7 @@ No. The legend names the set, and adding an aria-label on the control gives it a
 
 ## Exports and dependencies
 
-`npx koalaui-cli add form` writes `components/ui/form/`. Import from `@/components/ui/form`:
+`npx koalaui-cli@latest add form` writes `components/ui/form/`. Import from `@/components/ui/form`:
 
 - Components and helpers: `Form`, `FormSection`, `FormSectionHeader`, `FormSectionBody`, `FormSectionTitle`, `FormSectionDescription`, `FormActions`, `formVariants`
 - Types: `FormProps`, `FormSectionProps`, `FormSectionBodyProps`, `FormSectionTitleProps`, `FormActionsProps`

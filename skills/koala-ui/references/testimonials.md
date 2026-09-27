@@ -24,10 +24,10 @@ A minimal quote card for social-proof walls. Named parts you assemble: an option
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add testimonials
+npx koalaui-cli@latest add testimonials
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/testimonials/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -279,7 +279,7 @@ The root is a self-contained `figure` with `h-full`, so it stretches to equal he
 
 ## Exports and dependencies
 
-`npx koalaui-cli add testimonials` writes `components/ui/testimonials/`. Import from `@/components/ui/testimonials`:
+`npx koalaui-cli@latest add testimonials` writes `components/ui/testimonials/`. Import from `@/components/ui/testimonials`:
 
 - Components and helpers: `Testimonial`, `TestimonialMark`, `TestimonialQuote`, `TestimonialBody`, `TestimonialFooter`, `TestimonialAuthor`, `TestimonialName`, `TestimonialTitle`, `TestimonialLogo`, `testimonialVariants`
 - Types: `TestimonialProps`

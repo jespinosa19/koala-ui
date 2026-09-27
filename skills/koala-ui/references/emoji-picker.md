@@ -12,10 +12,10 @@ A complete picker: searchable, with a scroll-spy category nav, a pinned frequent
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add emoji-picker
+npx koalaui-cli@latest add emoji-picker
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/emoji-picker/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -116,7 +116,7 @@ Yes. Pass your own categorized dataset to the `data` prop; it defaults to a cura
 
 ## Exports and dependencies
 
-`npx koalaui-cli add emoji-picker` writes `components/ui/emoji-picker/`. Import from `@/components/ui/emoji-picker`:
+`npx koalaui-cli@latest add emoji-picker` writes `components/ui/emoji-picker/`. Import from `@/components/ui/emoji-picker`:
 
 - Components and helpers: `EmojiPicker`, `EmojiPickerPopover`, `EmojiPickerTrigger`, `EmojiPickerContent`, `emojiPickerVariants`, `emojiCategories`, `defaultEmojiPresets`, `emojiIndex`
 - Types: `EmojiPickerProps`, `EmojiPickerPopoverProps`, `EmojiPickerContentProps`, `EmojiDatum`, `EmojiCategory`

@@ -18,10 +18,10 @@ The wrapper that turns any control into a labelled form field. Field generates t
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add field
+npx koalaui-cli@latest add field
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/field/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -290,7 +290,7 @@ Use FieldGroup instead. A Field wraps one control because a label needs exactly 
 
 ## Exports and dependencies
 
-`npx koalaui-cli add field` writes `components/ui/field/`. Import from `@/components/ui/field`:
+`npx koalaui-cli@latest add field` writes `components/ui/field/`. Import from `@/components/ui/field`:
 
 - Components and helpers: `Field`, `FieldLabel`, `FieldHint`, `FieldGroup`, `FieldGroupLabel`, `FieldRow`, `fieldVariants`, `fieldGroupVariants`
 - Types: `FieldProps`, `FieldLabelProps`, `FieldHintProps`, `FieldGroupProps`, `FieldGroupLabelProps`, `FieldRowProps`

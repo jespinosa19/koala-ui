@@ -37,10 +37,10 @@ A composable site footer for marketing, product and ecommerce pages. Pure layout
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add footer
+npx koalaui-cli@latest add footer
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/footer/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -61,7 +61,7 @@ export function Example() {
     <Footer>
       <FooterTop>
         <FooterBrand>
-          <span className="text-lg font-semibold">Acme</span>
+          <span className="text-lg font-semibold">Koala UI</span>
           <FooterTagline>Tools for teams that ship every week.</FooterTagline>
           <FooterSocial>
             <FooterSocialLink href="https://x.com" aria-label="X"><XLogo /></FooterSocialLink>
@@ -80,7 +80,7 @@ export function Example() {
         </FooterColumns>
       </FooterTop>
       <FooterBottom>
-        <FooterCopyright>© 2026 Acme, Inc.</FooterCopyright>
+        <FooterCopyright>© 2026 Koala UI. All rights reserved.</FooterCopyright>
         <FooterLegal>
           <FooterLink href="/privacy">Privacy</FooterLink>
           <FooterLink href="/terms">Terms</FooterLink>
@@ -236,7 +236,7 @@ Set `density` to `compact` on `Footer` to reduce the block padding and the gap t
 
 ## Exports and dependencies
 
-`npx koalaui-cli add footer` writes `components/ui/footer/`. Import from `@/components/ui/footer`:
+`npx koalaui-cli@latest add footer` writes `components/ui/footer/`. Import from `@/components/ui/footer`:
 
 - Components and helpers: `Footer`, `FooterTop`, `FooterBrand`, `FooterTagline`, `FooterColumns`, `FooterColumn`, `FooterLink`, `FooterSocial`, `FooterSocialLink`, `FooterBottom`, `FooterCopyright`, `FooterLegal`, `footerVariants`
 - Types: `FooterProps`, `FooterColumnProps`, `FooterLinkProps`, `FooterSocialLinkProps`

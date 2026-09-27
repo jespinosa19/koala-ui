@@ -6,6 +6,7 @@ export {
   BentoItemDescription,
   BentoItemMedia,
   BentoItemImage,
+  BentoItemArt,
   bentoVariants,
   type BentoProps,
   type BentoItemProps,

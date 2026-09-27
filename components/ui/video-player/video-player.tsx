@@ -140,8 +140,37 @@ export const videoPlayerVariants = tv({
 
 type VideoSlots = ReturnType<typeof videoPlayerVariants>
 
+/**
+ * Every string the player speaks: the tooltips, the aria-labels, and the buffering announcement.
+ * Pass a partial set through `labels` to translate or reword them; the rest keep these defaults.
+ */
+export interface VideoPlayerLabels {
+  play: string
+  pause: string
+  seek: string
+  mute: string
+  unmute: string
+  volume: string
+  enterFullscreen: string
+  exitFullscreen: string
+  buffering: string
+}
+
+const DEFAULT_LABELS: VideoPlayerLabels = {
+  play: "Play",
+  pause: "Pause",
+  seek: "Seek",
+  mute: "Mute",
+  unmute: "Unmute",
+  volume: "Volume",
+  enterFullscreen: "Enter fullscreen",
+  exitFullscreen: "Exit fullscreen",
+  buffering: "Buffering",
+}
+
 interface VideoContext {
   slots: VideoSlots
+  labels: VideoPlayerLabels
   videoRef: React.RefObject<HTMLVideoElement | null>
   containerRef: React.RefObject<HTMLDivElement | null>
   playing: boolean
@@ -185,7 +214,9 @@ function formatTime(seconds: number): string {
   return h > 0 ? `${h}:${String(m).padStart(2, "0")}:${ss}` : `${m}:${ss}`
 }
 
-export interface VideoPlayerProps extends React.ComponentProps<"div"> {
+// The div's own `onVolumeChange` (a media event that never fires on a div) is replaced by the
+// player's volume callback below.
+export interface VideoPlayerProps extends Omit<React.ComponentProps<"div">, "onVolumeChange"> {
   /** Idle delay before the controls auto-hide during playback, in ms. @default 2600 */
   hideDelay?: number
   /**
@@ -197,6 +228,22 @@ export interface VideoPlayerProps extends React.ComponentProps<"div"> {
    * @default "auto"
    */
   revealOn?: "auto" | "hover"
+  /** Translate or reword the player's tooltips and aria-labels. Missing keys keep the English defaults. */
+  labels?: Partial<VideoPlayerLabels>
+  /**
+   * Controlled volume, 0 to 1. Passing it hands the audio to you: the volume bar, the mute
+   * button and the arrow keys show this value and report changes through `onVolumeChange` and
+   * `onMutedChange`, and the player stops writing volume or mute to the `<video>`. Use it to
+   * remember the level between sessions, or to play the sound somewhere else (separately
+   * recorded audio tracks kept in sync with a muted video). Pair it with `muted`.
+   */
+  volume?: number
+  /** Called with the new level (0 to 1) when the volume bar or a shortcut changes it. */
+  onVolumeChange?: (volume: number) => void
+  /** Controlled mute state, read only when `volume` is controlled. @default false */
+  muted?: boolean
+  /** Called when the mute button, the `M` key, or a drag to or from 0 flips the mute state. */
+  onMutedChange?: (muted: boolean) => void
 }
 
 export function VideoPlayer({
@@ -204,6 +251,11 @@ export function VideoPlayer({
   children,
   hideDelay = 2600,
   revealOn = "auto",
+  labels: labelsProp,
+  volume: volumeProp,
+  onVolumeChange,
+  muted: mutedProp,
+  onMutedChange,
   onPointerMove,
   onPointerEnter,
   onPointerLeave,
@@ -219,8 +271,13 @@ export function VideoPlayer({
   const [currentTime, setCurrentTime] = React.useState(0)
   const [duration, setDuration] = React.useState(0)
   const [buffered, setBuffered] = React.useState(0)
-  const [volume, setVolume] = React.useState(1)
-  const [muted, setMuted] = React.useState(false)
+  // What the element reports. Shown only while the audio is uncontrolled; a controlled player
+  // shows its props instead, so a `<video muted>` whose sound plays elsewhere never reads as muted.
+  const [elementVolume, setVolume] = React.useState(1)
+  const [elementMuted, setMuted] = React.useState(false)
+  const audioControlled = volumeProp !== undefined
+  const volume = audioControlled ? volumeProp : elementVolume
+  const muted = audioControlled ? (mutedProp ?? false) : elementMuted
   const [fullscreen, setFullscreen] = React.useState(false)
   const [buffering, setBuffering] = React.useState(false)
   const [active, setActive] = React.useState(true)
@@ -279,19 +336,33 @@ export function VideoPlayer({
     setCurrentTime(time) // optimistic: `timeupdate` confirms shortly after
   }, [])
 
-  const changeVolume = React.useCallback((level: number) => {
-    const v = videoRef.current
-    if (!v) return
-    const clamped = Math.min(1, Math.max(0, level))
-    v.volume = clamped
-    v.muted = clamped === 0
-  }, [])
+  // Controlled audio mirrors what the element does on its own: dragging to 0 mutes, and any
+  // level above 0 unmutes.
+  const changeVolume = React.useCallback(
+    (level: number) => {
+      const clamped = Math.min(1, Math.max(0, level))
+      if (audioControlled) {
+        onVolumeChange?.(clamped)
+        if (muted !== (clamped === 0)) onMutedChange?.(clamped === 0)
+        return
+      }
+      const v = videoRef.current
+      if (!v) return
+      v.volume = clamped
+      v.muted = clamped === 0
+    },
+    [audioControlled, muted, onVolumeChange, onMutedChange],
+  )
 
   const toggleMute = React.useCallback(() => {
+    if (audioControlled) {
+      onMutedChange?.(!muted)
+      return
+    }
     const v = videoRef.current
     if (!v) return
     v.muted = !v.muted
-  }, [])
+  }, [audioControlled, muted, onMutedChange])
 
   const toggleFullscreen = React.useCallback(() => {
     const el = containerRef.current
@@ -348,6 +419,8 @@ export function VideoPlayer({
     }
   }
 
+  const labels = React.useMemo(() => ({ ...DEFAULT_LABELS, ...labelsProp }), [labelsProp])
+
   const sync = React.useMemo(
     () => ({
       setPlaying,
@@ -364,6 +437,7 @@ export function VideoPlayer({
   return (
     <VideoProvider
       slots={videoPlayerVariants()}
+      labels={labels}
       videoRef={videoRef}
       containerRef={containerRef}
       playing={playing}
@@ -426,9 +500,39 @@ export function VideoPlayer({
 
 export type VideoProps = React.ComponentProps<"video">
 
-/** The media element. Click toggles play and focuses the player so shortcuts take over. */
-export function Video({ className, onClick, ...props }: VideoProps) {
+/**
+ * The media element. Click toggles play and focuses the player so shortcuts take over.
+ *
+ * `ref` reaches the real `<video>` (the player keeps its own ref alongside yours), and every
+ * media handler you pass runs after the player's own, so listening to `onPlay` or `onTimeUpdate`
+ * never cuts the controls off from the element's state.
+ */
+export function Video({
+  className,
+  ref,
+  onClick,
+  onPlay,
+  onPause,
+  onEnded,
+  onWaiting,
+  onPlaying,
+  onTimeUpdate,
+  onDurationChange,
+  onLoadedMetadata,
+  onVolumeChange,
+  onProgress,
+  ...props
+}: VideoProps) {
   const { slots, videoRef, containerRef, togglePlay, sync } = useVideoContext("Video")
+
+  const setRef = React.useCallback(
+    (node: HTMLVideoElement | null) => {
+      videoRef.current = node
+      if (typeof ref === "function") ref(node)
+      else if (ref) ref.current = node
+    },
+    [ref, videoRef],
+  )
 
   // Recover state that landed BEFORE hydration. With `preload="metadata"` the browser starts
   // loading metadata the moment the SSR'd <video> is parsed; on a heavy page this component can
@@ -451,38 +555,62 @@ export function Video({ className, onClick, ...props }: VideoProps) {
 
   return (
     <video
-      ref={videoRef}
       data-slot="video"
-      className={slots.video({ className })}
       playsInline
       // Native chrome is suppressed; the Koala controls own the surface.
       controls={false}
+      {...props}
+      ref={setRef}
+      className={slots.video({ className })}
       onClick={(e) => {
         togglePlay()
         containerRef.current?.focus()
         onClick?.(e)
       }}
-      onPlay={() => sync.setPlaying(true)}
-      onPause={() => sync.setPlaying(false)}
-      onEnded={() => sync.setPlaying(false)}
-      onWaiting={() => sync.setBuffering(true)}
-      onPlaying={() => sync.setBuffering(false)}
-      onTimeUpdate={(e) => sync.setCurrentTime(e.currentTarget.currentTime)}
-      onDurationChange={(e) => sync.setDuration(e.currentTarget.duration)}
+      onPlay={(e) => {
+        sync.setPlaying(true)
+        onPlay?.(e)
+      }}
+      onPause={(e) => {
+        sync.setPlaying(false)
+        onPause?.(e)
+      }}
+      onEnded={(e) => {
+        sync.setPlaying(false)
+        onEnded?.(e)
+      }}
+      onWaiting={(e) => {
+        sync.setBuffering(true)
+        onWaiting?.(e)
+      }}
+      onPlaying={(e) => {
+        sync.setBuffering(false)
+        onPlaying?.(e)
+      }}
+      onTimeUpdate={(e) => {
+        sync.setCurrentTime(e.currentTarget.currentTime)
+        onTimeUpdate?.(e)
+      }}
+      onDurationChange={(e) => {
+        sync.setDuration(e.currentTarget.duration)
+        onDurationChange?.(e)
+      }}
       onLoadedMetadata={(e) => {
         sync.setDuration(e.currentTarget.duration)
         sync.setVolume(e.currentTarget.volume)
         sync.setMuted(e.currentTarget.muted)
+        onLoadedMetadata?.(e)
       }}
       onVolumeChange={(e) => {
         sync.setVolume(e.currentTarget.volume)
         sync.setMuted(e.currentTarget.muted)
+        onVolumeChange?.(e)
       }}
       onProgress={(e) => {
         const v = e.currentTarget
         if (v.buffered.length > 0) sync.setBuffered(v.buffered.end(v.buffered.length - 1))
+        onProgress?.(e)
       }}
-      {...props}
     />
   )
 }
@@ -510,7 +638,7 @@ export type VideoPlayButtonProps = React.ComponentProps<"button">
  * `grid-cols-1` (minmax(0,1fr)) keeps the column at the wrapper width, so the hidden wider word
  * overflows centered and is clipped, leaving the visible word centered as the bubble resizes.
  */
-function PlayPauseHint({ playing }: { playing: boolean }) {
+function PlayPauseHint({ playing, labels }: { playing: boolean; labels: VideoPlayerLabels }) {
   const wrapRef = React.useRef<HTMLSpanElement>(null)
   const pauseRef = React.useRef<HTMLSpanElement>(null)
   const playRef = React.useRef<HTMLSpanElement>(null)
@@ -538,27 +666,27 @@ function PlayPauseHint({ playing }: { playing: boolean }) {
         ref={pauseRef}
         className={`transition-[opacity,translate] duration-fast ease-out ${playing ? "translate-y-0 opacity-100" : "-translate-y-1.5 opacity-0"}`}
       >
-        Pause
+        {labels.pause}
       </span>
       <span
         ref={playRef}
         className={`transition-[opacity,translate] duration-fast ease-out ${playing ? "translate-y-1.5 opacity-0" : "translate-y-0 opacity-100"}`}
       >
-        Play
+        {labels.play}
       </span>
     </span>
   )
 }
 
 export function VideoPlayButton({ className, onClick, ...props }: VideoPlayButtonProps) {
-  const { slots, playing, togglePlay } = useVideoContext("VideoPlayButton")
-  const label = playing ? "Pause" : "Play"
+  const { slots, labels, playing, togglePlay } = useVideoContext("VideoPlayButton")
+  const label = playing ? labels.pause : labels.play
   return (
     <Tooltip
       // Keep the hint up through the click (Tippy hides on click by default) so the label can roll
       // AND resize in place. The roll + measured-width logic lives in PlayPauseHint.
       hideOnClick={false}
-      content={<PlayPauseHint playing={playing} />}
+      content={<PlayPauseHint playing={playing} labels={labels} />}
     >
       <button
         type="button"
@@ -605,8 +733,14 @@ export type VideoSeekProps = Omit<
  * follows the cursor and reads the time you'd land on against the total (`landing / total`, the
  * total dimmed), so you see where you're heading and how far along that is before you commit.
  */
-export function VideoSeek({ className, onPointerMove, onPointerLeave, ...props }: VideoSeekProps) {
-  const { slots, currentTime, duration, buffered, seek, wake } = useVideoContext("VideoSeek")
+export function VideoSeek({
+  className,
+  onPointerMove,
+  onPointerLeave,
+  "aria-label": ariaLabel,
+  ...props
+}: VideoSeekProps) {
+  const { slots, labels, currentTime, duration, buffered, seek, wake } = useVideoContext("VideoSeek")
   // Scrub-preview position (seconds under the cursor) and whether it's showing, kept as separate
   // state: on leave we drop `previewing` but KEEP `hoverTime`, so the bubble fades out where it is
   // instead of snapping back to 0:00.
@@ -622,7 +756,6 @@ export function VideoSeek({ className, onPointerMove, onPointerLeave, ...props }
       max={duration || 1}
       step={0.1}
       disabled={!duration}
-      aria-label="Seek"
       onValueChange={([v]) => {
         seek(v)
         wake()
@@ -648,7 +781,9 @@ export function VideoSeek({ className, onPointerMove, onPointerLeave, ...props }
         <div className={slots.seekBuffered()} style={{ width: `${bufferedPct}%` }} />
         <Slider.Range className={slots.seekRange()} />
       </Slider.Track>
-      <Slider.Thumb className={slots.seekThumb()} />
+      {/* The name goes on the Thumb: it is the element with role="slider". On the Root it
+          labelled a role-less span, and the slider was announced without a name. */}
+      <Slider.Thumb aria-label={ariaLabel ?? labels.seek} className={slots.seekThumb()} />
       {/* aria-hidden: the Slider already announces its value to assistive tech; this is a
           visual-only convenience that mirrors it. */}
       <div
@@ -686,13 +821,13 @@ export type VideoVolumeProps = React.ComponentProps<"div">
  * tracks the level too.
  */
 export function VideoVolume({ className, ...props }: VideoVolumeProps) {
-  const { slots, volume, muted, changeVolume, toggleMute } = useVideoContext("VideoVolume")
+  const { slots, labels, volume, muted, changeVolume, toggleMute } = useVideoContext("VideoVolume")
   const Icon = muted || volume === 0 ? SpeakerX : volume < 0.5 ? SpeakerLow : SpeakerHigh
   return (
     <div data-slot="video-volume" className={slots.volumeRoot({ className })} {...props}>
       <button
         type="button"
-        aria-label={muted || volume === 0 ? "Unmute" : "Mute"}
+        aria-label={muted || volume === 0 ? labels.unmute : labels.mute}
         aria-pressed={muted}
         className={slots.control()}
         onClick={toggleMute}
@@ -706,13 +841,12 @@ export function VideoVolume({ className, ...props }: VideoVolumeProps) {
           value={[volume]}
           max={1}
           step={0.05}
-          aria-label="Volume"
           onValueChange={([v]) => changeVolume(v)}
         >
           <Slider.Track className={slots.volumeTrack()}>
             <Slider.Range className={slots.volumeRange()} />
           </Slider.Track>
-          <Slider.Thumb className={slots.volumeThumb()} />
+          <Slider.Thumb aria-label={labels.volume} className={slots.volumeThumb()} />
           {/* Live % tooltip riding the thumb. `bottom` tracks `volume` so it follows the thumb;
               aria-hidden since the Slider already announces its value to AT (like the seek preview). */}
           <div
@@ -732,8 +866,8 @@ export function VideoVolume({ className, ...props }: VideoVolumeProps) {
 export type VideoFullscreenProps = React.ComponentProps<"button">
 
 export function VideoFullscreen({ className, onClick, ...props }: VideoFullscreenProps) {
-  const { slots, fullscreen, toggleFullscreen } = useVideoContext("VideoFullscreen")
-  const label = fullscreen ? "Exit fullscreen" : "Enter fullscreen"
+  const { slots, labels, fullscreen, toggleFullscreen } = useVideoContext("VideoFullscreen")
+  const label = fullscreen ? labels.exitFullscreen : labels.enterFullscreen
   return (
     <Tooltip content={label}>
       <button
@@ -756,11 +890,11 @@ export function VideoFullscreen({ className, onClick, ...props }: VideoFullscree
 
 /** Buffering spinner: renders only while the media is stalled waiting for data. */
 export function VideoSpinner({ className, ...props }: React.ComponentProps<"div">) {
-  const { slots, buffering } = useVideoContext("VideoSpinner")
+  const { slots, labels, buffering } = useVideoContext("VideoSpinner")
   if (!buffering) return null
   return (
     <div data-slot="video-spinner" className={slots.spinner({ className })} {...props}>
-      <Spinner size="xl" label="Buffering" className="text-white" />
+      <Spinner size="xl" label={labels.buffering} className="text-white" />
     </div>
   )
 }

@@ -21,10 +21,10 @@ const [value, setValue] = React.useState("")
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add password-strength
+npx koalaui-cli@latest add password-strength
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/password-strength/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -132,7 +132,7 @@ The moment the password satisfies a rule, that row's dot lifts up and out while 
 
 ## Exports and dependencies
 
-`npx koalaui-cli add password-strength` writes `components/ui/password-strength/`. Import from `@/components/ui/password-strength`:
+`npx koalaui-cli@latest add password-strength` writes `components/ui/password-strength/`. Import from `@/components/ui/password-strength`:
 
 - Components and helpers: `PasswordStrength`, `PasswordStrengthMeter`, `PasswordStrengthLabel`, `PasswordStrengthList`, `passwordStrengthVariants`, `getPasswordStrength`, `defaultPasswordRules`
 - Types: `PasswordStrengthProps`, `PasswordStrengthMeterProps`, `PasswordStrengthLabelProps`, `PasswordStrengthListProps`, `PasswordRule`

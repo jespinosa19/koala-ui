@@ -15,10 +15,10 @@ A compact label for status, counts, and categories. Single-element like Button; 
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add badge
+npx koalaui-cli@latest add badge
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/badge/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -90,6 +90,17 @@ The `dot` prop adds a leading status dot in the variant color - ideal for presen
 <Badge variant="pink" dot>Do not disturb</Badge>
 ```
 
+## Toggling the dot
+
+Drive `dot` from state and the change animates: the dot grows in and pushes the label over, the tint gives way to the hairline, and the label settles on foreground. Turning it off plays the same thing in reverse, back to the tinted badge. A badge that never passes `dot` renders no dot at all.
+
+```tsx
+const [live, setLive] = useState(true)
+
+<Badge variant="success" dot={live}>Online</Badge>
+<Switch checked={live} onCheckedChange={setLive} />
+```
+
 ## Sizes
 
 ```tsx
@@ -158,6 +169,10 @@ A Badge labels: it states status, a count, or a category and is not meant to be 
 
 Both read from the same semantic token. The soft variant tints a background plus text; adding the dot prop strips the background so only a small colored dot carries the state, ideal for presence indicators and dense lists where a full tinted pill would be too heavy.
 
+### Why does `dot={false}` render differently from leaving dot out?
+
+Passing dot as a boolean, false included, tells the badge its dot can change, so it keeps a collapsed dot slot mounted and flipping the prop animates both ways. The collapsed slot has no width and cancels the flex gap, so an off badge measures exactly like a plain one. Leave dot out entirely on badges that never change and they render no slot.
+
 ### How do I make a dismissible tag?
 
 Pass an onRemove handler to render a trailing dismiss button, and always give a descriptive removeLabel (e.g. `Remove Design`) so screen readers announce what is being removed. pill pairs well with removable tags.
@@ -172,7 +187,7 @@ Yes. Every variant, including the categorical hues, derives from semantic tokens
 
 ## Exports and dependencies
 
-`npx koalaui-cli add badge` writes `components/ui/badge/`. Import from `@/components/ui/badge`:
+`npx koalaui-cli@latest add badge` writes `components/ui/badge/`. Import from `@/components/ui/badge`:
 
 - Components and helpers: `Badge`, `badgeVariants`
 - Types: `BadgeProps`

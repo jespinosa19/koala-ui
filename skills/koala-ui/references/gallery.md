@@ -35,10 +35,10 @@ A marketing concepts wall: a balanced headline and lead, an optional tab rail to
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add gallery
+npx koalaui-cli@latest add gallery
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/gallery/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -196,7 +196,7 @@ Yes. Gallery ships an accordion layout as one more option (see “As an accordio
 
 ## Exports and dependencies
 
-`npx koalaui-cli add gallery` writes `components/ui/gallery/`. Import from `@/components/ui/gallery`:
+`npx koalaui-cli@latest add gallery` writes `components/ui/gallery/`. Import from `@/components/ui/gallery`:
 
 - Components and helpers: `Gallery`, `GalleryHeader`, `GalleryTitle`, `GalleryDescription`, `GalleryMasonry`, `GalleryItem`, `GalleryImage`, `galleryVariants`, `GalleryAccordion`, `GalleryAccordionItem`, `GalleryAccordionTrigger`, `GalleryAccordionPeek`, `GalleryAccordionContent`, `GalleryAccordionCaption`, `GalleryAccordionMedia`, `GalleryAccordionImage`, `galleryAccordionVariants`
 - Types: `GalleryProps`, `GalleryItemProps`, `GalleryImageProps`, `GalleryAccordionProps`, `GalleryAccordionItemProps`, `GalleryAccordionTriggerProps`, `GalleryAccordionPeekProps`, `GalleryAccordionImageProps`

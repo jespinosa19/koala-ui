@@ -23,10 +23,10 @@ export function CallToAction() {
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add code-snippet
+npx koalaui-cli@latest add code-snippet
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/code-snippet/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -47,10 +47,10 @@ Set `lang` to switch grammars. TS/TSX, shell (`bash`/`sh`), and CSS are highligh
 
 ```bash title="install.sh"
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add a component (its dependencies come along)
-npx koalaui-cli add button
+npx koalaui-cli@latest add button
 ```
 
 ```css title="globals.css"
@@ -220,7 +220,7 @@ Yes. The block shows a copy-on-hover control that copies the exact code string y
 
 ## Exports and dependencies
 
-`npx koalaui-cli add code-snippet` writes `components/ui/code-snippet/`. Import from `@/components/ui/code-snippet`:
+`npx koalaui-cli@latest add code-snippet` writes `components/ui/code-snippet/`. Import from `@/components/ui/code-snippet`:
 
 - Components and helpers: `CodeSnippet`, `codeSnippetVariants`
 - Types: `CodeSnippetProps`

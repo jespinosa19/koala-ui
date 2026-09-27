@@ -27,10 +27,10 @@ The bar is built out of our `Button`: an attach menu, the model picker, and a si
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add prompt-input
+npx koalaui-cli@latest add prompt-input
 ```
 
 Manual: run `npm install tailwind-variants tailwind-merge @phosphor-icons/react`, then copy the source into `components/ui/prompt-input/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -288,7 +288,7 @@ PromptInputSuggestions is a context-free chip row meant to sit above the compose
 
 ## Exports and dependencies
 
-`npx koalaui-cli add prompt-input` writes `components/ui/prompt-input/`. Import from `@/components/ui/prompt-input`:
+`npx koalaui-cli@latest add prompt-input` writes `components/ui/prompt-input/`. Import from `@/components/ui/prompt-input`:
 
 - Components and helpers: `PromptInput`, `PromptInputTextarea`, `PromptInputToolbar`, `PromptInputButton`, `PromptInputSubmit`, `PromptInputCount`, `PromptInputBanner`, `PromptInputBannerAction`, `PromptInputSuggestions`, `PromptInputSuggestion`, `promptInputVariants`
 - Types: `PromptInputProps`, `PromptInputTextareaProps`, `PromptInputSubmitProps`, `PromptInputCountProps`, `PromptInputBannerProps`

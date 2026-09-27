@@ -75,7 +75,7 @@ export function FeatureSection4() {
         <SectionHeader align="center">
           <SectionHeaderText>
             <Badge variant="orange" dot pill>
-              Why Acme
+              Why Koala UI
             </Badge>
             <SectionHeaderHeading>The hard parts, already handled</SectionHeaderHeading>
             <SectionHeaderDescription>

@@ -45,10 +45,10 @@ The assistant sidepanel: a header, a scrollable conversation and a pinned compos
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add ai-panel
+npx koalaui-cli@latest add ai-panel
 ```
 
 Manual: run `npm install tailwind-variants tailwind-merge`, then copy the source into `components/ui/ai-panel/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -225,7 +225,7 @@ The body is a plain flex region, so center whatever fits the moment. For a fresh
 
 ## Exports and dependencies
 
-`npx koalaui-cli add ai-panel` writes `components/ui/ai-panel/`. Import from `@/components/ui/ai-panel`:
+`npx koalaui-cli@latest add ai-panel` writes `components/ui/ai-panel/`. Import from `@/components/ui/ai-panel`:
 
 - Components and helpers: `AIPanel`, `AIPanelHeader`, `AIPanelHeading`, `AIPanelTitle`, `AIPanelDescription`, `AIPanelActions`, `AIPanelAction`, `AIPanelExpandToggle`, `AIPanelBody`, `AIPanelFooter`, `aiPanelVariants`
 - Types: `AIPanelView`

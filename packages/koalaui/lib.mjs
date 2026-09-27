@@ -381,6 +381,19 @@ export function isCi(env = process.env) {
   return Boolean(env.CI || env.GITHUB_ACTIONS || env.BUILDKITE || env.GITLAB_CI || env.VERCEL)
 }
 
+/**
+ * How a hint spells the next command. A package runner (npx, pnpm dlx, yarn dlx, bunx) runs the
+ * CLI from a throwaway folder and leaves no `koalaui` on PATH, so a hint saying `koalaui add` would
+ * fail right after `npx koalaui-cli@latest init`; those runs get the npx form. An install, global or
+ * in the project, keeps the short command.
+ * @param {string} [script]  the path the CLI runs from (process.argv[1])
+ * @param {Record<string, string | undefined>} [env]
+ */
+export function selfCommand(script = process.argv[1] ?? "", env = process.env) {
+  const viaRunner = env.npm_command === "exec" || /[\\/](_npx|dlx[^\\/]*|bunx-[^\\/]*|xfs-[^\\/]*)[\\/]/.test(script)
+  return viaRunner ? "npx koalaui-cli@latest" : "koalaui"
+}
+
 // ── responses ───────────────────────────────────────────────────────────────────
 /**
  * One line for a failed API call, using the server's own words when it sent any.

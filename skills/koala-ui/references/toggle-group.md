@@ -21,10 +21,10 @@ A set of pressable pills that hold a selection, built on Radix ToggleGroup. Use 
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add toggle-group
+npx koalaui-cli@latest add toggle-group
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/toggle-group/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -125,6 +125,32 @@ The `ghost` variant is the size picker on a product page: lay the group out as a
 </ToggleGroup>
 ```
 
+## Icon-only with tooltips
+
+`iconOnly` squares an item around its glyph (32px at `sm`, 40px at `md`, where the glyph steps up to 20px), the same square the lone [Toggle](https://koala-ui.vercel.app/docs/components/toggle.md) draws. A glyph is not a name, so an icon-only item always needs a hint, and `tooltip` gives it one with the same wiring as [Button](https://koala-ui.vercel.app/docs/components/button.md): a string `tooltip` is shown on hover and focus and also names an item that has no `aria-label`, and an icon-only item with an `aria-label` shows that label as its hint on its own. On a labelled pill a `tooltip` is a supplementary hint. Pass `tooltip={false}` to opt out when you wrap the item in your own `Tooltip`.
+
+```tsx
+// A string tooltip is the hint and, with no aria-label, the item's name.
+<ToggleGroup type="single" variant="segmented" size="sm" defaultValue="3x3" aria-label="Wall layout">
+  <ToggleGroupItem value="2x2" iconOnly tooltip="2 by 2 grid"><SquaresFour /></ToggleGroupItem>
+  <ToggleGroupItem value="3x3" iconOnly tooltip="3 by 3 grid"><GridNine /></ToggleGroupItem>
+</ToggleGroup>
+
+// An icon-only item with an aria-label shows it as the hint, like an icon-only Button.
+<ToggleGroup type="multiple" defaultValue={["bold"]} aria-label="Text style">
+  <ToggleGroupItem value="bold" iconOnly aria-label="Bold"><TextB /></ToggleGroupItem>
+  <ToggleGroupItem value="italic" iconOnly aria-label="Italic"><TextItalic /></ToggleGroupItem>
+  <ToggleGroupItem value="underline" iconOnly aria-label="Underline"><TextUnderline /></ToggleGroupItem>
+</ToggleGroup>
+
+// On a labelled pill, the tooltip is a supplementary hint.
+<ToggleGroup type="single" variant="segmented" size="sm" defaultValue="7d" aria-label="Range">
+  <ToggleGroupItem value="7d" tooltip="Last 7 days">7D</ToggleGroupItem>
+  <ToggleGroupItem value="30d" tooltip="Last 30 days">30D</ToggleGroupItem>
+  <ToggleGroupItem value="90d" tooltip="Last 90 days">90D</ToggleGroupItem>
+</ToggleGroup>
+```
+
 ## Feedback card
 
 The classic "Was this useful?" prompt: a title, a question, and a Yes/No band on a card. Rendered open so it reads at a glance, with the group controlled so the selection is yours to send.
@@ -222,13 +248,18 @@ The item background reads `var(--surface)`, so a colored container must declare 
 
 ### How do I label icon-only pills for screen readers?
 
-Give each icon-only `ToggleGroupItem` its own `aria-label`, and put an `aria-label` on the `ToggleGroup` for the group as a whole. Radix ToggleGroup handles roving focus and the pressed state, so keyboard users can arrow through and toggle with Space or Enter.
+Mark the item `iconOnly` and give it either an `aria-label` (which then doubles as its tooltip) or a string `tooltip` (which then doubles as its name), and put an `aria-label` on the `ToggleGroup` for the group as a whole. Radix ToggleGroup handles roving focus and the pressed state, so keyboard users can arrow through and toggle with Space or Enter.
+
+### Do I still wrap items in a Tooltip by hand?
+
+No. `tooltip` on a `ToggleGroupItem` is wired like Button's: it shows on hover and focus, adds no DOM around the item (so the segmented thumb and roving focus are unaffected), and takes `tooltipPlacement`. Wrap by hand only for rich content, and pass `tooltip={false}` on that item so the two do not stack.
 
 ## Exports and dependencies
 
-`npx koalaui-cli add toggle-group` writes `components/ui/toggle-group/`. Import from `@/components/ui/toggle-group`:
+`npx koalaui-cli@latest add toggle-group` writes `components/ui/toggle-group/`. Import from `@/components/ui/toggle-group`:
 
 - Components and helpers: `ToggleGroup`, `ToggleGroupItem`, `toggleGroupVariants`
 - Types: `ToggleGroupProps`, `ToggleGroupItemProps`
+- Koala components it installs with it: `toggle`, `tooltip`
 - Koala lib helpers it uses: `create-context`, `hit-area`, `tv`, `utils`
 - npm packages: `radix-ui`

@@ -29,10 +29,10 @@ A nesting tree view for file explorers, category browsers and any hierarchy. Bui
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add tree
+npx koalaui-cli@latest add tree
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/tree/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -170,7 +170,7 @@ Use the `actions` slot on `TreeItem` for trailing content like a Badge, a count,
 
 ## Exports and dependencies
 
-`npx koalaui-cli add tree` writes `components/ui/tree/`. Import from `@/components/ui/tree`:
+`npx koalaui-cli@latest add tree` writes `components/ui/tree/`. Import from `@/components/ui/tree`:
 
 - Components and helpers: `Tree`, `TreeItem`, `treeVariants`
 - Types: `TreeProps`, `TreeItemProps`, `TreeMoveEvent`, `TreeDropPosition`

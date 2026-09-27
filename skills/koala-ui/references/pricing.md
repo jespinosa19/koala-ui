@@ -90,10 +90,10 @@ A responsive marketing pricing table. Named parts you assemble into plan cards: 
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add pricing
+npx koalaui-cli@latest add pricing
 ```
 
 Manual: run `npm install radix-ui @phosphor-icons/react tailwind-variants tailwind-merge`, then copy the source into `components/ui/pricing/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -550,7 +550,7 @@ Yes. Pass `asChild` to PricingTier and render an `<a>` (or a Next `<Link>`) as i
 
 ## Exports and dependencies
 
-`npx koalaui-cli add pricing` writes `components/ui/pricing/`. Import from `@/components/ui/pricing`:
+`npx koalaui-cli@latest add pricing` writes `components/ui/pricing/`. Import from `@/components/ui/pricing`:
 
 - Components and helpers: `Pricing`, `PricingTier`, `PricingTierHeader`, `PricingTierName`, `PricingTierDescription`, `PricingPrice`, `PricingAmount`, `PricingPeriod`, `PricingFeatures`, `PricingFeature`, `PricingFeatureGroup`, `PricingTierAction`, `PricingTierBanner`, `pricingVariants`
 - Types: `PricingProps`, `PricingTierProps`, `PricingFeatureProps`, `PricingFeatureGroupProps`, `PricingTierBannerProps`

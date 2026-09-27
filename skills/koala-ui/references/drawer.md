@@ -29,10 +29,10 @@ A panel that slides in from any edge of the screen. Built on Radix Dialog for fo
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add drawer
+npx koalaui-cli@latest add drawer
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/drawer/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -234,7 +234,7 @@ Wrap your pages in `DrawerNav` with a `defaultView`, give each page a `DrawerVie
 
 ## Exports and dependencies
 
-`npx koalaui-cli add drawer` writes `components/ui/drawer/`. Import from `@/components/ui/drawer`:
+`npx koalaui-cli@latest add drawer` writes `components/ui/drawer/`. Import from `@/components/ui/drawer`:
 
 - Components and helpers: `Drawer`, `DrawerTrigger`, `DrawerClose`, `DrawerContent`, `DrawerHeader`, `DrawerBody`, `DrawerFooter`, `DrawerTitle`, `DrawerDescription`, `DrawerNav`, `DrawerView`, `DrawerNavTrigger`, `DrawerNavBack`, `useDrawerNav`, `drawerVariants`
 - Types: `DrawerSide`, `DrawerContentProps`, `DrawerNavProps`, `DrawerViewProps`, `DrawerNavTriggerProps`, `DrawerNavBackProps`

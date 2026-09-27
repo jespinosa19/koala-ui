@@ -32,10 +32,10 @@ The AI conversation thread, the second piece of the AI module. The assistant ans
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add chat
+npx koalaui-cli@latest add chat
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge @phosphor-icons/react`, then copy the source into `components/ui/chat/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -315,7 +315,7 @@ MessageActions holds a row of MessageAction buttons, each a ghost icon Button, s
 
 ## Exports and dependencies
 
-`npx koalaui-cli add chat` writes `components/ui/chat/`. Import from `@/components/ui/chat`:
+`npx koalaui-cli@latest add chat` writes `components/ui/chat/`. Import from `@/components/ui/chat`:
 
 - Components and helpers: `Conversation`, `Message`, `MessageAvatar`, `MessageBody`, `MessageHeader`, `MessageName`, `MessageTime`, `MessageContent`, `MessageActions`, `MessageAction`, `MessageTyping`, `MessageReasoning`, `MessageReasoningTrigger`, `MessageReasoningContent`, `MessageReasoningStep`, `MessageReasoningQueries`, `MessageReasoningQuery`, `MessageReasoningSources`, `MessageReasoningSource`, `chatVariants`
 - Types: `ConversationProps`, `MessageProps`, `MessageAvatarProps`, `MessageReasoningProps`, `MessageReasoningStepProps`, `MessageReasoningSourcesProps`, `MessageReasoningSourceProps`

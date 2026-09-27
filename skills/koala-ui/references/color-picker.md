@@ -15,10 +15,10 @@ const [color, setColor] = useState("#67aa38")
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add color-picker
+npx koalaui-cli@latest add color-picker
 ```
 
 Manual: run `npm install @phosphor-icons/react radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/color-picker/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -238,7 +238,7 @@ It was replaced by a ring: a gap ring in the panel's own surface with a halo of 
 
 ## Exports and dependencies
 
-`npx koalaui-cli add color-picker` writes `components/ui/color-picker/`. Import from `@/components/ui/color-picker`:
+`npx koalaui-cli@latest add color-picker` writes `components/ui/color-picker/`. Import from `@/components/ui/color-picker`:
 
 - Components and helpers: `ColorPicker`, `colorPickerVariants`, `colorPickerFormats`, `defaultColorPresets`, `ColorPickerArea`, `ColorPickerControls`, `ColorPickerPreview`, `ColorPickerHueSlider`, `ColorPickerAlphaSlider`, `ColorPickerFormat`, `ColorPickerFields`, `ColorPickerHexInput`, `ColorPickerEyeDropper`, `ColorPickerSwatches`, `ColorPickerModes`, `ColorPickerGradient`, `ColorPickerImage`, `ColorPickerPopover`, `ColorPickerTrigger`, `ColorPickerTriggerSwatch`, `ColorPickerContent`, `hexToHsva`, `hexToRgba`, `hsvaToHex`, `hsvaToRgba`, `rgbaToHsva`, `hsvaToHsla`, `hslaToHsva`, `gradientToCss`, `stopsToBarCss`, `colorAtPosition`, `sortStops`
 - Types: `ColorPickerProps`, `ColorPickerMode`, `ColorPickerFormatValue`, `ColorPickerImageFit`, `ColorPickerImageValue`, `ColorPickerSwatchesProps`, `ColorPickerTriggerSwatchProps`, `ColorPickerContentProps`, `Hsla`, `Hsva`, `Rgba`, `GradientType`, `GradientStop`, `GradientValue`

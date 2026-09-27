@@ -33,7 +33,18 @@ export const tableVariants = tv({
     header: "",
     // Last body row drops its divider so it never doubles up with the container's edge (or,
     // in `minimal`, so the table closes on the content rather than a dangling rule).
-    body: "[&>tr:last-child>td]:border-b-0",
+    //
+    // The current row (`TableRow current`: the record open in a detail pane) takes a brand tint,
+    // deliberately a different hue from the neutral checkbox-selected fill, so "open" and "picked"
+    // never read as the same state on a row that is both. Mixed into the table surface rather than
+    // layered with alpha, like every row fill here, so a pinned `bg-inherit` cell stays opaque.
+    // Written on the body (0,2,1) so it outranks the row's selected fill (0,2,0). A dark surface
+    // swallows a light wash, so the dark themes mix a little more brand in.
+    body: [
+      "[&>tr:last-child>td]:border-b-0",
+      "[&>tr[aria-current=true]]:bg-[color-mix(in_oklab,var(--brand)_8%,var(--table-surface))]",
+      "dark:[&>tr[aria-current=true]]:bg-[color-mix(in_oklab,var(--brand)_14%,var(--table-surface))]",
+    ],
     footer: "[&>tr>td]:border-t [&>tr>td]:border-b-0 [&>tr>td]:border-border bg-[color-mix(in_oklab,var(--muted)_50%,var(--table-surface))] font-medium tabular-nums",
     row: "bg-[var(--table-surface)] transition-colors duration-fast ease-out data-[state=selected]:bg-muted",
     // The `transition-[height,padding]` is what makes a density change *glide* instead of snap:
@@ -57,10 +68,28 @@ export const tableVariants = tv({
         // Honors the `--surface` contract: a container that declares one (Dialog → popover,
         // Layout → card) gets a table that blends into it; on a plain page `--surface` is unset
         // so this falls back to `--background`, identical to before.
-        root: "[--table-surface:var(--surface,var(--background))]",
-        // Edge cells go flush with the table's bounds: without a container edge to sit
-        // inside, the leading/trailing padding would just read as a stray indent.
-        table: "[&_tr>*:first-child]:pl-0 [&_tr>*:last-child]:pr-0",
+        //
+        // Edge cells go flush with the table's bounds (the `table` slot below), which leaves a
+        // control in the first or last column flush against the scroll box: its focus ring and
+        // shadow were cut on the outer side, and a 32px icon Button's 40px hit-area extender
+        // (lib/hit-area.ts) poked 4px past the table, which the scroll box counted as overflow,
+        // so a table that fits scrolled sideways by 4px. So the scroll box bleeds: it reaches 4px
+        // past the table on both sides (negative margin, widened to match) and pads them back
+        // (`px-1`), so the columns sit exactly where they did while the rings and extenders land
+        // in that padding, inside the scroll box: nothing clipped, nothing to scroll.
+        root: [
+          "[--table-surface:var(--surface,var(--background))]",
+          "-mx-1 w-[calc(100%+--spacing(2))] px-1",
+        ],
+        // Without a container edge to sit inside, the leading/trailing padding would just read as
+        // a stray indent. A column pinned to an edge sticks at the padding edge (right where it
+        // sits at rest), so it throws a hard shadow of the table surface across the 4px strip
+        // beside it, or the columns scrolling under it would peek through there.
+        table: [
+          "[&_tr>*:first-child]:pl-0 [&_tr>*:last-child]:pr-0",
+          "[&_tr>.sticky:first-child]:shadow-[calc(var(--spacing)*-1)_0_0_var(--table-surface)]",
+          "[&_tr>.sticky:last-child]:shadow-[var(--spacing)_0_0_var(--table-surface)]",
+        ],
       },
       // The contour is a full-strength `--border` ring (no lift to help it), not a border: a
       // box-shadow takes no layout and sits outside the scroll clip, so the rows reach the true
@@ -81,13 +110,20 @@ export const tableVariants = tv({
     // The tint is mixed into the table surface (not layered with alpha) so it stays fully opaque:
     // a pinned `bg-inherit` cell that takes it on must cover content scrolling under it, not bleed it.
     striped: {
-      true: { body: "[&>tr:nth-child(even):not(:hover):not([data-state=selected])]:bg-[color-mix(in_oklab,var(--muted)_40%,var(--table-surface))]" },
+      true: { body: "[&>tr:nth-child(even):not(:hover):not([data-state=selected]):not([aria-current=true])]:bg-[color-mix(in_oklab,var(--muted)_40%,var(--table-surface))]" },
       false: {},
     },
     // Row hover. Applied on the body so only data rows light up; header/footer rows never do.
     // Opaque (mixed into the table surface, not `/50` alpha) for the same pinned-column reason as `striped`.
+    // A hovered current row deepens its own brand tint instead of dropping to the neutral hover.
     hoverable: {
-      true: { body: "[&>tr:hover]:bg-[color-mix(in_oklab,var(--muted)_50%,var(--table-surface))]" },
+      true: {
+        body: [
+          "[&>tr:hover]:bg-[color-mix(in_oklab,var(--muted)_50%,var(--table-surface))]",
+          "[&>tr[aria-current=true]:hover]:bg-[color-mix(in_oklab,var(--brand)_12%,var(--table-surface))]",
+          "dark:[&>tr[aria-current=true]:hover]:bg-[color-mix(in_oklab,var(--brand)_18%,var(--table-surface))]",
+        ],
+      },
       false: {},
     },
     // Sticky header: header cells pin to the top of the scroll container. The consumer caps the
@@ -194,14 +230,19 @@ export function TableFooter({ className, ...props }: React.ComponentProps<"tfoot
 export interface TableRowProps extends React.ComponentProps<"tr"> {
   /** Highlight the row as selected; stamps `data-state="selected"`. */
   selected?: boolean
+  /** Mark the row as the current one, e.g. the record open in a detail pane beside the table.
+   *  Stamps `aria-current="true"` and paints a brand tint that stays distinct from `selected`
+   *  (a row can be both: checked for a bulk action and open). */
+  current?: boolean
 }
 
-export function TableRow({ className, selected, ...props }: TableRowProps) {
+export function TableRow({ className, selected, current, ...props }: TableRowProps) {
   const { slots } = useTableContext("TableRow")
   return (
     <tr
       data-slot="table-row"
       data-state={selected ? "selected" : undefined}
+      aria-current={current ? "true" : undefined}
       className={slots.row({ className })}
       {...props}
     />

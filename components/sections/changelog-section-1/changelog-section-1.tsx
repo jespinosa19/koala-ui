@@ -25,30 +25,30 @@ const RELEASES = [
   {
     version: "v11",
     date: "December 13, 2025",
-    title: "Acme v11",
+    title: "Koala UI v11",
     description:
       "This release focuses on faster search, shared dashboards, and a fully responsive workspace that feels the same on a laptop as it does on your phone.",
   },
   {
     version: "Mobile",
     date: "August 9, 2025",
-    title: "Introducing Acme for iOS and Android",
+    title: "Introducing Koala UI for iOS and Android",
     description:
-      "Acme now runs natively on your phone, including offline projects, push alerts for mentions, and light/dark themes, so your team can keep work moving from anywhere.",
+      "Koala UI now runs natively on your phone, including offline projects, push alerts for mentions, and light/dark themes, so your team can keep work moving from anywhere.",
   },
   {
     version: "v10",
     date: "July 14, 2025",
-    title: "Acme v10",
+    title: "Koala UI v10",
     description:
       "Introducing a visual refresh with a calmer sidebar, faster page loads, and enhanced accessibility. This release also adds key tools like a rich text editor, recurring tasks, time tracking, guest access, and emoji reactions.",
   },
   {
     version: "v9",
     date: "June 9, 2025",
-    title: "Acme v9",
+    title: "Koala UI v9",
     description:
-      "After our spring security review, we've spent weeks bringing Acme to the next level. Here's everything new and improved in this release.",
+      "After our spring security review, we've spent weeks bringing Koala UI to the next level. Here's everything new and improved in this release.",
   },
 ]
 
@@ -61,7 +61,7 @@ export function ChangelogSection1() {
             <SectionHeaderHeading>New Month, New Updates</SectionHeaderHeading>
             <SectionHeaderDescription>
               We spend the weeks updating the product, introducing new features, new integrations,
-              and new workflows. Until Acme is perfect.
+              and new workflows. Until Koala UI is perfect.
             </SectionHeaderDescription>
           </SectionHeaderText>
         </SectionHeader>

@@ -18,10 +18,10 @@ The one label and helper-text recipe behind every form control in Koala. Input, 
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add label
+npx koalaui-cli@latest add label
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/label/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -129,7 +129,7 @@ Pass `disabled` to `Label`, or set `disabled` on the surrounding `Field` and the
 
 ## Exports and dependencies
 
-`npx koalaui-cli add label` writes `components/ui/label/`. Import from `@/components/ui/label`:
+`npx koalaui-cli@latest add label` writes `components/ui/label/`. Import from `@/components/ui/label`:
 
 - Components and helpers: `Label`, `Hint`, `labelVariants`
 - Types: `LabelProps`, `HintProps`

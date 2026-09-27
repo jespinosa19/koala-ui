@@ -34,10 +34,10 @@ A floating rail of icon controls that morphs, in place, into a labelled menu wit
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add dock
+npx koalaui-cli@latest add dock
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/dock/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -255,7 +255,7 @@ Position it yourself, the way you would any floating surface: typically fixed, b
 
 ## Exports and dependencies
 
-`npx koalaui-cli add dock` writes `components/ui/dock/`. Import from `@/components/ui/dock`:
+`npx koalaui-cli@latest add dock` writes `components/ui/dock/`. Import from `@/components/ui/dock`:
 
 - Components and helpers: `Dock`, `DockItem`, `DockGroup`, `DockLabel`, `DockExpander`, `DockSeparator`, `dockVariants`
 - Types: `DockProps`, `DockItemProps`, `DockGroupProps`, `DockLabelProps`, `DockExpanderProps`

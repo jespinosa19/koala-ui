@@ -193,14 +193,33 @@ export interface ToolbarButtonProps
   tooltipPlacement?: TooltipProps["placement"]
   /** Disable the tactile scale-on-press. */
   static?: boolean
+  /**
+   * `primary` fills the control with the brand accent: the one action the bar exists for (play
+   * in a transport, run in an editor). Keep it to one per bar; the rest stay quiet.
+   * @default "default"
+   */
+  variant?: "default" | "primary"
 }
 
+// The emphasized control keeps its siblings' box and corners, so the band's rhythm and the
+// concentric radius hold; the emphasis is the fill alone. The primary action is brand, as on
+// Button. Hover, pressed and open stay on the fill instead of dropping to the accent chip, and
+// the merge order lets it win over the `solid` bar's re-tinted controls too.
+const primaryControl = [
+  "bg-brand text-brand-foreground hover:bg-brand/90 hover:text-brand-foreground",
+  "data-[pressed]:bg-brand data-[pressed]:text-brand-foreground",
+  "data-[state=on]:bg-brand data-[state=on]:text-brand-foreground",
+  "data-[state=open]:bg-brand/90 data-[state=open]:text-brand-foreground",
+]
+
 /**
- * A single icon control. Pass `tooltip` for a labelled hint, `pressed` to mark it active, or
- * `caret` to make it a dropdown trigger (compose it with our DropdownMenu/Popover via `asChild`).
+ * A single icon control. Pass `tooltip` for a labelled hint, `pressed` to mark it active,
+ * `caret` to make it a dropdown trigger (compose it with our DropdownMenu/Popover via `asChild`),
+ * or `variant="primary"` for the bar's main action.
  */
 export function ToolbarButton({
   className,
+  variant = "default",
   pressed,
   tooltip,
   shortcut,
@@ -220,6 +239,7 @@ export function ToolbarButton({
     <ToolbarPrimitive.Button
       type="button"
       data-slot="toolbar-button"
+      data-variant={variant === "primary" ? "primary" : undefined}
       data-pressed={pressed || undefined}
       aria-pressed={pressed}
       aria-label={label}
@@ -230,6 +250,7 @@ export function ToolbarButton({
         // open menu (`data-state=open`), flip the trailing caret so the chevron points at its
         // now-open surface. `transition-transform` covers the standalone `rotate` prop in v4.
         className: cn(
+          variant === "primary" && primaryControl,
           caret && "w-auto gap-0.5 px-1",
           caret &&
             "[&>svg:last-child]:transition-transform [&>svg:last-child]:duration-fast [&>svg:last-child]:ease-out data-[state=open]:[&>svg:last-child]:rotate-180 motion-reduce:[&>svg:last-child]:transition-none",

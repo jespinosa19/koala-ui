@@ -16,10 +16,10 @@ Triggers an action or event. The reference single-element component: one tv reci
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add button
+npx koalaui-cli@latest add button
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/button/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -69,6 +69,24 @@ A button sitting on a color band or over a photo has the wrong ground: the brand
 ```tsx
 <Button tone="onInverse">Get started</Button>
 <Button variant="outline" tone="onInverse">Talk to sales</Button>
+```
+
+## Over a picture
+
+`tone="onMedia"` trusts the ground to be dark or saturated. An action placed straight on a picture can't: a thumbnail's corner button may land on a white frame as easily as on a dark one, and a white ghost glyph vanishes there. `variant="overlay"` brings its own ground, a dark translucent chip with a faint white edge (the same recipe as Badge's `overlay`), so it reads over any frame. Its focus ring is white on a transparent offset, like the on-media tones.
+
+```tsx
+<div className="relative aspect-video overflow-hidden rounded-xl">
+  <img src={thumbnail} alt="" className="size-full object-cover" />
+  <div className="absolute top-2 right-2 flex gap-1">
+    <Button variant="overlay" size="sm" iconOnly aria-label="Download">
+      <DownloadSimple />
+    </Button>
+    <Button variant="overlay" size="sm" iconOnly aria-label="Delete">
+      <Trash />
+    </Button>
+  </div>
+</div>
 ```
 
 ## Sizes
@@ -275,7 +293,7 @@ At least 44 by 44px. With a mouse every size meets 40px (sm grows its target wit
 
 ## Exports and dependencies
 
-`npx koalaui-cli add button` writes `components/ui/button/`. Import from `@/components/ui/button`:
+`npx koalaui-cli@latest add button` writes `components/ui/button/`. Import from `@/components/ui/button`:
 
 - Components and helpers: `Button`, `buttonVariants`, `SocialButton`, `socialProviders`, `SOCIAL_PROVIDER_IDS`
 - Types: `ButtonProps`, `SocialButtonProps`, `SocialProvider`, `SocialMeta`

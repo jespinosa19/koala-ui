@@ -15,10 +15,10 @@ A toggle for an instant, self-applying boolean, built on Radix Switch. Use it fo
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add switch
+npx koalaui-cli@latest add switch
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/switch/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -100,7 +100,7 @@ No. A transparent pseudo-element extends the vertical click area to 40px without
 
 ## Exports and dependencies
 
-`npx koalaui-cli add switch` writes `components/ui/switch/`. Import from `@/components/ui/switch`:
+`npx koalaui-cli@latest add switch` writes `components/ui/switch/`. Import from `@/components/ui/switch`:
 
 - Components and helpers: `Switch`, `SwitchIndicator`, `switchVariants`
 - Types: `SwitchProps`, `SwitchIndicatorProps`

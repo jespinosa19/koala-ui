@@ -64,10 +64,10 @@ The application and page shell. One set of parts and two app shells that share i
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add layout
+npx koalaui-cli@latest add layout
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/layout/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -128,7 +128,17 @@ What the set deliberately does *not* contain is a second *decorated* app shell: 
       {children}
     </LayoutContainer>
   </LayoutContent>
-  <LayoutAside>{/* on-this-page nav */}</LayoutAside>
+  <LayoutAside>
+    <TableOfContents>
+      <TableOfContentsTitle>On this page</TableOfContentsTitle>
+      <TableOfContentsList>
+        <TableOfContentsItem href="#overview">Overview</TableOfContentsItem>
+        <TableOfContentsItem href="#anatomy">Anatomy</TableOfContentsItem>
+        <TableOfContentsItem href="#variants">Variants</TableOfContentsItem>
+        <TableOfContentsItem href="#density">Density</TableOfContentsItem>
+      </TableOfContentsList>
+    </TableOfContents>
+  </LayoutAside>
 </Layout>
 ```
 
@@ -712,7 +722,7 @@ Put two or more `LayoutPane`s straight inside `LayoutContent`. The sheet lays th
 
 ## Exports and dependencies
 
-`npx koalaui-cli add layout` writes `components/ui/layout/`. Import from `@/components/ui/layout`:
+`npx koalaui-cli@latest add layout` writes `components/ui/layout/`. Import from `@/components/ui/layout`:
 
 - Components and helpers: `Layout`, `LayoutTopbar`, `LayoutBody`, `LayoutRail`, `LayoutSidebar`, `LayoutSidebarTrigger`, `useLayoutSidebar`, `LayoutContent`, `LayoutPane`, `LayoutPaneHeader`, `LayoutContainer`, `LayoutAside`, `LayoutHeader`, `LayoutMobileBar`, `LayoutMobileSidebar`, `PageHeader`, `PageHeaderContent`, `PageHeaderHeading`, `PageHeaderDescription`, `PageHeaderActions`, `SplitLayout`, `SplitPane`, `SplitPaneBody`, `SplitMedia`, `SplitMediaOverlay`, `layoutVariants`, `splitLayoutVariants`
 - Types: `LayoutProps`, `LayoutSidebarProps`, `LayoutSidebarTriggerProps`, `LayoutPaneProps`, `LayoutContainerProps`, `LayoutHeaderProps`, `LayoutMobileSidebarProps`, `SplitLayoutProps`, `SplitPaneBodyProps`

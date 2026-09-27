@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Progress as ProgressPrimitive } from "radix-ui"
 
+import { cn } from "@/lib/utils"
 import { tv, type VariantProps } from "@/lib/tv"
 import { createContext } from "@/lib/create-context"
 
@@ -26,6 +27,10 @@ import { createContext } from "@/lib/create-context"
  * Pass `value={null}` for indeterminate: the fill becomes a short pill sweeping the track, which is
  * the honest reading when there is no percentage to report.
  *
+ * `orientation="vertical"` stands the bar up: the fill rises from the floor, `size` sets the bar's
+ * width instead of its height, and the header parts stack centred above it. Give the root a height,
+ * or let a parent size it (`h-auto flex-1` in a column flex parent); it defaults to 128px.
+ *
  * `"use client"` because Radix Progress carries context and the value animates on change.
  */
 export const progressVariants = tv({
@@ -36,7 +41,32 @@ export const progressVariants = tv({
     value: "text-sm tabular-nums text-muted-foreground",
     // The track clips the fill, so the fill inherits the track's pill ends and an indeterminate
     // sweep can run past both edges without escaping.
-    track: "relative w-full overflow-hidden rounded-full bg-muted",
+    //
+    // Its ground is a relative tint of the foreground, not the opaque `--muted`: an opaque muted
+    // groove vanished on a muted ground (a selected DataTable row, a muted panel), while a tint
+    // always sits one step off whatever is behind it. The alphas are matched to `--muted`: 4% lands
+    // exactly on light's muted over white, and 6% in dark is the trough ink the Tabs pill list and
+    // the segmented ToggleGroup already use, within a hair of dark's muted over the card (on the
+    // bare dark page it sits a step softer, as those troughs do). It rides a variable the track
+    // declares for itself, so the `dark:` swap only ever writes the variable: a consumer's own
+    // track colour (`[&_[data-slot=progress-track]]:bg-…`) still wins, with no specificity fight.
+    track: [
+      "relative w-full overflow-hidden rounded-full bg-(--progress-track)",
+      "[--progress-track:color-mix(in_oklab,var(--foreground)_4%,transparent)]",
+      "dark:[--progress-track:color-mix(in_oklab,var(--foreground)_6%,transparent)]",
+    ],
+    // Vertical only: the frame the fill rises in. It is absolutely positioned over the track, so its
+    // height is the track's used height whatever sized the track (a class, a flexing parent, a
+    // stretch), and the fill's percentage height always resolves; a percentage of an in-flow
+    // flexed track, or container-query units, came out 0 inside a column flex parent. It inherits
+    // the track's padding and radius, so padding on the track insets the fill (a gauge's well,
+    // with no calc) and the fill's corners follow the track's instead of a pill's dome.
+    rail: "absolute inset-0 flex flex-col justify-end rounded-[inherit] p-[inherit]",
+    // Vertical indeterminate only: a square as tall as the track, centred on it and turned a
+    // quarter anticlockwise, so the shared X sweep keyframe (`--animate-progress-indeterminate`)
+    // runs from the floor to the top. The square is wider than the track; the track clips it to
+    // the bar. `aspect-square` on a full-height box is what makes its side the track's height.
+    sweep: "absolute top-0 left-1/2 aspect-square h-full -translate-x-1/2 -rotate-90",
     // Width (not scaleX) is driven inline from `value`: scaling would squash the pill's rounded
     // caps into ellipses at low values, and the fill is one contained element, so the layout cost
     // is nil.
@@ -85,8 +115,42 @@ export const progressVariants = tv({
       },
       none: { indicator: "transition-none" },
     },
+    /**
+     * Which way the bar runs. `vertical` stands it up: the fill rises from the floor, the header
+     * stacks centred above the track, and the track takes the root's height (128px unless the
+     * root is given one). `size` maps to the track's width there, in the compound variants below.
+     */
+    orientation: {
+      horizontal: {},
+      vertical: {
+        root: "h-32 w-fit items-center",
+        header: "flex-col justify-center gap-0.5 text-center",
+        track: "min-h-0 flex-1",
+        // The height is driven inline from `value`, in the rail; the corners follow the track's.
+        indicator: "w-full shrink-0 rounded-[inherit]",
+      },
+    },
   },
-  defaultVariants: { variant: "default", size: "sm", tone: "brand", transition: "smooth" },
+  compoundVariants: [
+    // Vertical: the size scale sets the bar's thickness, its width, and the height is the root's.
+    { orientation: "vertical", size: "xs", className: { track: "h-auto w-1" } },
+    { orientation: "vertical", size: "sm", className: { track: "h-auto w-1.5" } },
+    { orientation: "vertical", size: "md", className: { track: "h-auto w-2" } },
+    { orientation: "vertical", size: "lg", className: { track: "h-auto w-3" } },
+    // Standing up, the fill glides on its height.
+    {
+      orientation: "vertical",
+      transition: "smooth",
+      className: { indicator: "transition-[height] duration-base ease-out motion-reduce:transition-none" },
+    },
+  ],
+  defaultVariants: {
+    variant: "default",
+    size: "sm",
+    tone: "brand",
+    transition: "smooth",
+    orientation: "horizontal",
+  },
 })
 
 type Slots = ReturnType<typeof progressVariants>
@@ -109,6 +173,13 @@ export interface ProgressProps
   value?: number | null
   /** Upper bound of the scale. Defaults to 100, so `value` reads as a percentage. */
   max?: number
+  /**
+   * Which way the bar runs. `vertical` fills from the bottom up (a tank, a level meter): `size`
+   * then sets the bar's width, the header parts stack centred above it, and the root needs a
+   * height (`className="h-40"`, 128px by default). Stamped as `data-orientation` on the root.
+   * @default "horizontal"
+   */
+  orientation?: "horizontal" | "vertical"
 }
 
 function Progress({
@@ -118,11 +189,13 @@ function Progress({
   size,
   tone,
   transition,
+  orientation = "horizontal",
   className,
   children,
   ...props
 }: ProgressProps) {
-  const slots = progressVariants({ variant, size, tone, transition })
+  const slots = progressVariants({ variant, size, tone, transition, orientation })
+  const vertical = orientation === "vertical"
   const labelId = React.useId()
 
   // Clamp before painting: a value outside the scale would otherwise overflow the track, and Radix
@@ -139,10 +212,34 @@ function Progress({
   )
   const labelled = hasLabel && !props["aria-label"] && !props["aria-labelledby"]
 
+  const indicator = (
+    <ProgressPrimitive.Indicator
+      data-slot="progress-indicator"
+      className={slots.indicator({
+        // Indeterminate: a short pill sweeps the track on the shared motion token, so no
+        // length is implied. Determinate: the width (the height, standing up) *is* the value.
+        // Standing up, the sweep runs inside the turned `sweep` square, a band as thick as the
+        // square; the track clips it to the bar, so its own corners never show.
+        className:
+          clamped === null
+            ? cn(
+                "w-1/4 animate-progress-indeterminate transition-none motion-reduce:animate-none",
+                vertical && "h-full rounded-none",
+              )
+            : undefined,
+      })}
+      style={clamped === null ? undefined : vertical ? { height: `${percent}%` } : { width: `${percent}%` }}
+    />
+  )
+
+  // No `aria-orientation`: WAI-ARIA does not allow it on `progressbar` (axe flags it), and the
+  // direction a bar fills carries no meaning for assistive tech, which reads the value either way.
+  // `data-orientation` is the styling hook, the same attribute Radix stamps on its oriented parts.
   return (
     <ProgressProvider value={clamped} max={max} slots={slots} labelId={labelId}>
       <ProgressPrimitive.Root
         data-slot="progress"
+        data-orientation={orientation}
         value={clamped}
         max={max}
         aria-labelledby={labelled ? labelId : undefined}
@@ -155,18 +252,13 @@ function Progress({
           </div>
         ) : null}
         <div data-slot="progress-track" className={slots.track()}>
-          <ProgressPrimitive.Indicator
-            data-slot="progress-indicator"
-            className={slots.indicator({
-              // Indeterminate: a short pill sweeps the track on the shared motion token, so no
-              // width is implied. Determinate: the width *is* the value.
-              className:
-                clamped === null
-                  ? "w-1/4 animate-progress-indeterminate transition-none motion-reduce:animate-none"
-                  : undefined,
-            })}
-            style={clamped === null ? undefined : { width: `${percent}%` }}
-          />
+          {!vertical ? (
+            indicator
+          ) : clamped === null ? (
+            <div className={slots.sweep()}>{indicator}</div>
+          ) : (
+            <div className={slots.rail()}>{indicator}</div>
+          )}
         </div>
       </ProgressPrimitive.Root>
     </ProgressProvider>
@@ -231,24 +323,31 @@ function ProgressValue({ className, children, ...props }: ProgressValueProps) {
  *   const progress = useScrollProgress()
  *   <Progress value={progress} size="xs" aria-label="Reading progress" />
  *
+ * Pass a ref to measure a scroll container instead of the document: a reader pane, a modal body,
+ * a panel that scrolls on its own.
+ *
+ *   const pane = React.useRef<HTMLDivElement>(null)
+ *   const progress = useScrollProgress(pane)
+ *
  * Reads its own `document`, so it works unchanged inside the docs preview iframes (the component
  * executes in that realm). State is only ever set from the scroll/resize listener, never from the
  * effect body, per the strict react-hooks lint (memory `react-hooks-strict-lint`); the first
  * measurement is taken by calling the same handler once on mount.
  */
-export function useScrollProgress(): number {
+export function useScrollProgress(target?: React.RefObject<HTMLElement | null>): number {
   const [progress, setProgress] = React.useState(0)
 
   React.useEffect(() => {
+    const box = target?.current ?? null
     let frame = 0
 
     const measure = () => {
       frame = 0
-      const doc = document.documentElement
-      // The scrollable distance, not the document height: at the bottom of a page one viewport
+      const scroller = box ?? document.documentElement
+      // The scrollable distance, not the content height: at the bottom of a page one viewport
       // taller than the window, scrollTop equals this and the bar reads a true 100%.
-      const scrollable = doc.scrollHeight - doc.clientHeight
-      setProgress(scrollable <= 0 ? 0 : Math.min(100, (doc.scrollTop / scrollable) * 100))
+      const scrollable = scroller.scrollHeight - scroller.clientHeight
+      setProgress(scrollable <= 0 ? 0 : Math.min(100, (scroller.scrollTop / scrollable) * 100))
     }
 
     // Coalesce to one measurement per frame: scroll fires far faster than we can paint.
@@ -256,15 +355,17 @@ export function useScrollProgress(): number {
       if (frame === 0) frame = requestAnimationFrame(measure)
     }
 
+    // A container reports its own scroll; the document reports through the window.
+    const source: HTMLElement | Window = box ?? window
     onScroll()
-    window.addEventListener("scroll", onScroll, { passive: true })
+    source.addEventListener("scroll", onScroll, { passive: true })
     window.addEventListener("resize", onScroll)
     return () => {
       if (frame !== 0) cancelAnimationFrame(frame)
-      window.removeEventListener("scroll", onScroll)
+      source.removeEventListener("scroll", onScroll)
       window.removeEventListener("resize", onScroll)
     }
-  }, [])
+  }, [target])
 
   return progress
 }

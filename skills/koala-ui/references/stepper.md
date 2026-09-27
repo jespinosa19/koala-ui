@@ -30,10 +30,10 @@ const [step, setStep] = React.useState(1)
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add stepper
+npx koalaui-cli@latest add stepper
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/stepper/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -204,7 +204,7 @@ Reach for `DialogStepper` from `@/components/ui/dialog`. It places the stepper f
 
 ## Exports and dependencies
 
-`npx koalaui-cli add stepper` writes `components/ui/stepper/`. Import from `@/components/ui/stepper`:
+`npx koalaui-cli@latest add stepper` writes `components/ui/stepper/`. Import from `@/components/ui/stepper`:
 
 - Components and helpers: `Stepper`, `StepperItem`, `StepperTrigger`, `StepperIndicator`, `StepperTitle`, `StepperDescription`, `StepperSeparator`, `stepperVariants`
 - Types: `StepperProps`, `StepperItemProps`, `StepperTriggerProps`

@@ -12,10 +12,10 @@ A QR code rendered as crisp, dependency-free SVG. The matrix is generated in-hou
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add qr-code
+npx koalaui-cli@latest add qr-code
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/qr-code/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -125,7 +125,7 @@ Overlay one yourself with an absolutely-positioned element centered over the cod
 
 ## Exports and dependencies
 
-`npx koalaui-cli add qr-code` writes `components/ui/qr-code/`. Import from `@/components/ui/qr-code`:
+`npx koalaui-cli@latest add qr-code` writes `components/ui/qr-code/`. Import from `@/components/ui/qr-code`:
 
 - Components and helpers: `QRCode`, `qrCodeVariants`, `encodeQR`
 - Types: `QRCodeProps`, `QRErrorCorrection`, `QRMatrix`

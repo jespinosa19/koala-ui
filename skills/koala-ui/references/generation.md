@@ -42,10 +42,10 @@ The card a model fills while it paints a picture. The frame is sized by its rati
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add generation
+npx koalaui-cli@latest add generation
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/generation/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -294,7 +294,7 @@ Yes, and there is very little colour to re-theme. The dot field is plain foregro
 
 ## Exports and dependencies
 
-`npx koalaui-cli add generation` writes `components/ui/generation/`. Import from `@/components/ui/generation`:
+`npx koalaui-cli@latest add generation` writes `components/ui/generation/`. Import from `@/components/ui/generation`:
 
 - Components and helpers: `Generation`, `GenerationHeader`, `GenerationIcon`, `GenerationLabel`, `GenerationActions`, `GenerationAction`, `GenerationStatus`, `GenerationPrompt`, `GenerationCanvas`, `GenerationImage`, `GenerationCaption`, `GenerationProgress`, `GenerationPercent`, `GenerationOverlay`, `GenerationGrid`, `GenerationFooter`, `GenerationMeta`, `generationVariants`
 - Types: `GenerationProps`, `GenerationActionProps`, `GenerationStatusProps`, `GenerationPromptProps`, `GenerationCanvasProps`, `GenerationImageProps`, `GenerationCaptionProps`, `GenerationProgressProps`, `GenerationPercentProps`, `GenerationGridProps`, `GenerationState`, `GenerationRatio`

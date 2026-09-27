@@ -15,10 +15,10 @@ A WYSIWYG editor for formatted prose: headings, bold, italic, underline, links a
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add rich-text-editor
+npx koalaui-cli@latest add rich-text-editor
 ```
 
 Manual: run `npm install @tiptap/react @tiptap/starter-kit @tiptap/pm @tiptap/extensions radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/rich-text-editor/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -200,7 +200,7 @@ Yes. Set `density="compact"` per instance or once with a `DensityProvider` to ti
 
 ## Exports and dependencies
 
-`npx koalaui-cli add rich-text-editor` writes `components/ui/rich-text-editor/`. Import from `@/components/ui/rich-text-editor`:
+`npx koalaui-cli@latest add rich-text-editor` writes `components/ui/rich-text-editor/`. Import from `@/components/ui/rich-text-editor`:
 
 - Components and helpers: `RichTextEditor`, `RichTextEditorToolbar`, `RichTextEditorButton`, `RichTextEditorSeparator`, `RichTextEditorContent`, `RichTextEditorBubbleMenu`, `useRichTextEditor`, `richTextEditorVariants`
 - Types: `RichTextEditorProps`, `RichTextEditorToolbarProps`, `RichTextEditorButtonProps`, `RichTextEditorBubbleMenuProps`

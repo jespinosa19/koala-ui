@@ -26,7 +26,7 @@ A marketing-ready frequently-asked-questions section built on the Accordion. It 
       className that merges last, so you can re-theme globally or override one instance.
     </FaqsItem>
     <FaqsItem question="How do I install a component?">
-      Run npx koalaui-cli add &lt;component&gt;, or copy the source straight from the docs. There is
+      Run npx koalaui-cli@latest add &lt;component&gt;, or copy the source straight from the docs. There is
       no runtime package to lock you in.
     </FaqsItem>
   </FaqsList>
@@ -37,10 +37,10 @@ A marketing-ready frequently-asked-questions section built on the Accordion. It 
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add faqs
+npx koalaui-cli@latest add faqs
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/faqs/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -354,7 +354,7 @@ Because the parts are plain composition, just place your prompt and Button insid
 
 ## Exports and dependencies
 
-`npx koalaui-cli add faqs` writes `components/ui/faqs/`. Import from `@/components/ui/faqs`:
+`npx koalaui-cli@latest add faqs` writes `components/ui/faqs/`. Import from `@/components/ui/faqs`:
 
 - Components and helpers: `Faqs`, `FaqsHeader`, `FaqsTitle`, `FaqsDescription`, `FaqsGroup`, `FaqsList`, `FaqsItem`, `FaqsFeedback`, `FaqsFooter`, `faqsVariants`
 - Types: `FaqsProps`, `FaqsGroupProps`, `FaqsListProps`, `FaqsItemProps`, `FaqsFeedbackProps`

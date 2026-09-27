@@ -83,7 +83,11 @@ export interface BadgeProps
     VariantProps<typeof badgeVariants> {
   /** Render the child element as the badge (Radix Slot). Ignores `dot`/`onRemove`. */
   asChild?: boolean
-  /** Show a leading status dot in the current text color. */
+  /**
+   * Show a leading status dot in the current text color. Passing it as a boolean (even `false`)
+   * keeps the dot's slot mounted, so flipping it animates: the dot grows in and the fill gives
+   * way to the hairline, instead of the badge swapping treatments in one frame.
+   */
   dot?: boolean
   /** When set, renders a trailing dismiss button that calls this handler. */
   onRemove?: () => void
@@ -97,13 +101,16 @@ export function Badge({
   size,
   pill,
   asChild = false,
-  dot = false,
+  dot,
   onRemove,
   removeLabel = "Remove",
   children,
   ...props
 }: BadgeProps) {
-  const classes = badgeVariants({ variant, size, pill, dot, className })
+  const classes = badgeVariants({ variant, size, pill, dot: !!dot, className })
+  // A badge that never mentions `dot` renders no dot slot at all. One that passes it, `false`
+  // included, is a badge whose dot can change, so the slot stays mounted to animate both ways.
+  const dotSlot = dot !== undefined
 
   // asChild composes the styles onto a consumer element (e.g. a link); the dot/dismiss
   // affordances require our own element, so they're omitted in that mode.
@@ -117,13 +124,28 @@ export function Badge({
 
   return (
     <span data-slot="badge" className={classes} {...props}>
-      {dot && (
-        <span aria-hidden className="size-1.5 shrink-0 rounded-full bg-current" />
+      {dotSlot && (
+        <span
+          aria-hidden
+          data-slot="badge-dot"
+          className={cn(
+            "h-1.5 shrink-0 rounded-full bg-current",
+            // Width, not just scale, so the label slides over as the dot makes room. Named
+            // props only (`scale` is its own property in v4, not `transform`).
+            "transition-[width,margin,scale,opacity] duration-base ease-out motion-reduce:transition-none",
+            // Off: no width, and a negative end margin the size of the flex gap cancels the gap
+            // it would still take, so an off badge measures exactly like one with no dot slot.
+            dot ? "w-1.5" : ["w-0 scale-0 opacity-0", size === "sm" ? "-me-1" : "-me-1.5"],
+          )}
+        />
       )}
-      {dot ? (
+      {dotSlot ? (
         // The label's color is the recipe's call, not this file's: with a page-ground tone the
         // dot compound steps it back to foreground, while an `overlay*` tone keeps the root's white.
-        <span data-slot="badge-label">{children}</span>
+        // Its own color transition, so the swap tweens alongside the root's fill.
+        <span data-slot="badge-label" className="transition-colors duration-fast ease-out">
+          {children}
+        </span>
       ) : (
         children
       )}

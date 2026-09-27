@@ -16,10 +16,10 @@ const [state, setState] = React.useState("Draft")
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add animated-label
+npx koalaui-cli@latest add animated-label
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/animated-label/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -101,7 +101,7 @@ The roll and the width morph are both off and the label swaps instantly. The ani
 
 ## Exports and dependencies
 
-`npx koalaui-cli add animated-label` writes `components/ui/animated-label/`. Import from `@/components/ui/animated-label`:
+`npx koalaui-cli@latest add animated-label` writes `components/ui/animated-label/`. Import from `@/components/ui/animated-label`:
 
 - Components and helpers: `AnimatedLabel`, `animatedLabelVariants`
 - Types: `AnimatedLabelProps`

@@ -30,10 +30,10 @@ Inline AI edit suggestions over a body of text. The AI marks spans with a colore
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add suggestions
+npx koalaui-cli@latest add suggestions
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/suggestions/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -126,7 +126,7 @@ It is a real focusable button that opens our Popover, so it is reachable by keyb
 
 ## Exports and dependencies
 
-`npx koalaui-cli add suggestions` writes `components/ui/suggestions/`. Import from `@/components/ui/suggestions`:
+`npx koalaui-cli@latest add suggestions` writes `components/ui/suggestions/`. Import from `@/components/ui/suggestions`:
 
 - Components and helpers: `Suggestions`, `SuggestionMark`, `suggestionVariants`
 - Types: `SuggestionsProps`, `SuggestionMarkProps`

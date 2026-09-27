@@ -26,10 +26,10 @@ A KPI/metric card for dashboards: a label, a big tabular-nums value, a direction
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add stat
+npx koalaui-cli@latest add stat
 ```
 
 Manual: run `npm install @phosphor-icons/react radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/stat/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -81,7 +81,7 @@ export function OrdersStat() {
       <StatLabel>Total orders</StatLabel>
       <StatIcon className="bg-primary/10 text-primary"><ShoppingBag /></StatIcon>
     </StatHeader>
-    <div className="flex items-center gap-2">
+    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
       <StatValue>1,429</StatValue>
       <StatTrend direction="up">12.4%</StatTrend>
     </div>
@@ -110,7 +110,7 @@ A tile reads top-to-bottom: a `StatHeader` pairs the label with a tinted `StatIc
 
 ## Trend
 
-`StatTrend` is a soft chip whose arrow and color come from `direction`: `up` reads green, `down` red, and `neutral` muted. For metrics where down is the good outcome (refunds, churn, bounce rate), set `inverted`: the color flips to match the meaning while the arrow keeps pointing the honest way.
+`StatTrend` is a soft chip whose arrow and color come from `direction`: `up` reads green, `down` red, and `neutral` muted. For metrics where down is the good outcome (refunds, churn, bounce rate), set `inverted`: the color flips to match the meaning while the arrow keeps pointing the honest way. The chip never wraps or shrinks, so a “+1.1 pts” in a narrow tile stays one chip and the row beside it gives way.
 
 ```tsx
 <StatTrend direction="up">12.4%</StatTrend>          {/* green, ↑ */}
@@ -163,12 +163,78 @@ Pass `countUp` to `StatValue` and the figure counts up from zero to its value th
 
 ## Variants
 
-`default` sits on a hairline border with a soft shadow; `outline` drops the shadow for flat, gridded dashboards; `elevated` trades the border for a lifted shadow when a tile needs to float.
+`default` sits on a hairline border with a soft shadow; `outline` drops the shadow for flat, gridded dashboards; `elevated` trades the border for a lifted shadow when a tile needs to float; `plain` has no tile at all.
 
 ```tsx
 <Stat variant="default">…</Stat>
 <Stat variant="outline">…</Stat>
 <Stat variant="elevated">…</Stat>
+<Stat variant="plain">…</Stat>
+```
+
+## Without a frame
+
+Most dashboards lead a chart or a card with one big figure, and that figure is not a tile. `variant="plain"` drops the ring, the shadow, the fill and the padding, and keeps everything else: the display-face figure, the density’s type ramp, and a tighter rhythm between the parts, since there is no frame left to space them against. Lay it on the sheet beside a chart, or inside a [Card](https://koala-ui.vercel.app/docs/components/card.md), where the card is the frame. Inside a `StatGroup` the group already owns the frame, so a plain tile keeps the group’s padding.
+
+```tsx
+// On the sheet: the figure with no tile around it.
+<Stat variant="plain">
+  <StatLabel>Net sales</StatLabel>
+  <div className="flex flex-wrap items-center gap-2">
+    <StatValue>$48,290</StatValue>
+    <StatTrend direction="up">+8.1%</StatTrend>
+  </div>
+  <StatCaption className="tabular-nums">Sep 21–27, against the week before</StatCaption>
+</Stat>
+
+// Inside a Card: the card is the frame.
+<Card>
+  <CardHeader>
+    <CardTitle>Refunds</CardTitle>
+    <CardDescription>Money returned to customers this week.</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <Stat variant="plain">
+      <div className="flex flex-wrap items-center gap-2">
+        <StatValue>$2,840</StatValue>
+        <StatTrend direction="down" inverted>-4.2%</StatTrend>
+      </div>
+      <StatCaption className="tabular-nums">32 orders, 2.1% of sales</StatCaption>
+    </Stat>
+  </CardContent>
+</Card>
+```
+
+## Parts on their own
+
+The parts do not need a Stat around them. `StatValue`, `StatTrend`, `StatLabel` and `StatCaption` (and the header, footer and icon rows) render anywhere with the plain look at the ambient density, so the headline figure of a chart card is a `StatValue`, and the trend chip beside a number in a description is a `StatTrend`, the same chip a tile carries. `countUp` works there too. Only `StatSparkline` needs a Stat, because it bleeds to the tile’s edges.
+
+```tsx
+// The headline figure of a card, with the window it covers:
+<Card>
+  <CardHeader>
+    <CardTitle>Orders</CardTitle>
+    <CardDescription>Placed on the storefront.</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <div className="flex items-baseline justify-between gap-3">
+      <StatValue>1,429</StatValue>
+      <StatCaption className="tabular-nums">Sep 21–27</StatCaption>
+    </div>
+  </CardContent>
+</Card>
+
+// The trend chip beside any figure:
+<Card>
+  <CardHeader>
+    <CardTitle>Traffic sources</CardTitle>
+    <CardDescription className="flex flex-wrap items-center gap-x-2 gap-y-1">
+      <span className="tabular-nums">12,480 visits</span>
+      <StatTrend direction="up">+6.3%</StatTrend>
+      <span>against last week</span>
+    </CardDescription>
+  </CardHeader>
+</Card>
 ```
 
 ## Density
@@ -210,7 +276,7 @@ A KPI tile is data, not a control, so it stays inert by default. When the whole 
 
 ## API reference
 
-`Stat` forwards all `div` props and adds `variant` (`default | outline | elevated`), `density` (`compact | comfortable`), `interactive`, and `asChild`. `StatGroup` bands a row of tiles into one surface and forwards `div` props plus `variant` (`default | outline | elevated`), `columns` (`2 | 3 | 4`), and `asChild`. The parts `StatHeader`, `StatLabel`, `StatValue`, `StatCaption`, `StatFooter`, `StatIcon` all forward `div` props; `StatValue` adds `countUp` to count a string figure up from zero on scroll. `StatTrend` adds `direction` (`up | down | neutral`) and `inverted`; `StatSparkline` takes a `data: number[]`, an optional `strokeWidth`, and `tooltip` to enable per-point hover. Every part accepts `className`, merged last.
+`Stat` forwards all `div` props and adds `variant` (`default | outline | elevated | plain`), `density` (`compact | comfortable`), `interactive`, and `asChild`. `StatGroup` bands a row of tiles into one surface and forwards `div` props plus `variant` (`default | outline | elevated`), `columns` (`2 | 3 | 4`), and `asChild`. The parts `StatHeader`, `StatLabel`, `StatValue`, `StatCaption`, `StatFooter`, `StatIcon` all forward `div` props; `StatValue` adds `countUp` to count a string figure up from zero on scroll. `StatTrend` adds `direction` (`up | down | neutral`) and `inverted`; `StatSparkline` takes a `data: number[]`, an optional `strokeWidth`, and `tooltip` to enable per-point hover. Every part but `StatSparkline` also renders outside a `Stat`, with the plain look at the ambient density. Every part accepts `className`, merged last.
 
 ## FAQ
 
@@ -238,16 +304,24 @@ A KPI tile is data, so it is inert by default. Pass `asChild` to render it as a 
 
 Pass `countUp` to `StatValue`. It counts the figure up from zero to its value the first time it scrolls into view (an IntersectionObserver, same trigger as the marketing sections) and re-counts on every re-entry, climbing fast then decelerating onto the final figure. It parses the string children to keep the prefix, suffix, and comma/decimal format: `$4.2M` lands on $4.2M, `4.6×` on 4.6×, `74%` on 74%. It relies on the value's built-in `tabular-nums` so the row never jitters as the count climbs, no-ops for number-less content, and honors `prefers-reduced-motion` by showing the final figure immediately.
 
+### How do I show a headline figure without the tile?
+
+Use `variant="plain"`: no ring, no shadow, no fill and no padding, with the Stat's type ramp and a tighter gap between the parts. It is the figure laid on the sheet beside a chart, or inside a Card where the card is the frame. For a lone number, skip the Stat entirely: `StatValue`, `StatTrend`, `StatLabel` and `StatCaption` all render on their own.
+
+### Can I use StatTrend next to a figure that is not in a Stat?
+
+Yes. Outside a Stat, `StatTrend` is the same soft chip with the same `direction` and `inverted` rules, so a trend in a card description or a table row matches the tiles. It never wraps or shrinks: in a tight row the text beside it gives way instead.
+
 ### Which density should I use for a dashboard?
 
 `compact` is the dashboard default and tunes padding, gap, the icon tile, and the value size down; `comfortable` is roomier. Set it per-tile via the `density` prop or for a whole grid with `DensityProvider`.
 
 ## Exports and dependencies
 
-`npx koalaui-cli add stat` writes `components/ui/stat/`. Import from `@/components/ui/stat`:
+`npx koalaui-cli@latest add stat` writes `components/ui/stat/`. Import from `@/components/ui/stat`:
 
 - Components and helpers: `Stat`, `StatGroup`, `StatHeader`, `StatLabel`, `StatValue`, `StatTrend`, `StatCaption`, `StatFooter`, `StatIcon`, `StatSparkline`, `statVariants`, `statGroupVariants`
 - Types: `StatProps`, `StatValueProps`, `StatGroupProps`, `StatTrendProps`, `StatSparklineProps`
 - Koala components it installs with it: `chart`
-- Koala lib helpers it uses: `create-context`, `density`, `in-view`, `motion`, `tv`, `utils`
+- Koala lib helpers it uses: `density`, `in-view`, `motion`, `tv`, `utils`
 - npm packages: `@phosphor-icons/react`, `radix-ui`

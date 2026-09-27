@@ -62,6 +62,7 @@ import {
   resolveInstance,
   resolveLicense,
   resolveTemplatePath,
+  selfCommand,
   sha,
   shadcnStylesheet,
   validateDepSpec,
@@ -73,6 +74,10 @@ const DEFAULT_PUBLIC_REPO = "jespinosa19/koala-ui"
 const DEFAULT_BRANCH = "main"
 const FETCH_TIMEOUT_MS = 30_000
 const HEADERS = { "User-Agent": `koalaui-cli/${VERSION}`, "X-Koalaui-Cli": VERSION }
+// How hints spell the next command: `koalaui …` when installed, the npx form when run through a
+// package runner (see selfCommand).
+const SELF = selfCommand()
+const cli = (args) => `${SELF} ${args}`
 
 // ── tiny ANSI ──────────────────────────────────────────────────────────────
 const c = {
@@ -164,7 +169,7 @@ function paywall(itemName, reason) {
   fail(
     `${c.bold(itemName)} is part of ${c.bold("Koala UI Pro")} - it needs a license.\n` +
       (reason ? `  ${c.dim(reason)}\n` : "") +
-      `  Have one? Activate it:  ${c.cyan("koalaui login <key>")}\n` +
+      `  Have one? Activate it:  ${c.cyan(cli("login <key>"))}\n` +
       `  Get a license → ${PURCHASE_URL}`
   )
 }
@@ -273,8 +278,8 @@ function makeRegistry(opts) {
     if (!instanceId) {
       fail(
         `this machine has no activated seat for that license.\n` +
-          `  Activate it once:  ${c.cyan("koalaui login <key>")}\n` +
-          `  On CI: activate with ${c.cyan("koalaui login <key> --name ci --no-save")} and set KOALAUI_INSTANCE`
+          `  Activate it once:  ${c.cyan(cli("login <key>"))}\n` +
+          `  On CI: activate with ${c.cyan(cli("login <key> --name ci --no-save"))} and set KOALAUI_INSTANCE`
       )
     }
     const api = resolveApi(opts)
@@ -528,7 +533,7 @@ function resolveItems(m, names) {
   }
   for (const n of names) visit(n)
   if (missing.length)
-    fail(`unknown item(s): ${missing.join(", ")}\n  Run ${c.cyan("koalaui list")} to see what's available.`)
+    fail(`unknown item(s): ${missing.join(", ")}\n  Run ${c.cyan(cli("list"))} to see what's available.`)
   return resolved
 }
 function reportWrites(w) {
@@ -599,8 +604,8 @@ async function cmdList(reg) {
     log(c.bold(`\nTemplates ${c.dim(`(${templates.length}, PRO, whole sites)`)} 🔒`))
     for (const i of templates) log(`  ${i.name} ${c.dim(i.title || "")}`)
   }
-  log(`\n${c.dim("Add with:")} koalaui add <item...>`)
-  if (templates.length) log(`${c.dim("Start a site from a template:")} koalaui template <name> [dir]`)
+  log(`\n${c.dim("Add with:")} ${cli("add <item...>")}`)
+  if (templates.length) log(`${c.dim("Start a site from a template:")} ${cli("template <name> [dir]")}`)
   log()
 }
 
@@ -652,7 +657,7 @@ async function cmdInit(reg, opts) {
   if (w.skipped.includes(UTILS))
     warn(
       `${w.fromRoot(UTILS)} is your own, so it was kept, but ${w.fromRoot("lib/tv.ts")} imports ${c.cyan("twMergeConfig")} from it.\n` +
-        `  Merge Koala's version in (${c.cyan("koalaui diff utils")}) or re-run with ${c.cyan("--overwrite")}.`
+        `  Merge Koala's version in (${c.cyan(cli("diff utils"))}) or re-run with ${c.cyan("--overwrite")}.`
     )
   if (css.status === "replaced") info(`replaced the create-next-app boilerplate in ${css.target} with the Koala import`)
   if (css.status === "added") info(`imported ${c.cyan(koalaPath)} from ${css.target}${fonts ? ", with Inter and DM Sans" : ""}`)
@@ -691,16 +696,16 @@ async function cmdInit(reg, opts) {
   }
   if (project.shadcn)
     log(
-      `  ${step++}. Coming from shadcn/ui? Swap one component at a time: delete ${c.cyan(w.fromRoot("components/ui/<name>.tsx"))}, then ${c.cyan("koalaui add <name>")}.\n` +
+      `  ${step++}. Coming from shadcn/ui? Swap one component at a time: delete ${c.cyan(w.fromRoot("components/ui/<name>.tsx"))}, then ${c.cyan(cli("add <name>"))}.\n` +
         `     ${c.dim(MIGRATION_URL)}`
     )
-  log(`  ${step++}. Add components: ${c.cyan("koalaui add button card")}\n`)
+  log(`  ${step++}. Add components: ${c.cyan(cli("add button card"))}\n`)
 }
 
 async function cmdAdd(reg, opts) {
   const root = opts.cwd
   const names = opts._
-  if (!names.length) fail("nothing to add. Usage: koalaui add <item...>")
+  if (!names.length) fail(`nothing to add. Usage: ${cli("add <item...>")}`)
 
   const m = await reg.meta()
   const manifest = loadManifest(root)
@@ -708,7 +713,7 @@ async function cmdAdd(reg, opts) {
   // A template is a whole site, not something to drop into a project.
   const template = [...resolved.values()].find((i) => i.type === "template")
   if (template)
-    fail(`${c.bold(template.name)} is a template, a whole site.\n  Start one in a new folder: ${c.cyan(`koalaui template ${template.name} [dir]`)}`)
+    fail(`${c.bold(template.name)} is a template, a whole site.\n  Start one in a new folder: ${c.cyan(cli(`template ${template.name} [dir]`))}`)
 
   // A flat components/ui/button.tsx (how shadcn/ui lays components out) wins the resolution of
   // `@/components/ui/button` over Koala's button/ folder, so every Koala import of it, including
@@ -754,7 +759,7 @@ async function cmdAdd(reg, opts) {
   log()
   ok(`added ${names.join(", ")}`)
   if (w.useSrc) info("detected a src/ layout - files were written under src/")
-  if (w.skipped.length) info(`already installed? ${c.cyan("koalaui update")} brings files up to date without touching your edits`)
+  if (w.skipped.length) info(`already installed? ${c.cyan(cli("update"))} brings files up to date without touching your edits`)
   const nextOnly = items.filter((i) => i.frameworks?.includes("next")).map((i) => i.name)
   if (nextOnly.length && inspectProject(root).framework !== "next")
     warn(
@@ -809,20 +814,20 @@ async function downloadAssets(meta, root) {
 
 async function cmdTemplate(reg, opts) {
   const [name, folder] = opts._
-  if (!name) fail("which template? Usage: koalaui template <name> [dir]")
+  if (!name) fail(`which template? Usage: ${cli("template <name> [dir]")}`)
   const m = await reg.meta()
   const templates = m.items.filter((i) => i.type === "template")
   const item = templates.find((i) => i.name === name)
   if (!item)
     fail(
       `unknown template: ${name}\n  Templates: ${templates.map((i) => i.name).join(", ") || "none yet"}\n` +
-        `  Run ${c.cyan("koalaui list")} to see everything.`
+        `  Run ${c.cyan(cli("list"))} to see everything.`
     )
 
   // A template is a whole project, so it only goes into a folder that holds nothing yet.
   const dest = resolvePath(opts.cwd, folder || name)
   if (existsSync(dest) && readdirSync(dest).length)
-    fail(`${dest} is not empty. A template starts a new site: ${c.cyan(`koalaui template ${name} <new-folder>`)}`)
+    fail(`${dest} is not empty. A template starts a new site: ${c.cyan(cli(`template ${name} <new-folder>`))}`)
 
   log(c.bold(`\nKoala UI - template ${name} ${c.dim(`(${reg.label})`)}\n`))
   info(`${c.bold("PRO")} content 🔒`)
@@ -931,7 +936,7 @@ async function cmdSkill(reg, opts) {
   log(`  ${c.bold("Cursor, Codex and other agents")}: add this line to AGENTS.md (or to a rule in .cursor/rules/):`)
   log(`     ${c.cyan(`Before writing UI, read ${shown}/SKILL.md and follow it. Component docs: ${shown}/references/.`)}`)
   log(`  Commit the folder so everyone on the project, and every agent, reads the same rules.`)
-  log(`  Run ${c.cyan("koalaui skill")} again after updating Koala to refresh it.\n`)
+  log(`  Run ${c.cyan(cli("skill"))} again after updating Koala to refresh it.\n`)
 }
 
 /** Where each installed item stands against the registry. */
@@ -939,7 +944,7 @@ async function inspect(reg, root, only) {
   const m = await reg.meta()
   const manifest = loadManifest(root)
   const names = Object.keys(manifest.items)
-  if (!names.length) fail(`nothing tracked in ${MANIFEST}. Install with ${c.cyan("koalaui init")} / ${c.cyan("koalaui add")} first.`)
+  if (!names.length) fail(`nothing tracked in ${MANIFEST}. Install with ${c.cyan(cli("init"))} / ${c.cyan(cli("add"))} first.`)
   if (only.length) {
     const unknown = only.filter((n) => !manifest.items[n])
     if (unknown.length) fail(`not installed (per ${MANIFEST}): ${unknown.join(", ")}`)
@@ -1004,7 +1009,7 @@ async function cmdDiff(reg, opts) {
   }
   if (current) ok(`${current} item(s) up to date`)
   log()
-  if (outdated.length) info(`${outdated.length} update(s). See the changes: ${c.cyan("koalaui diff <item>")} · apply: ${c.cyan("koalaui update")}`)
+  if (outdated.length) info(`${outdated.length} update(s). See the changes: ${c.cyan(cli("diff <item>"))} · apply: ${c.cyan(cli("update"))}`)
   else ok("everything is up to date")
   log()
 }
@@ -1072,7 +1077,7 @@ async function cmdUpdate(reg, opts) {
   }
 
   for (const t of w.written) ok(`updated ${c.dim(t)}`)
-  for (const k of kept) warn(`you edited ${c.dim(k.target)}, kept yours ${c.dim(`(koalaui diff ${k.item} · --force to replace)`)}`)
+  for (const k of kept) warn(`you edited ${c.dim(k.target)}, kept yours ${c.dim(`(${cli(`diff ${k.item}`)} · --force to replace)`)}`)
   saveManifest(root, manifest)
 
   if (opts.install) installDeps(root, deps)
@@ -1145,13 +1150,13 @@ function unifiedDiff(a, b, context = 3) {
  */
 async function cmdLogin(opts) {
   const key = (opts._[0] || opts.license || process.env.KOALAUI_LICENSE || "").trim()
-  if (!key) fail(`usage: ${c.cyan("koalaui login <license-key>")}`)
+  if (!key) fail(`usage: ${c.cyan(cli("login <license-key>"))}`)
   // Every login claims a seat. On CI that would spend one per run, so it has to be deliberate:
   // activate once with --no-save and reuse the instance id from the environment.
   if (isCi() && opts.save && !opts.yes) {
     fail(
       `refusing to activate a seat on CI: each run would claim a new one.\n` +
-        `  Activate once from your machine:  ${c.cyan("koalaui login <key> --name ci --no-save")}\n` +
+        `  Activate once from your machine:  ${c.cyan(cli("login <key> --name ci --no-save"))}\n` +
         `  then set KOALAUI_LICENSE and KOALAUI_INSTANCE in the CI secrets.`
     )
   }
@@ -1181,14 +1186,14 @@ async function cmdLogin(opts) {
   if (!opts.save) {
     ok(`seat activated as ${c.bold(name)} ${c.dim("(not saved on this machine)")}`)
     log(`\n  KOALAUI_LICENSE=${key}\n  KOALAUI_INSTANCE=${body.instanceId}\n`)
-    info("store both as CI secrets; release the seat later with koalaui logout --license <key> --instance <id>")
+    info(`store both as CI secrets; release the seat later with ${cli("logout --license <key> --instance <id>")}`)
     return
   }
 
   writeConfig({ ...loadConfig(), license: key, instanceId: body.instanceId })
   ok(`license activated on ${c.bold(name)}`)
   if (body.seats > 1) info(`${body.plan} plan - seat ${body.used} of ${body.seats}`)
-  info(`now add a Pro section, e.g. ${c.cyan("koalaui add hero-section-3")}`)
+  info(`now add a Pro section, e.g. ${c.cyan(cli("add hero-section-3"))}`)
 }
 
 /**
@@ -1234,7 +1239,7 @@ function cmdWhoami(opts) {
   const cfg = loadConfig()
   const key = resolveLicense(opts, cfg)
   if (!key) {
-    info(`no license configured. Activate one: ${c.cyan("koalaui login <key>")}`)
+    info(`no license configured. Activate one: ${c.cyan(cli("login <key>"))}`)
     return
   }
   const instance = resolveInstance(opts, cfg, key)
@@ -1245,7 +1250,7 @@ function cmdWhoami(opts) {
     return
   }
   log(`license: ${c.bold(maskSecret(key))}`)
-  log(`machine: ${instance ? c.dim(`activated (${maskSecret(instance)})`) : c.yellow("not activated - run koalaui login <key>")}`)
+  log(`machine: ${instance ? c.dim(`activated (${maskSecret(instance)})`) : c.yellow(`not activated - run ${cli("login <key>")}`)}`)
   log(`api:     ${c.dim(resolveApi(opts))}`)
   log(`account: ${c.dim(ACCOUNT_URL)}`)
 }
@@ -1254,7 +1259,7 @@ function help() {
   log(`
 ${c.bold("koalaui")} - add Koala UI components & sections to your project
 
-${c.bold("Usage")}
+${c.bold("Usage")}${SELF === "koalaui" ? "" : c.dim(`  through a package runner, ${SELF} <command>`)}
   koalaui init                 set up tokens, core lib helpers and base deps
   koalaui add <item...>        copy items (and their deps) into your project
   koalaui list                 list available items (free + pro)
@@ -1269,7 +1274,7 @@ ${c.bold("Usage")}
 ${c.bold("Tiers")}
   free    components, lib, tokens, one sample section per family - no auth
   PRO 🔒  every other section, page examples, templates - need a license:
-          buy at ${PURCHASE_URL}, then ${c.cyan("koalaui login <key>")} once per machine
+          buy at ${PURCHASE_URL}, then ${c.cyan(cli("login <key>"))} once per machine
           (owner/dev: a GitHub token to the private repo also works)
 
 ${c.bold("CI")}
@@ -1313,7 +1318,7 @@ async function main() {
     if (cmd === "update") return await cmdUpdate(reg, opts)
     if (cmd === "template") return await cmdTemplate(reg, opts)
     if (cmd === "skill") return await cmdSkill(reg, opts)
-    fail(`unknown command: ${cmd}\n  Run ${c.cyan("koalaui --help")}.`)
+    fail(`unknown command: ${cmd}\n  Run ${c.cyan(cli("--help"))}.`)
   } catch (err) {
     log(`${c.red("✗")} ${err && err.message ? err.message : String(err)}`)
     process.exitCode = 1

@@ -19,10 +19,10 @@ The text link, in both house treatments. default and muted are the standalone UI
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add link
+npx koalaui-cli@latest add link
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/link/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -130,7 +130,7 @@ Yes. The rest color is text-foreground (or text-muted-foreground, or inherited u
 
 ## Exports and dependencies
 
-`npx koalaui-cli add link` writes `components/ui/link/`. Import from `@/components/ui/link`:
+`npx koalaui-cli@latest add link` writes `components/ui/link/`. Import from `@/components/ui/link`:
 
 - Components and helpers: `Link`, `linkVariants`
 - Types: `LinkProps`

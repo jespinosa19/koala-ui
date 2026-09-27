@@ -9,4 +9,7 @@ export {
   listVariants,
   type ListProps,
   type ListItemProps,
+  type ListItemTitleProps,
+  type ListItemDescriptionProps,
+  type ListItemLines,
 } from "./list"

@@ -14,6 +14,7 @@ import {
   NavbarNav,
   NavbarSpacer,
 } from "@/components/ui/navbar"
+import { KOALA_LOGO_SRC } from "@/lib/koala-mark"
 
 /**
  * navbar-section-1: the canonical marketing bar.
@@ -31,12 +32,9 @@ const COMPANY = ["About us", "Careers", "Customers", "Contact"] as const
 function Logo() {
   return (
     <span className="inline-flex items-center gap-2">
-      <span aria-hidden className="grid size-7 place-items-center rounded-lg bg-foreground text-background">
-        <svg viewBox="0 0 16 16" className="size-3.5" fill="currentColor">
-          <path d="M8 1.5 14.5 14h-13Z" />
-        </svg>
-      </span>
-      <span className="hidden text-base font-semibold tracking-tight sm:inline">Acme</span>
+      {/* eslint-disable-next-line @next/next/no-img-element -- packaged file: the embedded mark (a data URI), so no BrandMark and no next/image */}
+      <img src={KOALA_LOGO_SRC} alt="" className="size-7 rounded-lg shadow-xs" />
+      <span className="hidden text-base font-semibold tracking-tight sm:inline">Koala UI</span>
     </span>
   )
 }
@@ -45,7 +43,7 @@ export function NavbarSection1() {
   return (
     <Navbar>
       <NavbarInner>
-        <NavbarBrand href="#" aria-label="Acme">
+        <NavbarBrand href="#" aria-label="Koala UI">
           <Logo />
         </NavbarBrand>
         <NavbarNav>
@@ -72,7 +70,7 @@ export function NavbarSection1() {
         </NavbarNav>
         <NavbarSpacer />
         <NavbarActions>
-          <Button size="sm" variant="ghost" className="hidden sm:inline-flex">
+          <Button size="sm" variant="outline" className="hidden sm:inline-flex">
             Sign in
           </Button>
           <Button size="sm">Sign up</Button>

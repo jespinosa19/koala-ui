@@ -28,10 +28,10 @@ A family of ready get-in-touch blocks on one recipe: ContactForm, LeadForm for s
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add contact-form
+npx koalaui-cli@latest add contact-form
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/contact-form/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -88,7 +88,7 @@ The density prop accepts compact (16px padding, the default) or comfortable (24p
 
 ## Exports and dependencies
 
-`npx koalaui-cli add contact-form` writes `components/ui/contact-form/`. Import from `@/components/ui/contact-form`:
+`npx koalaui-cli@latest add contact-form` writes `components/ui/contact-form/`. Import from `@/components/ui/contact-form`:
 
 - Components and helpers: `ContactForm`, `LeadForm`, `SupportForm`, `contactFormVariants`
 - Types: `ContactFormProps`, `ContactFormData`, `LeadFormProps`, `LeadFormData`, `SupportFormProps`, `SupportFormData`

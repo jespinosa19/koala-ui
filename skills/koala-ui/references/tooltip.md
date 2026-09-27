@@ -14,10 +14,10 @@ A small hint shown on hover or focus. Positioning, hover-intent and a11y come fr
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add tooltip
+npx koalaui-cli@latest add tooltip
 ```
 
 Manual: run `npm install tippy.js`, then copy the source into `components/ui/tooltip/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -133,6 +133,8 @@ The graph variant grows as far as a preview card: a picture, a mark, a title wit
 ## Placement
 
 `placement` takes any Tippy placement (each also accepts a `-start` / `-end` suffix). The bubble grows out of the edge nearest the trigger.
+
+The bubble is positioned `fixed`, so one that lands past the edge of the screen is clipped there instead of widening the page: a phone never scrolls sideways because of a tooltip. While it is up it follows its trigger when the trigger moves (a drawer sliding in, a row that grows), rather than staying where the trigger was when it opened.
 
 ```tsx
 <Tooltip content="Tooltip" placement="top">…</Tooltip>
@@ -273,6 +275,8 @@ Wrap an `InputSuffixButton` in a `Tooltip` to surface field hints - password rul
 ## Inside a dialog
 
 Tippy appends its bubble to `document.body`, so tooltips always render above the dialog's stacking context - no extra `z-index` or portal config required. A small icon next to a form label is the most common pattern.
+
+Focus opens a tooltip only when it is keyboard focus. A dialog or drawer opened with a click or a tap moves focus onto its first control by script, and that shows no bubble; opened from the keyboard, the focused control shows its hint like any other. To drop focus hints altogether, as the help icons below do, pass `trigger="mouseenter"`.
 
 ```tsx
 <Dialog>
@@ -485,9 +489,13 @@ Wrap several `Tooltip`s in `TooltipGroup` to share one bubble that glides from t
 
 Inside a `TooltipGroup` the `delay` and `offset` on individual `Tooltip`s are ignored because one shared bubble can have only one timing and distance. Set `delay` and `offset` once on the `TooltipGroup` instead.
 
-### My tooltip pops open when a dialog auto-focuses the button. How do I stop that?
+### Does a tooltip pop open when a dialog auto-focuses its button?
 
-Pass `trigger="mouseenter"` to drop the default focus trigger. By default `trigger` is `"mouseenter focus"`, so Radix auto-focusing the first control on dialog open will also open the tooltip unless you suppress the focus event.
+Only when the dialog was opened from the keyboard. Focus opens a tooltip only when it is keyboard focus: the focus a click or a tap gives, and the focus a dialog or drawer opened by one moves inside by script, show nothing. To drop focus hints altogether, pass `trigger="mouseenter"` (the default is `"mouseenter focus"`), knowing keyboard users then never see that hint.
+
+### Can a tooltip make the page scroll sideways on a phone?
+
+No. The bubble is positioned `fixed`, so when it lands past the edge of the screen (its trigger still sliding in with a drawer, or hugging the edge) it is clipped by the viewport instead of widening the page. While it is up it also follows its trigger as the trigger moves, so it settles next to it once the drawer is in place.
 
 ### Is a rich preview card a tooltip or a popover?
 
@@ -499,11 +507,11 @@ Give it an `anchor`, the point in viewport coordinates (or a box with `width` an
 
 ### Do I need to manage z-index to show a tooltip above a dialog?
 
-No. Tippy appends the bubble to `document.body`, so it renders above the dialog stacking context with no extra `z-index` or portal configuration.
+No. Tippy appends the bubble to `document.body`, so it renders above the dialog stacking context with no extra `z-index` or portal configuration. While an element is full screen (a video player, a file preview) the bubble goes into that element instead, because the browser paints nothing outside it over the screen.
 
 ## Exports and dependencies
 
-`npx koalaui-cli add tooltip` writes `components/ui/tooltip/`. Import from `@/components/ui/tooltip`:
+`npx koalaui-cli@latest add tooltip` writes `components/ui/tooltip/`. Import from `@/components/ui/tooltip`:
 
 - Components and helpers: `Tooltip`, `TooltipGroup`, `TooltipHeader`, `TooltipHeaderText`, `TooltipTitle`, `TooltipDescription`, `TooltipValue`, `TooltipSeparator`, `TooltipSection`, `TooltipStat`, `tooltipVariants`, `tooltipGraphVariants`
 - Types: `TooltipAnchor`, `TooltipProps`, `TooltipGroupProps`, `TooltipTone`, `TooltipSectionProps`, `TooltipStatProps`

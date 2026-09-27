@@ -57,10 +57,10 @@ An asymmetric marketing grid of feature tiles. Named parts you assemble: a tinte
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add bento
+npx koalaui-cli@latest add bento
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/bento/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -164,6 +164,23 @@ A screenshot is taken in one theme, and a framed window is the first thing that 
 </BentoItem>
 ```
 
+## Live art
+
+A shot is one take of one moment. When the moment should follow the visitor's theme and accent, move, or answer a click, put the real components in the window instead. `BentoItemArt` is the same art window a `BentoItemImage` paints into, framed by default and bled under `imageFit="bleed"`, with your composition inside. Position it yourself: the window clips it, and a bled window is wider than the tile, so anything past the tile's edge is cut there.
+
+```tsx
+<BentoItem size="md" tone="purple">
+  <BentoItemIcon><Palette /></BentoItemIcon>
+  <BentoItemTitle>Real components, not a picture</BentoItemTitle>
+  <BentoItemDescription>The window holds live parts.</BentoItemDescription>
+  <BentoItemArt>
+    <Card variant="elevated" className="absolute top-6 left-6 w-80">
+      <CardContent>{/* switches, buttons… */}</CardContent>
+    </Card>
+  </BentoItemArt>
+</BentoItem>
+```
+
 ## Scale
 
 `scale` on `Bento` is the board's type and spacing step. `md` (default) is a block among many: 24px tiles, 16px descriptions. `lg` is the landing board a home page tells its feature story with: 32px tiles, a 32px step to the art, and 18px descriptions. The title stays 8px from its description at both steps, and the bleed cancels the bigger padding. Set once on the grid, so a board never mixes steps.
@@ -200,6 +217,10 @@ The tinted icon chip (pass one Phosphor icon as the child, tone inherited from t
 ### BentoItemImage
 
 A screenshot clipped at the tile's edge: a framed window peeking up from the bottom, or bleeding art with `imageFit="bleed"`. A plain lazy `<img>` that fills the window, so it runs in Next, Vite or any React app: pass `src` (a URL or a static image import) and `alt`, plus `darkSrc` for the dark themes' take of the same shot; its height (and the bleed's width) follows the tile `size` and is overridable via `frameClassName`. Children are extra layers inside the window (a floating panel over the shot), positioned by you and clipped and dissolved with the art.
+
+### BentoItemArt
+
+The art window with live children instead of a picture: framed or bled by the tile's `imageFit`, with the same height (and bleed width) per `size` as `BentoItemImage`. Position the composition inside it yourself; the window clips it. Forwards native `<div>` props and `className`.
 
 ### BentoItemMedia
 
@@ -241,9 +262,9 @@ Yes. The grid is one column on mobile, two at `sm`, and six at `lg`, and every `
 
 ## Exports and dependencies
 
-`npx koalaui-cli add bento` writes `components/ui/bento/`. Import from `@/components/ui/bento`:
+`npx koalaui-cli@latest add bento` writes `components/ui/bento/`. Import from `@/components/ui/bento`:
 
-- Components and helpers: `Bento`, `BentoItem`, `BentoItemIcon`, `BentoItemTitle`, `BentoItemDescription`, `BentoItemMedia`, `BentoItemImage`, `bentoVariants`
+- Components and helpers: `Bento`, `BentoItem`, `BentoItemIcon`, `BentoItemTitle`, `BentoItemDescription`, `BentoItemMedia`, `BentoItemImage`, `BentoItemArt`, `bentoVariants`
 - Types: `BentoProps`, `BentoItemProps`, `BentoItemImageProps`
 - Koala lib helpers it uses: `create-context`, `tv`, `utils`
 - npm packages: `radix-ui`

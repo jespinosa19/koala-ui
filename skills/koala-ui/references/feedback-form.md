@@ -12,10 +12,10 @@ A compact sentiment and comment block. A row of five faces reveals an optional c
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add feedback-form
+npx koalaui-cli@latest add feedback-form
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/feedback-form/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -73,7 +73,7 @@ The submit Button is disabled until a face is selected, since a rating is requir
 
 ## Exports and dependencies
 
-`npx koalaui-cli add feedback-form` writes `components/ui/feedback-form/`. Import from `@/components/ui/feedback-form`:
+`npx koalaui-cli@latest add feedback-form` writes `components/ui/feedback-form/`. Import from `@/components/ui/feedback-form`:
 
 - Components and helpers: `FeedbackForm`, `feedbackFormVariants`
 - Types: `FeedbackFormProps`, `FeedbackFormData`

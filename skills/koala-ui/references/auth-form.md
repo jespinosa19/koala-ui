@@ -12,10 +12,10 @@ The sign-in and sign-up pair, shipped as two ready blocks: social providers, an 
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add auth-form
+npx koalaui-cli@latest add auth-form
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/auth-form/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -180,7 +180,7 @@ Neither variant paints a fill of its own, so the composed Input, Checkbox, and p
 
 ## Exports and dependencies
 
-`npx koalaui-cli add auth-form` writes `components/ui/auth-form/`. Import from `@/components/ui/auth-form`:
+`npx koalaui-cli@latest add auth-form` writes `components/ui/auth-form/`. Import from `@/components/ui/auth-form`:
 
 - Components and helpers: `LoginForm`, `SignUpForm`, `ProviderForm`, `authFormVariants`
 - Types: `LoginFormProps`, `LoginFormData`, `SignUpFormProps`, `SignUpFormData`, `ProviderFormProps`, `SocialLink`, `SocialNetwork`, `AuthProvider`, `AuthFormLabels`

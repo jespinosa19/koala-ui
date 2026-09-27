@@ -1,0 +1,16 @@
+export {
+  navigationMenuVariants,
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuTrigger,
+  NavigationMenuContent,
+  NavigationMenuLink,
+  NavigationMenuLinkText,
+  NavigationMenuLinkDescription,
+  NavigationMenuIndicator,
+  NavigationMenuViewport,
+  type NavigationMenuProps,
+  type NavigationMenuContentProps,
+  type NavigationMenuLinkProps,
+} from "./navigation-menu"

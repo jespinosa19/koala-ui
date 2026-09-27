@@ -176,7 +176,7 @@ export function WaitlistForm({
             ))}
           </div>
           <p className={slots.count()}>
-            <span className="font-medium text-foreground">{count.toLocaleString()}+</span> already
+            <span className="font-medium text-foreground">{count.toLocaleString("en-US")}+</span> already
             joined
           </p>
         </div>

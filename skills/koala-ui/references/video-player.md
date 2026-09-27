@@ -24,10 +24,10 @@ A native way to play media: a real video element wrapped in a composable control
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add video-player
+npx koalaui-cli@latest add video-player
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/video-player/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -148,6 +148,70 @@ It pairs naturally with the native `<video>` props that `Video` forwards: `autoP
 </VideoPlayer>
 ```
 
+## Labels
+
+Every word the player speaks, from the play tooltip to the slider names a screen reader announces, comes from `labels`. Pass the keys you want to change; the rest keep their English defaults.
+
+```tsx
+<VideoPlayer
+  labels={{
+    play: "Reproducir",
+    pause: "Pausa",
+    seek: "Buscar",
+    mute: "Silenciar",
+    unmute: "Activar sonido",
+    volume: "Volumen",
+    enterFullscreen: "Pantalla completa",
+    exitFullscreen: "Salir de pantalla completa",
+    buffering: "Cargando",
+  }}
+>
+  …
+</VideoPlayer>
+```
+
+## Controlled volume
+
+Pass `volume` and `muted` to own the level. The volume bar, the mute button and the arrow keys then show your values and report changes through `onVolumeChange` and `onMutedChange`, and the player stops writing volume or mute to the `<video>`. That is what lets you remember the level between visits, or play the sound somewhere else: audio tracks recorded apart from the picture and kept in sync with a video that stays muted. The demo keeps the level in state and applies it to the element itself.
+
+```tsx
+const [volume, setVolume] = React.useState(0.4)
+const [muted, setMuted] = React.useState(false)
+
+<VideoPlayer
+  volume={volume}
+  onVolumeChange={setVolume}
+  muted={muted}
+  onMutedChange={setMuted}
+>
+  {/* The player no longer writes to the element: apply the level
+      yourself, or play the sound somewhere else. */}
+  <Video ref={videoRef} src={src} />
+  …
+</VideoPlayer>
+```
+
+## Reaching the element
+
+A `ref` on `Video` reaches the real `<video>`; the player keeps its own ref alongside yours. Media handlers you pass (`onPlay`, `onTimeUpdate`, `onVolumeChange` and the rest) run after the player's own, so listening to the element never cuts the controls off from its state.
+
+```tsx title="element.tsx"
+const videoRef = React.useRef<HTMLVideoElement>(null)
+
+// Slave separately recorded audio to the video clock, recover a stalled decoder...
+React.useEffect(() => attachAudioTracks(videoRef.current), [])
+
+<VideoPlayer>
+  <Video
+    ref={videoRef}
+    src={src}
+    // Runs after the player's own handler, so the controls keep up.
+    onTimeUpdate={(e) => saveProgress(e.currentTarget.currentTime)}
+  />
+  …
+</VideoPlayer>
+```
+
 ## Keyboard
 
 Click the video to focus the player, then drive it from the keyboard. The Radix scrubber and volume slider keep their own arrow-key handling when focused, so the shortcuts below only fire when the player frame itself holds focus.
@@ -196,10 +260,10 @@ Set `revealOn="hover"` on `VideoPlayer`. The chrome stays hidden until you point
 
 ## Exports and dependencies
 
-`npx koalaui-cli add video-player` writes `components/ui/video-player/`. Import from `@/components/ui/video-player`:
+`npx koalaui-cli@latest add video-player` writes `components/ui/video-player/`. Import from `@/components/ui/video-player`:
 
 - Components and helpers: `VideoPlayer`, `Video`, `VideoControls`, `VideoBar`, `VideoPlayButton`, `VideoSeek`, `VideoTime`, `VideoVolume`, `VideoFullscreen`, `VideoSpinner`, `videoPlayerVariants`
-- Types: `VideoPlayerProps`, `VideoProps`, `VideoPlayButtonProps`, `VideoSeekProps`, `VideoVolumeProps`, `VideoFullscreenProps`
+- Types: `VideoPlayerProps`, `VideoPlayerLabels`, `VideoProps`, `VideoPlayButtonProps`, `VideoSeekProps`, `VideoVolumeProps`, `VideoFullscreenProps`
 - Koala components it installs with it: `spinner`, `tooltip`
 - Koala lib helpers it uses: `create-context`, `tv`
 - npm packages: `@phosphor-icons/react`, `radix-ui`

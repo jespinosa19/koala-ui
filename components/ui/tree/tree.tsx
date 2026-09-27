@@ -46,11 +46,12 @@ export const treeVariants = tv({
     // (it reads the row's own data-expanded) but kept as the item's stable hook. Flex-col +
     // `gap-0.5` separates a branch's own row from its nested panel below.
     item: "group/item flex list-none flex-col gap-0.5",
-    // The animated branch panel: overflow-hidden clips the height tween; the keyframes read
-    // Koala's duration/ease tokens via tw-animate-css (no raw ms/cubic-bezier). `relative` hosts
-    // the guide rail. `gap-0.5` spaces sibling rows inside the panel. role="group".
+    // The animated branch panel: `animate-disclosure-*` clips it only while the height tweens (the
+    // clip rides in the keyframes, on Koala's duration/ease tokens), so at rest a focused row's
+    // ring is never shaved at the panel's edge. `relative` hosts the guide rail. `gap-0.5` spaces
+    // sibling rows inside the panel. role="group".
     group:
-      "relative flex flex-col gap-0.5 overflow-hidden duration-base ease-out data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up",
+      "relative flex flex-col gap-0.5 data-[state=open]:animate-disclosure-open data-[state=closed]:animate-disclosure-close",
     // Optional vertical guide rail, positioned under the parent caret's optical center
     // (base inset + level·indent + half the caret box). `before:z-[1]` lifts the rail above the
     // rows' selected/hover `bg-accent` fill (rows are `position:relative` with auto z-index, so any

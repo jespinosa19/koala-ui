@@ -46,6 +46,23 @@ export const duration = {
 export const countUpDuration = 1800;
 
 /**
+ * The signature's pen (components/ui/signature), one entry per `speed`. `duration` is how long the
+ * whole signature takes to write, shared out between its strokes by length so the pen keeps one
+ * speed whether the hand is long or short; `lift` is the pause between two strokes while the pen
+ * travels to the next. `base` is a person signing without hurry; `fast` is a flourish for a small
+ * mark that should not hold up the page; `slow` is for a hero moment where the writing IS the
+ * show. Driven from JS (the Web Animations API), so like the count-up it has no `--duration-*`
+ * counterpart in globals.css.
+ */
+export const signatureDraw = {
+  fast: { duration: 900, lift: 80 },
+  base: { duration: 1600, lift: 140 },
+  slow: { duration: 2800, lift: 220 },
+} as const;
+
+export type SignatureSpeed = keyof typeof signatureDraw;
+
+/**
  * Build a JS easing function from a cubic-bezier control-point tuple (see {@link easingPoints}), so
  * rAF-driven animation (count-ups, canvas work) can honor the exact same curves as the CSS
  * `--ease-*` tokens instead of inlining a bespoke easing. Given progress `x` in [0, 1] it solves for

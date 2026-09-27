@@ -7,6 +7,12 @@ import { createContext } from "@/lib/create-context"
 import { cn } from "@/lib/utils"
 import { tv, type VariantProps } from "@/lib/tv"
 import { hitY } from "@/lib/hit-area"
+import { toggleItemBase } from "@/components/ui/toggle"
+import { Tooltip, type TooltipProps } from "@/components/ui/tooltip/tooltip"
+
+// Every bundler (Next, Vite, webpack) replaces `process.env.NODE_ENV` at build time. Declared here so
+// the file typechecks in a buyer's project without Node types (as in Button).
+declare const process: { env: { NODE_ENV?: string } }
 
 /**
  * ToggleGroup: a set of pressable pills where a selection is held, built on Radix ToggleGroup.
@@ -41,6 +47,10 @@ import { hitY } from "@/lib/hit-area"
  *
  * `"use client"` because Radix ToggleGroup is interactive (roving focus + pressed state). Each item
  * is its own labelled button, so unlike RadioGroup it needs no paired `<label>`.
+ *
+ * An item can be `iconOnly` (a square pill, the lone Toggle's) and carry a `tooltip`, wired like
+ * Button's: an icon-only item shows its `aria-label` as the hint, and a string `tooltip` names an
+ * icon-only item that has no `aria-label`, so a view switch never needs hand-wrapped Tooltips.
  */
 
 // polish: the sm pill is 32px tall, under the 40px hit target (#9). `hitY` (lib/hit-area.ts)
@@ -73,21 +83,11 @@ export const toggleGroupVariants = tv({
       "group-has-[[data-state=on]:active]/toggle-group:scale-[0.96]",
     ],
     item: [
-      // Background reads `--surface` so the pill blends with whatever surface it sits on (card,
-      // popover, page) instead of painting a darker `--background` block (the --surface contract).
-      "relative inline-flex shrink-0 cursor-pointer select-none items-center justify-center gap-1.5 whitespace-nowrap rounded-md border border-input bg-[var(--surface,var(--background))] font-medium text-muted-foreground",
+      // The pill's paint (frame, --surface ground, brand outline + halo when on, focus ring, glyph
+      // box) is the lone Toggle's, shared from the atom so the two can never drift apart.
+      ...toggleItemBase,
       // Specific transition (never `transition: all`, #14); tactile press scale (#12).
       "transition duration-fast ease-out active:scale-[0.96]",
-      // Hover only lifts an *unselected* pill; a chosen one shouldn't shift under the cursor.
-      "data-[state=off]:hover:bg-accent data-[state=off]:hover:text-accent-foreground",
-      // Selected: brand outline + soft brand halo, no fill. The label and glyph turn foreground
-      // (not brand) so the icon reads as one with the text, matching Figma; only the border is brand.
-      "data-[state=on]:border-brand data-[state=on]:font-semibold data-[state=on]:text-foreground data-[state=on]:ring-2 data-[state=on]:ring-brand/10",
-      // Focus ring is listed after the selected halo, so a focused pill shows the stronger brand ring.
-      "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-      "disabled:pointer-events-none disabled:opacity-50",
-      // Icons default to a 1rem box unless the consumer sets their own `size-*`.
-      "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
     ],
   },
   variants: {
@@ -150,8 +150,20 @@ export const toggleGroupVariants = tv({
       // md (40px) is the default; it meets the hit target on its own, no extender needed.
       md: { item: "h-10 px-3.5 text-sm" },
     },
+    // Per item (ToggleGroupItem passes it to its own slot): a square pill holding one glyph, the
+    // lone Toggle's `iconOnly`. The square and the glyph step live in the compounds below, since
+    // they depend on `size` and must land after its padding.
+    iconOnly: {
+      true: {},
+      false: {},
+    },
   },
   compoundVariants: [
+    // sm keeps the vertical-only hit extender from its size: a 40px box would overlap the
+    // neighbouring square in a tight row. md is already 40px.
+    { size: "sm", iconOnly: true, className: { item: "w-8 px-0" } },
+    // A 16px glyph reads small in a 40px square, so md steps it up to 20px, as the Toggle does.
+    { size: "md", iconOnly: true, className: { item: "w-10 px-0 [&_svg:not([class*='size-'])]:size-5" } },
     // polish: concentric radius on the track. inner = outer − padding, the same ladder Tabs uses.
     // The thumb takes the item's radius so the plate never sits a hair rounder than the pill it fills.
     { variant: "segmented", size: "sm", className: { root: "rounded-md p-0.5", item: "rounded-sm", thumb: "rounded-sm" } },
@@ -231,8 +243,9 @@ function useSelectedThumb(rootRef: React.RefObject<HTMLDivElement | null>, enabl
 
 // ─── ToggleGroup ──────────────────────────────────────────────────────────────
 
+// `iconOnly` is per item (a band can mix a labelled pill with square ones), so the root omits it.
 export type ToggleGroupProps = React.ComponentProps<typeof ToggleGroupPrimitive.Root> &
-  VariantProps<typeof toggleGroupVariants>
+  Omit<VariantProps<typeof toggleGroupVariants>, "iconOnly">
 
 export function ToggleGroup({ className, size, variant, children, ref, ...props }: ToggleGroupProps) {
   const slots = toggleGroupVariants({ size, variant })
@@ -284,15 +297,71 @@ export function ToggleGroup({ className, size, variant, children, ref, ...props 
 
 // ─── ToggleGroupItem ────────────────────────────────────────────────────────────
 
-export type ToggleGroupItemProps = React.ComponentProps<typeof ToggleGroupPrimitive.Item>
+export interface ToggleGroupItemProps extends React.ComponentProps<typeof ToggleGroupPrimitive.Item> {
+  /**
+   * A square pill holding one glyph (32px at `sm`, 40px at `md`, where the glyph steps up to
+   * 20px), the lone Toggle's `iconOnly`. The glyph is not a name: give the item an `aria-label`,
+   * or a string `tooltip`, which then names it. @default false
+   */
+  iconOnly?: boolean
+  /**
+   * The hint shown on hover and focus, through Koala's Tooltip (the same wiring as Button's).
+   * On an `iconOnly` item it defaults to the `aria-label`, so a labelled icon pill gets its hint
+   * for free, and a string `tooltip` doubles as the accessible name when there is no
+   * `aria-label`. On a labelled pill it is a supplementary hint ("7D" → "Last 7 days"). Pass
+   * `false` to opt out, e.g. when you wrap the item in your own `<Tooltip>` for rich content.
+   */
+  tooltip?: React.ReactNode | false
+  /** Where the tooltip sits. @default "top" */
+  tooltipPlacement?: TooltipProps["placement"]
+}
 
-export function ToggleGroupItem({ className, ...props }: ToggleGroupItemProps) {
+export function ToggleGroupItem({
+  className,
+  iconOnly = false,
+  tooltip,
+  tooltipPlacement,
+  ...props
+}: ToggleGroupItemProps) {
   const { slots } = useToggleGroupContext("ToggleGroupItem")
-  return (
+
+  const ariaLabel = props["aria-label"]
+  const ariaLabelledby = props["aria-labelledby"]
+  // An icon-only item with no explicit name borrows a string tooltip as its name: the hint and
+  // the announcement are the same words, so they can never drift apart.
+  const name =
+    ariaLabel ?? (iconOnly && !ariaLabelledby && typeof tooltip === "string" ? tooltip : undefined)
+
+  // a11y guard, as on Button: an icon-only pill with no name at all is announced as "button".
+  // Stripped from production builds.
+  React.useEffect(() => {
+    if (process.env.NODE_ENV !== "production" && iconOnly && !name && !ariaLabelledby) {
+      console.warn(
+        "ToggleGroupItem: an `iconOnly` item has no accessible name. Pass `aria-label` (or a " +
+          "string `tooltip`) so assistive tech can announce it.",
+      )
+    }
+  }, [iconOnly, name, ariaLabelledby])
+
+  const item = (
     <ToggleGroupPrimitive.Item
       data-slot="toggle-group-item"
-      className={slots.item({ className })}
+      className={slots.item({ iconOnly, className })}
       {...props}
+      aria-label={name}
     />
   )
+
+  // Content resolves like Button's: explicit `tooltip` > the `aria-label` of an icon-only item >
+  // nothing (no wrap). The Tooltip adds no DOM around the item, so the roving focus, the
+  // segmented thumb's measurements and the `data-slot` selectors see the same children.
+  const tooltipContent = tooltip === false ? null : (tooltip ?? (iconOnly ? ariaLabel : undefined))
+  if (tooltipContent) {
+    return (
+      <Tooltip content={tooltipContent} placement={tooltipPlacement ?? "top"}>
+        {item}
+      </Tooltip>
+    )
+  }
+  return item
 }

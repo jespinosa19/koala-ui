@@ -17,7 +17,7 @@ A dependency-free plotting primitive for line, area and bar trends. Compose the 
   <ChartArea dataKey="revenue" />
   <ChartLine dataKey="revenue" />
   <ChartXAxis />
-  <ChartTooltip valueFormatter={(v) => `$${v.toLocaleString()}`} />
+  <ChartTooltip valueFormatter={(v) => `$${v.toLocaleString("en-US")}`} />
 </Chart>
 ```
 
@@ -25,10 +25,10 @@ A dependency-free plotting primitive for line, area and bar trends. Compose the 
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add chart
+npx koalaui-cli@latest add chart
 ```
 
 Manual: run `npm install tailwind-variants tailwind-merge tippy.js`, then copy the source into `components/ui/chart/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -86,7 +86,7 @@ Every chart plays a one-shot reveal the first time it mounts: the `ChartLine` se
   <ChartArea dataKey="revenue" />
   <ChartLine dataKey="revenue" />
   <ChartXAxis />
-  <ChartTooltip valueFormatter={(v) => `$${v.toLocaleString()}`} />
+  <ChartTooltip valueFormatter={(v) => `$${v.toLocaleString("en-US")}`} />
 </Chart>
 ```
 
@@ -126,7 +126,24 @@ Layer a `ChartLine` per series; each resolves its hue from `config`, or takes an
   <ChartArea dataKey="revenue" />
   <ChartLine dataKey="revenue" />
   <ChartXAxis />
-  <ChartTooltip valueFormatter={(v) => `$${v.toLocaleString()}`} />
+  <ChartTooltip valueFormatter={(v) => `$${v.toLocaleString("en-US")}`} />
+</Chart>
+```
+
+## Smooth curves
+
+Pass `curve="monotone"` to `ChartLine`, `ChartArea` or `ChartAreas` to join the points with a monotone cubic instead of straight segments. It is smooth, yet it still passes through every point and never swings above a peak or below a trough the data does not have: a plateau stays flat and an extreme sits exactly on its point, so the curve never invents a value. Gaps, stacking, `dashed`, `markEnd`, the draw-in and the hover dot all follow the curve. Set the same `curve` on the area and the line drawn over it.
+
+```tsx
+// The same data, joined two ways. Set the curve on the area and the line over it.
+<Chart data={sessions} index="month"
+  config={{ sessions: { label: "Sessions", color: "blue" } }} className="h-56">
+  <ChartGrid />
+  <ChartYAxis />
+  <ChartArea dataKey="sessions" curve="monotone" />
+  <ChartLine dataKey="sessions" curve="monotone" markEnd />
+  <ChartXAxis />
+  <ChartTooltip />
 </Chart>
 ```
 
@@ -170,7 +187,7 @@ const signal = [
 
 ## Value labels & highlight
 
-Pass `label` to `ChartBar` to print each value just past its bar end. It returns inline content, so a figure can carry a glyph. To single one datum out, give it its own series in `brand` and let the rest recede in `neutral`, the foreground at 10% on every theme. Hovering a column also lifts its x-axis tick to the foreground.
+Pass `label` to `ChartBar` to print each value just past its bar end. It returns inline content, so a figure can carry a glyph. To single one datum out, draw the series in `neutral` (the foreground at 10% on every theme) and pass its index to `highlight`, so that one bar takes the brand. Hovering a column also lifts its x-axis tick to the foreground.
 
 ```tsx
 const label = (value, index) => (
@@ -181,17 +198,44 @@ const label = (value, index) => (
 )
 
 <Chart data={weeks} index="week" className="h-64"
-  config={{
-    past: { label: "Revenue", color: "neutral" },
-    current: { label: "Revenue", color: "brand" },
-  }}
+  config={{ revenue: { label: "Revenue", color: "neutral" } }}
   padding={{ top: 28, right: 0, bottom: 32, left: 0 }}>
   <ChartGrid />
-  <ChartBar dataKey="past" label={label} />
-  <ChartBar dataKey="current" label={label} />
+  {/* One series; the current week (index 3) takes the brand. */}
+  <ChartBar dataKey="revenue" highlight={3} label={label} />
   <ChartXAxis />
   <ChartTooltip />
 </Chart>
+```
+
+## Highlight & active bar
+
+`highlight` on `ChartBar` paints chosen bars in `highlightColor` (the brand by default) and leaves the rest in the series hue: an index for today, a list, a predicate over the row, or `"active"` for the bar under the pointer. The chart reports that bar through `onActiveIndexChange` (and takes a controlled `activeIndex`), so a legend or a headline can follow it. Here the latest month is lit until another is hovered. Swapping the highlight recolors the bars in place, so the grow-in never replays, and the tooltip swatch takes the hue the bar is wearing. While a column is hovered the others dim, except `neutral` bars: already faint, they hold their ink and the hovered one steps up instead, so no bar ever disappears.
+
+```tsx
+// A fixed highlight: today (the last day) in the brand, the week behind it neutral.
+<Chart data={week} index="day"
+  config={{ orders: { label: "Orders", color: "neutral" } }} className="h-56">
+  <ChartBar dataKey="orders" highlight={week.length - 1} />
+  <ChartXAxis />
+  <ChartTooltip />
+</Chart>
+
+// The highlight follows the pointer and rests on the latest month. The chart reports
+// the hovered index, so the legend always names the bar that is lit.
+const [active, setActive] = React.useState<number | null>(null)
+const lit = active ?? months.length - 1
+
+<ChartLegend items={[{ label: months[lit].month, color: "brand", value: usd(months[lit].revenue) }]} />
+<Chart data={months} index="month" onActiveIndexChange={setActive}
+  config={{ revenue: { label: "Revenue", color: "neutral" } }} className="h-56">
+  <ChartBar dataKey="revenue" highlight={lit} />
+  <ChartXAxis />
+  <ChartTooltip />
+</Chart>
+
+// Other shapes: highlight={[0, 6]}, highlight="active" (only the hovered bar),
+// highlight={(row) => Number(row.orders) > 50}, and highlightColor="teal".
 ```
 
 ## Grouped & stacked bars
@@ -279,7 +323,7 @@ Give a series `axis: "right"` in `config` to scale it against a secondary y-axis
 <Chart data={months} index="month"
   config={{
     revenue: { label: "Revenue", color: "blue", axis: "left",
-               format: (v) => `$${v.toLocaleString()}` },
+               format: (v) => `$${v.toLocaleString("en-US")}` },
     orders:  { label: "Orders", color: "teal", axis: "right" },
   }}
   padding={{ bottom: 28, left: 48, right: 44, top: 12 }} className="h-72">
@@ -334,6 +378,55 @@ const trend = [
 </Chart>
 ```
 
+## Tooltip rows
+
+`footer` on `ChartTooltip` adds rows under the series, below a hairline, for a figure the chart does not draw: here the net of income and expenses. Build each row with `ChartTooltipItem` (a swatch, a label, a value) so it lines up with the rows above and its swatch keeps its hue in the portaled bubble. `labelFormatter` receives the whole row and its index after the label, so the heading can say more than the axis (a full month name).
+
+```tsx
+const cashflow = [
+  { month: "Mar", name: "March 2026", income: 51200, expenses: 38400 },
+  // …
+]
+
+<Chart data={cashflow} index="month" className="h-64"
+  config={{
+    income: { label: "Income", color: "brand", format: usd },
+    expenses: { label: "Expenses", color: "neutral", format: usd },
+  }}>
+  <ChartGrid />
+  <ChartYAxis tickFormatter={(v) => `$${v / 1000}k`} />
+  <ChartBars keys={["income", "expenses"]} barRatio={0.6} />
+  <ChartXAxis />
+  <ChartTooltip
+    // The heading gets the row too: the full month name instead of "Mar".
+    labelFormatter={(_, row) => row.name}
+    // Rows under the series, below a hairline: the net the chart does not draw.
+    footer={(row) => (
+      <ChartTooltipItem color="success" label="Net" value={usd(Number(row.income) - Number(row.expenses))} />
+    )}
+  />
+</Chart>
+```
+
+## Axis labels that fit
+
+`interval="auto"` on `ChartXAxis` measures its labels against the plot’s width and skips just enough of them that none collide, re-thinning as the chart resizes. It counts back from the last category, so the latest day or month always carries its name. `minTickGap` sets the clear space between labels (12px), and `minInterval` keeps a month of days reading by the week however wide the plot. A number still labels every Nth category from the first.
+
+```tsx
+// Thirty days: the axis keeps the labels that fit the plot, counted back from Sep 27.
+<Chart data={daily} index="day"
+  config={{ visits: { label: "Visits", color: "blue" } }} className="h-52">
+  <ChartGrid />
+  <ChartArea dataKey="visits" curve="monotone" />
+  <ChartLine dataKey="visits" curve="monotone" markEnd />
+  <ChartXAxis interval="auto" />
+  <ChartTooltip />
+</Chart>
+
+// Never more often than weekly, however wide the plot:
+<ChartXAxis interval="auto" minInterval={7} />
+```
+
 ## Negative values
 
 The domain anchors to zero, and bars and areas grow from the **value baseline** (the y-zero line), so positive values rise above it and negative values drop below. No extra config: pass data that crosses zero and it reads correctly.
@@ -353,6 +446,23 @@ const net = [{ month: "Jan", net: 12 }, { month: "Feb", net: -8 }, /* … */]
 </Chart>
 ```
 
+## Fitted domain
+
+A full chart starts its y-axis at zero, which is right for bars and totals. A balance or a rate moves in a band far from zero, and a zero floor flattens it into a line. Pass `domain="fit"` and the axis wraps the data’s own extent in nice rounded bounds, with ticks on a nice step, so the grid and the labels still land on round values. It never crosses zero when the data does not. A `[min, max]` pair still fixes the domain exactly.
+
+```tsx
+// A balance between $1.67M and $1.84M: "fit" wraps it in $1.65M to $1.85M.
+<Chart data={balance} index="week" domain="fit"
+  config={{ balance: { label: "Balance", color: "blue", format: usd } }} className="h-56">
+  <ChartGrid />
+  <ChartYAxis tickFormatter={(v) => `$${(v / 1_000_000).toFixed(2)}M`} />
+  <ChartArea dataKey="balance" curve="monotone" />
+  <ChartLine dataKey="balance" curve="monotone" markEnd />
+  <ChartXAxis interval="auto" />
+  <ChartTooltip />
+</Chart>
+```
+
 ## Sparkline
 
 Pass `sparkline` for a chromeless trend: zero padding (it bleeds to the edge), points spanning the full width, and `currentColor` so a single `text-*` utility sets the hue. This is exactly what [StatSparkline](https://koala-ui.vercel.app/docs/components/stat.md) renders under the hood.
@@ -363,6 +473,19 @@ Pass `sparkline` for a chromeless trend: zero padding (it bleeds to the edge), p
 <Chart data={[31, 40, 28, 51, 42, 60, 58, 71]} sparkline className="h-12 text-success">
   <ChartArea />
   <ChartLine />
+  <ChartTooltip />
+</Chart>
+```
+
+## Sparkline bars
+
+A sparkline can draw bars too, for a week of orders beside a figure. Once a `ChartBar` is in it, the categories sit in bands (the first and last bars keep their full width) and the scale runs from zero, so the shortest bar still reads as a bar. Add `ChartTooltip` for a hover readout, and `highlight` to light today.
+
+```tsx
+// Bars in a sparkline sit in bands and grow from zero; today takes the brand.
+<Chart data={week} index="day" sparkline
+  config={{ orders: { label: "Orders", color: "neutral" } }} className="h-12 w-28">
+  <ChartBar dataKey="orders" highlight={week.length - 1} radius={3} />
   <ChartTooltip />
 </Chart>
 ```
@@ -405,13 +528,13 @@ The SVG is decorative (`aria-hidden`): pixels do not read well to a screen reade
   <ChartArea dataKey="revenue" />
   <ChartLine dataKey="revenue" />
   <ChartXAxis />
-  <ChartTooltip valueFormatter={(v) => `$${v.toLocaleString()}`} />
+  <ChartTooltip valueFormatter={(v) => `$${v.toLocaleString("en-US")}`} />
 </Chart>
 ```
 
 ## API reference
 
-`Chart` takes `data` (an array of rows, or a bare `number[]`), `index`, `config`, `domain`, `sparkline`, `stack` (stack multi-series bars and size the domain to the total), `padding`, `animate` (the load reveal, on by default), `crosshair` (the hover tracking line, which paints behind the data so the trend stays on top; defaults on for full charts, off for sparklines), `loading`, `empty`, and `label` (accessible name + data-table caption), and forwards `div` props. The series parts ( `ChartLine`, `ChartArea`, `ChartBar`) take a `dataKey` and optional `color`; `ChartBar` also takes `label` (a value label per bar); `ChartLine` and `ChartArea` also take `connectNulls`; `ChartLine` adds `dashed` and `markEnd`. `ChartBars` and `ChartAreas` draw several bar / area series (grouped, or stacked when `stack` is set) from a `keys` list. `ChartGrid`, `ChartXAxis`, and `ChartYAxis` (with `side="right"` for the secondary axis) are the chrome; per-series `config` entries take `format` and `axis`; `ChartReferenceLine` adds a `y`/`x` threshold with an optional `label`; `ChartTooltip` adds the hover bubble with `valueFormatter` and `labelFormatter`; and `ChartLegend` is a standalone key (place it outside the chart, fed the same `config`, or `items` with an optional `value`). Every part accepts `className`, merged last.
+`Chart` takes `data` (an array of rows, or a bare `number[]`), `index`, `config`, `domain` (`"auto"`, the default, from zero; `"fit"` around the data; or a fixed `[min, max]`), `sparkline`, `stack` (stack multi-series bars and size the domain to the total), `padding`, `animate` (the load reveal, on by default), `crosshair` (the hover tracking line, which paints behind the data so the trend stays on top; defaults on for full charts, off for sparklines), `activeIndex` and `onActiveIndexChange` (the hovered category, controlled or reported), `loading`, `empty`, and `label` (accessible name + data-table caption), and forwards `div` props, a `ref` included (merged with the one it measures through). The series parts ( `ChartLine`, `ChartArea`, `ChartBar`) take a `dataKey` and optional `color`; `ChartBar` also takes `label` (a value label per bar) and `highlight` with `highlightColor` (bars painted in another hue); `ChartLine` and `ChartArea` also take `connectNulls` and `curve` (`"linear"` or `"monotone"`); `ChartLine` adds `dashed` and `markEnd`. `ChartBars` and `ChartAreas` draw several bar / area series (grouped, or stacked when `stack` is set) from a `keys` list, and `ChartAreas` takes a `curve` too. `ChartGrid`, `ChartXAxis` (with `interval`, a number or `"auto"`, plus `minTickGap` and `minInterval`), and `ChartYAxis` (with `side="right"` for the secondary axis) are the chrome; per-series `config` entries take `format` and `axis`; `ChartReferenceLine` adds a `y`/`x` threshold with an optional `label`; `ChartTooltip` adds the hover bubble with `valueFormatter`, `labelFormatter` (label, row, index) and `footer`, whose rows are `ChartTooltipItem`s (`color`, `label`, `value`); and `ChartLegend` is a standalone key (place it outside the chart, fed the same `config`, or `items` with an optional `value`). Every part accepts `className`, merged last.
 
 ## FAQ
 
@@ -469,7 +592,35 @@ Use ChartReferenceLine with y for a horizontal threshold (or x for a vertical ma
 
 ### Why does the y-axis go a bit above my largest value?
 
-Full charts round the domain to nice bounds and a 1/2/5 tick step (for example a max of 7,100 extends the axis to 8,000 with ticks at 0, 2k, 4k, 6k, 8k). Grid lines and y-axis labels share that one tick set, so they always align. Sparklines and an explicit domain skip the rounding.
+Full charts round the domain to nice bounds and a 1/2/5 tick step (for example a max of 7,100 extends the axis to 8,000 with ticks at 0, 2k, 4k, 6k, 8k). Grid lines and y-axis labels share that one tick set, so they always align. domain="fit" rounds the same way around the data instead of from zero. Sparklines and an explicit [min, max] domain skip the rounding.
+
+### How do I draw a smooth line?
+
+Pass curve="monotone" to ChartLine and to the ChartArea under it (ChartAreas takes it too). It is a monotone cubic: smooth, but it passes through every point and never overshoots, so a plateau stays flat and a peak sits exactly on its value. Gaps, stacking, dashed lines, markEnd and the draw-in all follow the curve.
+
+### How do I light one bar, or the one under the pointer?
+
+Draw the series in neutral and pass highlight to ChartBar: an index (today), a list, a predicate over the row, or "active" for the hovered bar. highlightColor sets the hue, the brand by default. The predicate also receives the active index, so (row, i, active) => i === (active ?? last) keeps the latest bar lit until another is hovered. Swapping the highlight never replays the grow-in.
+
+### Can I know which category is hovered?
+
+Yes. onActiveIndexChange on Chart reports the index as the pointer crosses the ChartTooltip bands, and null when it leaves. Pass activeIndex to control it instead, for example to light a column from a table row. The crosshair, the active dot, the bar dim and an "active" highlight all follow it.
+
+### How do I add a row to the tooltip?
+
+Pass footer to ChartTooltip. It receives the row and its index and renders under the series rows, below a hairline. Build each row with ChartTooltipItem (color, label, value) so it lines up with the series and keeps its swatch hue in the portaled bubble. labelFormatter also receives the row and index, for a richer heading.
+
+### How do I stop x-axis labels from colliding?
+
+Set interval="auto" on ChartXAxis. It measures the labels against the plot width, skips just enough to keep them apart (minTickGap, 12px by default), re-thins on resize, and counts back from the last category so the latest period always keeps its label. minInterval sets a floor, like 7 for a month read by the week.
+
+### Can a sparkline show bars?
+
+Yes. Put a ChartBar in a sparkline Chart: the categories lay out in bands so the edge bars keep their full width, and the scale runs from zero so every bar keeps its height. ChartTooltip and highlight work as in a full chart.
+
+### Can I pass a ref to Chart?
+
+Yes. Chart merges your ref with the one it measures its box through, so a ref (object or callback) reaches the root div and the chart keeps sizing itself.
 
 ### What shows while data is loading or empty?
 
@@ -485,9 +636,9 @@ Pass animate={false} on the Chart root. By default every chart plays a one-shot 
 
 ## Exports and dependencies
 
-`npx koalaui-cli add chart` writes `components/ui/chart/`. Import from `@/components/ui/chart`:
+`npx koalaui-cli@latest add chart` writes `components/ui/chart/`. Import from `@/components/ui/chart`:
 
-- Components and helpers: `Chart`, `ChartArea`, `ChartAreas`, `ChartLine`, `ChartBar`, `ChartBars`, `ChartGrid`, `ChartXAxis`, `ChartYAxis`, `ChartReferenceLine`, `ChartTooltip`, `ChartLegend`, `chartVariants`
-- Types: `ChartProps`, `ChartConfig`, `ChartColor`, `ChartDatum`, `ChartSeriesConfig`, `ChartLineProps`, `ChartAreaProps`, `ChartAreasProps`, `ChartBarProps`, `ChartBarsProps`, `ChartGridProps`, `ChartAxisProps`, `ChartYAxisProps`, `ChartReferenceLineProps`, `ChartTooltipProps`, `ChartLegendProps`, `ChartLegendItem`
+- Components and helpers: `Chart`, `ChartArea`, `ChartAreas`, `ChartLine`, `ChartBar`, `ChartBars`, `ChartGrid`, `ChartXAxis`, `ChartYAxis`, `ChartReferenceLine`, `ChartTooltip`, `ChartTooltipItem`, `ChartLegend`, `chartVariants`
+- Types: `ChartProps`, `ChartConfig`, `ChartColor`, `ChartCurve`, `ChartBarHighlight`, `ChartDatum`, `ChartSeriesConfig`, `ChartLineProps`, `ChartAreaProps`, `ChartAreasProps`, `ChartBarProps`, `ChartBarsProps`, `ChartGridProps`, `ChartAxisProps`, `ChartYAxisProps`, `ChartReferenceLineProps`, `ChartTooltipProps`, `ChartTooltipItemProps`, `ChartLegendProps`, `ChartLegendItem`
 - Koala components it installs with it: `skeleton`, `tooltip`
 - Koala lib helpers it uses: `create-context`, `motion`, `tv`, `utils`

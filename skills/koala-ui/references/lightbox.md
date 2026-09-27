@@ -20,10 +20,10 @@ A full-screen, browsable image viewer over Radix Dialog. Give it the image list 
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add lightbox
+npx koalaui-cli@latest add lightbox
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/lightbox/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -119,7 +119,7 @@ No. The viewer and thumbnails use plain lazy-loaded `<img>` elements so any remo
 
 ## Exports and dependencies
 
-`npx koalaui-cli add lightbox` writes `components/ui/lightbox/`. Import from `@/components/ui/lightbox`:
+`npx koalaui-cli@latest add lightbox` writes `components/ui/lightbox/`. Import from `@/components/ui/lightbox`:
 
 - Components and helpers: `Lightbox`, `LightboxTrigger`, `lightboxVariants`
 - Types: `LightboxImage`, `LightboxProps`, `LightboxTriggerProps`

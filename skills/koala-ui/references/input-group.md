@@ -27,10 +27,10 @@ Joins several controls, a field, a Select, a static affix, a small icon-only act
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add input-group
+npx koalaui-cli@latest add input-group
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/input-group/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -169,7 +169,7 @@ The `size` prop sets the shell height (`sm` 32, `md` 36, `lg` 40px) and the affi
 <InputGroup disabled>
   <InputGroupAddon>https://</InputGroupAddon>
   <InputRoot>
-    <InputField defaultValue="acme" disabled aria-label="Subdomain" />
+    <InputField defaultValue="koala" disabled aria-label="Subdomain" />
   </InputRoot>
   <InputGroupAddon>.com</InputGroupAddon>
 </InputGroup>
@@ -214,7 +214,7 @@ Yes. Like InputRoot, InputGroup reads the Field context, so hasError and disable
 
 ## Exports and dependencies
 
-`npx koalaui-cli add input-group` writes `components/ui/input-group/`. Import from `@/components/ui/input-group`:
+`npx koalaui-cli@latest add input-group` writes `components/ui/input-group/`. Import from `@/components/ui/input-group`:
 
 - Components and helpers: `InputGroup`, `InputGroupAddon`, `inputGroupVariants`
 - Types: `InputGroupProps`, `InputGroupAddonProps`

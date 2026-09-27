@@ -33,10 +33,10 @@ Every pattern below is its own block: a live preview in a device frame you can r
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add dialog
+npx koalaui-cli@latest add dialog
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/dialog/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -653,7 +653,7 @@ By default those dismissals are uncontrolled, so wire a controlled open and onOp
 
 ## Exports and dependencies
 
-`npx koalaui-cli add dialog` writes `components/ui/dialog/`. Import from `@/components/ui/dialog`:
+`npx koalaui-cli@latest add dialog` writes `components/ui/dialog/`. Import from `@/components/ui/dialog`:
 
 - Components and helpers: `Dialog`, `DialogTrigger`, `DialogClose`, `DialogContent`, `DialogIcon`, `DialogHeader`, `DialogStepper`, `DialogBody`, `DialogFooter`, `DialogTitle`, `DialogDescription`, `dialogVariants`
 - Types: `DialogContentProps`, `DialogFooterProps`, `DialogStepperProps`

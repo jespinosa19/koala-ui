@@ -15,19 +15,19 @@ needs it. There is no `koala-ui` package to import from.
 2. Read the reference of every component you are about to use, `references/<name>.md` in this
    skill (the index is at the end). It is that component's docs page: parts, variants, sizes,
    examples, FAQ, and its exact exports.
-3. Missing a component? Install it instead of writing a look-alike: `npx koalaui-cli add <name>`.
+3. Missing a component? Install it instead of writing a look-alike: `npx koalaui-cli@latest add <name>`.
 4. Compose Koala parts. Plain Tailwind is for the layout between components (flex, grid, gap,
    padding), not for rebuilding what a component already does.
 
 ## Install and update
 
 ```bash
-npx koalaui-cli init                  # once per project: tokens, lib helpers, theme provider, base deps
-npx koalaui-cli add button dialog     # one or more items, their dependencies pulled along
-npx koalaui-cli list                  # everything available, free and Pro
-npx koalaui-cli diff [item]           # what changed upstream since the install
-npx koalaui-cli update [item]         # replace untouched files; files the project edited are kept
-npx koalaui-cli skill                 # refresh this skill
+npx koalaui-cli@latest init                  # once per project: tokens, lib helpers, theme provider, base deps
+npx koalaui-cli@latest add button dialog     # one or more items, their dependencies pulled along
+npx koalaui-cli@latest list                  # everything available, free and Pro
+npx koalaui-cli@latest diff [item]           # what changed upstream since the install
+npx koalaui-cli@latest update [item]         # replace untouched files; files the project edited are kept
+npx koalaui-cli@latest skill                 # refresh this skill
 ```
 
 - `init` writes the tokens to `koala.css`, imports them from the stylesheet that imports Tailwind,
@@ -52,7 +52,7 @@ npx koalaui-cli skill                 # refresh this skill
 Every component, the lib helpers and the tokens are free, and so is one sample section of each
 marketing section family. The other sections, the page examples and the templates are Koala UI
 Pro. `add` on a Pro item without an activated license prints a paywall and exits with an error:
-tell the user the item needs a license (`npx koalaui-cli login <key>` activates one). Do not
+tell the user the item needs a license (`npx koalaui-cli@latest login <key>` activates one). Do not
 rebuild a Pro section from its preview; compose the free components instead.
 
 ## House rules
@@ -112,7 +112,9 @@ Colors are semantic roles backed by CSS variables, so one class is right in ever
   their own; elevation (a popover, a raised card) is what earns a surface.
 - **Motion:** `ease-out`, `ease-in-out`, `ease-drawer`, `ease-spring`, `ease-sine` and
   `duration-fast` (160ms), `duration-base` (300ms), `duration-slow` (450ms). From JavaScript,
-  import `easing` and `duration` from `@/lib/motion`.
+  import `easing` and `duration` from `@/lib/motion`. A surface that changes size with what it
+  shows keeps one box and morphs it with `useMorphBox` from `@/lib/morph` (one radius, contents
+  crossfading inside), never a swap to a second box.
 - **Density:** `compact` or `comfortable`, set once for a subtree with `DensityProvider` from
   `@/lib/density` (app shells are compact, marketing pages comfortable). Density tunes spacing;
   control height is the separate `size` prop (`sm` 32, `md` 36, `lg` 40px). A container such as
@@ -155,6 +157,7 @@ Colors are semantic roles backed by CSS variables, so one class is right in ever
 - [Checkbox](references/checkbox.md): A control for a binary or tri-state choice, built on Radix Checkbox. Supports the indeterminate state a “select all” needs. It's the same control the DataTable uses for row selection.
 - [Checklist](references/checklist.md): The onboarding panel: a card that tracks a short list of setup tasks and their progress. The bar and the 3-of-6 read-out derive from value and total, and the bar turns green the moment every step is done.
 - [Code Snippet](references/code-snippet.md): A polished code block: rounded surface, optional window chrome, copy-on-hover, line numbers and token-driven highlighting. The highlighter is a small, dependency-free tokenizer for TS/TSX, shell and CSS.
+- [Collapsible](references/collapsible.md): One region that opens under its trigger: show more, advanced settings, the log behind an error. No chrome of its own, a height tween on the system's motion tokens, and a mark that turns rather than swaps.
 - [Color Picker](references/color-picker.md): A full HSV color picker in one panel: a HEX/HSL/RGB switcher, a draggable saturation square, hue and alpha rails, channel fields, an eyedropper and a preset palette. The rails ride Radix Slider for keyboard and ARIA.
 - [Command](references/command.md): A searchable command palette: the Cmd-K menu. Arrows move the highlight, Enter runs the active row, and focus never leaves the input. Built on Radix Dialog; filtering and the roving highlight are hand-rolled.
 - [Contact Form](references/contact-form.md): A family of ready get-in-touch blocks on one recipe: ContactForm, LeadForm for sales, and SupportForm for help-desk requests. Each wires its controls through Field, owns its state and confirms on submit.
@@ -174,14 +177,20 @@ Colors are semantic roles backed by CSS variables, so one class is right in ever
 - [Feedback Form](references/feedback-form.md): A compact sentiment and comment block. A row of five faces reveals an optional comment field once one is picked, then submits. It owns its rating and message state; wire onSubmit to your sink.
 - [Field](references/field.md): The wrapper that turns any control into a labelled form field. Field generates the id, htmlFor and aria-describedby wiring for you and cascades error and disabled state to the control inside.
 - [File Card](references/file-card.md): A card for a single file: a realistic file-type illustration or image thumbnail, the name, a meta line, trailing actions and an optional progress bar. Composes into attachment rows and upload trays.
+- [File Icons](references/file-icon.md): File-type icons as pure inline SVG: a sheet with a folded corner and the extension, toned by category. Three variants, four sizes, and every icon ready to copy or download.
+- [File Preview](references/file-preview.md): Look at a file where it is instead of opening another tab. PDFs page through with selectable text, images zoom and pan, and one set of controls fits, zooms, rotates and pages every kind.
 - [File Upload](references/file-upload.md): The uploading experience: a drag-and-drop dropzone, a browse trigger, import shortcuts and built-in accept, size and count validation. Pairs with File Card for the resulting rows and per-file progress.
+- [Flags](references/flag.md): 261 country and region flags as pure inline SVG, in three shapes and six sizes. Search the set, pick a shape, and copy or download any flag as a standalone SVG.
 - [Footer](references/footer.md): A composable site footer for marketing, product and ecommerce pages. Pure layout: a brand column plus grouped link columns up top, and a bottom bar with copyright, legal links and social icons.
 - [Form](references/form.md): The anatomy layer above Field. Field solves one labelled control; Form owns everything around them: the form element and its rhythm, the chapters of a long form, the fieldset, and the bar that closes it.
 - [Gallery](references/gallery.md): A marketing concepts wall: a balanced headline and lead, an optional tab rail to switch template categories, and a full-bleed fake-masonry of framed preview tiles. Our own Tabs, plus plain CSS columns.
 - [Generation](references/generation.md): The card a model fills while it paints a picture. The frame is sized by its ratio before there is anything to put in it, so nothing jumps, and the picture comes in from the top out of a halftone field of dots.
+- [Heatmap](references/heatmap.md): A grid of cells tinted by value, for activity by hour, a year of days or a retention cohort. Scale it per grid, row or column; every cell reads out on hover, on focus and to screen readers.
 - [Hero](references/hero.md): A centered marketing hero section. Named parts you assemble: an announcement eyebrow, a balanced headline, a subtitle, a CTA row, a check-circle feature list and an integrated social-proof row.
+- [Hover Card](references/hover-card.md): A preview that opens while the pointer rests on a link: the profile behind a mention, the page behind a link, the commit behind a hash. Popover's surface, grown out of the link it previews.
 - [Input](references/input.md): A compound text field with a label, optional hint, prefix icons, suffix icons, prefix labels, and interactive suffix buttons. Built with slots and Context - each part is a named export.
 - [Input Group](references/input-group.md): Joins several controls, a field, a Select, a static affix, a small icon-only action, into one seamless segmented shell. The group owns the border and focus ring; each segment goes chromeless and melts in.
+- [Island](references/island.md): A floating pill that changes with what the viewer is doing. Each state is a view, and switching views morphs the pill to its new size while the contents crossfade in place.
 - [Job Card](references/job-card.md): The canonical open-role block: a category badge, the role title, a one-line summary and a meta tier of location, employment type and salary band. Renders as a chrome-less row or a bordered card.
 - [Kbd](references/kbd.md): A keyboard key indicator for documenting shortcuts. Renders a native <kbd>; the default variant is a flat gray chip (no border, no shadow) that re-themes everywhere. Compose combos by placing several side by side.
 - [Label](references/label.md): The one label and helper-text recipe behind every form control in Koala. Input, Field and OTP Input all compose Label and Hint, and inside a Field they auto-wire their own ids, htmlFor and aria.
@@ -190,8 +199,11 @@ Colors are semantic roles backed by CSS variables, so one class is right in ever
 - [Link](references/link.md): The text link, in both house treatments. default and muted are the standalone UI link for chrome, warming to the brand accent on hover; prose is the hyperlink embedded in running copy, underlined at rest.
 - [List](references/list.md): The canonical vertical list group: stacked rows with leading media, a title and description, and trailing meta or actions. Rows are inert by default and become links or buttons via asChild.
 - [Load More](references/load-more.md): Clamps a long region to a couple of rows, fades its cut edge, and puts one reveal button under it. The fade is a mask, not a painted gradient, so it works unchanged on any surface.
+- [Menubar](references/menubar.md): The File, Edit, View row of a desktop-style app. One tab stop, arrow keys across the menus, and once one is open the next opens on hover. The menus are Dropdown Menu's panels, so both read as one object.
 - [Multi Select](references/multi-select.md): A select that picks many values and stays open while you toggle them. Radix Select closes on pick, so this is built on Radix Popover instead, matching Select's surface with a checkbox or switch per row.
+- [Native Select](references/native-select.md): The browser's own select, dressed as Koala's Select trigger. The list that opens is the operating system's: the wheel on iOS, the sheet on Android. Closed, it is indistinguishable from a Select of the same size.
 - [Navbar](references/navbar.md): A composable top navigation bar for marketing, product and ecommerce shells. Layout is composition, not configuration: a NavbarSpacer pushes groups apart. Collapses to a hamburger disclosure below md.
+- [Navigation Menu](references/navigation-menu.md): Menus that open on hover and share one floating panel, so moving between triggers resizes and slides the same surface instead of opening a new popover.
 - [Newsletter Form](references/newsletter-form.md): A ready-to-ship email-capture block. It owns its own email state, validates the address and runs the loading to success flow. Two layouts: a self-contained card and a single-row inline signup.
 - [Order Summary](references/order-summary.md): The checkout and cart order read-out. One composable card that stacks line items, a promo-code band and a totals breakdown, with every price on tabular-nums so the column never jitters.
 - [OTP Input](references/otp-input.md): A numeric one-time-passcode field. Auto-advances on entry, distributes pasted codes across slots, and supports SMS autofill on mobile. Configure the digit count, size, and error state with plain props.
@@ -213,12 +225,15 @@ Colors are semantic roles backed by CSS variables, so one class is right in ever
 - [Rating](references/rating.md): A 1-to-N star rating built on Radix RadioGroup: roving focus, arrow keys and hover preview for free. Active stars render solid, the one place the DS opts out of its outline-only rule, and half stars read cleanly.
 - [Resizable](references/resizable.md): Split a surface into panels the user can drag to resize. No Radix primitive ships this, so the handle is hand-rolled: it carries role=separator, is arrow-key operable, and reports through aria-valuenow.
 - [Rich Text Editor](references/rich-text-editor.md): A WYSIWYG editor for formatted prose: headings, bold, italic, underline, links and lists. Built on Tiptap for selection, undo and paste, with every pixel of UI owned as a Koala tv recipe.
+- [Scroll Area](references/scroll-area.md): A scrolling region with Koala's own scrollbar: an ink pill that overlays the content, shows while you are over it, fades rather than blinks, and looks the same on every OS and theme. The scrolling itself stays native.
 - [Section](references/section.md): The content half of every marketing section: a full-bleed band and a centered 1280px gutter with a canonical gap to the content below. Pair it with SectionHeader and every block shares one rhythm.
 - [Section Header](references/section-header.md): The lede every section opens with: a Badge eyebrow, a balanced heading, a supporting paragraph and a CTA row. Two axes, align and orientation, recompose it, so every block on the page shares one rhythm.
 - [Select](references/select.md): A dropdown for picking one value from a list. Built on Radix Select for keyboard navigation, type-ahead and a11y, with interruptible enter and exit. Its sibling SelectSearch adds a search field.
 - [Settings Form](references/settings-form.md): An account-profile editing block: an avatar with change and remove controls, a name row, a prefixed username, email and a bio with a live count, closed by a Cancel and Save footer.
 - [Sheet](references/sheet.md): A panel that stays open over a full-bleed canvas like a map: a floating card on a wide container, a bottom sheet with three detents on a narrow one. Unlike Drawer, it never blocks the page.
 - [Sidebar](references/sidebar.md): The application navigation rail. Stack the parts you need: a workspace switcher up top, the primary pages first, labeled sections and favorites below, and a profile switcher pinned to the bottom.
+- [Signature](references/signature.md): A handwritten signature that writes itself, stroke by stroke, at the pace a hand signs. Close a letter, a testimonial or a hero with it, or sign a Signature Pad and play the hand back.
+- [Signature Pad](references/signature-pad.md): A page to sign on with a mouse, a finger or a stylus. It keeps each pen stroke as a smooth SVG path, in writing order, so a Signature can play the hand back and a form can submit it.
 - [Skeleton](references/skeleton.md): A loading placeholder that mirrors the shape of the content it stands in for. Single-element like Badge; the fill is a semantic token, so it re-themes everywhere, and the optional shimmer rides the shared motion tokens.
 - [Slider](references/slider.md): Pick a value or a range by dragging along a track. Built on Radix Slider: thumbs auto-render from the value array, with an optional live bubble and full keyboard support. SliderInput pairs a rail with a number.
 - [Spinner](references/spinner.md): The one loading glyph in the system. It takes its size from whatever holds it and its color from the text around it, and it is announced once, never twice.
@@ -227,11 +242,13 @@ Colors are semantic roles backed by CSS variables, so one class is right in ever
 - [Suggestions](references/suggestions.md): Inline AI edit suggestions over a body of text. The AI marks spans with a colored dotted underline; click one to see the proposed replacement and a reason, then apply it in place or dismiss it.
 - [Survey](references/survey.md): Google-Forms-style question cards: an eyebrow, a title with an optional required asterisk, and an answer. Survey owns the layout and semantics; the controls are the real DS components.
 - [Switch](references/switch.md): A toggle for an instant, self-applying boolean, built on Radix Switch. Use it for settings that take effect immediately (notifications, airplane mode); reach for a Checkbox when the choice is submitted with a form.
+- [Table of Contents](references/table-of-contents.md): The on-this-page nav beside a long document. It marks the section being read as you scroll, with a bar that slides along a hairline track, and it needs nothing but the links themselves.
 - [Tabs](references/tabs.md): Switch between related panels. Built on Radix Tabs for behavior and a11y, styled with one tv slots recipe. The active state is a single indicator measured in JS and slid with transform.
 - [Team Member](references/team-member.md): The person block of a team roster: a photo frame, the name, the role, an optional bio and a row of social links. Stacked, inline or set over the photo, as a plain block or an outline card.
 - [Testimonials](references/testimonials.md): A minimal quote card for social-proof walls. Named parts you assemble: an optional quote mark, the quote, an author row and an optional logo. Stars come from Rating, the headshot from Avatar.
 - [Textarea](references/textarea.md): A multi-line text field built from slots and Context: pairs with a label and hint, grows to fit its content, and carries an optional character counter in its footer. Each part is a named export.
 - [Toast](references/toast.md): Transient status messages anchored to a corner. Toasts stack with a compressed fan when several are queued, hover to expand, follow a promise from loading to its result, and update in place.
+- [Toggle](references/toggle.md): One control that stays pressed: bookmark, pin, mute, unread only. The single-item sibling of Toggle Group, sharing its paint and its heights, with a pressed glyph that fills in instead of blinking.
 - [Toggle Group](references/toggle-group.md): A set of pressable pills that hold a selection, built on Radix ToggleGroup. Use single for a one-of-N choice or multiple for independent toggles. A chosen pill carries the brand outline.
 - [Toolbar](references/toolbar.md): A keyboard-navigable band that groups icon controls, dropdown triggers, toggle sets and separators into one unit. Built on Radix Toolbar, so it ships roving tab focus and arrow-key movement.
 - [Tooltip](references/tooltip.md): A small hint shown on hover or focus. Positioning, hover-intent and a11y come from Tippy.js in headless mode - Koala owns the bubble's markup, styled with our tokens. The one component built on a non-Radix primitive.

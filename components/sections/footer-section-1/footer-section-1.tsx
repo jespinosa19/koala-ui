@@ -14,6 +14,7 @@ import {
   FooterTagline,
   FooterTop,
 } from "@/components/ui/footer"
+import { KOALA_LOGO_SRC } from "@/lib/koala-mark"
 
 /**
  * footer-section-1: the canonical marketing footer.
@@ -42,12 +43,9 @@ const SOCIAL = [
 function Logo() {
   return (
     <span className="inline-flex items-center gap-2">
-      <span aria-hidden className="grid size-7 place-items-center rounded-lg bg-foreground text-background">
-        <svg viewBox="0 0 16 16" className="size-3.5" fill="currentColor">
-          <path d="M8 1.5 14.5 14h-13Z" />
-        </svg>
-      </span>
-      <span className="text-base font-semibold tracking-tight">Acme</span>
+      {/* eslint-disable-next-line @next/next/no-img-element -- packaged file: the embedded mark (a data URI), so no BrandMark and no next/image */}
+      <img src={KOALA_LOGO_SRC} alt="" className="size-7 rounded-lg shadow-xs" />
+      <span className="text-base font-semibold tracking-tight">Koala UI</span>
     </span>
   )
 }
@@ -80,7 +78,7 @@ export function FooterSection1() {
         </FooterColumns>
       </FooterTop>
       <FooterBottom>
-        <FooterCopyright>© 2026 Acme, Inc. All rights reserved.</FooterCopyright>
+        <FooterCopyright>© 2026 Koala UI. All rights reserved.</FooterCopyright>
         <FooterLegal>
           <FooterLink href="#">Privacy</FooterLink>
           <FooterLink href="#">Terms</FooterLink>

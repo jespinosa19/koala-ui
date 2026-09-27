@@ -100,6 +100,23 @@ export const rankingVariants = tv({
           "h-full w-(--ranking-bar) rounded-md bg-foreground/10 [transition:width_var(--duration-slow)_var(--ease-out),background-color_var(--duration-fast)_var(--ease-out)] group-hover/bar:bg-brand group-focus-visible/bar:bg-brand group-focus-visible/bar:ring-2 group-focus-visible/bar:ring-brand group-focus-visible/bar:ring-offset-2 group-focus-visible/bar:ring-offset-background motion-reduce:transition-none",
       },
     },
+    /**
+     * The fill's hue, set per bar (RankingBar passes it to its own slot, so the root recipe never
+     * needs it). Unset, each layout keeps its own default: the chart blue in `list` and `bars`, the
+     * resting neutral in `inline`. The names and inks are the Chart's series colors, so a Ranking
+     * beside a Chart can carry the same key: `brand` for the one row the view is about, `neutral`
+     * for the rest, the status roles when a bar reports health. Complete classes, never built.
+     */
+    tone: {
+      blue: { barFill: "bg-blue-500" },
+      brand: { barFill: "bg-brand" },
+      // The Chart's recessive ink: the foreground at 10% reads as a quiet grey in every theme.
+      neutral: { barFill: "bg-foreground/10" },
+      success: { barFill: "bg-success" },
+      warning: { barFill: "bg-warning" },
+      destructive: { barFill: "bg-destructive" },
+      info: { barFill: "bg-info" },
+    },
   },
   defaultVariants: {
     variant: "default",
@@ -110,10 +127,18 @@ export const rankingVariants = tv({
 type RankingSlots = ReturnType<typeof rankingVariants>
 const [RankingProvider, useRankingContext] = createContext<{ slots: RankingSlots }>("Ranking")
 
+/** The fill hues a RankingBar can take (the Chart's series names). */
+export type RankingTone = NonNullable<VariantProps<typeof rankingVariants>["tone"]>
+
 export interface RankingProps
   extends React.ComponentProps<"div">,
     VariantProps<typeof rankingVariants> {
   asChild?: boolean
+  /**
+   * The hue every `RankingBar` fill takes unless the bar sets its own `tone`. Unset, each layout
+   * keeps its default: blue in `list` and `bars`, the resting neutral in `inline`.
+   */
+  tone?: RankingTone
 }
 
 /**
@@ -124,10 +149,11 @@ export function Ranking({
   className,
   variant,
   layout,
+  tone,
   asChild = false,
   ...props
 }: RankingProps) {
-  const slots = rankingVariants({ variant, layout })
+  const slots = rankingVariants({ variant, layout, tone })
   const Comp = asChild ? Slot.Root : "div"
   return (
     <RankingProvider slots={slots}>
@@ -239,23 +265,35 @@ export interface RankingBarProps extends Omit<React.ComponentProps<"div">, "chil
   /**
    * Pin this one bar in the brand, for a row that stays "the one in question". In the `inline`
    * layout the brand is already the hover, so leave it off unless something is truly selected.
+   * Wins over `tone`.
    */
   highlight?: boolean
+  /**
+   * The fill's hue: `blue` | `brand` | `neutral` | `success` | `warning` | `destructive` | `info`,
+   * the Chart's series names. Defaults to the Ranking's `tone`, else the layout's own (blue in
+   * `list` and `bars`, the resting neutral in `inline`). "The leader in the brand, the rest
+   * quiet" is `tone={i === 0 ? "brand" : "neutral"}`. In `inline` the hovered bar still lights
+   * the brand whatever its tone.
+   */
+  tone?: RankingTone
 }
 
 /**
  * RankingBar: a thin relative-share bar. The fill paints `bg-blue-500` by default, the
  * same chart hue the Chart's line and bars use, so a Ranking and a Chart read as one system.
- * Recolor it with a `className` on the fill via the `[&>div]` child, or pass a tone
- * class. The width is a runtime value, so it rides a CSS variable, not a generated class.
+ * Recolor it with `tone` (per bar, or for every bar on the Ranking root). The width is a runtime
+ * value, so it rides a CSS variable, not a generated class.
  */
-export function RankingBar({ className, value, highlight = false, ...props }: RankingBarProps) {
+export function RankingBar({ className, value, highlight = false, tone, ...props }: RankingBarProps) {
   const { slots } = useRankingContext("RankingBar")
   const pct = Math.max(0, Math.min(100, value))
   return (
     <div data-slot="ranking-bar" className={slots.barTrack({ className })} {...props}>
       <div
-        className={slots.barFill({ className: highlight && "bg-brand" })}
+        data-slot="ranking-bar-fill"
+        // Only a bar that names its own tone re-resolves the fill: passing `tone: undefined`
+        // would reset a tone the Ranking root set for every bar.
+        className={slots.barFill({ ...(tone ? { tone } : null), className: highlight && "bg-brand" })}
         style={{ "--ranking-bar": `${pct}%` } as React.CSSProperties}
       />
     </div>

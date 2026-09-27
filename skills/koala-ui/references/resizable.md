@@ -33,10 +33,10 @@ Split a surface into panels the user can drag to resize. No Radix primitive ship
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add resizable
+npx koalaui-cli@latest add resizable
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/resizable/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -272,7 +272,7 @@ Yes, groups nest. Put a vertical ResizablePanelGroup inside a panel of a horizon
 
 ## Exports and dependencies
 
-`npx koalaui-cli add resizable` writes `components/ui/resizable/`. Import from `@/components/ui/resizable`:
+`npx koalaui-cli@latest add resizable` writes `components/ui/resizable/`. Import from `@/components/ui/resizable`:
 
 - Components and helpers: `ResizablePanelGroup`, `ResizablePanel`, `ResizableHandle`, `resizableVariants`
 - Types: `ResizableDirection`, `ResizableSize`, `ResizablePanelGroupProps`, `ResizablePanelProps`, `ResizableHandleProps`

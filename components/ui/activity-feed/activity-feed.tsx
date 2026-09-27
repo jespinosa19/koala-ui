@@ -35,14 +35,45 @@ export const activityFeedVariants = tv({
     // The timeline is a semantic ordered list (most-recent first reads top-down). The gap is
     // part of the rhythm: each event carries its own symmetric padding and the list adds the
     // rest between them (see `item` below). The child selector closes the rail on the final
-    // event, and is inert when the rail is off: nothing renders to hide.
+    // event, and is inert when the rail is off: nothing renders to hide. It names the EVENT
+    // (`activity-item`, the <li> in both shapes), not any <li>: a feed of day groups ends on a
+    // group, whose own rule closes the rail on its last event instead (see `group`).
     root: [
       "flex flex-col gap-1",
       // Density and `divided` both retune this gap, so ease it: same call DataTable makes for its
       // own density padding. Interruptible, so toggling fast reverses cleanly (#4).
       "transition-[row-gap] duration-base ease-out motion-reduce:transition-none",
-      "[&>li:last-child_[data-slot=activity-connector]]:hidden",
+      "[&>[data-slot=activity-item]:last-child_[data-slot=activity-connector]]:hidden",
     ],
+    // A day (or any) group: an <li> of the feed holding its own <ol> of events, named by its
+    // label. The rail runs straight through: the last event of a group keeps its connector,
+    // which lands on the next group's label, and the label carries a segment of rail on to the
+    // group's first marker. Only the feed's last group closes the rail on its last event, and
+    // only its first group's label drops the segment (nothing above it to connect to).
+    group: [
+      "[&:last-child>ol>[data-slot=activity-item]:last-child_[data-slot=activity-connector]]:hidden",
+      "[&:first-child>ol>[data-slot=activity-group-label]_[data-slot=activity-group-rail]]:hidden",
+    ],
+    // The group's events: the same column and gap as the feed itself, so the rail budget below
+    // holds across a group boundary unchanged.
+    groupList:
+      "flex flex-col gap-1 transition-[row-gap] duration-base ease-out motion-reduce:transition-none",
+    // The label is the group list's first <li>, aria-hidden, because it NAMES that list
+    // (`aria-labelledby`) rather than being one of its events: a screen reader hears "Today, list,
+    // 3 items". It lays out like an event (a marker column, then the text column), so the label
+    // lines up with the events' text and the rail passes it on the left. More air above than
+    // below (12px top padding, none under), so the label reads as the head of what follows.
+    groupLabel:
+      "flex text-xs font-medium text-muted-foreground transition-[padding,column-gap] duration-base ease-out motion-reduce:transition-none",
+    // The marker column of the label row. When the group has no markers at all, it leaves, so the
+    // label keeps sharing the events' left edge instead of indenting past them.
+    groupMarker:
+      "flex w-8 shrink-0 flex-col items-center self-stretch [[data-slot=activity-group]:not(:has([data-slot=activity-marker]))_&]:hidden",
+    // The rail's segment through the label row. The connector above it ends 8px (6 compact) into
+    // the row and the label's text starts 12px (10) in, so it reaches up 4px to meet it; below,
+    // it spans the gap and the first event's top padding to land on that event's marker head.
+    groupRail: "w-px flex-1 bg-border transition-[margin] duration-base ease-out motion-reduce:transition-none",
+    groupLabelText: "min-w-0 flex-1",
     // The outer <li>: carries the divider and the list position only. The row layout lives on
     // `item` so an interactive event can move it onto an inner <a>/<button> (valid <li><a>).
     row: "relative",
@@ -128,12 +159,17 @@ export const activityFeedVariants = tv({
         connector: "-mb-5",
         icon: "size-7",
         dot: "size-7",
+        // Label: 12 top (8 + 4 + 12 = 24px of air above its text), rail 4 up and 0 + 4 + 8 down.
+        groupLabel: "gap-3 pt-3",
+        groupRail: "-mt-1 -mb-3",
       },
       compact: {
         item: "gap-2.5 py-1.5",
         connector: "-mb-4",
         icon: "size-7",
         dot: "size-7",
+        groupLabel: "gap-2.5 pt-2.5",
+        groupRail: "-mt-1 -mb-2.5",
       },
     },
     // Hairline rule between events instead of the vertical rail: the audit-log / notification-
@@ -150,7 +186,11 @@ export const activityFeedVariants = tv({
     divided: {
       true: {
         root: "gap-0",
+        groupList: "gap-0",
         row: "after:absolute after:inset-x-0 after:bottom-0 after:h-px after:bg-border after:content-[''] last:after:hidden",
+        // No rail to meet, and the events already carry 16px (14) of padding: 8 more above the
+        // label gives it the same lead over its group as on the rail.
+        groupLabel: "pt-2",
       },
     },
     // Set per event on {@link ActivityItem}. Not structure, state: the event is new to this
@@ -200,6 +240,10 @@ const [ActivityFeedProvider, useActivityFeedContext] = createContext<{
   connector: boolean
 }>("ActivityFeed")
 
+const [ActivityGroupProvider, useActivityGroupContext] = createContext<{
+  labelId: string
+}>("ActivityGroup")
+
 /* ----------------------------------------------------------------------- tones --- */
 
 /** The soft color a marker carries: pick one that matches the kind of event. */
@@ -218,7 +262,7 @@ export type ActivityTone =
 /** Soft tile tint per tone, following the Badge pattern (`border-<role>/20 bg-<role>/10
  *  text-<role>`) so every tone re-themes across all four palettes. */
 const ICON_TONES: Record<ActivityTone, string> = {
-  default: "border-transparent bg-muted text-muted-foreground",
+  default: "border-border bg-transparent text-muted-foreground",
   brand: "border-brand/20 bg-brand/10 text-brand",
   success: "border-success/20 bg-success/10 text-success",
   warning: "border-warning/20 bg-warning/10 text-warning",
@@ -281,6 +325,55 @@ export function ActivityFeed({
     <ActivityFeedProvider slots={slots} config={config} connector={showConnector}>
       <ol data-slot="activity-feed" className={slots.root({ className })} {...props} />
     </ActivityFeedProvider>
+  )
+}
+
+export type ActivityGroupProps = React.ComponentProps<"li">
+
+/**
+ * ActivityGroup: a run of events under one heading, a day ("Today", "Yesterday") or any other
+ * bucket. Put it straight inside {@link ActivityFeed}, give it an {@link ActivityGroupLabel} first
+ * and its {@link ActivityItem}s after. It renders an `<li>` of the feed holding its own `<ol>`,
+ * named by the label, and the feed's rail runs through every group and label unbroken. The
+ * label is droppable: a group without one is just a run of events.
+ */
+export function ActivityGroup({ className, children, ...props }: ActivityGroupProps) {
+  const { slots } = useActivityFeedContext("ActivityGroup")
+  const labelId = React.useId()
+  return (
+    <ActivityGroupProvider labelId={labelId}>
+      <li data-slot="activity-group" className={slots.group({ className })} {...props}>
+        <ol data-slot="activity-group-list" aria-labelledby={labelId} className={slots.groupList()}>
+          {children}
+        </ol>
+      </li>
+    </ActivityGroupProvider>
+  )
+}
+
+export type ActivityGroupLabelProps = React.ComponentProps<"li">
+
+/**
+ * ActivityGroupLabel: the small heading of an {@link ActivityGroup}, e.g. "Today". Sits in the
+ * events' text column with the rail passing on its left, and names the group's list for a screen
+ * reader (it is the list's accessible name, not one of its items). One per group, first.
+ */
+export function ActivityGroupLabel({ className, children, ...props }: ActivityGroupLabelProps) {
+  const { slots, connector } = useActivityFeedContext("ActivityGroupLabel")
+  const { labelId } = useActivityGroupContext("ActivityGroupLabel")
+  return (
+    <li
+      data-slot="activity-group-label"
+      id={labelId}
+      aria-hidden
+      className={slots.groupLabel({ className })}
+      {...props}
+    >
+      <span data-slot="activity-group-marker" className={slots.groupMarker()}>
+        {connector && <span data-slot="activity-group-rail" className={slots.groupRail()} />}
+      </span>
+      <span className={slots.groupLabelText()}>{children}</span>
+    </li>
   )
 }
 

@@ -23,7 +23,7 @@ A composable top navigation bar for marketing, product and ecommerce shells. Lay
     </NavbarNav>
     <NavbarSpacer />
     <NavbarActions>
-      <Button size="sm" variant="ghost">Sign in</Button>
+      <Button size="sm" variant="outline">Sign in</Button>
       <Button size="sm">Sign up</Button>
     </NavbarActions>
     <NavbarMobileToggle />
@@ -39,10 +39,10 @@ A composable top navigation bar for marketing, product and ecommerce shells. Lay
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add navbar
+npx koalaui-cli@latest add navbar
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/navbar/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -60,7 +60,7 @@ export function Example() {
   return (
     <Navbar>
       <NavbarInner>
-        <NavbarBrand href="/">Acme</NavbarBrand>
+        <NavbarBrand href="/">Koala UI</NavbarBrand>
         <NavbarNav>
           <NavbarLink href="/">Home</NavbarLink>
           <NavbarLink href="/features" active>Features</NavbarLink>
@@ -68,7 +68,7 @@ export function Example() {
         </NavbarNav>
         <NavbarSpacer />
         <NavbarActions>
-          <Button size="sm" variant="ghost">Sign in</Button>
+          <Button size="sm" variant="outline">Sign in</Button>
           <Button size="sm">Sign up</Button>
         </NavbarActions>
         <NavbarMobileToggle />
@@ -253,6 +253,46 @@ A link that opens a menu is a `NavbarLink` wrapped in the standard [DropdownMenu
 </DropdownMenu>
 ```
 
+## Open on hover, fluid between links
+
+Swap the click-triggered `DropdownMenu` for a [NavigationMenu](https://koala-ui.vercel.app/docs/components/navigation-menu.md) when the bar carries more than one dropdown link. It opens on hover, and every trigger shares one panel: moving from “Product” to “Resources” resizes it instead of swapping popovers.
+
+```tsx
+<NavbarInner>
+  <NavbarBrand href="/"><BrandMark /></NavbarBrand>
+  <div className="ml-2 hidden items-center gap-0.5 lg:flex">
+    <NavbarLink href="/" active>Home</NavbarLink>
+    <NavigationMenu>
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>Product</NavigationMenuTrigger>
+          <NavigationMenuContent>
+            <div className="flex w-64 flex-col">
+              <NavigationMenuLink href="/analytics">
+                <ChartBar />
+                <NavigationMenuLinkText>
+                  Analytics
+                  <NavigationMenuLinkDescription>Traffic and conversion</NavigationMenuLinkDescription>
+                </NavigationMenuLinkText>
+              </NavigationMenuLink>
+              …
+            </div>
+          </NavigationMenuContent>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
+          <NavigationMenuContent>…</NavigationMenuContent>
+        </NavigationMenuItem>
+        <NavigationMenuIndicator />
+      </NavigationMenuList>
+    </NavigationMenu>
+  </div>
+  <NavbarSpacer />
+  <NavbarActions>…</NavbarActions>
+  <NavbarMobileToggle className="md:inline-flex lg:hidden" />
+</NavbarInner>
+```
+
 ## Search
 
 `NavbarSearch` is the DS [Input](https://koala-ui.vercel.app/docs/components/input.md) with a leading magnifier. Set a width like `w-64` for a normal field, or `flex-1` to fill the center of the bar.
@@ -413,14 +453,19 @@ The same parts build a storefront header, with two conventions of its own: the l
 ```
 
 ```tsx
-{/* Editorial storefront: links lead, the mark holds the centreline */}
-<NavbarInner className="md:grid md:grid-cols-[1fr_auto_1fr]">
-  <NavbarBrand href="/" className="mr-0 md:order-2 md:justify-self-center"><BrandMark /></NavbarBrand>
-  <NavbarSpacer className="md:hidden" />
-  <NavbarNav className="md:order-1">…</NavbarNav>
-  <NavbarActions className="md:order-3 md:justify-self-end">…</NavbarActions>
-  <NavbarMobileToggle className="md:order-4" />
-</NavbarInner>
+{/* Editorial storefront: links lead, the mark holds the centreline.
+    Gated on the bar's own width (a container query), not the viewport: five uppercase
+    labels plus a centred mark need the bar itself to have the room, which a viewport
+    breakpoint gets wrong the moment the bar is narrower than the window. */}
+<Navbar className="@container/navbar">
+  <NavbarInner className="@7xl/navbar:grid @7xl/navbar:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
+    <NavbarBrand href="/" className="mr-0 @7xl/navbar:order-2 @7xl/navbar:justify-self-center"><BrandMark /></NavbarBrand>
+    <NavbarSpacer className="@7xl/navbar:hidden" />
+    <NavbarNav className="md:hidden @7xl/navbar:order-1 @7xl/navbar:flex">…</NavbarNav>
+    <NavbarActions className="@7xl/navbar:order-3 @7xl/navbar:justify-self-end">…</NavbarActions>
+    <NavbarMobileToggle className="md:inline-flex @7xl/navbar:order-4 @7xl/navbar:hidden" />
+  </NavbarInner>
+</Navbar>
 ```
 
 ## Density
@@ -514,7 +559,7 @@ Put `w-fit max-w-none` on `NavbarInner`. That releases the 1440px cap and stops 
 
 ## Exports and dependencies
 
-`npx koalaui-cli add navbar` writes `components/ui/navbar/`. Import from `@/components/ui/navbar`:
+`npx koalaui-cli@latest add navbar` writes `components/ui/navbar/`. Import from `@/components/ui/navbar`:
 
 - Components and helpers: `Navbar`, `NavbarInner`, `NavbarBrand`, `NavbarNav`, `NavbarLink`, `NavbarActions`, `NavbarSearch`, `NavbarSpacer`, `NavbarMobileToggle`, `NavbarMobileMenu`, `NavbarMobileLink`, `NavbarShellContext`, `navbarVariants`
 - Types: `NavbarProps`, `NavbarBrandProps`, `NavbarLinkProps`, `NavbarSearchProps`, `NavbarMobileToggleProps`, `NavbarMobileLinkProps`

@@ -14,10 +14,10 @@ const [date, setDate] = React.useState<Date>()
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add date-picker
+npx koalaui-cli@latest add date-picker
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/date-picker/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -145,7 +145,7 @@ No. Both pickers read useFieldContext, so dropping a DatePicker inside a Field a
 
 ## Exports and dependencies
 
-`npx koalaui-cli add date-picker` writes `components/ui/date-picker/`. Import from `@/components/ui/date-picker`:
+`npx koalaui-cli@latest add date-picker` writes `components/ui/date-picker/`. Import from `@/components/ui/date-picker`:
 
 - Components and helpers: `Calendar`, `DatePicker`, `DateRangePicker`, `getDatePresets`, `getDateRangePresets`, `calendarVariants`, `datePickerTriggerVariants`
 - Types: `CalendarProps`, `CalendarSingleProps`, `CalendarRangeProps`, `DatePickerProps`, `DateRangePickerProps`, `DateRange`, `DatePreset`, `DateRangePreset`

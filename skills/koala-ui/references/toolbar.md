@@ -79,10 +79,10 @@ A keyboard-navigable band that groups icon controls, dropdown triggers, toggle s
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add toolbar
+npx koalaui-cli@latest add toolbar
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/toolbar/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -226,6 +226,23 @@ Three levels of chrome. `floating` (the default) is an elevated pill that hovers
   <ToolbarButton tooltip="Next"><SkipForward weight="fill" /></ToolbarButton>
   <ToolbarSeparator />
   <ToolbarButton tooltip="Volume"><SpeakerHigh /></ToolbarButton>
+</Toolbar>
+```
+
+## Primary action
+
+When a bar exists for one action, play in a transport or run in an editor, mark that control with `variant="primary"`. It fills with the brand accent, like a primary Button, and keeps its siblings' box and corners, so the band's rhythm and concentric radius hold and only the fill says it leads. Hover, pressed and open states stay on the fill. Keep it to one per bar; a second filled control and neither one leads.
+
+```tsx
+<Toolbar aria-label="Transport">
+  <ToolbarButton tooltip="Undo" shortcut="⌘Z"><ArrowUUpLeft weight="bold" /></ToolbarButton>
+  <ToolbarButton tooltip="Redo" shortcut="⇧⌘Z"><ArrowUUpRight weight="bold" /></ToolbarButton>
+  <ToolbarSeparator />
+  <ToolbarButton tooltip="Previous"><SkipBack weight="fill" /></ToolbarButton>
+  <ToolbarButton variant="primary" tooltip="Play">
+    <Play weight="fill" className="translate-x-px" />
+  </ToolbarButton>
+  <ToolbarButton tooltip="Next"><SkipForward weight="fill" /></ToolbarButton>
 </Toolbar>
 ```
 
@@ -401,6 +418,7 @@ An icon control (Radix `Toolbar.Button`).
 - `pressed` — mark the control active (sets `aria-pressed` and the filled chip).
 - `caret` — trailing chevron + auto width for a dropdown trigger.
 - `asChild` — render as a menu/popover trigger; `static` — drop the press scale.
+- `variant`: `"default"` · `"primary"` (the bar's main action, brand-filled).
 
 ### ToolbarToggleGroup · ToolbarToggleItem
 
@@ -462,7 +480,7 @@ Yes. Set orientation="vertical" for a tool rail; arrow-key navigation follows th
 
 ## Exports and dependencies
 
-`npx koalaui-cli add toolbar` writes `components/ui/toolbar/`. Import from `@/components/ui/toolbar`:
+`npx koalaui-cli@latest add toolbar` writes `components/ui/toolbar/`. Import from `@/components/ui/toolbar`:
 
 - Components and helpers: `Toolbar`, `ToolbarButton`, `ToolbarSeparator`, `ToolbarToggleGroup`, `ToolbarToggleItem`, `ToolbarLink`, `ToolbarGroup`, `ToolbarSpacer`, `ToolbarTitle`, `toolbarVariants`, `ToolbarOverflow`
 - Types: `ToolbarProps`, `ToolbarButtonProps`, `ToolbarToggleItemProps`, `ToolbarOverflowProps`, `ToolbarOverflowItem`, `ToolbarOverflowAction`, `ToolbarOverflowToggle`, `ToolbarOverflowSeparator`

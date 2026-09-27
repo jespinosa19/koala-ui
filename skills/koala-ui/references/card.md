@@ -24,10 +24,10 @@ A surface that groups related content. The reference multi-part component: one t
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add card
+npx koalaui-cli@latest add card
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/card/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -130,6 +130,47 @@ Card is the other shape: two props, and everything else is composition. Turn a *
 </Card>
 ```
 
+## Interactive
+
+When the whole card is the way in (a task on a board, a template in a gallery, a customer in a grid), render it as the link or the button itself: pass `asChild` around an `<a>` or a `<button>`, and `interactive` to add the pointer, a hover and a focus ring. The hover follows the variant: `default` lifts and strengthens its edge, `outline` strengthens its edge with a whisper of lift, `elevated` rises further. The edge matters on the dark themes, where a shadow alone barely reads. Only the box-shadow moves, and nothing scales under the press. Keep other controls out of an interactive card: a link or button nested in another is invalid, so a card with its own actions stays a plain card with a link in its title.
+
+```tsx
+<Card asChild interactive>
+  <a href="/tasks/redirect-map">
+    <CardHeader>
+      <CardTitle>Redirect map</CardTitle>
+      <CardDescription>Point every legacy URL at its new page.</CardDescription>
+    </CardHeader>
+  </a>
+</Card>
+
+<Card asChild interactive variant="outline">…</Card>
+<Card asChild interactive variant="elevated">…</Card>
+```
+
+## Action on a narrow card
+
+A wide action (a period switch, a select) leaves the title a sliver of room on a phone-width card. Pass `wrap="narrow"` on `CardAction` and it drops under the title and description once the card header is narrower than 24rem, then returns to the top-right when there is room. It is measured on the header with a container query, so it follows the card, not the viewport: a narrow card on a wide screen wraps too, and a wide card on a tablet does not. It is opt-in because an icon button reads best beside the title at any width. Both cards below hold the same header.
+
+```tsx
+<Card className="w-full max-w-xs">
+  <CardHeader>
+    <CardTitle>Income vs expenses</CardTitle>
+    <CardDescription>Net of refunds, in USD.</CardDescription>
+    <CardAction wrap="narrow">
+      <ToggleGroup type="single" variant="segmented" size="sm" defaultValue="30d" aria-label="Period">
+        <ToggleGroupItem value="7d">7d</ToggleGroupItem>
+        <ToggleGroupItem value="30d">30d</ToggleGroupItem>
+        <ToggleGroupItem value="12m">12m</ToggleGroupItem>
+      </ToggleGroup>
+    </CardAction>
+  </CardHeader>
+  <CardContent className="text-2xl font-semibold tabular-nums">$48,200</CardContent>
+</Card>
+
+<Card className="w-full max-w-md">…the same header…</Card>
+```
+
 ## FAQ
 
 ### Why are the parts named exports instead of Card.Header?
@@ -139,6 +180,14 @@ Namespaced statics like Card.Header do not survive the React Server Components s
 ### How do I put an action in the top-right of the header?
 
 Wrap it in CardAction inside CardHeader. The header is a grid that switches to two columns when it detects a card-action, so the action sits top-right and the title and description stay optically aligned.
+
+### How do I move the action under the title on a phone?
+
+Pass wrap="narrow" on CardAction. Once the card header is under 24rem the action drops below the title and description, flush left; wider, it goes back to the top-right. The header measures itself with a container query, so the switch follows the card's width, not the screen's. The card then takes its width from the layout (a grid track, w-full or a max-w), not from its header's content.
+
+### Can I truncate the description to one line?
+
+Yes. Put a truncate class on CardDescription. Its pretty wrapping is only a zero-specificity default, so truncate, whitespace-nowrap or line-clamp on the description win without any extra class.
 
 ### When should I use variant="elevated" over the default?
 
@@ -166,13 +215,13 @@ Koala insets media: the picture sits 8px in from the card on every side, with a 
 
 ### Can I render the card as a different element, like a link?
 
-Yes. Pass asChild on Card to render its styles onto your own element via Radix Slot, with no extra wrapper.
+Yes. Pass asChild on Card to render its styles onto your own element via Radix Slot, with no extra wrapper. If the whole card is the link or the button, add interactive too: it brings the pointer, a hover that follows the variant and a focus ring.
 
 ## Exports and dependencies
 
-`npx koalaui-cli add card` writes `components/ui/card/`. Import from `@/components/ui/card`:
+`npx koalaui-cli@latest add card` writes `components/ui/card/`. Import from `@/components/ui/card`:
 
 - Components and helpers: `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardAction`, `CardContent`, `CardFooter`, `CardMedia`, `cardVariants`
-- Types: `CardProps`
+- Types: `CardProps`, `CardActionProps`
 - Koala lib helpers it uses: `create-context`, `density`, `tv`
 - npm packages: `radix-ui`

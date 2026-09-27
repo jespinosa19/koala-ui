@@ -4,16 +4,16 @@ A polished React design system: components built on Tailwind CSS v4, Radix UI an
 `tailwind-variants`, with four themes (light, cream, dark, moonlight) and a density system.
 Explore every component at [koala-ui.vercel.app](https://koala-ui.vercel.app).
 
-This repository holds the **free tier**: 107 components, 21 sample
+This repository holds the **free tier**: 122 components, 21 sample
 sections (one of each family), the lib helpers and the design tokens. The CLI copies the source into your project, so you own and edit the code; Koala UI is
 not a runtime dependency.
 
 ## Install
 
 ```bash
-npx koalaui-cli init                      # tokens, helpers, theme provider, base deps
-npx koalaui-cli add button card dialog    # components, dependencies pulled along
-npx koalaui-cli update                    # later: updates, files you edited are kept
+npx koalaui-cli@latest init                      # tokens, helpers, theme provider, base deps
+npx koalaui-cli@latest add button card dialog    # components, dependencies pulled along
+npx koalaui-cli@latest update                    # later: updates, files you edited are kept
 ```
 
 Requires React 19 and Tailwind CSS v4. Full guide:
@@ -21,7 +21,7 @@ Requires React 19 and Tailwind CSS v4. Full guide:
 
 ## For coding agents
 
-`npx koalaui-cli skill` writes the Koala UI agent skill ([skills/koala-ui](./skills/koala-ui)) into
+`npx koalaui-cli@latest skill` writes the Koala UI agent skill ([skills/koala-ui](./skills/koala-ui)) into
 `.claude/skills/koala-ui/`: the house rules plus one reference per component, generated from the
 docs. Every docs page is also served as markdown at its URL plus `.md`, indexed by
 [llms.txt](https://koala-ui.vercel.app/llms.txt).
@@ -30,8 +30,8 @@ docs. Every docs page is also served as markdown at its URL plus `.md`, indexed 
 
 | Tier | What | Install |
 | --- | --- | --- |
-| **Free** | components, lib helpers, tokens, one sample section per family | `koalaui add <name>`, no account |
-| **Pro** | every other section, page examples, templates | a license, then `koalaui login <key>` |
+| **Free** | components, lib helpers, tokens, one sample section per family | `npx koalaui-cli@latest add <name>`, no account |
+| **Pro** | every other section, page examples, templates | a license, then `npx koalaui-cli@latest login <key>` |
 
 Pro source lives in a private repository and reaches buyers through the licensing API, so a
 license is the only thing that grants access. [See the plans](https://koala-ui.vercel.app/pro).

@@ -23,10 +23,10 @@ Google-Forms-style question cards: an eyebrow, a title with an optional required
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add survey
+npx koalaui-cli@latest add survey
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/survey/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -278,7 +278,7 @@ There is no Survey root or provider. Each `SurveyQuestion` is a standalone card,
 
 ## Exports and dependencies
 
-`npx koalaui-cli add survey` writes `components/ui/survey/`. Import from `@/components/ui/survey`:
+`npx koalaui-cli@latest add survey` writes `components/ui/survey/`. Import from `@/components/ui/survey`:
 
 - Components and helpers: `SurveyQuestion`, `SurveyHeader`, `SurveyEyebrow`, `SurveyTitle`, `SurveyDescription`, `SurveyOptions`, `SurveyOption`, `SurveyShortAnswer`, `SurveyParagraph`, `SurveyDropdown`, `SurveyRating`, `SurveyScale`, `surveyVariants`
 - Types: `SurveyQuestionProps`, `SurveyTitleProps`, `SurveyOptionsProps`, `SurveyOptionProps`, `SurveyShortAnswerProps`, `SurveyParagraphProps`, `SurveyDropdownProps`, `SurveyRatingProps`, `SurveyScaleProps`

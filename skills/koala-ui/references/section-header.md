@@ -25,10 +25,10 @@ The lede every section opens with: a Badge eyebrow, a balanced heading, a suppor
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add section-header
+npx koalaui-cli@latest add section-header
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/section-header/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -300,7 +300,7 @@ Reach for `stagger` on hero-adjacent or above-the-fold section headers where a b
 
 ## Exports and dependencies
 
-`npx koalaui-cli add section-header` writes `components/ui/section-header/`. Import from `@/components/ui/section-header`:
+`npx koalaui-cli@latest add section-header` writes `components/ui/section-header/`. Import from `@/components/ui/section-header`:
 
 - Components and helpers: `sectionHeaderVariants`, `sectionHeaderChipVariants`, `SectionHeader`, `SectionHeaderText`, `SectionHeaderHeading`, `SectionHeaderDescription`, `SectionHeaderActions`, `SectionHeaderChip`
 - Types: `SectionHeaderProps`, `SectionHeaderHeadingProps`, `SectionHeaderChipProps`, `SectionHeaderStaggerBy`, `SectionHeaderStaggerTrigger`

@@ -31,8 +31,20 @@ import { Kbd } from "@/components/ui/kbd"
 const dataTableToolbarVariants = tv({
   slots: {
     // Wraps to a stacked layout on narrow screens so the two clusters never collide.
-    root: "flex flex-wrap items-center justify-between gap-x-3 gap-y-2",
-    section: "flex items-center gap-1.5",
+    //
+    // On a phone the clusters dissolve (`contents`), so every control is a flex item of the bar
+    // itself and they share rows instead of each cluster claiming rows of its own: the search
+    // (full width below sm) takes the first row, and the filters and the right-hand actions share
+    // the next one, filters packed from the left and the actions pushed to the right edge by the
+    // first action's auto margin. Kept as two boxes, the left cluster would span the whole width
+    // (its search does) and strand the right cluster's lone view-options button on a row of its
+    // own. One gap for all of them there, the in-cluster one, since the clusters no longer exist.
+    root: [
+      "flex flex-wrap items-center justify-between gap-x-3 gap-y-2",
+      "max-sm:justify-start max-sm:gap-x-1.5",
+      "max-sm:[&>[data-slot=data-table-toolbar-section]:last-child:not(:first-child)>:first-child]:ml-auto",
+    ],
+    section: "flex items-center gap-1.5 max-sm:contents",
   },
 })
 

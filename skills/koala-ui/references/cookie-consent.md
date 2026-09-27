@@ -44,10 +44,10 @@ A GDPR-ready consent surface in two coordinated pieces over one shared state: a 
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add cookie-consent
+npx koalaui-cli@latest add cookie-consent
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/cookie-consent/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -113,6 +113,79 @@ export function Example() {
 }
 ```
 
+## Details on hover
+
+`CookieBannerDetails` keeps the banner clean: it stays folded away and unrolls above the copy on hover or keyboard focus, so the buttons never move under the pointer. `CookieDetailList` fills it from your `categories`, listing the `cookies` of each one with its purpose, provider and duration. Touch screens have no hover, so `CookieBannerDetailsTrigger` shows there, and only there. Escape folds it again.
+
+```tsx
+const categories: CookieCategoryDef[] = [
+  {
+    id: "analytics",
+    label: "Analytics",
+    cookies: [{ name: "_ga", purpose: "Tells visits apart", provider: "Google", duration: "2 years" }],
+  },
+  // …
+]
+
+<CookieBanner position="bottom-right">
+  <CookieBannerContent>
+    <CookieBannerTitle>We value your privacy</CookieBannerTitle>
+    <CookieBannerDescription>We use cookies to run the site and, if you agree, to measure it.</CookieBannerDescription>
+  </CookieBannerContent>
+  <CookieBannerDetails>
+    <CookieDetailList />
+  </CookieBannerDetails>
+  <CookieBannerActions>
+    <CookieBannerDetailsTrigger size="sm" />
+    <CookieRejectAllButton size="sm" />
+    <CookieAcceptAllButton size="sm" />
+  </CookieBannerActions>
+</CookieBanner>
+```
+
+## Essential cookies only
+
+A site that stores only what it needs to work (a sign-in, a saved theme) needs no consent, so there is nothing to accept or reject, only something to know. `layout="launcher"` rests the banner as its icon alone in a small circle. On hover, focus or a tap, the circle grows into the card and the icon slides to its seat beside the title, with the reason and the full list above. This is the notice koalaui.com runs.
+
+```tsx
+<CookieConsent categories={essential} storageKey="cookie-notice">
+  <CookieBanner position="bottom-right" layout="launcher">
+    <CookieBannerIcon><Cookie /></CookieBannerIcon>
+    <CookieBannerContent>
+      <CookieBannerTitle>Only essential cookies</CookieBannerTitle>
+    </CookieBannerContent>
+    <CookieBannerDetails>
+      <CookieBannerDescription>No analytics, no ads, no tracking.</CookieBannerDescription>
+      <CookieDetailList />
+    </CookieBannerDetails>
+    <CookieBannerActions>
+      <CookieBannerDetailsTrigger size="sm" />
+      <CookieAcceptAllButton size="sm" variant="secondary">Got it</CookieAcceptAllButton>
+    </CookieBannerActions>
+  </CookieBanner>
+</CookieConsent>
+```
+
+## Remember the choice
+
+Pass `storageKey` and the root keeps the answer in localStorage: the banner shows only until the visitor answers, the preferences come back on the next visit, and every open tab follows. The record is dated and versioned. Bump `version` when your categories change and everyone is asked again; after `maxAgeDays` (six months by default) the choice expires and the banner returns. Nothing optional is on until the visitor says so, so gate each script on the preferences map.
+
+```tsx title="consent.tsx"
+<CookieConsent categories={categories} storageKey="cookie-consent" version={2} maxAgeDays={180}>
+  …
+  <Analytics />
+</CookieConsent>
+
+// Stored as: { "version": 2, "date": "2026-09-27T10:04:12.000Z", "preferences": { "necessary": true, "analytics": false } }
+
+function Analytics() {
+  const { prefs } = useCookieConsent()
+  // Off until the visitor accepts, and off again the moment they withdraw.
+  if (!prefs.analytics) return null
+  return <Script src="https://plausible.io/js/script.js" data-domain="example.com" />
+}
+```
+
 ## Preferences dialog
 
 The configurator is a DS `Dialog` bound to the same shared state. `CookieCategoryList` maps your `categories` into rows, each with a leading icon, a description, and a `Switch`. Required categories render locked-on with an *Always on* badge. Open it from the banner's `CookieCustomizeButton`, or from a standalone `CookiePreferencesTrigger` anywhere on the page.
@@ -143,7 +216,7 @@ The configurator is a DS `Dialog` bound to the same shared state. `CookieCategor
 
 ## Position
 
-`position` anchors the banner: `bottom` is a full-bleed bar that rows its content out on wide screens, while `bottom-left` and `bottom-right` are compact floating cards. Each slides in from its own edge.
+`position` anchors the banner: `bottom` is a full-bleed bar that rows its content out on wide screens, while `bottom-left` and `bottom-right` are compact floating cards. Each slides in from its own edge. `layout` arranges the parts inside: `stack` (the default) is a column, `inline` one slim row, and `launcher` (corners only) the icon alone until the banner is expanded.
 
 ```tsx
 <CookieBanner position="bottom"> … </CookieBanner>
@@ -157,7 +230,8 @@ The configurator is a DS `Dialog` bound to the same shared state. `CookieCategor
 
 The root and single source of truth. Owns the category booleans and the coordinated actions; both surfaces read from it.
 
-- `categories`: the cookie categories to manage (`CookieCategoryDef[]`): each has an `id`, `label`, optional `description`, `icon`, and `required` (locks the toggle on).
+- `categories`: the cookie categories to manage (`CookieCategoryDef[]`): each has an `id`, `label`, optional `description`, `icon`, `required` (locks the toggle on), and `cookies` (`name`, `purpose`, `provider`, `duration`) for the detail list.
+- `storageKey` / `version` (default `1`) / `maxAgeDays` (default `180`): remember the answer in localStorage, dated and versioned, and ask again when the version changes or it expires.
 - `value` / `defaultValue` / `onValueChange`: the preferences map (`{ [id]: boolean }`), controlled or uncontrolled. Required categories are always clamped on.
 - `onAcceptAll` / `onRejectAll` / `onSave`: fire on each coordinated action with the resulting map. Persist it (cookie / localStorage) here.
 - `open` / `defaultOpen` / `onOpenChange`: the preferences dialog open state.
@@ -166,7 +240,7 @@ The root and single source of truth. Owns the category booleans and the coordina
 
 ### CookieBanner
 
-The non-blocking consent region (`role="region"`), hidden once a choice is made. Takes `position` (`bottom` / `bottom-left` / `bottom-right`). Compose `CookieBannerIcon`, `CookieBannerContent`, `CookieBannerTitle`, `CookieBannerDescription`, and `CookieBannerActions` inside.
+The non-blocking consent region (`role="region"`), hidden once a choice is made. Takes `position` (`bottom` / `bottom-left` / `bottom-right`) and `layout` (`stack` / `inline` / `launcher`). Compose `CookieBannerIcon`, `CookieBannerContent`, `CookieBannerTitle`, `CookieBannerDescription`, `CookieBannerDetails` (the layer that opens on hover, focus or `CookieBannerDetailsTrigger`), and `CookieBannerActions` inside. The banner stamps `data-expanded` while the layer is open. `CookieDetailList` lists every category's cookies, in the layer or anywhere inside the root.
 
 ### CookiePreferences
 
@@ -182,9 +256,17 @@ Pre-wired DS Buttons: `CookieAcceptAllButton`, `CookieRejectAllButton`, `CookieC
 
 Use Cookie Consent when you need a GDPR/ePrivacy consent flow specifically: it pairs a non-blocking CookieBanner with a CookiePreferences dialog over one shared state, so toggling a category and clicking Accept all mutate the same source of truth. A plain Dialog gives you a modal but none of the category booleans, the always-on clamping, or the coordinated accept/reject/save actions.
 
+### Does Cookie Consent make my site GDPR compliant?
+
+It covers the interface the rules ask for: nothing optional is on until the visitor chooses (no pre-ticked boxes), Reject all sits on the first layer next to Accept all, consent is granular per category, the cookies behind each one are listed with purpose, provider and duration, the choice can be changed from the preferences dialog at any time, and with storageKey it is dated, versioned and renewed after six months. What stays with you: list the cookies you really set, keep each script from loading until useCookieConsent().prefs allows it, and link a privacy policy.
+
 ### How do I persist the visitor's choice and stop the banner reappearing?
 
-Persist the map you receive in onAcceptAll, onRejectAll, and onSave (write it to a cookie or localStorage). On the next visit, read that stored value and pass defaultConsented so the banner starts hidden and only first-time visitors see it.
+Pass storageKey and the root does it: the answer is stored in localStorage with its date and version, the banner shows only until the visitor answers, and it asks again once the version changes or the answer is older than maxAgeDays. To keep the choice somewhere else (a server-side record, a first-party cookie), leave storageKey out, persist the map you receive in onAcceptAll, onRejectAll, and onSave, and pass defaultConsented on the next visit.
+
+### My site only uses essential cookies. Do I need a banner?
+
+Consent, no: strictly necessary storage (a sign-in session, a saved theme, the record of this notice) is exempt. Telling visitors is still good practice, which is what the inline notice with a single Got it button does. Mark every category required and nothing can be switched off. The day you add analytics, give it its own category, show Reject all and Accept all, and bump version so everyone is asked.
 
 ### How do I mark a category like Strictly necessary as non-optional?
 
@@ -204,10 +286,10 @@ It does. Pass density="compact" on CookieConsent or let it inherit from a surrou
 
 ## Exports and dependencies
 
-`npx koalaui-cli add cookie-consent` writes `components/ui/cookie-consent/`. Import from `@/components/ui/cookie-consent`:
+`npx koalaui-cli@latest add cookie-consent` writes `components/ui/cookie-consent/`. Import from `@/components/ui/cookie-consent`:
 
-- Components and helpers: `CookieConsent`, `useCookieConsent`, `CookieBanner`, `CookieBannerIcon`, `CookieBannerContent`, `CookieBannerTitle`, `CookieBannerDescription`, `CookieBannerActions`, `CookiePreferences`, `CookiePreferencesTrigger`, `CookiePreferencesContent`, `CookiePreferencesHeader`, `CookiePreferencesTitle`, `CookiePreferencesDescription`, `CookiePreferencesFooter`, `CookieCategoryList`, `CookieCategory`, `CookieAcceptAllButton`, `CookieRejectAllButton`, `CookieCustomizeButton`, `CookieSavePreferencesButton`, `cookieConsentVariants`
-- Types: `CookieConsentProps`, `CookieCategoryDef`, `CookieBannerProps`, `CookieCategoryProps`, `CookiePreferencesContentProps`, `CookieActionButtonProps`
+- Components and helpers: `CookieConsent`, `useCookieConsent`, `CookieBanner`, `CookieBannerIcon`, `CookieBannerContent`, `CookieBannerTitle`, `CookieBannerDescription`, `CookieBannerActions`, `CookieBannerDetails`, `CookieBannerDetailsTrigger`, `CookieDetailList`, `CookiePreferences`, `CookiePreferencesTrigger`, `CookiePreferencesContent`, `CookiePreferencesHeader`, `CookiePreferencesTitle`, `CookiePreferencesDescription`, `CookiePreferencesFooter`, `CookieCategoryList`, `CookieCategory`, `CookieAcceptAllButton`, `CookieRejectAllButton`, `CookieCustomizeButton`, `CookieSavePreferencesButton`, `cookieConsentVariants`
+- Types: `CookieConsentProps`, `CookieCategoryDef`, `CookieDef`, `CookieBannerProps`, `CookieCategoryProps`, `CookiePreferencesContentProps`, `CookieActionButtonProps`
 - Koala components it installs with it: `badge`, `button`, `dialog`, `switch`
 - Koala lib helpers it uses: `create-context`, `density`, `tv`
 - npm packages: `@phosphor-icons/react`

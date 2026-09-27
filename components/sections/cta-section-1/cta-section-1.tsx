@@ -22,7 +22,7 @@ import { CodeSnippet } from "@/components/ui/code-snippet"
  */
 
 const INSTALL = `# add components straight into your project
-npx @acme/cli add button card dialog
+npx koalaui-cli@latest add button card dialog
 
 # they land as editable source you own
 components/ui/button/button.tsx`

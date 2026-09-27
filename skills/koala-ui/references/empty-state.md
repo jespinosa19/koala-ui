@@ -23,10 +23,10 @@ The zero-data, no-results and first-run placeholder. A neutral icon tile, a bala
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add empty-state
+npx koalaui-cli@latest add empty-state
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/empty-state/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -149,7 +149,7 @@ Both `EmptyState` and `EmptyStateMedia` accept `asChild` to merge their props on
 
 ## Exports and dependencies
 
-`npx koalaui-cli add empty-state` writes `components/ui/empty-state/`. Import from `@/components/ui/empty-state`:
+`npx koalaui-cli@latest add empty-state` writes `components/ui/empty-state/`. Import from `@/components/ui/empty-state`:
 
 - Components and helpers: `EmptyState`, `EmptyStateMedia`, `EmptyStateTitle`, `EmptyStateDescription`, `EmptyStateActions`, `emptyStateVariants`
 - Types: `EmptyStateProps`

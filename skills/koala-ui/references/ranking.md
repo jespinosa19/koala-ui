@@ -27,7 +27,7 @@ A leaderboard card for the tops of a dashboard: products, customers or countries
             <RankingLabel>{p.name}</RankingLabel>
             <RankingBar value={p.share} />
           </RankingContent>
-          <RankingValue>{p.units.toLocaleString()}</RankingValue>
+          <RankingValue>{p.units.toLocaleString("en-US")}</RankingValue>
         </RankingItem>
       </Tooltip>
     ))}
@@ -39,10 +39,10 @@ A leaderboard card for the tops of a dashboard: products, customers or countries
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add ranking
+npx koalaui-cli@latest add ranking
 ```
 
 Manual: run `npm install @phosphor-icons/react radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/ranking/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -132,7 +132,7 @@ Give a row a face. `RankingMedia` is a tinted icon tile for things (products, co
   <RankingContent>
     <div className="flex items-baseline justify-between gap-3">
       <RankingLabel>{p.name}</RankingLabel>
-      <RankingValue>{p.units.toLocaleString()}</RankingValue>
+      <RankingValue>{p.units.toLocaleString("en-US")}</RankingValue>
     </div>
     {/* value is the share of the leader, 0–100 */}
     <RankingBar value={p.share} />
@@ -156,7 +156,7 @@ Set `layout="bars"` to read the same list as a vertical bar chart: `RankingList`
       // Narrow columns: wrap each bar in a Tooltip for the detail.
       <Tooltip key={p.name} content={<ProductTip p={p} />}>
         <RankingItem>
-          <RankingValue className="text-xs">{p.units.toLocaleString()}</RankingValue>
+          <RankingValue className="text-xs">{p.units.toLocaleString("en-US")}</RankingValue>
           <RankingBar value={p.share} />
           <RankingLabel className="w-full text-xs font-normal text-muted-foreground">
             {p.short}
@@ -193,6 +193,72 @@ Set `layout="inline"` for a horizontal bar chart: the name holds a fixed column 
 </Ranking>
 ```
 
+## Bar tones
+
+`tone` sets a bar’s fill: `blue`, `brand`, `neutral`, `success`, `warning`, `destructive` or `info`, the same names and inks as the [Chart](https://koala-ui.vercel.app/docs/components/chart.md)’s series, so a Ranking beside a chart can carry its key. Put the leader in the brand and the rest in `neutral` when the list is about one row, or let a status tone report each row’s health. Set `tone` on the `Ranking` to paint every bar at once; a bar’s own tone wins over it, and `highlight` wins over both. In the `inline` layout the hovered bar still lights up in the brand.
+
+```tsx
+// The leader in the brand, the rest quiet:
+<RankingItem>
+  <RankingRank highlight={i === 0}>{i + 1}</RankingRank>
+  <RankingContent>
+    <div className="flex items-baseline justify-between gap-3">
+      <RankingLabel>{p.name}</RankingLabel>
+      <RankingValue>{p.units.toLocaleString("en-US")}</RankingValue>
+    </div>
+    <RankingBar value={p.share} tone={i === 0 ? "brand" : "neutral"} />
+  </RankingContent>
+</RankingItem>
+
+// A status tone reporting each row's health:
+const capacityTone = (used: number) =>
+  used >= 90 ? "destructive" : used >= 75 ? "warning" : "success"
+
+<RankingBar value={w.used} tone={capacityTone(w.used)} />
+
+// Or every bar at once, from the root (a bar's own tone still wins):
+<Ranking tone="brand">…</Ranking>
+```
+
+## Headline figure
+
+When the list breaks down a total, lead with the total. Ranking has no figure part of its own on purpose: the figure is the [Stat](https://koala-ui.vercel.app/docs/components/stat.md)’s `StatValue`, which renders outside a Stat, with a `StatTrend` beside it. Set them between the header and the list, so every card in a dashboard leads with the same figure and the same chip, and the description is free to say what the number counts.
+
+```tsx
+import { StatTrend, StatValue } from "@/components/ui/stat"
+
+<Ranking tone="brand">
+  <RankingHeader>
+    <div className="flex min-w-0 flex-col gap-1.5">
+      <RankingTitle>Country visitors</RankingTitle>
+      <RankingDescription>Visits this week, by country</RankingDescription>
+    </div>
+    <RankingAction>
+      <Button variant="outline" size="sm">View all</Button>
+    </RankingAction>
+  </RankingHeader>
+  {/* The total the list breaks down: the Stat's figure and trend chip, no Stat around them. */}
+  <div className="flex flex-wrap items-center gap-2">
+    <StatValue>12,480</StatValue>
+    <StatTrend direction="up">+8.2%</StatTrend>
+  </div>
+  <RankingList>
+    {countries.map((c) => (
+      <RankingItem key={c.code}>
+        <Flag code={c.code} shape="circle" size="sm" className="mt-0.5" />
+        <RankingContent>
+          <div className="flex items-baseline justify-between gap-3">
+            <RankingLabel>{c.name}</RankingLabel>
+            <RankingValue>{c.visits.toLocaleString("en-US")}</RankingValue>
+          </div>
+          <RankingBar value={(c.visits / leader) * 100} />
+        </RankingContent>
+      </RankingItem>
+    ))}
+  </RankingList>
+</Ranking>
+```
+
 ## Interactive rows
 
 Pass `interactive` to a `RankingItem` for a clickable row: pointer, a hover wash that bleeds to the card edge, and a focus ring. The wash sits close to the rank chip, media tile, and bar track, so those nested surfaces step down to the card surface on hover to keep their definition instead of dissolving into the wash, while the highlighted leader chip holds its primary fill. Wire it with `onClick` and add a trailing chevron to signal the affordance.
@@ -203,7 +269,7 @@ Pass `interactive` to a `RankingItem` for a clickable row: pointer, a hover wash
   <RankingMedia><p.icon /></RankingMedia>
   <RankingContent>
     <RankingLabel>{p.name}</RankingLabel>
-    <RankingMeta>{p.units.toLocaleString()} units</RankingMeta>
+    <RankingMeta>{p.units.toLocaleString("en-US")} units</RankingMeta>
   </RankingContent>
   <CaretRight className="size-4 shrink-0 text-muted-foreground" />
 </RankingItem>
@@ -221,7 +287,7 @@ Pass `interactive` to a `RankingItem` for a clickable row: pointer, a hover wash
 
 ## API reference
 
-`Ranking` forwards all `div` props and adds `variant` (`default | outline | elevated`), `layout` (`list | bars | inline`) and `asChild`. `RankingList` renders an `<ol>`; `RankingItem` renders an `<li>` and adds `interactive`. `RankingRank` adds `highlight` for the leader; `RankingBar` takes a `value` (0–100) and `highlight` (a brand fill). The rest: `RankingHeader`, `RankingTitle`, `RankingDescription`, `RankingAction`, `RankingMedia`, `RankingContent`, `RankingLabel`, `RankingMeta`, `RankingValue`, forward their element props. Every part accepts `className`, merged last.
+`Ranking` forwards all `div` props and adds `variant` (`default | outline | elevated`), `layout` (`list | bars | inline`), `tone` (every bar’s default hue) and `asChild`. `RankingList` renders an `<ol>`; `RankingItem` renders an `<li>` and adds `interactive`. `RankingRank` adds `highlight` for the leader; `RankingBar` takes a `value` (0–100), `tone` (`blue | brand | neutral | success | warning | destructive | info`) and `highlight` (a brand fill that wins over the tone). The rest: `RankingHeader`, `RankingTitle`, `RankingDescription`, `RankingAction`, `RankingMedia`, `RankingContent`, `RankingLabel`, `RankingMeta`, `RankingValue`, forward their element props. Every part accepts `className`, merged last.
 
 ## FAQ
 
@@ -241,6 +307,14 @@ RankingBar takes a `value` from 0 to 100 representing each row's share of the le
 
 Set `layout="bars"` on the Ranking root. RankingList becomes a row of full-height columns and each RankingBar grows from the bottom. The columns are narrow, so wrap each RankingItem in a Tooltip for the detail instead of crowding the row.
 
+### How do I recolor the bars?
+
+Pass `tone` to a RankingBar (`blue`, `brand`, `neutral`, `success`, `warning`, `destructive`, `info`, the Chart's series names), or to the Ranking root to paint every bar. "The leader in the brand, the rest quiet" is `tone={i === 0 ? "brand" : "neutral"}`. There is no need to reach into the fill with a `[&>div]` selector.
+
+### Where does the total go?
+
+Ranking has no figure part: set a standalone `StatValue` (with a `StatTrend` beside it) between the RankingHeader and the RankingList. It is the same headline figure a Stat tile or a chart card uses, so every card in a dashboard leads alike.
+
 ### How do I make rows clickable?
 
 Pass `interactive` to a RankingItem for a pointer, hover wash, and focus ring, then wire `onClick`. Nested surfaces (rank chip, media tile, bar track) step down to the card surface on hover so they keep definition; add a trailing chevron to signal the affordance.
@@ -251,9 +325,9 @@ Pass `interactive` to a RankingItem for a pointer, hover wash, and focus ring, t
 
 ## Exports and dependencies
 
-`npx koalaui-cli add ranking` writes `components/ui/ranking/`. Import from `@/components/ui/ranking`:
+`npx koalaui-cli@latest add ranking` writes `components/ui/ranking/`. Import from `@/components/ui/ranking`:
 
 - Components and helpers: `Ranking`, `RankingHeader`, `RankingTitle`, `RankingDescription`, `RankingAction`, `RankingList`, `RankingItem`, `RankingRank`, `RankingMedia`, `RankingContent`, `RankingLabel`, `RankingMeta`, `RankingValue`, `RankingBar`, `rankingVariants`
-- Types: `RankingProps`, `RankingItemProps`, `RankingRankProps`, `RankingBarProps`
+- Types: `RankingProps`, `RankingItemProps`, `RankingRankProps`, `RankingBarProps`, `RankingTone`
 - Koala lib helpers it uses: `create-context`, `tv`, `utils`
 - npm packages: `radix-ui`

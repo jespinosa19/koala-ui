@@ -10,6 +10,12 @@ import { useDensity } from "@/lib/density"
 import { tv, type VariantProps } from "@/lib/tv"
 import { Progress, ProgressLabel, ProgressValue } from "@/components/ui/progress"
 import { Spinner } from "@/components/ui/spinner"
+import {
+  FileIcon,
+  FILE_ICON_TYPES,
+  fileTypeFromName,
+  type FileIconType,
+} from "@/components/ui/file-icon"
 
 /**
  * FileCard: a card for a single file: a realistic file-type illustration (or image
@@ -224,62 +230,12 @@ const [FileCardProvider, useFileCardContext] = createContext<{
 
 /* ------------------------------------------------------------ file types --- */
 
-/** The visual categories a file collapses to: each maps to a tone and a short label. */
-export type FileCardType =
-  | "pdf"
-  | "image"
-  | "video"
-  | "audio"
-  | "doc"
-  | "sheet"
-  | "slides"
-  | "archive"
-  | "code"
-  | "text"
-  | "default"
-
-/** Tone + short label per category. The tone is a semantic color role (so it re-themes
- *  across all four palettes); it rides the icon wrapper as `currentColor`, which the SVG
- *  label band picks up via `fill-current`. The label is the text stamped on that band:
- *  a short, generic stand-in (PDF, DOC, XLS…) — pass an explicit `label` to FileCardIcon
- *  to stamp the real extension instead (e.g. "DOCX", "CSV"). */
-const FILE_TYPES: Record<FileCardType, { color: string; label: string }> = {
-  pdf: { color: "text-destructive", label: "PDF" },
-  image: { color: "text-purple", label: "IMG" },
-  video: { color: "text-pink", label: "VID" },
-  audio: { color: "text-orange", label: "MP3" },
-  doc: { color: "text-info", label: "DOC" },
-  sheet: { color: "text-success", label: "XLS" },
-  slides: { color: "text-warning", label: "PPT" },
-  archive: { color: "text-teal", label: "ZIP" },
-  code: { color: "text-teal", label: "</>" },
-  text: { color: "text-muted-foreground", label: "TXT" },
-  default: { color: "text-muted-foreground", label: "FILE" },
-}
-
-/** Extension → category, so a filename resolves straight to the right tone + label. */
-const EXTENSION_TYPES: Record<string, FileCardType> = {
-  pdf: "pdf",
-  png: "image", jpg: "image", jpeg: "image", gif: "image", svg: "image", webp: "image", avif: "image", heic: "image",
-  mp4: "video", mov: "video", webm: "video", avi: "video", mkv: "video",
-  mp3: "audio", wav: "audio", ogg: "audio", flac: "audio", m4a: "audio",
-  doc: "doc", docx: "doc", rtf: "doc", pages: "doc", odt: "doc",
-  xls: "sheet", xlsx: "sheet", csv: "sheet", numbers: "sheet", ods: "sheet",
-  ppt: "slides", pptx: "slides", key: "slides", odp: "slides",
-  zip: "archive", rar: "archive", "7z": "archive", tar: "archive", gz: "archive",
-  js: "code", ts: "code", jsx: "code", tsx: "code", json: "code", html: "code", css: "code", py: "code", rb: "code", go: "code", rs: "code", sh: "code",
-  txt: "text", md: "text", log: "text",
-}
-
 /**
- * fileTypeFromName: derive a {@link FileCardType} from a filename's extension, so a
- * consumer can drive `FileCardIcon` straight from the file: `type={fileTypeFromName(f.name)}`.
- * Falls back to `"default"` for unknown or extensionless names.
+ * The file categories, tones and labels live on {@link FileIcon}, the glyph this card leads with;
+ * FileCard re-exports the category type and the filename resolver so existing imports keep working.
  */
-export function fileTypeFromName(name: string): FileCardType {
-  const ext = name.split(".").pop()?.toLowerCase()
-  return (ext && EXTENSION_TYPES[ext]) || "default"
-}
+export type FileCardType = FileIconType
+export { fileTypeFromName }
 
 /* ------------------------------------------------------------------ parts --- */
 
@@ -322,59 +278,6 @@ export function FileCard({
   )
 }
 
-/**
- * FileGlyph: the realistic file illustration: a sheet of paper with a dog-eared corner and
- * a colored label band stamped with the extension. The paper blends with the card surface
- * (defined by a hairline outline so it reads on any background); the band is tinted by the
- * wrapper's `currentColor` via `fill-current`, and the knockout label uses the card color.
- * Pure SVG, no raw values: every fill/stroke is a semantic token utility.
- */
-function FileGlyph({ label }: { label: string }) {
-  // Four-character extensions (DOCX, XLSX, FILE) step down a touch so they never crowd the
-  // band edges; the short, common labels stay big and legible at the 40px compact size.
-  const fontSize = label.length >= 4 ? 7 : 8.5
-  return (
-    <svg viewBox="0 0 40 48" fill="none" className="h-full w-auto" aria-hidden focusable="false">
-      {/* The sheet: A4 proportions (≈1:√2, width 70% of height), blends with the card
-          surface, defined by a 1px outline + the fold. */}
-      <path
-        d="M8 3 H26 L35 12 V42 A3 3 0 0 1 32 45 H8 A3 3 0 0 1 5 42 V6 A3 3 0 0 1 8 3 Z"
-        className="fill-card stroke-border"
-        strokeWidth="1.25"
-        strokeLinejoin="round"
-      />
-      {/* The dog-eared corner: a hair darker than the page so the fold reads as depth. */}
-      <path
-        d="M26 3 V12 H35 Z"
-        className="fill-muted stroke-border"
-        strokeWidth="1.25"
-        strokeLinejoin="round"
-      />
-      {/* Two faint content lines imply text on the page above the label. */}
-      <path
-        d="M10 17 H24 M10 21.5 H30"
-        className="stroke-muted-foreground/25"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-      {/* The colored label band, tinted by the wrapper's text color. */}
-      <rect x="8" y="27" width="24" height="13" rx="2.5" className="fill-current" />
-      <text
-        x="20"
-        y="34"
-        textAnchor="middle"
-        dominantBaseline="central"
-        className="fill-card font-sans"
-        fontSize={fontSize}
-        fontWeight="700"
-        letterSpacing="-0.3"
-      >
-        {label}
-      </text>
-    </svg>
-  )
-}
-
 export interface FileCardIconProps extends React.ComponentProps<"div"> {
   /** File category: picks the tone and the band label. Ignored when `children` are passed. */
   type?: FileCardType
@@ -400,16 +303,18 @@ export function FileCardIcon({ type, label, className, children, ...props }: Fil
     )
   }
 
-  // Default: the realistic file illustration, tinted by the category's tone (currentColor).
-  const meta = FILE_TYPES[type ?? "default"]
+  // Default: the FileIcon illustration. The tone stays on this wrapper, where a consumer's
+  // `className` can still override it, and the icon inherits it (`text-inherit` beats the tone
+  // FileIcon would set itself); `h-full` fills the density's glyph footprint.
+  const meta = FILE_ICON_TYPES[type ?? "default"]
   return (
     <div
       data-slot="file-card-icon"
       aria-hidden
-      className={slots.glyph({ className: cn(meta.color, className) })}
+      className={slots.glyph({ className: cn(meta.tone, className) })}
       {...props}
     >
-      <FileGlyph label={label ?? meta.label} />
+      <FileIcon type={type ?? "default"} label={label ?? meta.label} className="h-full text-inherit" />
     </div>
   )
 }

@@ -123,11 +123,11 @@ export const planVariants = tv({
       // `caret-turn` is the DS's shared turn (transition-transform on the motion tokens).
       "caret-turn group-data-[state=open]/step-trigger:rotate-180",
     ],
-    // Animated wrapper: overflow-hidden clips while the height tweens (tw-animate-css keyframes
-    // retimed to Koala's tokens, same as Accordion, Tree and Chat).
+    // Animated wrapper: clipped only while the height tweens (`animate-disclosure-*` carries the
+    // clip, same as Accordion, Tree and Chat); `flow-root` contains the inner's `mt` at rest.
     stepDetail: [
-      "min-w-0 overflow-hidden duration-base ease-out",
-      "data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up",
+      "flow-root min-w-0",
+      "data-[state=open]:animate-disclosure-open data-[state=closed]:animate-disclosure-close",
     ],
     stepDetailInner: "mt-1.5 flex min-w-0 flex-col gap-1.5",
     // Sub-tasks: a step's own beats. Quieter again, and marked with a dash rather than a ring so

@@ -27,7 +27,9 @@ export const carouselVariants = tv({
     // the viewport to its own compositing layer so the rounded `overflow-hidden` clip is applied
     // to the track too: while dragging, the track uses `translate3d` (a GPU layer), and Chromium
     // otherwise skips an un-composited ancestor's border-radius clip on a composited child, letting
-    // the slides' square corners poke past the rounded frame mid-drag.
+    // the slides' square corners poke past the rounded frame mid-drag. The clip is flush on every
+    // side (photos need it), so a slide holding a surface with an outer ring or shadow (a card, a
+    // testimonial) pads the slide (`p-1`) to give that edge room; the padding doubles as the gap.
     viewport: "overflow-hidden rounded-lg [transform:translateZ(0)]",
     // Specific transition (never `transition: all`); honors reduced-motion.
     track: "flex transition-transform duration-base ease-out motion-reduce:transition-none",
@@ -186,6 +188,19 @@ export const carouselVariants = tv({
       end: {},
       center: {},
     },
+    // Seat dots/lines/progress in a pill, the same one `fraction` wears (h-6, px-2.5, bg-muted), so
+    // a contained dot row and a "2 / 5" readout line up when they share a layout. `w-max mx-auto`
+    // shrinks the row to its dots; under `overlay` it is already absolute and shrink-wrapped. The
+    // inactive dots step up from `bg-border` to a foreground tint so they still read on the muted
+    // fill. CarouselIndicators only passes `contained` for dots/lines/progress.
+    contained: {
+      true: {
+        indicators: "mx-auto h-6 w-max rounded-full bg-muted px-2.5",
+        indicator: "focus-visible:ring-offset-muted",
+        progressTrack: "bg-foreground/15",
+      },
+      false: {},
+    },
   },
   compoundVariants: [
     // Dots morph width with active state; lines keep their fixed width and only swap color.
@@ -228,6 +243,24 @@ export const carouselVariants = tv({
       variant: "fraction",
       overlay: true,
       class: { fraction: "bg-black/55 text-white shadow-sm backdrop-blur-sm" },
+    },
+    // Contained: inactive ticks on the muted pill take a foreground tint (bg-border washes out on it).
+    {
+      contained: true,
+      overlay: false,
+      active: false,
+      class: { indicator: "bg-foreground/20 hover:bg-foreground/35" },
+    },
+    // Contained over a photo: the fraction's dark frosted pill. The white ticks drop their own
+    // shadow-sm, which the pill now does for them.
+    {
+      contained: true,
+      overlay: true,
+      class: {
+        indicators: "bg-black/55 shadow-sm backdrop-blur-sm",
+        // The ring hugs the tick: an offset would paint a halo of page color inside the dark pill.
+        indicator: "shadow-none focus-visible:ring-offset-0",
+      },
     },
     // Overlay placement for dots/lines/fraction/thumbnails.
     { overlay: true, align: "end", class: { indicators: "right-3" } },
@@ -615,6 +648,12 @@ export interface CarouselIndicatorsProps extends React.ComponentProps<"div"> {
    */
   align?: "end" | "center"
   /**
+   * Seat the indicator in a pill (the one `fraction` wears): muted in the flow, dark and frosted
+   * under `overlay`. Applies to `dots`, `lines` and `progress`; `fraction` is always contained and
+   * the other forms ignore it.
+   */
+  contained?: boolean
+  /**
    * One node per slide (e.g. an `<img>`), rendered inside each thumb button. Required by - and only
    * used for - `variant="thumbnails"`; index it to match the slide order.
    */
@@ -638,6 +677,7 @@ export function CarouselIndicators({
   dotLabel = (i) => `Go to slide ${i + 1}`,
   overlay = false,
   align = "end",
+  contained: containedProp = false,
   thumbnails,
   thumbnailSize = "sm",
   labels,
@@ -648,6 +688,8 @@ export function CarouselIndicators({
   const tabRowRef = React.useRef<HTMLDivElement>(null)
   const tab = useTabIndicator(tabRowRef, index, variant === "tabs")
   if (count <= 1) return null
+  // Only the thin forms take the pill; fraction already has one and the chunkier forms don't fit it.
+  const contained = containedProp && (variant === "dots" || variant === "lines" || variant === "progress")
 
   // Fraction is a single readout, not one control per slide.
   if (variant === "fraction") {
@@ -736,11 +778,11 @@ export function CarouselIndicators({
     return (
       <div
         data-slot="carousel-indicators"
-        className={slots.indicators({ variant, overlay, align, className })}
+        className={slots.indicators({ variant, overlay, align, contained, className })}
         {...props}
       >
         <span
-          className={slots.progressTrack({ variant, overlay })}
+          className={slots.progressTrack({ variant, overlay, contained })}
           role="progressbar"
           aria-valuemin={1}
           aria-valuemax={count}
@@ -761,7 +803,7 @@ export function CarouselIndicators({
   return (
     <div
       data-slot="carousel-indicators"
-      className={slots.indicators({ variant, overlay, align, className })}
+      className={slots.indicators({ variant, overlay, align, contained, className })}
       {...props}
     >
       {variant === "thumbnails" && (
@@ -815,7 +857,7 @@ export function CarouselIndicators({
             aria-label={label}
             aria-current={active || undefined}
             onClick={() => setIndex(i)}
-            className={slots.indicator({ variant, active, overlay })}
+            className={slots.indicator({ variant, active, overlay, contained })}
           />
         )
       })}

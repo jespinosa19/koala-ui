@@ -14,10 +14,10 @@ const [value, setValue] = useState(4)
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add rating
+npx koalaui-cli@latest add rating
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/rating/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -117,7 +117,7 @@ Both: use `defaultValue` for uncontrolled or `value` with `onValueChange` to con
 
 ## Exports and dependencies
 
-`npx koalaui-cli add rating` writes `components/ui/rating/`. Import from `@/components/ui/rating`:
+`npx koalaui-cli@latest add rating` writes `components/ui/rating/`. Import from `@/components/ui/rating`:
 
 - Components and helpers: `Rating`, `ratingVariants`
 - Types: `RatingProps`

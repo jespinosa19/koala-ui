@@ -19,10 +19,10 @@ A horizontal slide viewer with a clickable indicator. The track translates betwe
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add carousel
+npx koalaui-cli@latest add carousel
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/carousel/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -71,6 +71,19 @@ The indicator ships as one component with a closed set of forms, picked with the
 <CarouselIndicators variant="tabs" labels={["Photo", "Stats", "Map", "Camera"]} />
 <CarouselIndicators variant="numbers" />
 <CarouselIndicators variant="progress" />
+```
+
+## Contained
+
+Pass `contained` to seat `dots`, `lines` or `progress` in a pill, the same one `fraction` wears. In the flow it is a muted fill; with `overlay` it turns dark and frosted so the white dots hold on any photo.
+
+```tsx
+<CarouselIndicators contained />
+<CarouselIndicators variant="lines" contained />
+<CarouselIndicators variant="progress" contained />
+
+{/* over the image */}
+<CarouselIndicators contained overlay align="center" />
 ```
 
 ## Over a hero
@@ -150,7 +163,7 @@ Drop CarouselPrevious and CarouselNext inside the Carousel. They are overlay arr
 
 ### What indicator forms are there, and do I create a new component for each?
 
-No, never hand-roll a new indicator. CarouselIndicators is one component with a closed set of forms picked via the variant prop: dots (default), lines, fraction (a contained 2 / 5 readout), and thumbnails (one slide preview per slide, passed via the thumbnails prop). Positioning with overlay and align composes with every form.
+No, never hand-roll a new indicator. CarouselIndicators is one component with a closed set of forms picked via the variant prop: dots (default), lines, fraction (a contained 2 / 5 readout), and thumbnails (one slide preview per slide, passed via the thumbnails prop). Positioning with overlay and align composes with every form, and contained seats dots, lines or progress in a pill.
 
 ### What does the overlay prop on CarouselIndicators do?
 
@@ -170,7 +183,7 @@ Pass draggable={false} on CarouselContent to turn off pointer and touch swiping,
 
 ## Exports and dependencies
 
-`npx koalaui-cli add carousel` writes `components/ui/carousel/`. Import from `@/components/ui/carousel`:
+`npx koalaui-cli@latest add carousel` writes `components/ui/carousel/`. Import from `@/components/ui/carousel`:
 
 - Components and helpers: `Carousel`, `CarouselContent`, `CarouselSlide`, `CarouselPrevious`, `CarouselNext`, `CarouselIndicators`, `carouselVariants`
 - Types: `CarouselProps`, `CarouselContentProps`, `CarouselSlideProps`, `CarouselArrowProps`, `CarouselIndicatorsProps`

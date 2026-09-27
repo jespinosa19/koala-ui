@@ -69,13 +69,13 @@ export const galleryAccordionVariants = tv({
       "group-data-[state=open]/trigger:rotate-45",
       "[&_svg]:size-4",
     ],
-    // Animated height wrapper: overflow-hidden clips the inner padded div while height tweens.
-    // `duration-base`/`ease-out` feed tw-animate-css's accordion keyframes via --tw-duration/--tw-ease.
+    // Animated height wrapper: `animate-disclosure-*` clips it only while the height tweens (the
+    // clip rides in the keyframes), so at rest the tiles' shadows and focus rings keep their edge.
+    // `flow-root` contains the inner's margins without a clip.
     content: [
       // `group/content` so the caption + tiles can read THIS panel's open state for their stagger.
-      "group/content overflow-hidden",
-      "duration-base ease-out",
-      "data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up",
+      "group/content flow-root",
+      "data-[state=open]:animate-disclosure-open data-[state=closed]:animate-disclosure-close",
     ],
     // Padding lives on the inner wrapper (not the animated one) so the height tween stays smooth.
     contentInner: "flex flex-col gap-4",

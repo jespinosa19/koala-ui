@@ -34,10 +34,10 @@ A stack of disclosure rows built on Radix Accordion: keyboard nav, ARIA, and sin
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add accordion
+npx koalaui-cli@latest add accordion
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/accordion/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -185,7 +185,7 @@ The open/close tween relies on Radix's `--radix-accordion-content-height` variab
 
 ## Exports and dependencies
 
-`npx koalaui-cli add accordion` writes `components/ui/accordion/`. Import from `@/components/ui/accordion`:
+`npx koalaui-cli@latest add accordion` writes `components/ui/accordion/`. Import from `@/components/ui/accordion`:
 
 - Components and helpers: `Accordion`, `AccordionItem`, `AccordionTrigger`, `AccordionContent`, `accordionVariants`
 - Types: `AccordionProps`

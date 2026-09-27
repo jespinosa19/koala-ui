@@ -70,10 +70,10 @@ The actions menu that opens where you right-click. Built on Radix ContextMenu fo
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add context-menu
+npx koalaui-cli@latest add context-menu
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/context-menu/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -297,7 +297,7 @@ Set `density="compact"` on ContextMenuContent, or drive it globally with Density
 
 ## Exports and dependencies
 
-`npx koalaui-cli add context-menu` writes `components/ui/context-menu/`. Import from `@/components/ui/context-menu`:
+`npx koalaui-cli@latest add context-menu` writes `components/ui/context-menu/`. Import from `@/components/ui/context-menu`:
 
 - Components and helpers: `ContextMenu`, `ContextMenuTrigger`, `ContextMenuGroup`, `ContextMenuRadioGroup`, `ContextMenuSub`, `ContextMenuPortal`, `ContextMenuContent`, `ContextMenuItem`, `ContextMenuCheckboxItem`, `ContextMenuRadioItem`, `ContextMenuLabel`, `ContextMenuSeparator`, `ContextMenuShortcut`, `ContextMenuSubTrigger`, `ContextMenuSubContent`, `contextMenuVariants`
 - Types: `ContextMenuContentProps`, `ContextMenuItemProps`, `ContextMenuCheckboxItemProps`, `ContextMenuRadioItemProps`, `ContextMenuLabelProps`, `ContextMenuSubTriggerProps`, `ContextMenuSubContentProps`

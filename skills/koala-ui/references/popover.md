@@ -24,10 +24,10 @@ A general-purpose floating surface over Radix Popover: focus management, dismiss
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add popover
+npx koalaui-cli@latest add popover
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/popover/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -250,7 +250,7 @@ No, they are optional structured-content helpers for consistent typography. Popo
 
 ## Exports and dependencies
 
-`npx koalaui-cli add popover` writes `components/ui/popover/`. Import from `@/components/ui/popover`:
+`npx koalaui-cli@latest add popover` writes `components/ui/popover/`. Import from `@/components/ui/popover`:
 
 - Components and helpers: `Popover`, `PopoverTrigger`, `PopoverAnchor`, `PopoverClose`, `PopoverContent`, `PopoverTitle`, `PopoverDescription`, `PopoverCloseButton`, `popoverVariants`
 - Types: `PopoverContentProps`

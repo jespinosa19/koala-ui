@@ -96,7 +96,7 @@ const POSTS: Post[] = [
     category: "Company",
     title: "We raised our Series B to make teamwork feel effortless",
     excerpt:
-      "What the new chapter means for the roadmap, the team, and the thousands of teams already working in Acme.",
+      "What the new chapter means for the roadmap, the team, and the thousands of teams already working in Koala UI.",
     cover: cover("1522202176988-66273c2fd55f"),
     coverAlt: "Team collaborating together in an office",
     author: { name: "Priya Nair", avatar: avatar(24), initials: "PN" },
@@ -254,7 +254,7 @@ export function BlogSection1() {
             <Badge variant="purple" dot pill>
               Blog
             </Badge>
-            <SectionHeaderHeading>From the Acme blog</SectionHeaderHeading>
+            <SectionHeaderHeading>From the Koala UI blog</SectionHeaderHeading>
             <SectionHeaderDescription>
               Product notes, engineering deep-dives, and the thinking behind every release.
             </SectionHeaderDescription>

@@ -12,10 +12,10 @@ A centered waitlist block: a headline, a one-row email capture and a social-proo
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add waitlist-form
+npx koalaui-cli@latest add waitlist-form
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/waitlist-form/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -75,7 +75,7 @@ The card paints no fill of its own, so the nested Input takes the same ground th
 
 ## Exports and dependencies
 
-`npx koalaui-cli add waitlist-form` writes `components/ui/waitlist-form/`. Import from `@/components/ui/waitlist-form`:
+`npx koalaui-cli@latest add waitlist-form` writes `components/ui/waitlist-form/`. Import from `@/components/ui/waitlist-form`:
 
 - Components and helpers: `WaitlistForm`, `waitlistFormVariants`
 - Types: `WaitlistFormProps`, `WaitlistAvatar`

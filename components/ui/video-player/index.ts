@@ -11,6 +11,7 @@ export {
   VideoSpinner,
   videoPlayerVariants,
   type VideoPlayerProps,
+  type VideoPlayerLabels,
   type VideoProps,
   type VideoPlayButtonProps,
   type VideoSeekProps,

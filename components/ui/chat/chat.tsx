@@ -69,14 +69,14 @@ const chatVariants = tv({
     reasoningIcon: "size-4 shrink-0",
     reasoningChevron:
       "size-3.5 shrink-0 caret-turn group-data-[state=open]/reasoning:rotate-180",
-    // Animated wrapper: overflow-hidden clips while the height tweens (tw-animate-css keyframes
-    // retimed to Koala's tokens, same as Accordion/Tree). Padding lives on the inner div.
+    // Animated wrapper: clipped only while the height tweens (`animate-disclosure-*` carries the
+    // clip, same as Accordion/Tree); `flow-root` contains the inner's margin at rest without one.
+    // Padding lives on the inner div.
     reasoningContent: [
-      // Small left padding keeps the rail (and the step dots that straddle it) clear of this
-      // wrapper's clip edge: the dots protrude left of the rail and would otherwise be shaved.
-      "min-w-0 overflow-hidden pl-2 text-sm text-muted-foreground",
-      "duration-base ease-out",
-      "data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up",
+      // Small left padding keeps the rail (and the step dots that straddle it) clear of the tween's
+      // clip edge: the dots protrude left of the rail and would otherwise be shaved mid-animation.
+      "flow-root min-w-0 pl-2 text-sm text-muted-foreground",
+      "data-[state=open]:animate-disclosure-open data-[state=closed]:animate-disclosure-close",
     ],
     // The reasoning detail sits behind a left rail, set in from the trigger.
     reasoningInner:

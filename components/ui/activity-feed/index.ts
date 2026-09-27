@@ -13,6 +13,8 @@ export {
   ActivityAttachments,
   ActivityImage,
   ActivityActions,
+  ActivityGroup,
+  ActivityGroupLabel,
   activityFeedVariants,
   type ActivityFeedProps,
   type ActivityTone,
@@ -22,4 +24,6 @@ export {
   type ActivityTimeProps,
   type ActivityImageProps,
   type ActivityItemProps,
+  type ActivityGroupProps,
+  type ActivityGroupLabelProps,
 } from "./activity-feed"

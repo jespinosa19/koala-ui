@@ -35,8 +35,13 @@ export const listVariants = tv({
     media: "flex shrink-0 items-center justify-center text-muted-foreground [&>svg]:size-5",
     // min-w-0 lets the title truncate instead of pushing the meta off the row.
     content: "flex min-w-0 flex-1 flex-col gap-0.5",
-    title: "truncate font-medium text-foreground",
-    description: "text-pretty text-xs text-muted-foreground",
+    // How many lines the title and description take is the `lines` prop on each part (LINES
+    // below), so neither slot carries `truncate` itself: the title's default of one line adds it.
+    // `text-pretty` rides a zero-specificity `:where()` so it is only ever a default. The
+    // `text-wrap` shorthand resets `text-wrap-mode`, so at full strength it beat a consumer's
+    // `truncate` or `whitespace-nowrap` (both write `white-space`) and wrapped the line anyway.
+    title: "font-medium text-foreground [:where(&)]:text-pretty",
+    description: "text-xs text-muted-foreground [:where(&)]:text-pretty",
     // Trailing slot: badges, a timestamp, a chevron, or an action button.
     meta: "ml-auto flex shrink-0 items-center gap-2 text-xs tabular-nums text-muted-foreground [&>svg]:size-4",
   },
@@ -81,6 +86,17 @@ export const listVariants = tv({
         item: "w-full cursor-pointer text-left transition-colors duration-fast ease-out hover:bg-muted/60 active:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
       },
     },
+    // Set per row on {@link ListItem}: the row whose record the rest of the screen shows (the open
+    // thread, the chapter being read). It must never read as a hover, so it answers on two channels
+    // a hover never touches: the fill goes to full strength and STAYS there under the pointer (the
+    // hover wash would otherwise lighten it), and a 3x16 brand bar sits on the row's leading edge,
+    // the same mark the Sidebar's active row carries. `relative` anchors the bar on an asChild
+    // <a>/<button>; the static <li> already is. Declared after `interactive` so its hover wins.
+    current: {
+      true: {
+        item: "relative bg-muted hover:bg-muted before:pointer-events-none before:absolute before:top-1/2 before:left-0 before:h-4 before:w-[3px] before:-translate-y-1/2 before:rounded-r-full before:bg-brand before:content-['']",
+      },
+    },
   },
   compoundVariants: [
     // Plain rows align flush to the container's left edge (no surface to inset from).
@@ -109,7 +125,7 @@ const [ListProvider, useListContext] = createContext<{
 
 export interface ListProps
   extends React.ComponentProps<"ul">,
-    Omit<VariantProps<typeof listVariants>, "interactive"> {
+    Omit<VariantProps<typeof listVariants>, "interactive" | "current"> {
   asChild?: boolean
 }
 
@@ -149,6 +165,14 @@ export interface ListItemProps extends React.ComponentProps<"li"> {
   asChild?: boolean
   /** Add hover/press/focus affordance. Defaults to `true` when `asChild` is set. */
   interactive?: boolean
+  /**
+   * Mark this row as the current one in its set: the open thread in an inbox, the chapter being
+   * read. Paints a full-strength fill that a hover never lightens plus a brand bar on the leading
+   * edge, and sets `aria-current` on the row surface (the `<a>`/`<button>` under `asChild`).
+   * `true` announces `aria-current="true"`; pass a token (`"page"`, `"location"`…) when the row
+   * is a navigation link. An explicit `aria-current` prop still wins.
+   */
+  current?: boolean | "page" | "step" | "location" | "date" | "time"
 }
 
 /**
@@ -161,19 +185,22 @@ export function ListItem({
   className,
   asChild = false,
   interactive,
+  current,
   children,
   ...props
 }: ListItemProps) {
   const { config } = useListContext("ListItem")
   const isInteractive = interactive ?? asChild
-  const slots = listVariants({ ...config, interactive: isInteractive })
+  const slots = listVariants({ ...config, interactive: isInteractive, current: Boolean(current) })
+  // Written before `props` is spread, so a consumer's own `aria-current` keeps the last word.
+  const ariaCurrent = current === true ? "true" : current || undefined
 
   // asChild: the <li> keeps only the divider; the child element owns the row layout +
   // interaction, giving valid <li><a>…</a></li>.
   if (asChild) {
     return (
       <li data-slot="list-item" className={slots.row()}>
-        <Slot.Root className={slots.item({ className })} {...props}>
+        <Slot.Root aria-current={ariaCurrent} className={slots.item({ className })} {...props}>
           {children}
         </Slot.Root>
       </li>
@@ -184,6 +211,7 @@ export function ListItem({
   return (
     <li
       data-slot="list-item"
+      aria-current={ariaCurrent}
       className={cn(slots.row(), slots.item({ className }))}
       {...props}
     >
@@ -204,17 +232,64 @@ export function ListItemContent({ className, ...props }: React.ComponentProps<"d
   return <div data-slot="list-item-content" className={slots.content({ className })} {...props} />
 }
 
-/** The primary line. Truncates rather than pushing the meta off the row. */
-export function ListItemTitle({ className, ...props }: React.ComponentProps<"div">) {
-  const { slots } = useListContext("ListItemTitle")
-  return <div data-slot="list-item-title" className={slots.title({ className })} {...props} />
+/** How many lines a title or description may take. */
+export type ListItemLines = 1 | 2 | 3 | "none"
+
+/**
+ * A static map, never a computed `line-clamp-${n}`: the Tailwind compiler has to see the class.
+ * `1` is `truncate` (one line cut with an ellipsis, what a list row has always done); 2 and 3
+ * clamp at a word boundary; `"none"` lets the text wrap as long as it needs.
+ */
+const LINES: Record<ListItemLines, string> = {
+  1: "truncate",
+  2: "line-clamp-2",
+  3: "line-clamp-3",
+  none: "",
 }
 
-/** The muted secondary line under the title. */
-export function ListItemDescription({ className, ...props }: React.ComponentProps<"div">) {
+export interface ListItemTitleProps extends React.ComponentProps<"div"> {
+  /**
+   * How many lines the title may take before it ends in an ellipsis. One line keeps the meta on
+   * the row; pass `2` or `3` to clamp there, or `"none"` for a title that wraps in full (a note, a
+   * message). @default 1
+   */
+  lines?: ListItemLines
+}
+
+/** The primary line. One line by default, so a long title never pushes the meta off the row. */
+export function ListItemTitle({ className, lines = 1, ...props }: ListItemTitleProps) {
+  const { slots } = useListContext("ListItemTitle")
+  return (
+    <div
+      data-slot="list-item-title"
+      className={slots.title({ className: cn(LINES[lines], className) })}
+      {...props}
+    />
+  )
+}
+
+export interface ListItemDescriptionProps extends React.ComponentProps<"div"> {
+  /**
+   * How many lines the description may take. It wraps in full by default; pass `1` to keep it on
+   * one line with an ellipsis (an inbox excerpt), or `2`/`3` to clamp there. A `truncate` class
+   * works too. @default "none"
+   */
+  lines?: ListItemLines
+}
+
+/** The muted secondary line under the title. Wraps by default; `lines` clamps or truncates it. */
+export function ListItemDescription({
+  className,
+  lines = "none",
+  ...props
+}: ListItemDescriptionProps) {
   const { slots } = useListContext("ListItemDescription")
   return (
-    <div data-slot="list-item-description" className={slots.description({ className })} {...props} />
+    <div
+      data-slot="list-item-description"
+      className={slots.description({ className: cn(LINES[lines], className) })}
+      {...props}
+    />
   )
 }
 

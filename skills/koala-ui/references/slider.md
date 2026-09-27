@@ -18,10 +18,10 @@ Pick a value or a range by dragging along a track. Built on Radix Slider: thumbs
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add slider
+npx koalaui-cli@latest add slider
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/slider/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -171,6 +171,7 @@ const [value, setValue] = useState([72])
 - Drag sideways on the number box to scrub it. A plain click edits it with the number selected.
 - While typing, arrows step (Shift steps ×10), Enter commits and Escape reverts. Out-of-range input clamps and snaps to `step` on commit.
 - Inside a `Field` the label focuses the box and names the thumb, no wiring needed.
+- Drag past either end and the rail stretches a few pixels, then eases back on release (not with reduced motion).
 
 ```tsx
 import { Field, FieldLabel } from "@/components/ui/field"
@@ -225,6 +226,102 @@ With no children the root renders both halves. Compose `SliderInputValue` and `S
 // Value only: a scrubbable number
 <SliderInput defaultValue={30} aria-label="Value only">
   <SliderInputValue suffix="%" />
+</SliderInput>
+```
+
+## Label inside the track
+
+Give `SliderInputTrack` children and the track becomes the field, the slider you find in generation panels. `SliderInputLabel` sits inside on the left and `SliderInputValue` turns into a read-only readout on the right, while the fill paints as a raised chip that ends at the pill. Drag anywhere on it.
+
+- The text insets match Input's side padding, so a column of these lines up with the inputs and selects around it.
+- The pill fades while it passes under the label or the readout, and `ticks` fade out around the text.
+- Name the stops of a discrete scale with `formatValue` on the root: the readout shows the name and the thumb announces it.
+- Both parts are optional. A label alone or a readout alone is still a field.
+
+```tsx
+import {
+  SliderInput,
+  SliderInputLabel,
+  SliderInputTrack,
+  SliderInputValue,
+} from "@/components/ui/slider"
+
+const RESOLUTIONS = ["720p", "1080p", "1440p", "4K"]
+
+<SliderInput defaultValue={1} max={3} formatValue={(v) => RESOLUTIONS[v]}>
+  <SliderInputTrack ticks>
+    <SliderInputLabel>Resolution</SliderInputLabel>
+    <SliderInputValue />
+  </SliderInputTrack>
+</SliderInput>
+
+<SliderInput defaultValue={6} min={2} max={10}>
+  <SliderInputTrack ticks>
+    <SliderInputLabel>Duration</SliderInputLabel>
+    <SliderInputValue suffix="s" />
+  </SliderInputTrack>
+</SliderInput>
+
+<SliderInput defaultValue={60} step={10}>
+  <SliderInputTrack ticks>
+    <SliderInputLabel>Motion</SliderInputLabel>
+    <SliderInputValue suffix="%" />
+  </SliderInputTrack>
+</SliderInput>
+
+<SliderInput defaultValue={7.5} max={20} step={0.5}>
+  <SliderInputTrack>
+    <SliderInputLabel>Guidance</SliderInputLabel>
+    <SliderInputValue />
+  </SliderInputTrack>
+</SliderInput>
+```
+
+## Label inside: sizes and variants
+
+The field layout keeps the same `size` and `variant`. Inside a field the pill stays a quiet grey next to the text, and `brand` tints the chip and the pill.
+
+```tsx
+<SliderInput size="sm" defaultValue={50}>
+  <SliderInputTrack>
+    <SliderInputLabel>Small</SliderInputLabel>
+    <SliderInputValue suffix="%" />
+  </SliderInputTrack>
+</SliderInput>
+
+// size="md" (default) and size="lg" work the same way
+
+<SliderInput variant="brand" defaultValue={70}>
+  <SliderInputTrack>
+    <SliderInputLabel>Brand</SliderInputLabel>
+    <SliderInputValue suffix="%" />
+  </SliderInputTrack>
+</SliderInput>
+```
+
+## Ticks
+
+`ticks` on the track marks the stops: `true` for one at every `step`, or a number for one every that many units. The ends get no mark, since the rail's edges already show them. Inside the fill, marks only show while the track is hovered, dragged or focused. Past 64 marks none are drawn.
+
+```tsx
+// One mark per step
+<SliderInput defaultValue={3} max={8} aria-label="Every step">
+  <SliderInputValue />
+  <SliderInputTrack ticks />
+</SliderInput>
+
+// One mark every 25 units
+<SliderInput defaultValue={40} aria-label="Every 25">
+  <SliderInputValue suffix="%" />
+  <SliderInputTrack ticks={25} />
+</SliderInput>
+
+// In the field layout, marks fade out around the text
+<SliderInput defaultValue={40}>
+  <SliderInputTrack ticks={10}>
+    <SliderInputLabel>Every 10</SliderInputLabel>
+    <SliderInputValue suffix="%" />
+  </SliderInputTrack>
 </SliderInput>
 ```
 
@@ -287,15 +384,23 @@ Use `Slider` for settings and filters where a thin rail and an optional value bu
 
 Compose the parts and pass `suffix` to the box: `<SliderInputValue suffix="%" />`. The unit is painted muted after the number and is never part of what gets typed or submitted.
 
+### How do I put the label and the value inside the slider?
+
+Pass them as children of the track: `<SliderInputTrack><SliderInputLabel>Strength</SliderInputLabel><SliderInputValue suffix="%" /></SliderInputTrack>`. The track becomes a full-height field and the value becomes a read-only readout. `SliderInputLabel` also names the thumb for screen readers.
+
+### How do I make a slider with named stops, like 720p / 1080p / 4K?
+
+Use indexes as the value (`min={0} max={3}`) and name them with `formatValue` on the root: `formatValue={(v) => RESOLUTIONS[v]}`. The readout shows the name and the thumb announces it. Add `ticks` to the track to mark each stop.
+
 ### How is accessibility handled, and what about the small thumb hit area?
 
 Radix Slider provides full arrow-key support and ARIA, so always pass an `aria-label`. The thumb also carries a centered 40x40 pseudo-element so the small visual still hits a comfortable drag target.
 
 ## Exports and dependencies
 
-`npx koalaui-cli add slider` writes `components/ui/slider/`. Import from `@/components/ui/slider`:
+`npx koalaui-cli@latest add slider` writes `components/ui/slider/`. Import from `@/components/ui/slider`:
 
-- Components and helpers: `Slider`, `sliderVariants`, `SliderInput`, `SliderInputValue`, `SliderInputTrack`, `sliderInputVariants`
-- Types: `SliderProps`, `SliderInputProps`, `SliderInputValueProps`, `SliderInputTrackProps`
+- Components and helpers: `Slider`, `sliderVariants`, `SliderInput`, `SliderInputValue`, `SliderInputTrack`, `SliderInputLabel`, `sliderInputVariants`
+- Types: `SliderProps`, `SliderInputProps`, `SliderInputValueProps`, `SliderInputTrackProps`, `SliderInputLabelProps`
 - Koala lib helpers it uses: `create-context`, `density`, `field-context`, `hit-area`, `tv`, `utils`
 - npm packages: `radix-ui`

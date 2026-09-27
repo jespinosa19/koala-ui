@@ -70,10 +70,10 @@ A contextual menu that opens on trigger. Built on Radix DropdownMenu for keyboar
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add dropdown-menu
+npx koalaui-cli@latest add dropdown-menu
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/dropdown-menu/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -389,13 +389,17 @@ Pass `variant="destructive"` to DropdownMenuItem. It colors the label red and, u
 
 Set `density="compact"` on DropdownMenuContent, or drive it globally with DensityProvider since every part reads the density context. Compact shortens rows from 36px to 32px. The horizontal rhythm does not change between densities, so the menu keeps the same edge line and concentric corners at either size.
 
+### Does the menu open over an element that is full screen?
+
+Yes. DropdownMenuContent is portalled to the body, or to the element that is full screen when the menu opens, because the browser paints nothing outside that element over the screen. Pass `container` to portal it somewhere else.
+
 ### How far do icons sit from the menu's edge?
 
 12px, measured from the outer edge of the menu: 4px of content padding plus 8px of row padding. The edge is drawn as an inset ring rather than a border, so it takes no layout space and the sum stays exact. Leading icons, label text, shortcuts, the submenu caret and the selection check all sit on that 12px line, left and right. An `inset` row starts its text at 40px from the edge (4px + 36px), which lines it up with the text of icon-bearing siblings.
 
 ## Exports and dependencies
 
-`npx koalaui-cli add dropdown-menu` writes `components/ui/dropdown-menu/`. Import from `@/components/ui/dropdown-menu`:
+`npx koalaui-cli@latest add dropdown-menu` writes `components/ui/dropdown-menu/`. Import from `@/components/ui/dropdown-menu`:
 
 - Components and helpers: `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuGroup`, `DropdownMenuRadioGroup`, `DropdownMenuSub`, `DropdownMenuPortal`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuItemText`, `DropdownMenuItemDescription`, `DropdownMenuCheckboxItem`, `DropdownMenuRadioItem`, `DropdownMenuLabel`, `DropdownMenuSeparator`, `DropdownMenuShortcut`, `DropdownMenuSubTrigger`, `DropdownMenuSubContent`, `dropdownMenuVariants`
 - Types: `DropdownMenuContentProps`, `DropdownMenuItemProps`, `DropdownMenuCheckboxItemProps`, `DropdownMenuRadioItemProps`, `DropdownMenuLabelProps`, `DropdownMenuSubTriggerProps`, `DropdownMenuSubContentProps`

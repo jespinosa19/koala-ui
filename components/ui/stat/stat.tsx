@@ -5,7 +5,6 @@ import { Slot } from "radix-ui"
 import { TrendUp, TrendDown, Minus } from "@phosphor-icons/react"
 
 import { cn } from "@/lib/utils"
-import { createContext } from "@/lib/create-context"
 import { useDensity, type Density } from "@/lib/density"
 import { tv, type VariantProps } from "@/lib/tv"
 import { cubicBezier, countUpDuration, easingPoints } from "@/lib/motion"
@@ -18,6 +17,12 @@ import { Chart, ChartArea, ChartLine, ChartTooltip } from "@/components/ui/chart
  * Context (never prop-drilled or cloned). Compose the parts (`StatLabel`,
  * `StatValue`, `StatTrend`, `StatIcon`, `StatSparkline`) to assemble a dashboard tile.
  * See docs/ARCHITECTURE.md §2.
+ *
+ * Two ways to use it without the tile: `variant="plain"` keeps the Stat's layout and type ramp
+ * with no frame at all (a headline figure laid on the sheet or inside a Card), and every part but
+ * `StatSparkline` also renders on its own, outside any Stat, with the plain look at the ambient
+ * density. That makes `StatValue` the DS's one headline figure and `StatTrend` its one trend chip,
+ * wherever a figure sits.
  */
 export const statVariants = tv({
   slots: {
@@ -32,9 +37,11 @@ export const statVariants = tv({
     // headline, so it speaks in the display face (DM Sans, like h1-h4) one step up the scale.
     value: "font-heading font-semibold leading-none tracking-tight tabular-nums text-foreground",
     // Soft chip; the directional tone (success/destructive/muted) is applied per
-    // instance in StatTrend, since each trend carries its own direction.
+    // instance in StatTrend, since each trend carries its own direction. It never wraps and never
+    // shrinks: "+1.1 pts" broken over two lines in a narrow tile reads as two chips, so the row
+    // beside it gives way instead.
     trend:
-      "inline-flex w-fit items-center gap-0.5 rounded-md border px-1.5 py-0.5 text-xs font-medium tabular-nums [&>svg]:size-3.5",
+      "inline-flex w-fit shrink-0 items-center gap-0.5 whitespace-nowrap rounded-md border px-1.5 py-0.5 text-xs font-medium tabular-nums [&>svg]:size-3.5",
     caption: "text-sm text-pretty text-muted-foreground",
     footer: "flex items-center gap-2",
     // Concentric radius: the card is rounded-xl (16px), so the inner tile drops to lg.
@@ -50,6 +57,10 @@ export const statVariants = tv({
       default: { root: "shadow-xs ring-1 ring-edge" },
       outline: { root: "shadow-none ring-1 ring-border" },
       elevated: { root: "bg-card shadow-lg [--surface:var(--card)]" },
+      // No frame at all: no ring, no lift, no fill, no padding. The figure lies on whatever holds
+      // it (the page sheet, a Card's content) and keeps the Stat's type ramp and part rhythm. The
+      // padding and the tighter gap live in the compound variants below, keyed on density.
+      plain: { root: "bg-transparent shadow-none ring-0" },
     },
     // Density is Koala's cross-cutting spacing axis (see lib/density.tsx). For Stat it
     // governs padding, gap, value size, and the icon tile. `compact` is the dashboard
@@ -81,6 +92,15 @@ export const statVariants = tv({
       },
     },
   },
+  compoundVariants: [
+    // Plain drops the tile's padding, and the parts close up (label, figure and caption read as
+    // one block once there is no frame to space them against). Comfortable keeps a step more.
+    { variant: "plain", density: "compact", className: { root: "gap-1.5 p-0" } },
+    { variant: "plain", density: "comfortable", className: { root: "gap-2 p-0" } },
+    // An interactive plain figure has no frame for the hover lift to raise, and gets no press
+    // scale: the pointer and the focus ring are its affordance.
+    { variant: "plain", interactive: true, className: { root: "hover:shadow-none active:scale-100" } },
+  ],
   defaultVariants: {
     variant: "default",
     density: "compact",
@@ -88,10 +108,40 @@ export const statVariants = tv({
 })
 
 type StatSlots = ReturnType<typeof statVariants>
-const [StatProvider, useStatContext] = createContext<{
+interface StatContextValue {
   slots: StatSlots
   density: Density
-}>("Stat")
+}
+
+/**
+ * A plain Context with a `null` default (not the throwing `lib/create-context` factory), because
+ * the parts are allowed to render without a Stat: `StatValue` beside a chart title, `StatTrend`
+ * next to any figure. Inside a Stat they read the root's slots; outside one they fall back to
+ * {@link STANDALONE_SLOTS}. Only `StatSparkline` insists on a Stat, since it bleeds to the tile.
+ */
+const StatContext = React.createContext<StatContextValue | null>(null)
+StatContext.displayName = "StatContext"
+
+/** The recipe a part uses outside any Stat: the plain look at each density, resolved once. */
+const STANDALONE_SLOTS: Record<Density, StatSlots> = {
+  compact: statVariants({ variant: "plain", density: "compact" }),
+  comfortable: statVariants({ variant: "plain", density: "comfortable" }),
+}
+
+/** The slots a part paints with: its Stat's, or the standalone plain recipe at ambient density. */
+function useStatSlots(): StatSlots {
+  const context = React.useContext(StatContext)
+  const density = useDensity()
+  return context ? context.slots : STANDALONE_SLOTS[density]
+}
+
+function useStatContext(consumerName: string): StatContextValue {
+  const context = React.useContext(StatContext)
+  if (context === null) {
+    throw new Error(`\`${consumerName}\` must be used within \`Stat\``)
+  }
+  return context
+}
 
 /**
  * Ambient flag a {@link StatGroup} sets so every nested {@link Stat} renders flush
@@ -124,24 +174,33 @@ export function Stat({
   // reads them from context. The resolved density is shared too, so StatSparkline can
   // bleed past the exact card padding.
   const resolvedDensity = useDensity(density)
-  // Inside a StatGroup the tile sheds its own chrome; standalone it keeps it.
+  // Inside a StatGroup the tile sheds its own chrome; standalone it keeps it. The group already
+  // owns the frame, so `plain` has nothing left to strip there: the tile keeps the group's padding.
   const grouped = React.useContext(StatGroupContext)
-  const slots = statVariants({ variant, interactive, density: resolvedDensity, grouped })
+  const resolvedVariant = grouped && variant === "plain" ? undefined : variant
+  const context = React.useMemo<StatContextValue>(
+    () => ({
+      slots: statVariants({ variant: resolvedVariant, interactive, density: resolvedDensity, grouped }),
+      density: resolvedDensity,
+    }),
+    [resolvedVariant, interactive, resolvedDensity, grouped],
+  )
   const Comp = asChild ? Slot.Root : "div"
   return (
-    <StatProvider slots={slots} density={resolvedDensity}>
-      <Comp data-slot="stat" className={slots.root({ className })} {...props} />
-    </StatProvider>
+    <StatContext.Provider value={context}>
+      <Comp data-slot="stat" className={context.slots.root({ className })} {...props} />
+    </StatContext.Provider>
   )
 }
 
 export function StatHeader({ className, ...props }: React.ComponentProps<"div">) {
-  const { slots } = useStatContext("StatHeader")
+  const slots = useStatSlots()
   return <div data-slot="stat-header" className={slots.header({ className })} {...props} />
 }
 
+/** The metric's name. Renders inside a Stat or on its own (muted, medium weight). */
 export function StatLabel({ className, ...props }: React.ComponentProps<"div">) {
-  const { slots } = useStatContext("StatLabel")
+  const slots = useStatSlots()
   return <div data-slot="stat-label" className={slots.label({ className })} {...props} />
 }
 
@@ -283,8 +342,13 @@ export interface StatValueProps extends React.ComponentProps<"div"> {
   countUp?: boolean
 }
 
+/**
+ * The headline figure: the display face, `tabular-nums`, one step up the scale per density. Inside
+ * a Stat it follows the tile's density; on its own (beside a chart title, in a Ranking header, on
+ * the sheet) it takes the ambient density, so it is the same figure wherever a number leads.
+ */
 export function StatValue({ className, countUp = false, children, ...props }: StatValueProps) {
-  const { slots } = useStatContext("StatValue")
+  const slots = useStatSlots()
   const parsed = React.useMemo(
     () => (countUp ? parseMetric(children) : null),
     [countUp, children],
@@ -304,18 +368,19 @@ export function StatValue({ className, countUp = false, children, ...props }: St
   )
 }
 
+/** The muted line that frames the figure (a period, a comparison). Works inside or outside a Stat. */
 export function StatCaption({ className, ...props }: React.ComponentProps<"div">) {
-  const { slots } = useStatContext("StatCaption")
+  const slots = useStatSlots()
   return <div data-slot="stat-caption" className={slots.caption({ className })} {...props} />
 }
 
 export function StatFooter({ className, ...props }: React.ComponentProps<"div">) {
-  const { slots } = useStatContext("StatFooter")
+  const slots = useStatSlots()
   return <div data-slot="stat-footer" className={slots.footer({ className })} {...props} />
 }
 
 export function StatIcon({ className, ...props }: React.ComponentProps<"div">) {
-  const { slots } = useStatContext("StatIcon")
+  const slots = useStatSlots()
   return <div data-slot="stat-icon" aria-hidden className={slots.icon({ className })} {...props} />
 }
 
@@ -339,6 +404,10 @@ export interface StatTrendProps extends React.ComponentProps<"span"> {
   inverted?: boolean
 }
 
+/**
+ * The trend chip: an arrow that points the honest way and a tone that says whether it is good
+ * news. It never wraps. Inside a Stat or on its own, it is the chip to set beside any figure.
+ */
 export function StatTrend({
   className,
   direction = "up",
@@ -346,7 +415,7 @@ export function StatTrend({
   children,
   ...props
 }: StatTrendProps) {
-  const { slots } = useStatContext("StatTrend")
+  const slots = useStatSlots()
   const Arrow = TREND_ARROW[direction]
   const tone =
     direction === "neutral"

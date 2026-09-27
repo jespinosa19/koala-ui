@@ -35,10 +35,10 @@ import { Pizza, Hamburger, Fish, Egg, Coffee } from "@phosphor-icons/react"
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add select
+npx koalaui-cli@latest add select
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/select/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -340,7 +340,7 @@ Koala's convention is a leading Phosphor icon per option: wrap the icon and labe
 
 ## Exports and dependencies
 
-`npx koalaui-cli add select` writes `components/ui/select/`. Import from `@/components/ui/select`:
+`npx koalaui-cli@latest add select` writes `components/ui/select/`. Import from `@/components/ui/select`:
 
 - Components and helpers: `Select`, `SelectGroup`, `SelectValue`, `SelectTrigger`, `SelectContent`, `SelectItem`, `SelectLabel`, `SelectSeparator`, `selectVariants`, `SelectSearch`, `SelectSearchTrigger`, `SelectSearchValue`, `SelectSearchContent`, `SelectSearchInput`, `SelectSearchList`, `SelectSearchItem`, `SelectSearchGroup`, `SelectSearchLabel`, `SelectSearchSeparator`, `SelectSearchEmpty`
 - Types: `SelectTriggerProps`, `SelectContentProps`, `SelectItemProps`, `SelectSearchProps`, `SelectSearchTriggerProps`, `SelectSearchValueProps`, `SelectSearchContentProps`, `SelectSearchInputProps`, `SelectSearchListProps`, `SelectSearchItemProps`, `SelectSearchFilter`

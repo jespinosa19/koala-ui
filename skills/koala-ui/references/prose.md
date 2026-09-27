@@ -25,10 +25,10 @@ The reading type. Wrap a document, CMS rich text, rendered Markdown or plain JSX
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add prose
+npx koalaui-cli@latest add prose
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/prose/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -95,7 +95,7 @@ Ordered lists carry tabular markers, inline `code` keeps the global chip, a `pre
     <li>Add the package.</li>
     <li>Import <code>globals.css</code> once, at the root.</li>
   </ol>
-  <pre><code>npx koalaui-cli add prose</code></pre>
+  <pre><code>npx koalaui-cli@latest add prose</code></pre>
   <figure>
     <img src="…" alt="A laptop on a desk, a code editor open" />
     <figcaption>The token map is the contract.</figcaption>
@@ -167,7 +167,7 @@ By design. Prose only styles a bare `<a>` (no class); anything with a class is a
 
 ## Exports and dependencies
 
-`npx koalaui-cli add prose` writes `components/ui/prose/`. Import from `@/components/ui/prose`:
+`npx koalaui-cli@latest add prose` writes `components/ui/prose/`. Import from `@/components/ui/prose`:
 
 - Components and helpers: `Prose`, `proseVariants`
 - Types: `ProseProps`

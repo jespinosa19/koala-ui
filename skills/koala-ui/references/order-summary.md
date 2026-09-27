@@ -53,10 +53,10 @@ The checkout and cart order read-out. One composable card that stacks line items
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add order-summary
+npx koalaui-cli@latest add order-summary
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/order-summary/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -329,7 +329,7 @@ Yes. Every price — the line prices, the totals rows, and the grand total — i
 
 ## Exports and dependencies
 
-`npx koalaui-cli add order-summary` writes `components/ui/order-summary/`. Import from `@/components/ui/order-summary`:
+`npx koalaui-cli@latest add order-summary` writes `components/ui/order-summary/`. Import from `@/components/ui/order-summary`:
 
 - Components and helpers: `OrderSummary`, `OrderSummaryHeader`, `OrderSummaryTitle`, `OrderSummaryItems`, `OrderSummaryItem`, `OrderSummaryItemThumbnail`, `OrderSummaryItemContent`, `OrderSummaryItemName`, `OrderSummaryItemOptions`, `OrderSummaryItemPrice`, `OrderSummaryItemActions`, `OrderSummaryItemQuantity`, `OrderSummaryItemRemove`, `OrderSummaryPromo`, `OrderSummaryTotals`, `OrderSummaryRow`, `OrderSummaryTotal`, `OrderSummaryFooter`, `orderSummaryVariants`
 - Types: `OrderSummaryProps`, `OrderSummaryItemProps`, `OrderSummaryItemThumbnailProps`, `OrderSummaryItemQuantityProps`, `OrderSummaryPromoProps`, `OrderSummaryFooterProps`, `OrderSummaryRowProps`, `OrderSummaryTotalProps`

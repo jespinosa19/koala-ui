@@ -25,10 +25,10 @@ import { Code, PenNib, Megaphone, Package, ChartLineUp } from "@phosphor-icons/r
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add multi-select
+npx koalaui-cli@latest add multi-select
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/multi-select/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -225,7 +225,7 @@ The panel has roving focus: Arrow keys, Home, and End move between option rows, 
 
 ## Exports and dependencies
 
-`npx koalaui-cli add multi-select` writes `components/ui/multi-select/`. Import from `@/components/ui/multi-select`:
+`npx koalaui-cli@latest add multi-select` writes `components/ui/multi-select/`. Import from `@/components/ui/multi-select`:
 
 - Components and helpers: `MultiSelect`, `MultiSelectTrigger`, `MultiSelectValue`, `MultiSelectContent`, `MultiSelectItem`, `MultiSelectSwitchItem`, `MultiSelectGroup`, `MultiSelectLabel`, `MultiSelectSeparator`, `multiSelectVariants`
 - Types: `MultiSelectProps`, `MultiSelectTriggerProps`, `MultiSelectValueProps`, `MultiSelectContentProps`, `MultiSelectItemProps`, `MultiSelectSwitchItemProps`

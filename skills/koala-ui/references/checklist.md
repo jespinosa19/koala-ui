@@ -49,10 +49,10 @@ The onboarding panel: a card that tracks a short list of setup tasks and their p
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add checklist
+npx koalaui-cli@latest add checklist
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/checklist/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -154,16 +154,94 @@ Like Card and Dialog, the Checklist reads the density context (or a `density` pr
 <Checklist density="compact" value={1} total={2}>…</Checklist>
 ```
 
+## Tasks the reader ticks
+
+Give a `ChecklistItem` `checked` and `onCheckedChange` (or `defaultChecked` to let it keep its own state) and it becomes a task list: the indicator turns into a real checkbox, named by the item's title, the whole row is its hit area, and a ticked title is struck through as it mutes. Leave `value` and `total` off the root and the Checklist counts its own items, so the bar follows every tick with no wiring. A row's `ChecklistItemAction` stays its own target above the hit area.
+
+```tsx
+<Checklist>
+  <ChecklistHeader>
+    <ChecklistTitle>Team tasks</ChecklistTitle>
+    <ChecklistDescription>Housekeeping for this week and next.</ChecklistDescription>
+    <ChecklistProgress />
+  </ChecklistHeader>
+  <ChecklistItems>
+    <ChecklistItem defaultChecked={true}>
+      <ChecklistItemContent>
+        <ChecklistItemTitle>Rotate the on-call schedule</ChecklistItemTitle>
+        <ChecklistItemDescription>Ana Torres, due Friday</ChecklistItemDescription>
+      </ChecklistItemContent>
+    </ChecklistItem>
+    <ChecklistItem defaultChecked={false}>
+      <ChecklistItemContent>
+        <ChecklistItemTitle>Archive tickets older than 90 days</ChecklistItemTitle>
+        <ChecklistItemDescription>Marc Vidal, due Monday</ChecklistItemDescription>
+      </ChecklistItemContent>
+    </ChecklistItem>
+    <ChecklistItem defaultChecked={false}>
+      <ChecklistItemContent>
+        <ChecklistItemTitle>Review the refund macro</ChecklistItemTitle>
+        <ChecklistItemDescription>Lucia Ramos, due Tuesday</ChecklistItemDescription>
+      </ChecklistItemContent>
+    </ChecklistItem>
+  </ChecklistItems>
+</Checklist>
+
+{/* Controlled, from your own task data */}
+<ChecklistItem checked={task.done} onCheckedChange={(done) => setDone(task.id, done)}>…</ChecklistItem>
+```
+
+## Inside a Card
+
+`variant="plain"` drops the Checklist's own contour and outer padding, so it sits inside a `Card` (or any surface that already frames it) without a frame inside a frame. The Card's header carries the heading; the indicators line up with it, and the row pills bleed into the Card's padding the way List's plain rows do. `ChecklistProgress` can lead the header on its own.
+
+```tsx
+<Card className="w-full max-w-sm">
+  <CardHeader>
+    <CardTitle>Team tasks</CardTitle>
+    <CardDescription>Housekeeping for this week and next.</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <Checklist variant="plain" density="compact">
+      <ChecklistHeader>
+        <ChecklistProgress />
+      </ChecklistHeader>
+      <ChecklistItems>
+        <ChecklistItem defaultChecked={true}>
+          <ChecklistItemContent>
+            <ChecklistItemTitle>Rotate the on-call schedule</ChecklistItemTitle>
+            <ChecklistItemDescription>Ana Torres, due Friday</ChecklistItemDescription>
+          </ChecklistItemContent>
+        </ChecklistItem>
+        <ChecklistItem defaultChecked={false}>
+          <ChecklistItemContent>
+            <ChecklistItemTitle>Archive tickets older than 90 days</ChecklistItemTitle>
+            <ChecklistItemDescription>Marc Vidal, due Monday</ChecklistItemDescription>
+          </ChecklistItemContent>
+        </ChecklistItem>
+        <ChecklistItem defaultChecked={false}>
+          <ChecklistItemContent>
+            <ChecklistItemTitle>Review the refund macro</ChecklistItemTitle>
+            <ChecklistItemDescription>Lucia Ramos, due Tuesday</ChecklistItemDescription>
+          </ChecklistItemContent>
+        </ChecklistItem>
+      </ChecklistItems>
+    </Checklist>
+  </CardContent>
+</Card>
+```
+
 ## API reference
 
 Checklist
 
 The root card. Forwards all `div` props.
 
-- `value: number` — completed task count.
-- `total: number` — total task count. Both drive the derived progress (clamped so a bad count can't overrun the bar).
-- `density?: "comfortable" | "compact"` — padding tier; defaults from the density context.
-- `asChild?: boolean` — render as a child element via Radix Slot.
+- `value?: number`: completed task count. Leave it out and the Checklist counts its complete items.
+- `total?: number`: total task count. Leave it out and the Checklist counts its items. Both drive the derived progress (clamped so a bad count can't overrun the bar).
+- `variant?: "card" | "plain"`: the panel contour, or none for a Checklist inside a Card. @default `"card"`
+- `density?: "comfortable" | "compact"`: padding tier; defaults from the density context.
+- `asChild?: boolean`: render as a child element via Radix Slot.
 
 ChecklistProgress
 
@@ -171,8 +249,9 @@ The labeled `role="progressbar"` bar. Reads progress from context. Pass `label` 
 
 ChecklistItem
 
-- `status?: "todo" | "active" | "complete"` — the task state. @default `"todo"`
-- `icon?: ReactNode` — the task glyph, shown while pending and cross-faded to a check on completion.
+- `status?: "todo" | "active" | "complete"`: the task state. On a row the reader ticks, `checked` decides `complete`. @default `"todo"`
+- `icon?: ReactNode`: the task glyph, shown while pending and cross-faded to a check on completion.
+- `checked?: boolean`, `defaultChecked?: boolean`, `onCheckedChange?: (checked: boolean) => void`: any of them makes the row a task the reader ticks: a Radix checkbox named by `ChecklistItemTitle`, the row as its hit area, `data-state` on the row.
 
 ChecklistHeader · ChecklistTitle · ChecklistDescription · ChecklistItems · ChecklistItemContent · ChecklistItemTitle · ChecklistItemDescription · ChecklistItemAction
 
@@ -186,7 +265,15 @@ From the root's value and total. ChecklistProgress derives the percentage, the '
 
 ### Do I have to keep value/total in sync with the item statuses?
 
-Yes. The statuses style each row; value/total drive the header progress. Keep both from the same source of truth (your task data), the way the docs demo derives status from a completed set and passes done.length as value. They're deliberately separate so you can show progress even for tasks that are collapsed or paginated out of view.
+No, you can leave them out: the Checklist then counts its own items, a status="complete" row or a checked one as done. Pass them when the progress covers more than the rows on screen (tasks collapsed or paginated out of view), and keep them from the same source of truth as the statuses.
+
+### How do I let people tick tasks off?
+
+Pass checked and onCheckedChange (or defaultChecked) on each ChecklistItem. The indicator becomes a Radix checkbox named by the item's title, clicking anywhere on the row toggles it, Space works from the keyboard, and a ticked title is struck through. Put any other control in ChecklistItemAction, which stays its own target.
+
+### How do I put a Checklist inside a Card?
+
+Use variant="plain". It drops the Checklist's own contour and outer padding, so there is no frame inside the frame: let the Card's header carry the heading and keep ChecklistProgress in a ChecklistHeader of its own.
 
 ### What does the active status do?
 
@@ -198,7 +285,7 @@ Yes. Pass icon to a ChecklistItem and it shows in the indicator while the task i
 
 ### Is it accessible?
 
-The bar is a role=progressbar with valuemin/max/now and a valuetext of 'X of Y complete'. Each item carries a data-status plus an sr-only label (Not started / In progress / Completed) so the state is announced, not only colored. The indicator itself is aria-hidden decoration.
+The bar is a named role=progressbar with valuemin/max/now and a valuetext of 'X of Y complete'. Each status item carries a data-status plus an sr-only label (Not started / In progress / Completed) so the state is announced, not only colored; its indicator is aria-hidden decoration. On a row the reader ticks, the indicator is a real checkbox named by the title, which announces its own state.
 
 ### Will it adapt to dark and the other themes?
 
@@ -206,7 +293,7 @@ Yes. Every color is a semantic token, brand, success, muted, border, card, so th
 
 ## Exports and dependencies
 
-`npx koalaui-cli add checklist` writes `components/ui/checklist/`. Import from `@/components/ui/checklist`:
+`npx koalaui-cli@latest add checklist` writes `components/ui/checklist/`. Import from `@/components/ui/checklist`:
 
 - Components and helpers: `Checklist`, `ChecklistHeader`, `ChecklistTitle`, `ChecklistDescription`, `ChecklistProgress`, `ChecklistItems`, `ChecklistItem`, `ChecklistItemContent`, `ChecklistItemTitle`, `ChecklistItemDescription`, `ChecklistItemAction`, `checklistVariants`
 - Types: `ChecklistProps`, `ChecklistTitleProps`, `ChecklistProgressProps`, `ChecklistItemProps`, `ChecklistStatus`

@@ -20,10 +20,10 @@ An inline status banner for page-level messages, validation summaries, and conte
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add alert
+npx koalaui-cli@latest add alert
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/alert/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -209,7 +209,7 @@ Yes. The root renders with `role="alert"`, so assistive tech announces the conte
 
 ## Exports and dependencies
 
-`npx koalaui-cli add alert` writes `components/ui/alert/`. Import from `@/components/ui/alert`:
+`npx koalaui-cli@latest add alert` writes `components/ui/alert/`. Import from `@/components/ui/alert`:
 
 - Components and helpers: `Alert`, `AlertIcon`, `AlertContent`, `AlertTitle`, `AlertDescription`, `AlertActions`, `alertVariants`
 - Types: `AlertProps`

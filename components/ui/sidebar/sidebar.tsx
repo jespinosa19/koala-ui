@@ -31,7 +31,7 @@ import { Tooltip } from "@/components/ui/tooltip"
  *     </SidebarContent>
  *
  *     <SidebarFooter>                  // profile switcher lives here
- *       <DropdownMenu>…<SidebarSwitcher title="Mara" subtitle="mara@acme.io" />…</DropdownMenu>
+ *       <DropdownMenu>…<SidebarSwitcher title="Mara" subtitle="mara@koalaui.com" />…</DropdownMenu>
  *     </SidebarFooter>
  *   </Sidebar>
  *
@@ -129,19 +129,22 @@ export const sidebarVariants = tv({
     // to sit under the parent's label and traces a hairline guide rail down the left so the
     // hierarchy reads at a glance. Its rows are ordinary `SidebarItem`s, but their left accent
     // bar is suppressed here: the rail already carries the nesting, and the active row keeps
-    // only its `bg-accent` chip. `data-[state]` animations ride Radix Collapsible.
+    // only its `bg-accent` chip. `data-[state]` animations ride Radix Collapsible, and the
+    // disclosure keyframes carry the clip, so it exists only mid-tween: at rest a focused row's
+    // ring paints its full edge instead of being shaved flush with the list.
     sub: [
-      "relative flex flex-col gap-0.5 overflow-hidden",
-      "duration-base ease-out data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up",
+      "relative flex flex-col gap-0.5",
+      "data-[state=open]:animate-disclosure-open data-[state=closed]:animate-disclosure-close",
       "before:pointer-events-none before:absolute before:inset-y-1 before:start-0 before:w-px before:bg-border before:content-['']",
       "[&_[data-slot=sidebar-item]]:before:hidden",
     ],
     // The animated content of a collapsible `SidebarGroup` (top-level, so no indent or rail,
     // just the same height tween as the nested list). Harmless on a non-collapsible group: with
-    // no Radix `data-state` the animation simply never fires.
+    // no Radix `data-state` the animation simply never fires. Clipped only mid-tween (the clip
+    // rides in the disclosure keyframes), so the rows' focus rings are never shaved at rest.
     groupContent: [
-      "flex flex-col gap-0.5 overflow-hidden",
-      "duration-base ease-out data-[state=open]:animate-collapsible-down data-[state=closed]:animate-collapsible-up",
+      "flex flex-col gap-0.5",
+      "data-[state=open]:animate-disclosure-open data-[state=closed]:animate-disclosure-close",
     ],
     // The caret on a `SidebarCollapsible` parent row. A box (not a bare svg) so the trigger's
     // leading-glyph rule (`[&>svg]`) sizes only the icon, not this caret. Pushed to the end of

@@ -21,10 +21,10 @@ A full-bleed announcement bar for promos, release notes and site-wide notices. S
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add banner
+npx koalaui-cli@latest add banner
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/banner/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -304,7 +304,7 @@ Override --banner-festive-via on the banner (a className or an inline style), or
 
 ## Exports and dependencies
 
-`npx koalaui-cli add banner` writes `components/ui/banner/`. Import from `@/components/ui/banner`:
+`npx koalaui-cli@latest add banner` writes `components/ui/banner/`. Import from `@/components/ui/banner`:
 
 - Components and helpers: `Banner`, `BannerIcon`, `BannerContent`, `BannerAction`, `BannerOrnament`, `bannerVariants`
 - Types: `BannerProps`, `BannerActionProps`, `BannerOrnamentProps`

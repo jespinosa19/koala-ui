@@ -9,4 +9,5 @@ export {
   CardMedia,
   cardVariants,
   type CardProps,
+  type CardActionProps,
 } from "./card"

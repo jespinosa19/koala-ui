@@ -436,6 +436,18 @@
   --animate-table-reveal: table-reveal var(--duration-base) var(--ease-out);
 
   /*
+   * Disclosure: the height tween of every Radix disclosure panel (Accordion, Collapsible, the
+   * Sidebar's collapsible groups and nested lists, Tree branches, Plan steps, Chat reasoning).
+   * Radix measures the panel into --radix-collapsible-content-height (Accordion content carries it
+   * too), so one pair serves both. The clip rides IN the keyframes: the panel is overflow-hidden
+   * only while its height tweens, so at rest it paints its children's focus rings, edge rings and
+   * shadows instead of shaving them flush with its box. Never put overflow-hidden on the panel
+   * itself; give a block panel `flow-root` so the clip-free rest state still contains margins.
+   */
+  --animate-disclosure-open: disclosure-open var(--duration-base) var(--ease-out);
+  --animate-disclosure-close: disclosure-close var(--duration-base) var(--ease-out);
+
+  /*
    * Banner-confetti: one piece's flight for the festive Banner's `confetti` burst. Each piece is
    * spawned imperatively with randomized end vectors (`--cx`/`--cy`/`--cr`) and self-removes on
    * animationend, so this is a one-shot enter (a keyframe, #4), not a transition. A bespoke 900ms
@@ -629,6 +641,30 @@
   to {
     grid-template-rows: 1fr;
     opacity: 1;
+  }
+}
+
+/* Disclosure: overflow is discrete, so it holds `hidden` for the whole tween and drops back to the
+   panel's own (visible) value the moment the animation ends. */
+@keyframes disclosure-open {
+  from {
+    height: 0;
+    overflow: hidden;
+  }
+  to {
+    height: var(--radix-collapsible-content-height);
+    overflow: hidden;
+  }
+}
+
+@keyframes disclosure-close {
+  from {
+    height: var(--radix-collapsible-content-height);
+    overflow: hidden;
+  }
+  to {
+    height: 0;
+    overflow: hidden;
   }
 }
 

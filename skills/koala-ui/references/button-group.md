@@ -31,10 +31,10 @@ A set of related buttons arranged as a visual unit. Supports attached (fused pil
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add button-group
+npx koalaui-cli@latest add button-group
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/button-group/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -223,7 +223,7 @@ ButtonGroupItem sets active:scale-100 so adjacent fused items do not visually sh
 
 ## Exports and dependencies
 
-`npx koalaui-cli add button-group` writes `components/ui/button-group/`. Import from `@/components/ui/button-group`:
+`npx koalaui-cli@latest add button-group` writes `components/ui/button-group/`. Import from `@/components/ui/button-group`:
 
 - Components and helpers: `ButtonGroup`, `ButtonGroupItem`, `buttonGroupVariants`
 - Types: `ButtonGroupProps`, `ButtonGroupItemProps`

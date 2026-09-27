@@ -23,6 +23,7 @@ import {
   type RowSelectionState,
   type SortingState,
   type Table as TanstackTable,
+  type Updater,
   type VisibilityState,
 } from "@tanstack/react-table"
 import { CaretDown, CaretUpDown, CaretRight, Info } from "@phosphor-icons/react"
@@ -50,8 +51,10 @@ import {
   TableRow,
 } from "./table"
 import { Pagination } from "@/components/ui/pagination"
+import { TabsContent } from "@/components/ui/tabs"
 import { Tooltip } from "@/components/ui/tooltip"
 import { DataTableEmpty } from "./data-table-empty"
+import { useDataTableTabs } from "./data-table-tabs"
 import {
   DataTableToolbar,
   DataTableToolbarSection,
@@ -129,11 +132,31 @@ export interface DataTableProps<TData, TValue> {
   /** Stable row id, required for selection/grouping to survive re-sorts. */
   getRowId?: (row: TData, index: number) => string
 
+  // Opening a row. The record-list pattern: click a row (or focus it and press Enter) and the
+  //   screen shows that record, in a detail pane beside the table, a drawer or a page of its own.
+  /** Open a row: called when the user clicks anywhere on a body row, or focuses one and presses
+   *  Enter. Clicks that land on a control inside the row (a button, link, checkbox, input, label or
+   *  menu item) do their own job instead, and so does a click that ends a text selection. Setting it
+   *  makes every body row focusable, with a brand focus ring. The event rides along for modifier
+   *  keys (a ⌘-click that opens in a new tab). */
+  onRowClick?: (
+    row: Row<TData>,
+    event: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>,
+  ) => void
+  /** The id (as `getRowId` returns it) of the row that is open elsewhere, e.g. in a detail pane.
+   *  That row is painted as the current one (a brand tint, distinct from the checkbox-selected fill)
+   *  and carries `aria-current="true"`. `null` or unset: no row is current. */
+  activeRowId?: string | null
+
   /** Click-to-sort headers. @default false */
   enableSorting?: boolean
   initialSorting?: SortingState
+  /** The sort, controlled. Pair it with `onSortingChange`; `initialSorting` is then ignored. */
+  sorting?: SortingState
   /** Leading checkbox column with a header "select all". @default false */
   enableRowSelection?: boolean
+  /** Notified after each selection change (once the table has re-rendered with it), including
+   *  when rows that left `data` drop out of the selection. */
   onRowSelectionChange?: (selection: RowSelectionState) => void
   /** Collapse rows into expandable groups (pass `initialGrouping` to choose the column). @default false */
   enableGrouping?: boolean
@@ -155,11 +178,15 @@ export interface DataTableProps<TData, TValue> {
   initialColumnOrder?: string[]
   /** Notified when the column order changes. */
   onColumnOrderChange?: (order: string[]) => void
-  /** Page the rows client-side and render a Pagination toolbar below the table. @default false */
+  /** Page the rows client-side and render a Pagination toolbar below the table. The page never
+   *  falls out of range: when `data` shrinks under it (a delete, a tab that filters the rows) it
+   *  steps back to the last page that still exists. @default false */
   enablePagination?: boolean
   /** Initial rows per page. @default 8 */
   pageSize?: number
-  /** Options offered by the rows-per-page select. @default [8, 16, 24, 50, 100] */
+  /** Options offered by the rows-per-page select. The current page size is always among them
+   *  (merged in and sorted if you leave it out), so the select never goes blank.
+   *  @default one, two and three pages of `pageSize`, then 50 and 100 ([8, 16, 24, 50, 100]) */
   pageSizeOptions?: number[]
 
   // Toolbar (the control rail above the table). Each piece is its own toggle.
@@ -170,11 +197,19 @@ export interface DataTableProps<TData, TValue> {
   searchable?: boolean
   /** Placeholder for the search box. @default "Search for anything" */
   searchPlaceholder?: string
+  /** The search text, controlled. Pair it with `onGlobalFilterChange`. Works with the built-in
+   *  box (`searchable`) or without it, for a search field that lives elsewhere on the screen. */
+  globalFilter?: string
   /** Right-cluster slot for app actions: filter/export/primary buttons, etc. */
   toolbarActions?: React.ReactNode
   /** Add a "View options" dropdown to the toolbar for showing/hiding columns. Give a column a
    *  `meta.label` (or a string header) for it to appear there. @default false */
   viewOptions?: boolean
+  /** Which columns are visible, controlled (`{ columnId: false }` hides one). Pair it with
+   *  `onColumnVisibilityChange`. */
+  columnVisibility?: VisibilityState
+  /** Notified when a column is shown or hidden. */
+  onColumnVisibilityChange?: (visibility: VisibilityState) => void
   /** Per-column faceted filters. Each field adds a multi-select dropdown to the toolbar and a
    *  removable chip below it. The filtered columns must use `filterFn: "arrIncludesSome"`. */
   filters?: DataTableFilterField[]
@@ -229,14 +264,25 @@ export interface DataTableProps<TData, TValue> {
   pageCount?: number
   /** Total row count across all pages; used to derive `pageCount` under `manualPagination`. */
   rowCount?: number
-  /** Notified when the sort changes (e.g. to refetch server-side). */
+  // Every on*Change below is called after the table has committed the change, never from inside
+  //   a state update, so it is safe to set your own state from it.
+  /** Notified when the sort changes (e.g. to refetch server-side). With `sorting` set, this is
+   *  the change you apply. */
   onSortingChange?: (sorting: SortingState) => void
   /** Notified when the page or page size changes. */
   onPaginationChange?: (pagination: PaginationState) => void
   /** Notified when the column filters change. */
   onColumnFiltersChange?: (filters: ColumnFiltersState) => void
-  /** Notified when the search text changes. */
+  /** Notified when the search text changes, as the user types in the built-in box too. With
+   *  `globalFilter` set, this is the change you apply. */
   onGlobalFilterChange?: (value: string) => void
+  /** The rows the table currently shows, in the order it shows them: every row that passes the
+   *  search and filters, sorted, across all pages (group header rows left out). Called after mount
+   *  and again whenever that list changes (new data, a search, a filter, a sort), not on paging. Use
+   *  it to walk the rows with previous/next from a detail pane or to export the current view. Rows
+   *  are compared by id and item, so keep `data` items stable between renders (state or memo), as
+   *  TanStack expects. */
+  onDisplayedRowsChange?: (rows: Row<TData>[]) => void
 
   /** Persist view state (visible columns, sorting, layout, page size) to localStorage under this
    *  key, so the table reopens the way the user left it. SSR-safe: applied after mount. */
@@ -273,12 +319,97 @@ type DropEdge = "before" | "after"
 const escapeId = (value: string) =>
   typeof CSS !== "undefined" && CSS.escape ? CSS.escape(value) : value
 
+/**
+ * One slice of table state that a consumer may control (a value prop + its `on*Change`) or leave to
+ * the table (kept here, with `on*Change` as a notification).
+ *
+ * Controlled, a change goes straight to `onChange` from the event that caused it: the consumer owns
+ * the value, so the table only proposes. Uncontrolled, the table keeps the value and reports it
+ * AFTER the commit, from an effect. TanStack hands us functional updaters; calling the consumer from
+ * inside one runs their `setState` in the middle of this component's render ("Cannot update a
+ * component while rendering a different component"), and twice under StrictMode. The report
+ * compares against the last value it reported, so mounting (or StrictMode's remount) is silent and
+ * a change that arrives from anywhere (a click, the search box, persistence) is reported once.
+ */
+function useTableState<T>(
+  controlled: T | undefined,
+  initial: T | (() => T),
+  onChange: ((value: T) => void) | undefined,
+) {
+  const [own, setOwn] = React.useState<T>(initial)
+  const isControlled = controlled !== undefined
+  const value = isControlled ? controlled : own
+
+  // The latest props, for the report below and for the setter, which runs from event handlers and
+  // effects (never during render). Refreshed in a layout effect, ahead of every effect the table
+  // declares after this hook, so a setter called from one of those already sees this commit.
+  const latestRef = React.useRef({ controlled, onChange })
+  React.useLayoutEffect(() => {
+    latestRef.current = { controlled, onChange }
+  })
+
+  const reportedRef = React.useRef(own)
+  React.useEffect(() => {
+    if (Object.is(reportedRef.current, own)) return
+    reportedRef.current = own
+    if (!isControlled) latestRef.current.onChange?.(own)
+  }, [own, isControlled])
+
+  // Stable, like a `useState` setter, so it can sit in the table options and effect deps freely.
+  const setValue = React.useCallback((updater: Updater<T>) => {
+    const { controlled: current, onChange: notify } = latestRef.current
+    if (current === undefined) {
+      setOwn(updater)
+      return
+    }
+    notify?.(typeof updater === "function" ? (updater as (old: T) => T)(current) : updater)
+  }, [])
+
+  return [value, setValue] as const
+}
+
+/** The rows-per-page choices when none are given: one, two and three pages, then 50 and 100 where
+ *  they are bigger still. `pageSize` 8 gives the long-standing [8, 16, 24, 50, 100]. */
+function defaultPageSizeOptions(pageSize: number) {
+  const pages = [pageSize, pageSize * 2, pageSize * 3]
+  return [...pages, ...[50, 100].filter((size) => size > pages[2]!)]
+}
+
+/** Anything inside a row that already does something when clicked. A click that lands on one of
+ *  these is that control's, not a request to open the row. */
+const ROW_CONTROL_SELECTOR = [
+  "a[href]",
+  "button",
+  "input",
+  "select",
+  "textarea",
+  "label",
+  "summary",
+  "[contenteditable=true]",
+  "[role=button]",
+  "[role=link]",
+  "[role=checkbox]",
+  "[role=radio]",
+  "[role=switch]",
+  "[role=menuitem]",
+  "[role=menuitemcheckbox]",
+  "[role=menuitemradio]",
+  "[role=option]",
+  "[role=combobox]",
+  "[role=slider]",
+  "[role=tab]",
+  "[role=textbox]",
+].join(",")
+
 export function DataTable<TData, TValue>({
   columns,
   data,
   getRowId,
+  onRowClick,
+  activeRowId,
   enableSorting = false,
   initialSorting = [],
+  sorting: sortingProp,
   enableRowSelection = false,
   onRowSelectionChange,
   enableGrouping = false,
@@ -289,12 +420,15 @@ export function DataTable<TData, TValue>({
   onColumnOrderChange,
   enablePagination = false,
   pageSize = 8,
-  pageSizeOptions = [8, 16, 24, 50, 100],
+  pageSizeOptions,
   toolbar = false,
   searchable = false,
   searchPlaceholder = "Search for anything",
+  globalFilter: globalFilterProp,
   toolbarActions,
   viewOptions = false,
+  columnVisibility: columnVisibilityProp,
+  onColumnVisibilityChange,
   filters,
   enableCardLayout = false,
   defaultLayout = "rows",
@@ -311,6 +445,7 @@ export function DataTable<TData, TValue>({
   onPaginationChange,
   onColumnFiltersChange,
   onGlobalFilterChange,
+  onDisplayedRowsChange,
   loading = false,
   loadingRows = 5,
   onLoadMore,
@@ -326,17 +461,44 @@ export function DataTable<TData, TValue>({
   className,
   containerClassName,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>(initialSorting)
+  // Each slice either follows its controlled prop or lives here and reports after commit (see
+  // useTableState). Grouping and layout have no callbacks, so they stay plain state.
+  const [sorting, setSorting] = useTableState<SortingState>(
+    sortingProp,
+    initialSorting,
+    onSortingChange,
+  )
   const [grouping, setGrouping] = React.useState<GroupingState>(initialGrouping)
-  const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({})
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-  const [pagination, setPagination] = React.useState<PaginationState>({
-    pageIndex: 0,
-    pageSize,
-  })
-  const [globalFilter, setGlobalFilter] = React.useState("")
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-  const [columnOrder, setColumnOrder] = React.useState<string[]>(initialColumnOrder ?? [])
+  const [rowSelection, setRowSelection] = useTableState<RowSelectionState>(
+    undefined,
+    {},
+    onRowSelectionChange,
+  )
+  const [columnVisibility, setColumnVisibility] = useTableState<VisibilityState>(
+    columnVisibilityProp,
+    {},
+    onColumnVisibilityChange,
+  )
+  const [pagination, setPagination] = useTableState<PaginationState>(
+    undefined,
+    () => ({ pageIndex: 0, pageSize }),
+    onPaginationChange,
+  )
+  const [globalFilter, setGlobalFilter] = useTableState<string>(
+    globalFilterProp,
+    "",
+    onGlobalFilterChange,
+  )
+  const [columnFilters, setColumnFilters] = useTableState<ColumnFiltersState>(
+    undefined,
+    [],
+    onColumnFiltersChange,
+  )
+  const [columnOrder, setColumnOrder] = useTableState<string[]>(
+    undefined,
+    initialColumnOrder ?? [],
+    onColumnOrderChange,
+  )
   // The card layout is a sibling of the row layout, switched from the view-options dropdown.
   const [layout, setLayout] = React.useState<DataTableLayout>(defaultLayout)
   const resolvedDensity = useDensity(density)
@@ -368,7 +530,8 @@ export function DataTable<TData, TValue>({
       // Unreadable/garbled storage: fall back to the defaults already in state.
     }
     setPersistHydrated(true)
-  }, [persistKey])
+    // The setters are stable (useTableState), so this still runs once per key.
+  }, [persistKey, setColumnVisibility, setColumnOrder, setSorting, setPagination])
 
   React.useEffect(() => {
     if (!persistKey || !persistHydrated) return
@@ -494,7 +657,9 @@ export function DataTable<TData, TValue>({
   // Filtering is on when there's a search box or any faceted filter field. Faceted counts only
   // make sense on the client, so they ride along with the (non-manual) filtered row model.
   const hasFilters = (filters?.length ?? 0) > 0
-  const filteringEnabled = searchable || hasFilters
+  // A controlled `globalFilter` searches too, with or without the built-in box.
+  const searching = searchable || globalFilterProp !== undefined
+  const filteringEnabled = searching || hasFilters
   // Expansion drives both grouping's group rows and standalone detail panels.
   const showExpansion = enableGrouping || renderSubRow != null
 
@@ -508,7 +673,7 @@ export function DataTable<TData, TValue>({
       columnVisibility,
       ...(enableColumnOrdering && { columnOrder }),
       ...(enablePagination && { pagination }),
-      ...(searchable && { globalFilter }),
+      ...(searching && { globalFilter }),
       ...(filteringEnabled && { columnFilters }),
     },
     getRowId,
@@ -532,52 +697,16 @@ export function DataTable<TData, TValue>({
         pageCount ?? (rowCount != null ? Math.ceil(rowCount / pagination.pageSize) : undefined),
     }),
     ...(renderSubRow && { getRowCanExpand: getRowCanExpand ?? (() => true) }),
+    // Every setter notifies the consumer on its own, after commit (useTableState), so these are
+    // handed over as they are: server-side mode needs no extra wiring.
     onGroupingChange: setGrouping,
     onColumnVisibilityChange: setColumnVisibility,
-    onColumnOrderChange: (updater) => {
-      setColumnOrder((prev) => {
-        const next = typeof updater === "function" ? updater(prev) : updater
-        onColumnOrderChange?.(next)
-        return next
-      })
-    },
-    // State setters wrapped to also notify the consumer (uncontrolled-with-notify): the same
-    // shape as the existing onRowSelectionChange, so server-side mode needs no extra wiring.
-    onSortingChange: (updater) => {
-      setSorting((prev) => {
-        const next = typeof updater === "function" ? updater(prev) : updater
-        onSortingChange?.(next)
-        return next
-      })
-    },
-    onPaginationChange: (updater) => {
-      setPagination((prev) => {
-        const next = typeof updater === "function" ? updater(prev) : updater
-        onPaginationChange?.(next)
-        return next
-      })
-    },
-    onGlobalFilterChange: (updater) => {
-      setGlobalFilter((prev) => {
-        const next = typeof updater === "function" ? updater(prev) : updater
-        onGlobalFilterChange?.(next)
-        return next
-      })
-    },
-    onColumnFiltersChange: (updater) => {
-      setColumnFilters((prev) => {
-        const next = typeof updater === "function" ? updater(prev) : updater
-        onColumnFiltersChange?.(next)
-        return next
-      })
-    },
-    onRowSelectionChange: (updater) => {
-      setRowSelection((prev) => {
-        const next = typeof updater === "function" ? updater(prev) : updater
-        onRowSelectionChange?.(next)
-        return next
-      })
-    },
+    onColumnOrderChange: setColumnOrder,
+    onSortingChange: setSorting,
+    onPaginationChange: setPagination,
+    onGlobalFilterChange: setGlobalFilter,
+    onColumnFiltersChange: setColumnFilters,
+    onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
     ...(filteringEnabled && !manualFiltering && { getFilteredRowModel: getFilteredRowModel() }),
     ...(hasFilters && !manualFiltering && {
@@ -590,13 +719,17 @@ export function DataTable<TData, TValue>({
     ...(enablePagination && !manualPagination && { getPaginationRowModel: getPaginationRowModel() }),
   })
 
-  // Replaces the disabled `autoResetPageIndex` (see the table options above): when the search or a
-  // faceted filter changes the row count, the current page can fall past the last page, so snap
-  // back to the first. Skipping the mount run keeps this out of the initial render (the whole point
-  // of disabling the built-in), and client-paged tables only: in `manualPagination` the consumer
-  // owns paging and refetches on its own callbacks.
+  // The view picked in a DataTableTabs around this table, if there is one.
+  const tabs = useDataTableTabs()
+  const tabValue = tabs?.value
+
+  // Replaces the disabled `autoResetPageIndex` (see the table options above): a new search, a
+  // faceted filter or another tab is a new list, so it starts on its first page. Skipping the mount
+  // run keeps this out of the initial render (the whole point of disabling the built-in), and
+  // client-paged tables only: in `manualPagination` the consumer owns paging and refetches on its
+  // own callbacks. A layout effect, so the page flips before paint instead of flashing the old one.
   const didMountRef = React.useRef(false)
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     if (!enablePagination || manualPagination) return
     if (!didMountRef.current) {
       didMountRef.current = true
@@ -605,7 +738,71 @@ export function DataTable<TData, TValue>({
     // Only when we're actually past the first page, so an already-first-page table never fires a
     // redundant pagination update (incl. under dev StrictMode's mount/remount).
     if (table.getState().pagination.pageIndex !== 0) table.setPageIndex(0)
-  }, [globalFilter, columnFilters, enablePagination, manualPagination, table])
+  }, [globalFilter, columnFilters, tabValue, enablePagination, manualPagination, table])
+
+  // The page never points past the end. `data` can shrink under it from outside (a delete, a filter
+  // the screen applies itself), and a page that no longer exists would show an empty table with a
+  // pager that says "Page 4 of 2". Step back to the last page that does exist: an in-place edit
+  // keeps its page, a shrink lands on the nearest one. Functional, so it composes with the reset
+  // above when both land in one commit (min(0, last) is still 0).
+  const clientPaged = enablePagination && !manualPagination
+  const clientPageCount = clientPaged ? table.getPageCount() : 0
+  React.useLayoutEffect(() => {
+    if (!clientPaged || loading) return
+    const last = Math.max(0, clientPageCount - 1)
+    if (pagination.pageIndex > last) table.setPageIndex((index) => Math.min(index, last))
+  }, [clientPageCount, pagination.pageIndex, clientPaged, loading, table])
+
+  // Selection follows the rows that are still here: when `data` changes, rows that left it leave
+  // the selection too, so a bulk action or a mirrored count never includes something the user can
+  // no longer see. Rows that stayed keep their checks. Not under server-side paging or filtering,
+  // where `data` is one page of a larger set and a selection may span pages, nor while loading,
+  // when `data` is often an empty placeholder, nor under grouping, whose group rows carry ids of
+  // their own that `data` never had.
+  React.useEffect(() => {
+    if (manualPagination || manualFiltering || loading || enableGrouping) return
+    const { rowsById } = table.getCoreRowModel()
+    const stale = Object.keys(rowSelection).filter((id) => !(id in rowsById))
+    if (stale.length === 0) return
+    setRowSelection((current) => {
+      const next = { ...current }
+      for (const id of stale) delete next[id]
+      return next
+    })
+  }, [
+    data,
+    rowSelection,
+    manualPagination,
+    manualFiltering,
+    loading,
+    enableGrouping,
+    table,
+    setRowSelection,
+  ])
+
+  // The rows on show, in order, for a consumer that walks or exports them (onDisplayedRowsChange).
+  // TanStack's sorted model sits after search, filters and grouping and before paging, and falls
+  // back to the unsorted one when sorting is off or manual. Reported after commit, and only when the
+  // list really changed (by id and item), so a consumer that stores it in state and hands back a
+  // freshly filtered `data` array on every render doesn't loop.
+  const displayedModel = onDisplayedRowsChange ? table.getSortedRowModel() : null
+  const onDisplayedRowsChangeRef = React.useRef(onDisplayedRowsChange)
+  const reportedRowsRef = React.useRef<Row<TData>[] | null>(null)
+  React.useEffect(() => {
+    onDisplayedRowsChangeRef.current = onDisplayedRowsChange
+  })
+  React.useEffect(() => {
+    if (!displayedModel) return
+    const rows = displayedModel.flatRows.filter((row) => !row.getIsGrouped())
+    const last = reportedRowsRef.current
+    const same =
+      last != null &&
+      last.length === rows.length &&
+      last.every((row, index) => row.id === rows[index]!.id && row.original === rows[index]!.original)
+    if (same) return
+    reportedRowsRef.current = rows
+    onDisplayedRowsChangeRef.current?.(rows)
+  }, [displayedModel])
 
   // ── Manual reordering ──────────────────────────────────────────────────────────────────────
   // "Lift and make room": the grabbed row follows the pointer and the rows it passes step aside,
@@ -822,11 +1019,49 @@ export function DataTable<TData, TValue>({
 
   const leafColumnCount = table.getVisibleLeafColumns().length
 
+  // ── Opening a row ─────────────────────────────────────────────────────────────────────────────
+  // The row is the target, but the controls inside it keep their own jobs: the checkbox checks, the
+  // menu opens, the link navigates. Only a click that lands on the row itself opens it.
+  const openRowOnClick = (row: Row<TData>, event: React.MouseEvent<HTMLElement>) => {
+    if (!onRowClick) return
+    const element = event.currentTarget
+    const target = event.target as Element
+    // React bubbles events along the component tree, portals included, so a click in a row's own
+    // dropdown menu or dialog arrives here from outside the row's DOM.
+    if (!element.contains(target)) return
+    const control = target.closest(ROW_CONTROL_SELECTOR)
+    if (control && control !== element && element.contains(control)) return
+    // Dragging across a cell to copy its text ends in a click as well; that is not a request to open.
+    const selection = typeof window !== "undefined" ? window.getSelection() : null
+    if (selection && !selection.isCollapsed && element.contains(selection.anchorNode)) return
+    onRowClick(row, event)
+  }
+
+  // The keyboard twin: Enter on the focused row. Only on the row itself, so Enter on a control
+  // inside it (a focused button, the checkbox) stays that control's.
+  const openRowOnKey = (row: Row<TData>, event: React.KeyboardEvent<HTMLElement>) => {
+    if (!onRowClick || event.key !== "Enter" || event.target !== event.currentTarget) return
+    event.preventDefault()
+    onRowClick(row, event)
+  }
+
+  /** The props that make a record (a table row or a card) openable, when `onRowClick` is set. */
+  const openableProps = (row: Row<TData>) =>
+    onRowClick && !row.getIsGrouped()
+      ? {
+          tabIndex: 0,
+          onClick: (event: React.MouseEvent<HTMLElement>) => openRowOnClick(row, event),
+          onKeyDown: (event: React.KeyboardEvent<HTMLElement>) => openRowOnKey(row, event),
+        }
+      : undefined
+
+  const isActiveRow = (row: Row<TData>) => activeRowId != null && row.id === activeRowId
+
   // A search/filter that came up empty is a different story than a table with no data; default
   // the placeholder to the matching `kind` so "no results" vs "no data yet" reads right. An
   // explicit `emptyState` always wins.
   const isFiltered =
-    (searchable && globalFilter.trim().length > 0) || columnFilters.length > 0
+    (searching && globalFilter.trim().length > 0) || columnFilters.length > 0
   const resolvedEmptyState =
     emptyState ?? <DataTableEmpty kind={isFiltered ? "search" : "empty"} />
 
@@ -1014,6 +1249,8 @@ export function DataTable<TData, TValue>({
             <React.Fragment key={row.id}>
             <TableRow
               selected={row.getIsSelected()}
+              current={isActiveRow(row)}
+              {...openableProps(row)}
               data-row-id={reorderRows ? row.id : undefined}
               style={
                 rowDrag.state
@@ -1032,6 +1269,13 @@ export function DataTable<TData, TValue>({
               className={cn(
                 row.depth > 0 && "animate-stagger-in",
                 reorderRows && "group/row",
+                // An openable row takes focus as a whole, so its ring is an outline: a <tr> paints
+                // no box-shadow of its own (see the lift below). Inset by its own width so the flush
+                // `minimal` edges and the scroll box can't clip it.
+                onRowClick != null && !row.getIsGrouped() && [
+                  "cursor-pointer outline-none",
+                  "focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-brand",
+                ],
                 // The lifted row rides above the ones making way for it. A drop shadow is not on
                 // the table: a <tr>'s shadow paints in the row-background layer, so the next row
                 // covers it, and moving it onto the cells puts a seam at every cell boundary
@@ -1205,7 +1449,16 @@ export function DataTable<TData, TValue>({
     // replay (polish).
     <Stagger data-slot="data-table-cards" className={cardGridClass}>
       {rows.map((row) =>
-        renderCard ? renderCard(row) : <DataTableCard key={row.id} row={row} />,
+        renderCard ? (
+          renderCard(row)
+        ) : (
+          <DataTableCard
+            key={row.id}
+            row={row}
+            current={isActiveRow(row)}
+            openable={openableProps(row)}
+          />
+        ),
       )}
     </Stagger>
   )
@@ -1228,15 +1481,35 @@ export function DataTable<TData, TValue>({
   // Reordering counts as something to wrap, because its keyboard moves need a live region to
   // announce themselves in and a <table> has nowhere to put one.
   const announceReorder = reorderRows || enableColumnOrdering
+
+  // Inside a DataTableTabs the whole table is the panel the tabs drive, so the tablist's
+  // `aria-controls` lands on it and a screen reader hears which view it is in. The panel's `value`
+  // follows the active tab: one element whose value changes, never a remount, so the search, sort
+  // and selection ride through a switch.
+  const inTabPanel = (node: React.ReactElement) =>
+    tabValue != null ? (
+      <TabsContent value={tabValue} className="min-w-0">
+        {node}
+      </TabsContent>
+    ) : (
+      node
+    )
+
   if (!showToolbar && !showPagination && !infiniteScroll && !hasSelectionBar && !announceReorder)
-    return contentElement
+    return inTabPanel(contentElement)
 
   // Match the toolbar's controls to the TABLE's density rather than the ambient one: the bar
   // imposes it on everything inside (search, filters, view options, the consumer's own actions),
   // so they can't drift apart when the table is given an explicit density.
   const toolbarSize = resolvedDensity === "compact" ? "sm" : "md"
 
-  return (
+  // The rows-per-page choices always include the size in use, so the select never shows a blank
+  // (a `pageSize` of 10 against the default options, or a size restored by `persistKey`).
+  const pageSizeChoices = [
+    ...new Set([...(pageSizeOptions ?? defaultPageSizeOptions(pageSize)), pagination.pageSize]),
+  ].sort((a, b) => a - b)
+
+  return inTabPanel(
     <div className="flex flex-col gap-4">
       {/* A drag has the pointer to follow; an arrow-key move has nothing, so it says where the row
           or column landed. `sr-only` is out of flow, so it never opens a gap in this column. */}
@@ -1315,13 +1588,13 @@ export function DataTable<TData, TValue>({
           onPageChange={(p) => table.setPageIndex(p - 1)}
           rowsPerPage={table.getState().pagination.pageSize}
           onRowsPerPageChange={(rows) => table.setPageSize(rows)}
-          rowsPerPageOptions={pageSizeOptions}
+          rowsPerPageOptions={pageSizeChoices}
           disabled={loading}
           density={resolvedDensity}
           showRowsPerPage
         />
       )}
-    </div>
+    </div>,
   )
 }
 
@@ -1349,10 +1622,16 @@ function SkeletonCell<TData>({ column, index }: { column: Column<TData>; index: 
  *  labelled columns stack as `label: value` fields. Override the whole card with `renderCard`. */
 function DataTableCard<TData>({
   row,
+  current = false,
+  openable,
   className,
   style,
 }: {
   row: Row<TData>
+  /** The card is the open record (`activeRowId`). */
+  current?: boolean
+  /** Focus + click + Enter wiring when the table has `onRowClick`. */
+  openable?: Pick<React.ComponentProps<"div">, "tabIndex" | "onClick" | "onKeyDown">
   // Forwarded to the Card root so a wrapping <Stagger> can attach its entrance class + delay.
   className?: string
   style?: React.CSSProperties
@@ -1368,11 +1647,21 @@ function DataTableCard<TData>({
   return (
     <Card
       data-state={row.getIsSelected() ? "selected" : undefined}
+      aria-current={current ? "true" : undefined}
+      {...openable}
       style={style}
       className={cn(
         // Card's edge is a ring, not a border, so the selected state thickens and tints that same
         // ring (2px brand, the weight the old border + ring pair drew). Transition the shadow it is.
         "transition-shadow duration-fast ease-out data-[state=selected]:ring-2 data-[state=selected]:ring-brand",
+        // The open record takes the same brand tint as a current table row (a tint is colour, not
+        // elevation, so an in-flow card may carry it).
+        "aria-[current=true]:bg-[color-mix(in_oklab,var(--brand)_8%,var(--surface,var(--background)))]",
+        // Openable: the ring already means "selected", so focus draws an outline, offset clear of it.
+        openable && [
+          "cursor-pointer outline-none",
+          "focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-brand",
+        ],
         className,
       )}
     >
@@ -1527,9 +1816,9 @@ function HeaderTooltip({ content }: { content: React.ReactNode }) {
 }
 
 /** Wraps a cell's content in a tooltip (`meta.cellTooltip`). The trigger is a focusable, layout-
- *  transparent `inline-block` so it shrinks to the cell content and never fights the column width:
- *  a cell that clamps itself (`max-w-* truncate`) still truncates, and the tooltip carries the full
- *  value. `cursor-help` marks it as explanatory; the hint is reachable by keyboard, not just hover. */
+ *  transparent block (see below) that never fights the column width: a cell that clamps itself
+ *  (`max-w-* truncate`) still truncates, and the tooltip carries the full value. `cursor-help` marks
+ *  it as explanatory; the hint is reachable by keyboard, not just hover. */
 function CellTooltip({
   content,
   children,
@@ -1537,11 +1826,16 @@ function CellTooltip({
   content: React.ReactNode
   children: React.ReactNode
 }) {
+  // A `block`, so it fills the cell's content box exactly as the cell's own content would: a
+  // full-width child (a Progress, a sparkline) keeps the column's width instead of collapsing to
+  // nothing inside a shrink-to-fit box, text keeps the cell's alignment, and a `truncate` child
+  // still clamps. The hint answers anywhere over the cell's content.
   return (
     <Tooltip content={content}>
       <span
         tabIndex={0}
-        className="inline-block max-w-full cursor-help rounded-sm align-middle outline-none focus-visible:ring-2 focus-visible:ring-brand"
+        data-slot="data-table-cell-tooltip"
+        className="block cursor-help rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-brand"
       >
         {children}
       </span>
@@ -1577,8 +1871,10 @@ export type {
   ColumnDef,
   ColumnFiltersState,
   PaginationState,
+  Row,
   RowSelectionState,
   SortingState,
   GroupingState,
   TanstackTable,
+  VisibilityState,
 }

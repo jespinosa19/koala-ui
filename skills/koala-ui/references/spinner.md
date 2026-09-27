@@ -14,10 +14,10 @@ The one loading glyph in the system. It takes its size from whatever holds it an
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add spinner
+npx koalaui-cli@latest add spinner
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/spinner/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -109,7 +109,7 @@ The ring stops turning (`motion-reduce:animate-none`) and stays visible. A still
 
 ## Exports and dependencies
 
-`npx koalaui-cli add spinner` writes `components/ui/spinner/`. Import from `@/components/ui/spinner`:
+`npx koalaui-cli@latest add spinner` writes `components/ui/spinner/`. Import from `@/components/ui/spinner`:
 
 - Components and helpers: `Spinner`, `spinnerVariants`
 - Types: `SpinnerProps`

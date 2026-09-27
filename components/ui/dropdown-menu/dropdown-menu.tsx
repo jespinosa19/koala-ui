@@ -143,17 +143,27 @@ export const DropdownMenuPortal = DropdownMenuPrimitive.Portal
 
 export interface DropdownMenuContentProps
   extends React.ComponentProps<typeof DropdownMenuPrimitive.Content>,
-    VariantProps<typeof dropdownMenuVariants> {}
+    VariantProps<typeof dropdownMenuVariants> {
+  /**
+   * Where the menu is portalled. Defaults to the body, or to the element that is full screen when
+   * the menu opens: the browser paints only that element's subtree over the page, so a menu left
+   * on the body would open invisibly behind a full-screen player or file preview.
+   */
+  container?: HTMLElement | null
+}
 
 export function DropdownMenuContent({
   className,
   sideOffset = 6,
   density,
+  container,
   ...props
 }: DropdownMenuContentProps) {
   const slots = dropdownMenuVariants({ density: useDensity(density) })
+  // Read as the menu opens (the content mounts on open); there is no full screen on the server.
+  const fullscreen = typeof document === "undefined" ? null : (document.fullscreenElement as HTMLElement | null)
   return (
-    <DropdownMenuPrimitive.Portal>
+    <DropdownMenuPrimitive.Portal container={container ?? fullscreen ?? undefined}>
       <DropdownMenuPrimitive.Content
         data-slot="dropdown-menu-content"
         sideOffset={sideOffset}

@@ -19,10 +19,10 @@ A set of mutually exclusive options where exactly one can be selected, built on 
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add radio-group
+npx koalaui-cli@latest add radio-group
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/radio-group/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -267,7 +267,7 @@ Both. Use `defaultValue` to let it manage its own selection, or pass `value` wit
 
 ## Exports and dependencies
 
-`npx koalaui-cli add radio-group` writes `components/ui/radio-group/`. Import from `@/components/ui/radio-group`:
+`npx koalaui-cli@latest add radio-group` writes `components/ui/radio-group/`. Import from `@/components/ui/radio-group`:
 
 - Components and helpers: `RadioGroup`, `RadioGroupItem`, `RadioSwatch`, `RadioCard`, `RadioCardTitle`, `RadioCardDescription`, `radioGroupVariants`, `radioCardVariants`
 - Types: `RadioGroupProps`, `RadioGroupItemProps`, `RadioSwatchProps`, `RadioCardProps`

@@ -97,10 +97,10 @@ A vertical timeline of what happened: comments, mentions, status changes, upload
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add activity-feed
+npx koalaui-cli@latest add activity-feed
 ```
 
 Manual: run `npm install @phosphor-icons/react radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/activity-feed/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -344,6 +344,74 @@ Pass `asChild` with an `<a>` child to make a whole event a link: the `<li>` stay
 </ActivityItem>
 ```
 
+## Day groups
+
+`ActivityGroup` gathers a run of events under a heading, a day or any other bucket, with an `ActivityGroupLabel` first. The label sits in the events' text column and the rail runs straight past it, so the timeline stays one line from the first event to the last. Each group is its own list, named by its label for a screen reader (“Today, list, 2 items”). The label is droppable, and a divided feed or one without the rail groups the same way.
+
+```tsx
+<ActivityFeed density="compact">
+  <ActivityGroup>
+    <ActivityGroupLabel>Today</ActivityGroupLabel>
+    <ActivityItem>
+      <ActivityMarker>
+        <Avatar size="sm">
+          <AvatarImage src={patient.avatar} alt="" />
+          <AvatarFallback>SC</AvatarFallback>
+        </Avatar>
+      </ActivityMarker>
+      <ActivityContent>
+        <ActivityHeader>
+          <ActivityActor>Sarah Chen</ActivityActor>
+          checked in for the 10:30 visit
+          <ActivityTime dateTime="2026-09-27T10:24:00Z">10:24</ActivityTime>
+        </ActivityHeader>
+      </ActivityContent>
+    </ActivityItem>
+    <ActivityItem>
+      <ActivityMarker>
+        <ActivityIcon tone="success"><CheckCircle /></ActivityIcon>
+      </ActivityMarker>
+      <ActivityContent>
+        <ActivityHeader>
+          <ActivityActor>Front desk</ActivityActor>
+          marked the invoice paid
+          <ActivityTime dateTime="2026-09-27T09:02:00Z">09:02</ActivityTime>
+        </ActivityHeader>
+      </ActivityContent>
+    </ActivityItem>
+  </ActivityGroup>
+
+  <ActivityGroup>
+    <ActivityGroupLabel>Yesterday</ActivityGroupLabel>
+    <ActivityItem>
+      <ActivityMarker>
+        <ActivityIcon tone="info"><ChatCircle /></ActivityIcon>
+      </ActivityMarker>
+      <ActivityContent>
+        <ActivityHeader>
+          <ActivityActor>Marcus Lee</ActivityActor>
+          left a note on the record
+          <ActivityTime dateTime="2026-09-26T16:40:00Z">16:40</ActivityTime>
+        </ActivityHeader>
+        <ActivityBody>Prefers morning slots, bring the X-ray from March.</ActivityBody>
+      </ActivityContent>
+    </ActivityItem>
+    <ActivityItem>
+      <ActivityMarker>
+        <ActivityDot tone="brand" />
+      </ActivityMarker>
+      <ActivityContent>
+        <ActivityHeader>
+          <ActivityActor>Sarah Chen</ActivityActor>
+          booked a visit
+          <ActivityTime dateTime="2026-09-26T11:15:00Z">11:15</ActivityTime>
+        </ActivityHeader>
+      </ActivityContent>
+    </ActivityItem>
+  </ActivityGroup>
+</ActivityFeed>
+```
+
 ## Divided
 
 `divided` swaps the vertical rail for a hairline rule between events: the audit-log and notification-inbox reading. It re-balances the per-event rhythm so each rule sits evenly between its neighbours, and it takes the rail with it. A rule and a rail are two answers to the same question, so a divided feed never draws the connector and `connector` is ignored there.
@@ -384,7 +452,7 @@ Density is Koala’s cross-cutting spacing axis (see [Density](https://koala-ui.
 
 ## API reference
 
-`ActivityFeed` renders an `<ol>` and adds `density` (`comfortable | compact`) and `divided` (`boolean`, default `false`) and `connector` (`boolean`, default `true`, ignored when the feed is divided). `ActivityItem` renders an `<li>` and takes `unread`, `interactive`, and `asChild` (which implies `interactive`). `ActivityIcon` and `ActivityDot` take a `tone` (`default | brand | success | warning | info | destructive | purple | pink | teal | orange`). `ActivityActor` accepts `asChild`; `ActivityTime` renders a `<time>` (pass `dateTime`); `ActivityImage` requires `alt`. The rest ( `ActivityMarker`, `ActivityContent`, `ActivityHeader`, `ActivityBody`, `ActivityCard`, `ActivityAttachments`, `ActivityActions`) forward their element props. Attachments compose existing components ([File Card](https://koala-ui.vercel.app/docs/components/file-card.md) for files). Every part accepts `className`, merged last.
+`ActivityFeed` renders an `<ol>` and adds `density` (`comfortable | compact`) and `divided` (`boolean`, default `false`) and `connector` (`boolean`, default `true`, ignored when the feed is divided). `ActivityItem` renders an `<li>` and takes `unread`, `interactive`, and `asChild` (which implies `interactive`). `ActivityIcon` and `ActivityDot` take a `tone` (`default | brand | success | warning | info | destructive | purple | pink | teal | orange`). `ActivityActor` accepts `asChild`; `ActivityTime` renders a `<time>` (pass `dateTime`); `ActivityImage` requires `alt`. `ActivityGroup` renders an `<li>` of the feed holding its own `<ol>`, and `ActivityGroupLabel` names it. The rest ( `ActivityMarker`, `ActivityContent`, `ActivityHeader`, `ActivityBody`, `ActivityCard`, `ActivityAttachments`, `ActivityActions`) forward their element props. Attachments compose existing components ([File Card](https://koala-ui.vercel.app/docs/components/file-card.md) for files). Every part accepts `className`, merged last.
 
 ## FAQ
 
@@ -424,15 +492,19 @@ Not with `asChild`: that would nest a button inside a link, which is invalid mar
 
 Use the rail when events are a story that reads top-down, and `divided` when they are separate records you scan, like an audit log or a notification inbox. They are the same decision, so a divided feed never draws the rail and `connector` is ignored there: the three coherent feeds are the rail, the rule, or neither (`connector={false}`).
 
+### How do I group events by day?
+
+Wrap each day's events in `ActivityGroup` inside one `ActivityFeed`, with an `ActivityGroupLabel` first. The rail runs through every label to the next group's first marker, and only the last group closes it. Each group is its own `<ol>` named by the label, so a screen reader hears the day before its events. Don't render one feed per day: the rail would break at every heading.
+
 ### How should I attach files and images to an event?
 
 Wrap them in `ActivityAttachments`. For files, drop a `FileCard` row in rather than re-rolling a chip, since it already ships the type-tinted icon, name, and meta; for images, lay `ActivityImage` thumbnails out in a `flex flex-wrap` row. Note `ActivityImage` requires an `alt`, and `ActivityTime` should get a `dateTime` ISO string.
 
 ## Exports and dependencies
 
-`npx koalaui-cli add activity-feed` writes `components/ui/activity-feed/`. Import from `@/components/ui/activity-feed`:
+`npx koalaui-cli@latest add activity-feed` writes `components/ui/activity-feed/`. Import from `@/components/ui/activity-feed`:
 
-- Components and helpers: `ActivityFeed`, `ActivityItem`, `ActivityMarker`, `ActivityIcon`, `ActivityDot`, `ActivityContent`, `ActivityHeader`, `ActivityActor`, `ActivityTime`, `ActivityBody`, `ActivityCard`, `ActivityAttachments`, `ActivityImage`, `ActivityActions`, `activityFeedVariants`
-- Types: `ActivityFeedProps`, `ActivityTone`, `ActivityIconProps`, `ActivityDotProps`, `ActivityActorProps`, `ActivityTimeProps`, `ActivityImageProps`, `ActivityItemProps`
+- Components and helpers: `ActivityFeed`, `ActivityItem`, `ActivityMarker`, `ActivityIcon`, `ActivityDot`, `ActivityContent`, `ActivityHeader`, `ActivityActor`, `ActivityTime`, `ActivityBody`, `ActivityCard`, `ActivityAttachments`, `ActivityImage`, `ActivityActions`, `ActivityGroup`, `ActivityGroupLabel`, `activityFeedVariants`
+- Types: `ActivityFeedProps`, `ActivityTone`, `ActivityIconProps`, `ActivityDotProps`, `ActivityActorProps`, `ActivityTimeProps`, `ActivityImageProps`, `ActivityItemProps`, `ActivityGroupProps`, `ActivityGroupLabelProps`
 - Koala lib helpers it uses: `create-context`, `density`, `tv`, `utils`
 - npm packages: `radix-ui`

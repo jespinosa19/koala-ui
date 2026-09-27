@@ -49,14 +49,14 @@ export const accordionVariants = tv({
     // (`koala-caret`, lib/utils.ts) with no conflict entry, so a rotation left on the base slot
     // would survive into the other branch and stack with it.
     icon: "size-4 shrink-0 text-muted-foreground",
-    // Animated wrapper: overflow-hidden clips the inner padded div while height tweens.
-    // `duration-base`/`ease-out` feed tw-animate-css's keyframes via --tw-duration/--tw-ease.
+    // Animated wrapper: `animate-disclosure-*` clips it only while the height tweens (the clip
+    // rides in the keyframes), so at rest a focused field or ringed card in the answer keeps its
+    // whole edge. `flow-root` contains the body's margins without a clip.
     // `group/content` lets the inner body read this wrapper's data-state for its own fade.
     content: [
       // The answer is read, so it takes the reading ink (`text-body`), not the meta grey.
-      "group/content overflow-hidden text-sm text-body",
-      "duration-base ease-out",
-      "data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up",
+      "group/content flow-root text-sm text-body",
+      "data-[state=open]:animate-disclosure-open data-[state=closed]:animate-disclosure-close",
     ],
     // Padding lives on the inner div, not the animated wrapper, so the height tween stays smooth.
     // The body also fades/slides in as one gesture with the height: Radix mounts Content fresh on

@@ -16,10 +16,10 @@ import { toast } from "@/components/ui/toast"
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add toast
+npx koalaui-cli@latest add toast
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/toast/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -212,7 +212,7 @@ Stacking is handled by the Toaster: older toasts compress behind the newest at d
 
 ## Exports and dependencies
 
-`npx koalaui-cli add toast` writes `components/ui/toast/`. Import from `@/components/ui/toast`:
+`npx koalaui-cli@latest add toast` writes `components/ui/toast/`. Import from `@/components/ui/toast`:
 
 - Components and helpers: `Toaster`, `toastVariants`, `toast`, `useToast`, `useToastStore`, `TOAST_DURATION`, `ANCHORED_TOAST_DURATION`
 - Types: `ToastData`, `ToastOptions`, `ToastVariant`, `ToastAnchorRect`, `ToastPromiseMessages`, `ToastPromiseResult`

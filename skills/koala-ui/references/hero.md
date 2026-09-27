@@ -45,10 +45,10 @@ A centered marketing hero section. Named parts you assemble: an announcement eye
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add hero
+npx koalaui-cli@latest add hero
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/hero/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -346,7 +346,7 @@ The magazine spread: compose these **instead of** `HeroContent`, since the panel
 
 ### HeroStatement · HeroSignoff
 
-`HeroStatement` is the section's `<h1>` when the hero *is* a sentence, so it replaces `HeroTitle` rather than joining it: display scale on a 36-character measure, semibold at 1.2 leading because a long sentence in bold display type reads as shouting. Mark the phrase it turns on with `HeroHighlight`, exactly as in a headline. `HeroSignoff` is the letter's closing under it, one line per child, in the house's small monospace voice.
+`HeroStatement` is the section's `<h1>` when the hero *is* a sentence, so it replaces `HeroTitle` rather than joining it: display scale on a 36-character measure, semibold at 1.2 leading because a long sentence in bold display type reads as shouting. Mark the phrase it turns on with `HeroHighlight`, exactly as in a headline. `HeroSignoff` is the letter's closing under it, one line per child, in the house's small monospace voice. To close it by hand instead of with a typed name, drop a [Signature](https://koala-ui.vercel.app/docs/components/signature.md) in as its last line: it writes itself in once the hero is on screen.
 
 ### HeroMosaic · HeroFrame
 
@@ -390,7 +390,7 @@ Set `layout="background"` on `Hero` and add a `HeroBackground` with a plain `<im
 
 ## Exports and dependencies
 
-`npx koalaui-cli add hero` writes `components/ui/hero/`. Import from `@/components/ui/hero`:
+`npx koalaui-cli@latest add hero` writes `components/ui/hero/`. Import from `@/components/ui/hero`:
 
 - Components and helpers: `Hero`, `HeroContent`, `HeroColumn`, `HeroTitle`, `HeroHighlight`, `HeroSubtitle`, `HeroActions`, `HeroFeatures`, `HeroFeature`, `HeroSocialProof`, `HeroRating`, `HeroMedia`, `HeroBackground`, `HeroCursors`, `HeroCursor`, `HeroScatter`, `HeroScatterTile`, `HeroStage`, `HeroStageMedia`, `HeroStageTitle`, `HeroStageReveal`, `HeroStageCard`, `HeroSpread`, `HeroSpreadMedia`, `HeroSpreadPanel`, `HeroSpreadIndex`, `HeroStatement`, `HeroSignoff`, `HeroMosaic`, `HeroFrame`, `heroVariants`
 - Types: `HeroProps`, `HeroBackgroundProps`, `HeroHighlightProps`, `HeroScatterTileProps`, `HeroStageMediaProps`, `HeroStageRevealProps`, `HeroStageCardProps`, `HeroSpreadPanelProps`, `HeroSpreadIndexProps`, `HeroFrameProps`, `HeroCursorProps`, `HeroCursorColor`, `HeroFeaturesProps`, `HeroFeatureProps`, `HeroFeatureLayout`, `HeroRatingProps`

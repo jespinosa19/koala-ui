@@ -21,10 +21,10 @@ An overlapping stack of avatars with built-in overflow. Cap how many show and th
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add avatar-group
+npx koalaui-cli@latest add avatar-group
 ```
 
 Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy the source into `components/ui/avatar-group/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -90,7 +90,7 @@ With no image the avatar shows its initials. Inside a group, give each fallback 
 
 ## Custom overflow
 
-Take over the chip with `renderOverflow`, which receives the overflow count. Return any node: here the chip is a [Tooltip](https://koala-ui.vercel.app/docs/components/tooltip.md) that names the people the stack hides.
+Take over the chip with `renderOverflow`, which receives the overflow count. Return any node: here the chip is a [Tooltip](https://koala-ui.vercel.app/docs/components/tooltip.md) that names the people the stack hides, riding the same shared bubble as the avatars.
 
 ```tsx
 <AvatarGroup
@@ -98,7 +98,7 @@ Take over the chip with `renderOverflow`, which receives the overflow count. Ret
   max={4}
   total={9}
   renderOverflow={(overflow) => (
-    <Tooltip interactive content={<NamesList names={hidden} />}>
+    <Tooltip content={<NamesList names={hidden} />}>
       <Avatar size="md" tabIndex={0}>
         <AvatarFallback maxInitials={4} className="tabular-nums">
           {`+${overflow}`}
@@ -115,7 +115,7 @@ Take over the chip with `renderOverflow`, which receives the overflow count. Ret
 
 ### AvatarGroup
 
-A `<div>` that lays out its `Avatar` children as an overlapping stack and appends the overflow chip. Forwards all native div props; `className` is merged last.
+A `<div>` that lays out its `Avatar` children as an overlapping stack and appends the overflow chip. Its children sit inside a `TooltipGroup`, so every `Tooltip` in the stack shares one gliding bubble. Forwards all native div props; `className` is merged last.
 
 - `size` — `xs | sm | md | lg | xl` (default `md`). Sizes the chip and the overlap; pass the same value you set on the children.
 - `max` — cap the visible avatars; the rest fold into the `+N` chip.
@@ -140,15 +140,19 @@ It adds the ring, overlap, and hover lift to each child through descendant utili
 
 Wrap each Avatar in a Tooltip. Tooltip clones its trigger and portals the bubble out, so the Avatar stays the direct child of the group and the overlap and ring still apply. For the hidden people, pass `renderOverflow` and put the names in a single Tooltip on the chip.
 
+### Why does one tooltip slide across the stack instead of each avatar opening its own?
+
+AvatarGroup wraps its children in a `TooltipGroup` (a Tippy singleton, no extra DOM), the same way Toolbar does. Every Tooltip in the stack, the overflow chip's included, registers with it, so one bubble glides from face to face as the pointer crosses the cluster. Because the bubble is shared, per-tooltip `variant`, `delay`, `offset`, `interactive` and `open` are ignored inside the group.
+
 ### Why is the size prop on the group as well as the avatars?
 
 The group needs a size to render the `+N` chip and to pick the overlap amount, since it can't read the children's individual sizes. Pass the same `size` to both so the chip matches the avatars and the overlap looks right.
 
 ## Exports and dependencies
 
-`npx koalaui-cli add avatar-group` writes `components/ui/avatar-group/`. Import from `@/components/ui/avatar-group`:
+`npx koalaui-cli@latest add avatar-group` writes `components/ui/avatar-group/`. Import from `@/components/ui/avatar-group`:
 
 - Components and helpers: `AvatarGroup`, `avatarGroupVariants`
 - Types: `AvatarGroupProps`
-- Koala components it installs with it: `avatar`
+- Koala components it installs with it: `avatar`, `tooltip`
 - Koala lib helpers it uses: `tv`

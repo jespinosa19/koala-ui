@@ -70,10 +70,10 @@ A feature-by-feature pricing matrix: rows are features, columns are plans, and e
 
 ```bash
 # One-time setup (tokens + lib helpers)
-npx koalaui-cli init
+npx koalaui-cli@latest init
 
 # Add this component (its dependencies come along)
-npx koalaui-cli add pricing-comparison
+npx koalaui-cli@latest add pricing-comparison
 ```
 
 Manual: run `npm install @phosphor-icons/react tailwind-variants tailwind-merge`, then copy the source into `components/ui/pricing-comparison/` and adjust the import paths to your project. Components pull `cn` from `lib/utils`, the `tv` wrapper from `lib/tv`, and (for multi-part components) `createContext` from `lib/create-context`.
@@ -151,6 +151,28 @@ A `PricingComparisonCell` is one of three things. Pass a value as children for a
 </PricingComparison>
 ```
 
+## Centered headers and marks
+
+`align="center"` on the root puts every plan header on its column's axis, the same one as the checks and values under it, so a matrix without CTAs (a versus table, a plan overview) reads as labelled columns. It is set once on the root, so the columns can never disagree. The default, `start`, keeps the name and price on a left edge over full-width buttons. `icon` on a plan adds a mark above its name: a plan glyph here, a product logo in a versus matrix like the one in [Migrating from shadcn/ui](https://koala-ui.vercel.app/docs/migrating-from-shadcn.md). It is decorative; the name stays the column's label.
+
+```tsx
+<PricingComparison featured={1} align="center">
+  <PricingComparisonHeader>
+    <PricingComparisonPlan name="Starter" icon={<Plant weight="bold" />} price="$0" period="/mo" />
+    <PricingComparisonPlan name="Pro" icon={<Lightning weight="bold" />} price="$29" period="/mo" />
+    <PricingComparisonPlan name="Enterprise" icon={<Buildings weight="bold" />} price="Custom" />
+  </PricingComparisonHeader>
+  <PricingComparisonSection>
+    <PricingComparisonRow label="Projects">
+      <PricingComparisonCell>5</PricingComparisonCell>
+      <PricingComparisonCell>Unlimited</PricingComparisonCell>
+      <PricingComparisonCell>Unlimited</PricingComparisonCell>
+    </PricingComparisonRow>
+    …
+  </PricingComparisonSection>
+</PricingComparison>
+```
+
 ## Row hints
 
 Add a `hint` to any `PricingComparisonRow` to append an info glyph beside the feature name. It reveals the detail in a tooltip on hover or focus, so terse row labels stay scannable while the caveats and limits stay one hover away. Set `hintLabel` to name the trigger for assistive tech (defaults to `"More information"`).
@@ -167,11 +189,11 @@ Add a `hint` to any `PricingComparisonRow` to append an info glyph beside the fe
 
 ### PricingComparison
 
-The matrix root (a scrollable `<table>`). `featured` is the 0-based index of the plan column to highlight (the single source of truth: the header cap and the body column tint both derive from it). Omit it for no highlight.
+The matrix root (a scrollable `<table>`). `featured` is the 0-based index of the plan column to highlight (the single source of truth: the header cap and the body column tint both derive from it). Omit it for no highlight. `align` places every plan header in its column: `start` (the default) or `center`.
 
 ### PricingComparisonHeader · PricingComparisonPlan
 
-The sticky plan-header row and its column cells. Header takes an optional `label` for the empty top-left corner. Each Plan takes `name`, `price`, `period`, and an optional `badge`; its children are the CTA, stretched full-width and pinned to the bottom so buttons line up across columns.
+The sticky plan-header row and its column cells. Header takes an optional `label` for the empty top-left corner. Each Plan takes `name`, `icon` (a decorative mark above the name), `price`, `period`, and an optional `badge`; its children are the CTA, stretched full-width and pinned to the bottom so buttons line up across columns.
 
 ### PricingComparisonSection
 
@@ -199,7 +221,7 @@ The plan header is `position: sticky`, so it stays in view while you scan a long
 
 ## Exports and dependencies
 
-`npx koalaui-cli add pricing-comparison` writes `components/ui/pricing-comparison/`. Import from `@/components/ui/pricing-comparison`:
+`npx koalaui-cli@latest add pricing-comparison` writes `components/ui/pricing-comparison/`. Import from `@/components/ui/pricing-comparison`:
 
 - Components and helpers: `PricingComparison`, `PricingComparisonHeader`, `PricingComparisonPlan`, `PricingComparisonSection`, `PricingComparisonRow`, `PricingComparisonCell`, `pricingComparisonVariants`
 - Types: `PricingComparisonProps`, `PricingComparisonHeaderProps`, `PricingComparisonPlanProps`, `PricingComparisonSectionProps`, `PricingComparisonRowProps`, `PricingComparisonCellProps`
