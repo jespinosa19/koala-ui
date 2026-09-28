@@ -2,7 +2,7 @@
   "$comment": "Written by `npm run skill`. The files `koalaui skill` installs, relative to this skill's folder.",
   "name": "koala-ui",
   "path": "skills/koala-ui",
-  "hash": "c0cb459d3d5a8bd2",
+  "hash": "5712cff060dbc3a1",
   "files": [
     "SKILL.md",
     "references/accordion.md",

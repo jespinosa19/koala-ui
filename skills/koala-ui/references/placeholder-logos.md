@@ -38,7 +38,7 @@ These are fictional placeholders, never real companies. Each mark is dependency-
 
 ## Brand logos
 
-Sometimes you need a real customer's logo, not a placeholder: say, Spotify or Netflix on a “works with” wall. Here are 57 of the most recognizable brand marks, ready to copy or download with the official color baked in. Search by name to find one fast. They live apart from the fictional set above because, unlike those, each one is a trademark you do not own.
+Sometimes you need a real customer's logo, not a placeholder: say, Spotify or Netflix on a “works with” wall. Here are 57 of the most recognizable brand marks, ready to copy or download in their official colors. Search by name to find one fast. They live apart from the fictional set above because, unlike those, each one is a trademark you do not own.
 
 Hover a logo and use Copy SVG to drop the mark straight into Figma, or grab it inline here. The Spotify mark, color baked in and ready to paste:
 
