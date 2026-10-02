@@ -23,53 +23,72 @@ import { tv, type VariantProps } from "@/lib/tv"
  * The label sits at the same place in every variant, so swapping the variant never moves it.
  * Size is the HEIGHT; the width follows the sheet's 5:6 box.
  *
- * Changing `variant` morphs instead of snapping: every shape transitions its fill and stroke, and
- * the band fades out with `opacity` rather than `hidden`, since `display` cannot animate. No colour
- * here is a `color-mix()` over `currentColor` (what `fill-current/10` compiles to): Chrome cannot
- * interpolate one and starts the transition from transparent, so the icon blinks. The washes are
- * the bare tone at a `fill-opacity` instead, the same paint.
+ * Changing `variant` morphs instead of snapping, and the morph has one rule: a shape painted in the
+ * tone never changes colour, only opacity. Each part is therefore two layers, its neutral paper
+ * (`sheet`, `fold`, `lines`) and its tone (`sheetTone`, `foldTone`, `linesTone`), and a variant
+ * sets how much of each shows. Animating a fill from a token to `currentColor` while its
+ * `fill-opacity` drops (one layer doing both) passes through a wash far stronger than either end,
+ * so the sheet pulsed; two layers fading in opposite directions can only move one way.
+ *
+ * The label follows the same logic. The knocked-out label belongs to the band (`stamp` groups them)
+ * and fades with it; the soft label is a second text that fades in on top. A single label
+ * recoloured from card to tone over a fading band crosses the band's colour midway and vanishes
+ * for a beat. Everything fades with `opacity`, never `hidden`, since `display` cannot animate.
  */
 const MORPH =
-  "transition-[fill,stroke,fill-opacity,stroke-opacity,opacity,color] duration-base ease-out motion-reduce:transition-none"
+  "transition-[fill,stroke,fill-opacity,stroke-opacity,opacity] duration-base ease-out motion-reduce:transition-none"
 
 export const fileIconVariants = tv({
   slots: {
     root: "inline-block aspect-[5/6] w-auto shrink-0 align-middle",
-    sheet: MORPH,
-    fold: MORPH,
-    lines: MORPH,
-    band: MORPH,
-    label: ["font-sans", MORPH],
+    sheet: ["fill-card stroke-border", MORPH],
+    sheetTone: ["fill-current stroke-current", MORPH],
+    // A hair darker than the page so the fold reads as depth.
+    fold: ["fill-muted stroke-border", MORPH],
+    foldTone: ["fill-current stroke-current", MORPH],
+    lines: ["stroke-muted-foreground/25", MORPH],
+    linesTone: ["stroke-current", MORPH],
+    // The band and the label knocked out of it, one unit. In `solid` the band is the sheet's own
+    // colour, so it stays drawn and simply disappears into the sheet.
+    stamp: MORPH,
+    band: "fill-current",
+    label: "fill-card font-sans",
+    // The bare tone is too light to read as text on its own 10% wash (sky and green fall under
+    // 3:1), so the soft label leans 30% toward the ink: darker in light themes, lighter in dark
+    // ones, the same move the `-strong` status tokens make. It never changes colour, only fades.
+    labelTone: [
+      "text-[color:color-mix(in_oklab,currentColor_70%,var(--foreground))] fill-current font-sans",
+      MORPH,
+    ],
   },
   variants: {
     variant: {
       default: {
-        sheet: "fill-card stroke-border",
-        // A hair darker than the page so the fold reads as depth.
-        fold: "fill-muted stroke-border",
-        lines: "stroke-muted-foreground/25",
-        band: "fill-current",
-        label: "fill-card",
+        sheetTone: "[fill-opacity:0] [stroke-opacity:0]",
+        foldTone: "[fill-opacity:0] [stroke-opacity:0]",
+        linesTone: "[stroke-opacity:0]",
+        labelTone: "opacity-0",
       },
       soft: {
-        sheet: "fill-current stroke-current [fill-opacity:0.1] [stroke-opacity:0.3]",
-        fold: "fill-current stroke-current [fill-opacity:0.15] [stroke-opacity:0.3]",
-        lines: "stroke-current [stroke-opacity:0.3]",
-        band: "fill-current opacity-0",
-        // The bare tone is too light to read as text on its own 10% wash (sky and green fall
-        // under 3:1), so the label leans 30% toward the ink: darker in light themes, lighter in
-        // dark ones, the same move the `-strong` status tokens make. The mix goes on `color`, where
-        // `currentColor` resolves to the inherited tone, so the fill it feeds stays interpolable.
-        label: "text-[color:color-mix(in_oklab,currentColor_70%,var(--foreground))] fill-current",
+        sheet: "opacity-0",
+        sheetTone: "[fill-opacity:0.1] [stroke-opacity:0.3]",
+        fold: "opacity-0",
+        foldTone: "[fill-opacity:0.15] [stroke-opacity:0.3]",
+        lines: "opacity-0",
+        linesTone: "[stroke-opacity:0.3]",
+        stamp: "opacity-0",
       },
       solid: {
-        // The stroke keeps the silhouette identical to the outlined variants (a 1.25 stroke grows
-        // the shape by half its width); in the tone it simply reads as more sheet.
-        sheet: "fill-current stroke-current",
-        fold: "fill-card/35 stroke-current",
+        // The paper stays under the tone, so default and solid swap only the tone layer. The tone
+        // stroke keeps the silhouette identical to the outlined variants (a 1.25 stroke grows the
+        // shape by half its width); in the tone it simply reads as more sheet.
+        sheetTone: "[fill-opacity:1] [stroke-opacity:1]",
+        // The fold catches a lighter wash of the card over the tone, outlined in the tone.
+        fold: "fill-card/35 [stroke-opacity:0]",
+        foldTone: "[fill-opacity:0] [stroke-opacity:1]",
         lines: "stroke-card/40",
-        band: "fill-current opacity-0",
-        label: "fill-card",
+        linesTone: "[stroke-opacity:0]",
+        labelTone: "opacity-0",
       },
     },
     size: {
@@ -84,6 +103,11 @@ export const fileIconVariants = tv({
     size: "md",
   },
 })
+
+/** The drawing, in the 40×48 viewBox. Each shape is drawn twice: paper, then tone. */
+const SHEET = "M8 3 H26 L35 12 V42 A3 3 0 0 1 32 45 H8 A3 3 0 0 1 5 42 V6 A3 3 0 0 1 8 3 Z"
+const FOLD = "M26 3 V12 H35 Z"
+const LINES = "M10 17 H24 M10 21.5 H30"
 
 /* ------------------------------------------------------------ file types --- */
 
@@ -191,6 +215,15 @@ export function FileIcon({
   // big and legible at the 40px size.
   const fontSize = text.length <= 3 ? 8.5 : text.length === 4 ? 7 : 5.75
   const labelled = props["aria-label"] != null
+  const labelProps = {
+    x: 20,
+    y: 34,
+    textAnchor: "middle",
+    dominantBaseline: "central",
+    fontSize,
+    fontWeight: 700,
+    letterSpacing: -0.3,
+  } as const
 
   return (
     <svg
@@ -204,38 +237,23 @@ export function FileIcon({
       {...props}
     >
       {/* The sheet: A4 proportions (width 70% of the height), rounded 3 at the three square
-          corners, cut on the diagonal where the fold is. */}
-      <path
-        d="M8 3 H26 L35 12 V42 A3 3 0 0 1 32 45 H8 A3 3 0 0 1 5 42 V6 A3 3 0 0 1 8 3 Z"
-        className={slots.sheet()}
-        strokeWidth="1.25"
-        strokeLinejoin="round"
-      />
+          corners, cut on the diagonal where the fold is. Paper, then tone over it. */}
+      <path d={SHEET} className={slots.sheet()} strokeWidth="1.25" strokeLinejoin="round" />
+      <path d={SHEET} className={slots.sheetTone()} strokeWidth="1.25" strokeLinejoin="round" />
       {/* The dog-eared corner. */}
-      <path
-        d="M26 3 V12 H35 Z"
-        className={slots.fold()}
-        strokeWidth="1.25"
-        strokeLinejoin="round"
-      />
+      <path d={FOLD} className={slots.fold()} strokeWidth="1.25" strokeLinejoin="round" />
+      <path d={FOLD} className={slots.foldTone()} strokeWidth="1.25" strokeLinejoin="round" />
       {/* Two faint content lines imply text on the page above the label. */}
-      <path
-        d="M10 17 H24 M10 21.5 H30"
-        className={slots.lines()}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-      <rect x="8" y="27" width="24" height="13" rx="2.5" className={slots.band()} />
-      <text
-        x="20"
-        y="34"
-        textAnchor="middle"
-        dominantBaseline="central"
-        className={slots.label()}
-        fontSize={fontSize}
-        fontWeight="700"
-        letterSpacing="-0.3"
-      >
+      <path d={LINES} className={slots.lines()} strokeWidth="1.5" strokeLinecap="round" />
+      <path d={LINES} className={slots.linesTone()} strokeWidth="1.5" strokeLinecap="round" />
+      <g className={slots.stamp()}>
+        <rect x="8" y="27" width="24" height="13" rx="2.5" className={slots.band()} />
+        <text {...labelProps} className={slots.label()}>
+          {text}
+        </text>
+      </g>
+      {/* The soft variant's label, set in the tone, fading in as the stamp fades out. */}
+      <text {...labelProps} className={slots.labelTone()}>
         {text}
       </text>
     </svg>

@@ -128,10 +128,9 @@ export const buttonVariants = tv({
      * accent/brand tokens disappear into the surface they are meant to contrast with:
      *   - `onMedia`   a fixed white family, for a `bg-brand` band, a photo, or a dark scrim. White
      *                 is not a token here on purpose: those grounds are saturated or dark in every
-     *                 theme. On a brand band, lead with the white chip: its `brand-strong` label is
-     *                 measured against white and clears AA on every accent, where the outline and
-     *                 ghost labels are white on the band itself (3.6:1 on the default orange,
-     *                 large-text AA only).
+     *                 theme. On a brand band, lead with the white chip: its near-black label clears
+     *                 AA on white with room to spare, where the outline and ghost labels are white
+     *                 on the band itself (3.6:1 on the default orange, large-text AA only).
      *   - `onInverse` the token-flipping twin, for a `bg-foreground` band. That band inverts with
      *                 the theme, so the button has to invert with it rather than pin to white.
      *
@@ -151,10 +150,10 @@ export const buttonVariants = tv({
     // action becomes the light shape, the outline keeps its hairline but in the band's ink, and
     // the ghost keeps no chrome at all. `secondary` rides with `primary` — on a band the
     // primary/secondary distinction is carried by which button is solid, not by two fills. The
-    // chip's label is `brand-strong`, not `brand`: contrast is symmetric, so a raw-brand label on
-    // white is the same 3.6:1 as white on the brand fill, so the darker step is what makes the chip
-    // pass AA (4.5:1+ on every accent preset, hover included).
-    { tone: "onMedia", variant: ["primary", "secondary", "neutral"], className: "bg-white text-brand-strong shadow-xs hover:bg-white/90" },
+    // chip's label is near-black ink, never a brand color: the band around it already carries the
+    // accent, and brand text on a white chip reads as a second, weaker accent. `neutral-950` is the
+    // light theme's own `--foreground`, pinned because the chip is white in every theme.
+    { tone: "onMedia", variant: ["primary", "secondary", "neutral"], className: "bg-white text-neutral-950 shadow-xs hover:bg-white/90" },
     { tone: "onMedia", variant: "outline", className: "border-white/30 bg-transparent text-white hover:bg-white/10 hover:text-white" },
     { tone: "onMedia", variant: "ghost", className: "text-white hover:bg-white/20 hover:text-white" },
     { tone: "onInverse", variant: ["primary", "secondary", "neutral"], className: "bg-background text-foreground shadow-xs hover:bg-background/90" },
@@ -277,6 +276,8 @@ export function Button({
   const button = (
     <Comp
       data-slot="button"
+      // A hook for containers that give their icon-only buttons their own chip (Navbar).
+      data-icon-only={iconOnly || undefined}
       // While loading the button is busy and non-interactive (disabled also neutralizes the
       // press scale and hover via the base `disabled:` rules). `isLoading` is false under
       // `asChild`, so this forwards a plain `disabled` there exactly as before.

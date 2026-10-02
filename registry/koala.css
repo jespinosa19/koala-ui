@@ -239,18 +239,19 @@
    class wins: an element inside a `.light` / `.cream` scope that itself sits inside a dark one (a
    page pinned light while the visitor's theme is dark) is NOT a dark context, so `dark:` stays off
    there. Without the `:not()`, the pinned scope would repaint its tokens light but still fire every
-   `dark:` utility inside it. An always-dark `.dark` band under a light `<html>` is unaffected. */
-@custom-variant dark (&:is(.dark *, .moonlight *):not(:is(.dark, .moonlight) :is(.light, .cream) *));
+   `dark:` utility inside it. An always-dark `.dark` band under a light `<html>` is unaffected.
+   The inner `:not()` looks one level further, so a `.dark` band inside that light pin is dark
+   again: the docked `Layout`'s rail, which pins itself `.dark`, previewed light on a dark site. */
+@custom-variant dark (&:is(.dark *, .moonlight *):not(:is(.dark, .moonlight) :is(.light, .cream) *:not(:is(.dark, .moonlight) :is(.light, .cream) :is(.dark, .moonlight) *)));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
-  /* The app canvas: the recessed floor an app shell's navigation rail sits on, one step
-     *below* `--card`. `--background` can't play this role: in the light theme it is the same
-     white as `--card`, so a docked shell (rail flush against the content, no shadow between
-     them) would read as one undivided sheet. See the per-theme values below. */
+  /* The app canvas: the dark frame of an app shell, the floor its rail and top band sit on and
+     that shows as a gutter around the content sheet. The same near-black in every theme (see
+     `:root` below), so no other role can play it: the page ground is white in light and cream. */
   --color-canvas: var(--canvas);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
@@ -446,6 +447,15 @@
    */
   --animate-disclosure-open: disclosure-open var(--duration-base) var(--ease-out);
   --animate-disclosure-close: disclosure-close var(--duration-base) var(--ease-out);
+
+  /*
+   * Indicator: the NavigationMenu tip's enter/exit, the same fade + 0.5rem drop the panel under it
+   * plays (slide-in-from-top-2), so tip and panel travel as one. It moves `translate`, never
+   * `transform`: Radix writes the tip's x offset to `transform`, and tw-animate's enter/exit
+   * keyframes animate `transform`, which flung the tip in from (and back out to) the first trigger.
+   */
+  --animate-indicator-in: indicator-in var(--duration-base) var(--ease-out);
+  --animate-indicator-out: indicator-out var(--duration-base) var(--ease-out);
 
   /*
    * Banner-confetti: one piece's flight for the festive Banner's `confetti` burst. Each piece is
@@ -665,6 +675,21 @@
   to {
     height: 0;
     overflow: hidden;
+  }
+}
+
+/* Indicator: one-sided, so the rest state is whatever the tip already is. */
+@keyframes indicator-in {
+  from {
+    opacity: 0;
+    translate: 0 -0.5rem;
+  }
+}
+
+@keyframes indicator-out {
+  to {
+    opacity: 0;
+    translate: 0 -0.5rem;
   }
 }
 
@@ -1239,16 +1264,18 @@
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
-  /* App canvas. Light is the theme that needs this role most: `--background` and `--card` are
-     both pure white here, so the rail is recessed with a whisper of grey (a step lighter than
-     `--muted`, which would read as a filled block rather than a floor). */
-  --canvas: oklch(0.985 0 0);
+  /* App canvas: the docked shell's frame. Black under every light theme (declared once here, cream
+     inherits it): a black frame around the white sheet, and the chrome on it pins itself `.dark`,
+     whose ground is this same value. Under a dark theme the frame is that theme's own ground, so
+     frame and sheet are one tone: `.dark`'s ground already is this value, and `.moonlight` rebases
+     it onto its own. `.dark` must never redeclare it, or the rail it pins would drop the page's. */
+  --canvas: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.205 0 0);
   --primary-foreground: oklch(0.985 0 0);
   /* Strokes and quiet fills are ink at low alpha, so they read on any ground (the page, a muted
-     band, the canvas) instead of fading into one close to their own grey. Each alpha lands on the
+     band, a card) instead of fading into one close to their own grey. Each alpha lands on the
      old solid grey over --background (--secondary/--accent 0.97, --border/--input 0.922). --muted
      stays opaque: it is a ground and a color-mix base (FOUNDATIONS.md, "Alpha strokes, opaque grounds"). */
   --secondary: oklch(0.145 0 0 / 4.1%);
@@ -1314,18 +1341,18 @@
   --brand: oklch(0.648 0.222 34.2);
   /* Focus ring derives from the accent: same hue at 10% opacity. Set --brand, get this free. */
   --ring-brand: color-mix(in oklch, var(--brand) 10%, transparent);
-  /* Brand ink: the accent pulled toward black, for brand-colored TEXT on a white chip, i.e. the
-     label of an onMedia Button sitting on a bg-brand band. Contrast is symmetric, so a raw --brand
-     label on white is the same 3.6:1 as white on the brand fill; this step clears 4.5:1 on white
-     for all eight accent presets (amber, the binding case, at 5.26:1; orange #ac2c0b at 6.73:1),
-     and still 4.78:1 or better on the chip's white/90 hover over the band. The band itself stays
-     raw --brand by design (white text on it is 3.6:1 on orange: AA for large text only).
-     Theme-agnostic like --brand: the chip is white in every theme, so no theme redefines it. */
+  /* Brand ink: the accent pulled toward black, for brand-colored TEXT on a light page ground (a
+     tinted vote chip, syntax highlighting). Contrast is symmetric, so a raw --brand label on white
+     is the same 3.6:1 as white on the brand fill; this step clears 4.5:1 on white for all eight
+     accent presets (amber, the binding case, at 5.26:1; orange #ac2c0b at 6.73:1). NOT for the
+     white onMedia chip on a bg-brand band: that label is near-black, never a brand color.
+     Theme-agnostic like --brand, so no theme redefines it. */
   --brand-strong: color-mix(in oklch, var(--brand), black 24%);
-  /* Brand foreground: the ink that sits ON a brand fill (a primary Button label, a checked
-     Checkbox tick, a selected day, a brand Banner). White for every mid-lightness accent; a light
-     accent (lime) swaps in a dark ink from its preset. Theme-agnostic like --brand. On `bg-brand`,
-     write `text-brand-foreground`, never `text-white`, or a light accent loses its labels. */
+  /* Brand foreground: the ink that sits ON a brand fill (a primary Button label, a Radio dot, a
+     selected day, a brand Banner). White for every mid-lightness accent; a light accent (lime)
+     swaps in a dark ink from its preset. Theme-agnostic like --brand. On `bg-brand`, write
+     `text-brand-foreground`, never `text-white`, or a light accent loses its labels. The one
+     exception is the Checkbox / Checklist tick, always `text-black` (docs/FOUNDATIONS.md). */
   --brand-foreground: oklch(1 0 0);
   /* The single radius knob. 1rem (16px) anchors the lg step; the quarter-step scale above
      keeps every rounded-* utility on the 4px grid as this value re-rounds the whole system. */
@@ -1347,8 +1374,8 @@
  * file: `dark:` utilities must NOT fire under it.
  *
  * The ladder inverts one relationship from `light`. There, `--background` and `--card` are both
- * pure white, so `--canvas` has to be dimmed to recess an app rail. Here the page is toned paper
- * and cards lift ABOVE it, which is what makes the theme read as warm rather than as dirty white.
+ * pure white. Here the page is toned paper and cards lift ABOVE it, which is what makes the theme
+ * read as warm rather than as dirty white.
  * `--popover` sits with the cards, above the page, which is the relationship Toast already assumes
  * for this theme (see components/ui/toast/toast.tsx).
  *
@@ -1363,14 +1390,12 @@
      its border, exactly as it does in the dark themes. */
   --card: oklch(0.997 0.004 85);
   --card-foreground: oklch(0.185 0.012 75);
-  /* App canvas: a step BELOW the page, so a sidebar rail recesses out of the content pane. */
-  --canvas: oklch(0.963 0.013 85);
   --popover: oklch(0.997 0.004 85);
   --popover-foreground: oklch(0.185 0.012 75);
   --primary: oklch(0.24 0.014 75);
   --primary-foreground: oklch(0.982 0.009 85);
   /* Warm ink at low alpha, as in light: over the cream page these land on the old solid steps
-     (0.952 fills, 0.898 strokes), and they darken a lifted card or the canvas by the same amount. */
+     (0.952 fills, 0.898 strokes), and they darken a lifted card by the same amount. */
   --secondary: oklch(0.35 0.07 78 / 5.4%);
   --secondary-foreground: oklch(0.24 0.014 75);
   --muted: oklch(0.952 0.015 85);
@@ -1395,9 +1420,6 @@
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
-  /* In the dark themes `--card` already sits above `--background`, so the page background is
-     the floor and the canvas simply matches it: the rail recedes, the content pane lifts. */
-  --canvas: oklch(0.145 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
@@ -1454,8 +1476,9 @@
  */
 .moonlight {
   --background: oklch(0.15 0.022 265);
+  /* The docked frame is the ground in a dark theme (see `--canvas` under :root). */
+  --canvas: var(--background);
   --foreground: oklch(0.97 0.006 265);
-  --canvas: oklch(0.15 0.022 265);
   --card: oklch(0.21 0.024 265);
   --card-foreground: oklch(0.97 0.006 265);
   --popover: oklch(0.21 0.024 265);

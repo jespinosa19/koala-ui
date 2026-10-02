@@ -9,10 +9,10 @@ import { dirname, isAbsolute, join, normalize as normalizePath, posix, sep } fro
 import { homedir } from "node:os"
 
 /** Sent to the API as X-Koalaui-Cli. test/cli/smoke.test.ts pins it to package.json. */
-export const VERSION = "0.6.0"
-// The public site. Every buyer-facing URL hangs off this one constant so moving to a custom
-// domain later is a one-line change.
-export const SITE = "https://koala-ui.vercel.app"
+export const VERSION = "0.7.1"
+// The public site. Every buyer-facing URL hangs off this one constant. 0.6.0 and earlier point
+// at koala-ui.vercel.app, which stays attached to the project, so old installs keep working.
+export const SITE = "https://www.koalaui.com"
 // The entitlement API. This URL ships inside every published copy of the CLI, so it has to be one
 // we control: it lets the backend or the payment provider move without republishing the CLI.
 export const DEFAULT_API = `${SITE}/api`

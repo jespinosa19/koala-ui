@@ -4,6 +4,7 @@ import * as React from "react"
 import { Checkbox as CheckboxPrimitive, Slot } from "radix-ui"
 import { Check } from "@phosphor-icons/react"
 
+import { AnimatedNumber } from "@/components/ui/animated-number"
 import { cn } from "@/lib/utils"
 import { createContext } from "@/lib/create-context"
 import { useDensity } from "@/lib/density"
@@ -24,14 +25,16 @@ import { tv, type VariantProps } from "@/lib/tv"
  * everything's done, so the panel rewards completion without any per-call-site wiring.
  *
  * Each `ChecklistItem` carries a `status` (`todo` | `active` | `complete`) that styles the
- * row and auto-renders its indicator: the task's own `icon` for a pending step, cross-faded
- * to a check the instant it completes (the password-strength icon-swap, no motion lib). The
- * one recommended next step takes `active` for a soft brand highlight; completed rows
- * de-emphasize their title via a `data-status` group selector, no second context.
+ * row and auto-renders its indicator, the task mark: an empty ring, a brand ring half filled on
+ * the one recommended next step (Linear's "in progress"; the row itself stays flat, its primary
+ * action draws the eye), the brand fill with a tick that draws itself in once done. Completed rows de-emphasize their title via a
+ * `data-status` group selector, no second context.
  *
  * Give an item `checked` / `defaultChecked` / `onCheckedChange` and it becomes a task the
- * reader ticks: the indicator turns into a real Radix checkbox named by the item's title, the
- * whole row is its hit area, and a done title is struck through.
+ * reader ticks: the same mark becomes a real Radix checkbox named by the item's title; the
+ * whole row is its hit area, and a done title is struck through. `ChecklistMark` draws the mark
+ * on its own, for task lists laid out by something else (an Accordion of steps). One mark, one
+ * size, one set of colours, in every task list of the kit.
  */
 export const checklistVariants = tv({
   slots: {
@@ -61,13 +64,25 @@ export const checklistVariants = tv({
     // One task row. items-start keeps the indicator on the title's line when the description
     // wraps; the pill radius steps down concentrically from the card.
     item: "relative flex items-start gap-3 rounded-xl transition-colors duration-base ease-out",
-    // The status indicator: a 28px circle holding the task icon, cross-fading to a check on
-    // completion. Fixed footprint so the row's left rail never shifts between states.
-    indicator:
-      "relative flex size-7 shrink-0 items-center justify-center rounded-full transition-colors duration-base ease-out [&_svg]:size-4",
+    // The task mark, every row's indicator whatever the row: the round checkbox of a task list,
+    // drawn as the small Checkbox is, only round. 16px, so it sits inside the 20px line of the
+    // title beside it instead of standing over it, and `mt-0.5` centres it on that first line,
+    // between the capitals and the lowercase, where the eye reads the line's middle. `--input`
+    // edge, `--surface` fill (inside a card it blends with the card instead of reading as a hole)
+    // and xs lift. Complete, it fills with the brand and its tick draws itself in, black in every
+    // theme like every Koala tick. The `active` step, the one up next, is Linear's "in progress":
+    // a brand ring half filled, started but not done, so a full fill only ever means done. The
+    // row itself never lights up; the step's primary action is what draws the eye. A row the
+    // reader ticks makes the mark a real checkbox; {@link ChecklistMark} draws it alone.
+    mark: [
+      "mt-0.5 grid size-4 shrink-0 place-items-center rounded-full border border-input bg-[var(--surface,var(--background))] text-black shadow-xs [&_svg]:size-3",
+      "transition-colors duration-fast ease-out",
+      "data-[status=active]:border-brand data-[state=checked]:border-brand data-[state=checked]:bg-brand",
+    ],
     // Title + description column. min-w-0 lets a long title wrap instead of shoving the action
-    // off the row. pt-0.5 optically centers the first line against the 28px indicator.
-    content: "flex min-w-0 flex-1 flex-col gap-0.5 pt-0.5",
+    // off the row. No nudge: the mark centres itself on the first line, so the row's padding
+    // stays even top and bottom.
+    content: "flex min-w-0 flex-1 flex-col gap-0.5",
     // Completed titles de-emphasize; the transition makes the flip feel deliberate. On a row the
     // reader ticks (it carries `data-state`), the title is also struck through: the line is always
     // drawn and only its colour moves, transparent while open, the muted ink once done, so the
@@ -109,19 +124,19 @@ export const checklistVariants = tv({
       },
     },
     // Set per row by {@link ChecklistItem} when it is a task the reader ticks. The indicator is
-    // the checkbox, and its `::after` stretches over the whole row (it is `static`, so the pseudo
-    // anchors to the `relative` row), so a click anywhere on the row toggles it. The glyphs stack
-    // on a grid rather than `absolute`, which would anchor to the row too. The row answers the
-    // pointer with the List wash (hover half, press full, no scale) and shows the focus ring for
-    // its checkbox, since a ring on a 28px circle is easy to miss.
+    // the task mark (the `mark` slot), made a real checkbox. Its `::after` stretches over the
+    // whole row (it is `static`, so the pseudo anchors to the `relative` row), so a click anywhere
+    // on the row toggles it; no press scale, which would re-anchor that pseudo mid-press. The
+    // glyph centres on a grid rather than `absolute`, which would anchor to the row too. The row
+    // answers the pointer with the List wash (hover half, press full) and shows the focus ring for
+    // its checkbox, since a ring on a 16px circle is easy to miss.
     toggleable: {
       true: {
         item: [
           "hover:bg-muted/60 active:bg-muted",
           "has-[[data-slot=checklist-indicator]:focus-visible]:ring-2 has-[[data-slot=checklist-indicator]:focus-visible]:ring-ring",
         ],
-        indicator:
-          "static grid cursor-pointer place-items-center outline-none after:absolute after:inset-0 after:content-['']",
+        mark: "static cursor-pointer outline-none after:absolute after:inset-0 after:content-['']",
       },
     },
   },
@@ -147,25 +162,6 @@ type ChecklistConfig = {
 
 /** A task's state in the checklist. */
 export type ChecklistStatus = "todo" | "active" | "complete"
-
-/**
- * Soft per-status styling for the row pill. `active` (the one recommended next step) gets an
- * inset brand tint + ring so the eye lands on it; todo/complete rows stay chrome-less. Follows
- * the Badge/ActivityFeed record pattern so it re-themes across all four palettes.
- */
-const ITEM_STATUS: Record<ChecklistStatus, string> = {
-  todo: "",
-  active: "bg-brand/[0.06] ring-1 ring-inset ring-brand/25",
-  complete: "",
-}
-
-/** The indicator circle per status: a soft outline for todo, a brand ring for the active step,
- *  a filled success disc for a completed one (white check reads AA on the saturated green). */
-const INDICATOR_STATUS: Record<ChecklistStatus, string> = {
-  todo: "border border-border bg-transparent text-muted-foreground",
-  active: "border-2 border-brand bg-brand/10 text-brand",
-  complete: "border-transparent bg-success text-white",
-}
 
 const [ChecklistProvider, useChecklistContext] = createContext<{
   slots: ChecklistSlots
@@ -304,20 +300,26 @@ export interface ChecklistProgressProps extends React.ComponentProps<"div"> {
 export function ChecklistProgress({ className, label, ...props }: ChecklistProgressProps) {
   const { slots, value, total, percent, complete, pending } =
     useChecklistContext("ChecklistProgress")
+  // The count and the percent roll as a step flips done. Plain text while a self-counting
+  // Checklist is still pending, so the first real count mounts in place instead of rolling up
+  // from the server's zero as the row fades in.
+  const roll = (figure: string | number) => (pending ? figure : <AnimatedNumber value={figure} />)
   const defaultLabel = complete ? (
     <>
       <Check weight="bold" className="size-4 text-success" aria-hidden />
       <span className="text-success">All steps complete</span>
     </>
   ) : (
-    `${value} of ${total} complete`
+    <span>
+      {roll(value)} of {total} complete
+    </span>
   )
 
   return (
     <div data-slot="checklist-progress" className={slots.progress({ className })} {...props}>
       <div className={slots.progressMeta({ className: pending ? "opacity-0" : undefined })}>
         <span className={slots.progressLabel()}>{label ?? defaultLabel}</span>
-        <span className={slots.progressPercent()}>{percent}%</span>
+        <span className={slots.progressPercent()}>{roll(`${percent}%`)}</span>
       </div>
       {/* Named, so the bar is more than a bare number to a screen reader (axe's
           aria-progressbar-name); the value text carries the count. */}
@@ -360,11 +362,6 @@ export interface ChecklistItemProps extends Omit<React.ComponentProps<"li">, "de
    */
   status?: ChecklistStatus
   /**
-   * The task's glyph, shown in the indicator while pending and cross-faded to a check once
-   * complete. Optional: without it a pending row shows an empty circle carrying just the status.
-   */
-  icon?: React.ReactNode
-  /**
    * Make the row a task the reader ticks, controlled. The indicator becomes a real checkbox
    * (Radix, named by the `ChecklistItemTitle`), the whole row toggles it, and a checked row
    * completes with its title struck through. Pair it with `onCheckedChange`.
@@ -377,9 +374,8 @@ export interface ChecklistItemProps extends Omit<React.ComponentProps<"li">, "de
 }
 
 /**
- * ChecklistItem: one task row. Renders its status indicator automatically (the `icon`
- * cross-fading to a check on completion), then lays out the composed `ChecklistItemContent`
- * and `ChecklistItemAction`. Sets `data-status` so descendants (the title) can react without a
+ * ChecklistItem: one task row. Renders its indicator automatically (the task mark, following
+ * `status`), then lays out the composed `ChecklistItemContent` and `ChecklistItemAction`. Sets `data-status` so descendants (the title) can react without a
  * second context, and an sr-only status so the row's state is announced, not just colored.
  *
  * With `checked`, `defaultChecked` or `onCheckedChange` the row is one the reader ticks: the
@@ -389,7 +385,6 @@ export interface ChecklistItemProps extends Omit<React.ComponentProps<"li">, "de
 export function ChecklistItem({
   className,
   status = "todo",
-  icon,
   checked,
   defaultChecked,
   onCheckedChange,
@@ -428,66 +423,105 @@ export function ChecklistItem({
 
   const slots = checklistVariants({ ...config, toggleable })
 
-  const checkGlyph = (
-    <Check
-      weight="bold"
-      className={cn(
-        toggleable ? "col-start-1 row-start-1" : "absolute inset-0 m-auto",
-        "transition-[opacity,scale,filter] duration-base ease-out",
-        isComplete ? "opacity-100 scale-100 blur-[0px]" : "opacity-0 scale-[0.25] blur-[4px]",
-      )}
-    />
-  )
-  const iconGlyph =
-    icon != null ? (
-      <span
-        className={cn(
-          toggleable ? "col-start-1 row-start-1" : "absolute inset-0",
-          "flex items-center justify-center transition-[opacity,scale,filter] duration-base ease-out",
-          isComplete ? "opacity-0 scale-[0.25] blur-[4px]" : "opacity-100 scale-100 blur-[0px]",
-        )}
-      >
-        {icon}
-      </span>
-    ) : null
-
   return (
     <ChecklistItemContext.Provider value={{ titleId, toggleable }}>
       <li
         data-slot="checklist-item"
         data-status={resolved}
         data-state={toggleable ? (isChecked ? "checked" : "unchecked") : undefined}
-        className={cn("group/item", slots.item({ className: [ITEM_STATUS[resolved], className] }))}
+        className={cn("group/item", slots.item({ className }))}
         {...props}
       >
         {toggleable ? (
           <CheckboxPrimitive.Root
             data-slot="checklist-indicator"
+            data-status={resolved}
             checked={isChecked}
             onCheckedChange={(next) => setChecked(next === true)}
             aria-labelledby={titleId}
-            className={slots.indicator({ className: INDICATOR_STATUS[resolved] })}
+            className={slots.mark()}
           >
-            {checkGlyph}
-            {iconGlyph}
+            <CheckboxPrimitive.Indicator className="flex">
+              <Tick />
+            </CheckboxPrimitive.Indicator>
+            {resolved === "active" && <HalfDisc />}
           </CheckboxPrimitive.Root>
         ) : (
-          <span
-            data-slot="checklist-indicator"
-            aria-hidden
-            className={slots.indicator({ className: INDICATOR_STATUS[resolved] })}
-          >
-            {/* Cross-fade icon → check with opacity/scale/blur (the password-strength swap, no
-                motion lib). Both stay mounted and absolutely stacked (inset-0 so each layer fills
-                the circle and centers its glyph) so nothing reflows on the flip. */}
-            {checkGlyph}
-            {iconGlyph}
-          </span>
+          <ChecklistMark data-slot="checklist-indicator" status={resolved} />
         )}
         {children}
         {toggleable ? null : <span className="sr-only">{STATUS_LABEL[resolved]}</span>}
       </li>
     </ChecklistItemContext.Provider>
+  )
+}
+
+/**
+ * The Checkbox's own tick: a stroke that draws itself in (`pathLength={1}` makes the dash math a
+ * clean 1 → 0). Mounted only while the mark is checked, so every tick replays the draw.
+ */
+function Tick() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={3}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M5 12.5l4.5 4.5L19 7.5" pathLength={1} className="animate-check-draw [stroke-dasharray:1]" />
+    </svg>
+  )
+}
+
+/**
+ * The `active` step's glyph, Linear's "in progress": the right half of a disc half the ring's
+ * size, so the mark reads as started, not done. It scales in when the step comes up.
+ */
+function HalfDisc() {
+  return (
+    <svg
+      viewBox="0 0 12 12"
+      aria-hidden
+      className="fill-brand animate-in fade-in zoom-in-50 duration-base ease-out"
+    >
+      <path d="M6 2a4 4 0 0 1 0 8z" />
+    </svg>
+  )
+}
+
+export interface ChecklistMarkProps extends React.ComponentProps<"span"> {
+  /**
+   * The task's state: an empty ring for `todo`, a brand ring half filled for `active` (the step up
+   * next), the brand fill with a tick for `complete`.
+   * @default "todo"
+   */
+  status?: ChecklistStatus
+}
+
+/**
+ * ChecklistMark: the task mark on its own, for a task list the Checklist doesn't lay out (the
+ * steps of an Accordion, a row inside a button) so every list of tasks draws the same mark. The
+ * one every `ChecklistItem` renders; a row the reader ticks makes it a checkbox, this one stays
+ * decoration, `aria-hidden`, so the row it sits in names the task's state. Needs no `Checklist` around it. It carries the
+ * `mt-0.5` that centres it on a `text-sm` first line, so drop it in an `items-start` row.
+ */
+export function ChecklistMark({ className, status = "todo", ...props }: ChecklistMarkProps) {
+  const complete = status === "complete"
+  return (
+    <span
+      data-slot="checklist-mark"
+      data-status={status}
+      data-state={complete ? "checked" : "unchecked"}
+      aria-hidden
+      className={checklistVariants().mark({ className })}
+      {...props}
+    >
+      {complete && <Tick />}
+      {status === "active" && <HalfDisc />}
+    </span>
   )
 }
 

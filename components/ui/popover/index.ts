@@ -6,6 +6,8 @@ export {
   PopoverContent,
   PopoverTitle,
   PopoverDescription,
+  PopoverMedia,
+  PopoverFooter,
   PopoverCloseButton,
   popoverVariants,
   type PopoverContentProps,

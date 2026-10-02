@@ -12,9 +12,8 @@
  *   koalaui skill                write the Koala UI agent skill into .claude/skills/koala-ui
  *
  * Tiers:
- *   FREE  components/ui, lib, tokens and one sample section per family - fetched from the
- *         PUBLIC repo, no auth.
- *   PRO   every other section, page examples and templates - served by the entitlement API to
+ *   FREE  components/ui, lib and tokens - fetched from the PUBLIC repo, no auth.
+ *   PRO   every section, page examples and templates - served by the entitlement API to
  *         an activated license, stamped with a fingerprint of it. PRO items can depend on FREE
  *         ones; those still come from the public repo automatically.
  *
@@ -1272,8 +1271,8 @@ ${c.bold("Usage")}${SELF === "koalaui" ? "" : c.dim(`  through a package runner,
   koalaui whoami               show the active license
 
 ${c.bold("Tiers")}
-  free    components, lib, tokens, one sample section per family - no auth
-  PRO 🔒  every other section, page examples, templates - need a license:
+  free    components, lib, tokens - no auth
+  PRO 🔒  every section, page examples, templates - need a license:
           buy at ${PURCHASE_URL}, then ${c.cyan(cli("login <key>"))} once per machine
           (owner/dev: a GitHub token to the private repo also works)
 

@@ -92,3 +92,18 @@ export function HoverCardDescription({ className, ...props }: React.ComponentPro
   const { description } = hoverCardVariants()
   return <p data-slot="hover-card-description" className={description({ className })} {...props} />
 }
+
+/**
+ * The picture of what the link leads to, set 8px in from the card's edges (4px compact) with
+ * concentric corners: Popover's inset media. Put it first or last; it pulls into that edge.
+ */
+export function HoverCardMedia({ className, ...props }: React.ComponentProps<"div">) {
+  const { media } = hoverCardVariants()
+  return <div data-slot="hover-card-media" className={media({ className })} {...props} />
+}
+
+/** A muted well that closes the card (a commit's counts, a profile's stats). Always the last part. */
+export function HoverCardFooter({ className, ...props }: React.ComponentProps<"div">) {
+  const { footer } = hoverCardVariants()
+  return <div data-slot="hover-card-footer" className={footer({ className })} {...props} />
+}

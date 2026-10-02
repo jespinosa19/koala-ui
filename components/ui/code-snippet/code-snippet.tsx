@@ -15,6 +15,12 @@ import { Button } from "@/components/ui/button"
  * re-themes across every theme). The highlighter is a small, self-contained tokenizer
  * scoped to TS/TSX, shell, and CSS, with no external dependency.
  *
+ * With chrome, the snippet wears the inset look (docs/ARCHITECTURE.md, "Inset media"): the header
+ * sits on a tinted frame and the code is a sheet set 8px into it, concentric with the frame.
+ *
+ * A shell listing whose lines start with `$ ` reads as a terminal session: the prompt dims, the
+ * lines without one read as the command's output, and the copy button copies only the commands.
+ *
  * Long listings can be `collapsible`: the block clamps to `collapsedHeight`, the last
  * lines dissolve into a bottom fade, and a "Show more / Show less" pill floats over that
  * fade, expanding the whole block to full height (animated). The pill only appears once
@@ -34,6 +40,10 @@ type TokenType =
   | "attribute"
   | "punctuation"
   | "flag"
+  | "text"
+  | "prompt"
+  | "output"
+  | "success"
 
 // Complete class strings (Tailwind can't see concatenated names) selected by a map.
 const TOKEN_CLASS: Record<TokenType, string> = {
@@ -46,14 +56,30 @@ const TOKEN_CLASS: Record<TokenType, string> = {
   attribute: "text-syntax-attribute",
   punctuation: "text-syntax-punctuation",
   flag: "text-syntax-keyword",
+  text: "text-foreground",
+  // The prompt stays out of a drag-selection too, so a copied command pastes as is.
+  prompt: "text-muted-foreground/60 select-none",
+  output: "text-muted-foreground",
+  // ✓ is not in most mono faces and falls back to a wider glyph; pinning it to one column keeps
+  // the output's text on the same column as the command after `$ `.
+  success: "inline-block w-[1ch] text-success",
 }
+
+type Grammar = "tsx" | "bash" | "console" | "css"
 
 // Ordered grammars; earlier patterns win at a given position (e.g. keyword before
 // function, so `return(` highlights as a keyword, not a call). No capturing groups
 // inside the patterns: each is wrapped in one group so its index maps to its type.
-const GRAMMARS: Record<"tsx" | "bash" | "css", [TokenType, RegExp][]> = {
+// The master pattern is multiline, so `^` anchors to the start of any line.
+const GRAMMARS: Record<Grammar, [TokenType, RegExp][]> = {
   tsx: [
     ["comment", /\/\/[^\n]*|\/\*[\s\S]*?\*\//],
+    // JSX text (`<Button>Get started</Button>`): plain ink, so a capitalized word in it doesn't
+    // read as a component. It stops at anything code-shaped (`(`, `=`, `{`, `;`, `&`, `|`) and
+    // needs a letter, so a generic's `>` followed by code never swallows the code. Inline, or on
+    // a line of its own between a line that ends a tag and one that opens the next.
+    ["text", /(?<=>)(?=[^<>{}()=;&|\n]*[A-Za-z])[^<>{}()=;&|\n]+(?=<)/],
+    ["text", /(?<=>\n[ \t]*)(?=[^<>{}()=;&|\n]*[A-Za-z])[^<>{}()=;&|\n]+(?=\n[ \t]*<)/],
     ["string", /`(?:\\[\s\S]|[^\\`])*`|"(?:\\.|[^"\\\n])*"|'(?:\\.|[^'\\\n])*'/],
     [
       "keyword",
@@ -73,6 +99,16 @@ const GRAMMARS: Record<"tsx" | "bash" | "css", [TokenType, RegExp][]> = {
   ],
   bash: [
     ["comment", /#[^\n]*/],
+    ["string", /"(?:\\.|[^"\\])*"|'[^']*'/],
+    ["flag", /(?<=\s)--?[A-Za-z][\w-]*/],
+  ],
+  // A shell session (any line starts with `$ `): the prompt, then a command highlighted as bash; a
+  // line with no prompt is output. The CLI's leading ✓ keeps its success color, the rest dims.
+  console: [
+    ["comment", /#[^\n]*/],
+    ["prompt", /^\$(?= )/],
+    ["success", /^[✓✔](?= )/],
+    ["output", /(?<=^(?:[✓✔] )?)(?![$#\n])[^\n]+/],
     ["string", /"(?:\\.|[^"\\])*"|'[^']*'/],
     ["flag", /(?<=\s)--?[A-Za-z][\w-]*/],
   ],
@@ -96,11 +132,11 @@ const COLLAPSE_RESERVE = 56
 
 type Token = { type?: TokenType; value: string }
 
-function tokenize(code: string, lang: "tsx" | "bash" | "css"): Token[] {
+function tokenize(code: string, lang: Grammar): Token[] {
   const grammar = GRAMMARS[lang]
   const master = new RegExp(
     grammar.map(([, re]) => `(${re.source})`).join("|"),
-    "g",
+    "gm",
   )
   const tokens: Token[] = []
   let last = 0
@@ -166,7 +202,7 @@ export const codeSnippetVariants = tv({
     // over borders"): a box-shadow sits outside the clip, so the header band and the fade reach
     // the true radius instead of stopping 1px short of it.
     root: "group relative overflow-hidden rounded-sm bg-[var(--surface,var(--background))] shadow-xs ring-1 ring-edge",
-    header: "flex items-center gap-3 border-b border-border/70",
+    header: "flex items-center gap-3",
     dots: "flex gap-1.5",
     dot: "size-2.5 rounded-full bg-muted-foreground/25",
     filename: "font-mono text-xs text-muted-foreground",
@@ -196,8 +232,36 @@ export const codeSnippetVariants = tv({
     toggle: "absolute bottom-3 left-1/2 z-20 -translate-x-1/2",
   },
   variants: {
+    // What the header does to the surface. Set by the component from `filename`/`dots` + `inset`.
+    chrome: {
+      none: {},
+      // The inset look (docs/ARCHITECTURE.md, "Inset media"), on the ladder's first rung: the
+      // root is a frame the header sits on, the viewport is a sheet set 8px into it, and
+      // frame rounded-xl 20 − 8 = sheet rounded-md 12. The frame's tint is mixed OPAQUE onto the
+      // ground (a floating window must not show what is behind it), and it declares no
+      // `--surface` on purpose: nothing on it is a control, and the sheet has to reach through to
+      // the ground outside, the same page ground as the docs' own inset sheet.
+      // A column so a frame stretched past its content (a window pinned by top and bottom) grows
+      // the sheet with it instead of showing an empty frame under the code. `grow`, not `flex-1`:
+      // the basis stays the sheet's own height, so the collapsible clamp still drives it.
+      inset: {
+        root: [
+          "flex flex-col rounded-xl px-2 pb-2 shadow-none",
+          "bg-[color-mix(in_oklab,var(--muted)_50%,var(--surface,var(--background)))]",
+          "dark:bg-[color-mix(in_oklab,var(--foreground)_3%,var(--surface,var(--background)))]",
+        ],
+        header: "shrink-0",
+        viewport:
+          "grow overflow-hidden rounded-md bg-[var(--surface,var(--background))] ring-1 ring-edge",
+      },
+      // A strip across the top of one surface, for a snippet that is already a sheet of someone
+      // else's frame (a docs preview's Code tab), where a second frame would double the chrome.
+      band: { header: "border-b border-border/70" },
+    },
     // Density retunes only padding (never radius or color). `compact` is the Koala default
-    // (tight, app-dense); `comfortable` is the spacious marketing alternative.
+    // (tight, app-dense); `comfortable` is the spacious marketing alternative. The header's
+    // inline padding matches the line's, so the filename starts on the code's left edge in both
+    // looks (inset: 8 frame + 12 = 8 sheet + 12).
     density: {
       comfortable: {
         header: "px-4 py-2.5",
@@ -215,14 +279,21 @@ export const codeSnippetVariants = tv({
       },
     },
   },
+  // On the frame the header is the band between the frame's edge and the sheet, so it takes a
+  // height rather than padding: its text centers in that band, not 8px off the sheet.
+  compoundVariants: [
+    { chrome: "inset", density: "compact", class: { header: "h-9 py-0" } },
+    { chrome: "inset", density: "comfortable", class: { header: "h-10 py-0" } },
+  ],
   defaultVariants: {
+    chrome: "none",
     density: "compact",
   },
 })
 
 export interface CodeSnippetProps
   extends Omit<React.ComponentProps<"div">, "children">,
-    VariantProps<typeof codeSnippetVariants> {
+    Omit<VariantProps<typeof codeSnippetVariants>, "chrome"> {
   code: string
   /** Source language for highlighting. Defaults to `tsx`. */
   lang?: "tsx" | "ts" | "js" | "css" | "bash" | "sh"
@@ -230,6 +301,12 @@ export interface CodeSnippetProps
   filename?: string
   /** Show macOS-style window dots in the header. */
   dots?: boolean
+  /**
+   * With a header (`filename` or `dots`): the header sits on a tinted frame and the code is a
+   * sheet set 8px into it. Pass `false` for a header strip across one surface instead, when the
+   * snippet is already a sheet inside another frame. No effect without a header. @default true
+   */
+  inset?: boolean
   /** Render a line-number gutter. */
   showLineNumbers?: boolean
   /**
@@ -258,6 +335,7 @@ export function CodeSnippet({
   lang = "tsx",
   filename,
   dots = false,
+  inset = true,
   showLineNumbers = false,
   startLine = 1,
   diff,
@@ -274,9 +352,15 @@ export function CodeSnippet({
   // once we know it actually overflows - no flash of a wrongly-collapsed block.
   const [contentHeight, setContentHeight] = React.useState<number | null>(null)
   const contentRef = React.useRef<HTMLDivElement>(null)
-  const slots = codeSnippetVariants({ density: useDensity(density) })
-  const grammar =
-    lang === "bash" || lang === "sh" ? "bash" : lang === "css" ? "css" : "tsx"
+  const showHeader = Boolean(filename) || dots
+  const slots = codeSnippetVariants({
+    density: useDensity(density),
+    chrome: !showHeader ? "none" : inset ? "inset" : "band",
+  })
+  const shell = lang === "bash" || lang === "sh"
+  // A shell listing with a `$ ` prompt on any line is a session: commands plus their output.
+  const session = shell && /^\$ /m.test(code)
+  const grammar: Grammar = shell ? (session ? "console" : "bash") : lang === "css" ? "css" : "tsx"
   const tokens = React.useMemo(() => tokenize(code, grammar), [code, grammar])
   const lineCount = code.replace(/\n+$/, "").split("\n").length
   const lines = React.useMemo(() => splitLines(tokens, lineCount), [tokens, lineCount])
@@ -314,12 +398,18 @@ export function CodeSnippet({
     : undefined
 
   async function copy() {
-    await navigator.clipboard.writeText(code)
+    // A session copies what you would type: the commands, without their prompt or their output.
+    const text = session
+      ? code
+          .split("\n")
+          .filter((line) => line.startsWith("$ "))
+          .map((line) => line.slice(2))
+          .join("\n")
+      : code
+    await navigator.clipboard.writeText(text)
     setCopied(true)
     window.setTimeout(() => setCopied(false), 1500)
   }
-
-  const showHeader = Boolean(filename) || dots
 
   return (
     <div data-slot="code-snippet" className={slots.root({ className })} {...props}>

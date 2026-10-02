@@ -2,6 +2,7 @@
 
 import * as React from "react"
 
+import { AnimatedNumber } from "@/components/ui/animated-number"
 import { Badge } from "@/components/ui/badge"
 import {
   Tabs,
@@ -91,14 +92,15 @@ export interface DataTableTabProps extends TabsTriggerProps {
   count?: number
 }
 
-/** One view. `count` adds the chip; everything else is a `TabsTrigger`, press-scale off. */
+/** One view. `count` adds the chip, which rolls to the new figure as a row action recounts it;
+ *  everything else is a `TabsTrigger`, press-scale off. */
 export function DataTableTab({ count, children, static: isStatic = true, ...props }: DataTableTabProps) {
   return (
     <TabsTrigger static={isStatic} {...props}>
       {children}
       {count != null && (
         <Badge variant="secondary" size="sm" className="tabular-nums">
-          {count}
+          <AnimatedNumber value={count} />
         </Badge>
       )}
     </TabsTrigger>

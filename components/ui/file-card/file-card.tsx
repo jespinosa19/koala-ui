@@ -147,8 +147,9 @@ export const fileCardVariants = tv({
           // outer ring is dropped (`ring-0`): a tile's edge is the image outline (#11), pure
           // black/white, riding on ::after so it paints OVER the photo. An inset ring on the card
           // itself sits under the filling thumbnail and never shows (memory `inset-ring-under-children`).
+          // `after:z-20` keeps it over the z-10 scrim too, so the blur never smears the edge.
           "ring-0",
-          "after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:ring-1 after:ring-inset after:ring-black/10 dark:after:ring-white/10",
+          "after:pointer-events-none after:absolute after:inset-0 after:z-20 after:rounded-[inherit] after:ring-1 after:ring-inset after:ring-black/10 dark:after:ring-white/10",
           // The photo scales on hover, and Chromium skips a non-composited ancestor's radius
           // clip on a composited child - promote the clipping card so the corners hold
           // (memory `rounded-clip-composited-child`).
@@ -166,8 +167,11 @@ export const fileCardVariants = tv({
         // The scrim. It must NOT fade with `opacity-0`: a backdrop-blur still paints through a
         // transparent layer (memory `backdrop-blur-leaks-through-opacity-0`), so the blur and the
         // wash are toggled directly and only the buttons use opacity.
+        // `rounded-[inherit]`: Chromium does not apply the card's rounded clip to a backdrop-filter
+        // layer, so a square scrim paints its blurred corners past the radius. A backdrop-filter
+        // is always clipped to its OWN border-radius, so the scrim carries the card's.
         actions: [
-          "absolute inset-0 z-10 flex items-center justify-center gap-1",
+          "absolute inset-0 z-10 flex items-center justify-center gap-1 rounded-[inherit]",
           "bg-transparent backdrop-blur-none",
           "transition-[background-color,backdrop-filter] duration-base ease-out",
           "group-hover/tile:bg-black/40 group-hover/tile:backdrop-blur-xs",

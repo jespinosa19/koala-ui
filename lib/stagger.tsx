@@ -27,7 +27,10 @@ export interface StaggerProps extends React.ComponentProps<"div"> {
  *
  * By default it animates on **mount**, which is the right gate for "load" cascades: with stable
  * keys, reordering (e.g. a table re-sort) reuses the same DOM and does *not* replay; genuinely new
- * content (filter matches, a fresh page, a layout switch) mounts and cascades. Pass `inView` to gate
+ * content (filter matches, a fresh page, a layout switch) mounts and cascades. That takes one guard:
+ * React moves a keyed child by re-inserting its node, and a CSS animation restarts whenever its
+ * element re-enters the document, so a child that moved would fade in all over again. A child whose
+ * entrance has played is marked `data-stagger-done` and drops the animation. Pass `inView` to gate
  * it on scrolling into view instead (the shared `useInView` gate holds the cascade at its start via
  * `animation-play-state: paused` + the keyframe's `both` fill, so nothing flashes, then runs it on
  * intersect). Honors `prefers-reduced-motion` (children simply appear). Direct children must forward
@@ -43,6 +46,7 @@ export function Stagger({
   blur = false,
   inView = false,
   ref,
+  onAnimationEnd,
   children,
   ...props
 }: StaggerProps) {
@@ -67,11 +71,21 @@ export function Stagger({
   const entrance = cn(
     blur ? "animate-stagger-in-blur" : "animate-stagger-in",
     paused && "[animation-play-state:paused]",
-    "motion-reduce:animate-none",
+    "motion-reduce:animate-none data-[stagger-done]:animate-none",
   )
 
+  // The mark lives on the DOM node, not in state: React leaves an attribute it does not own alone
+  // across renders, and the node is exactly what a move re-inserts.
+  const markDone = (event: React.AnimationEvent<HTMLDivElement>) => {
+    onAnimationEnd?.(event)
+    const child = event.target as HTMLElement
+    if (child.parentElement === event.currentTarget && event.animationName.startsWith("stagger-in")) {
+      child.dataset.staggerDone = ""
+    }
+  }
+
   return (
-    <div ref={setRef} data-slot="stagger" {...props}>
+    <div ref={setRef} data-slot="stagger" onAnimationEnd={markDone} {...props}>
       {React.Children.map(children, (child, index) => {
         if (
           !React.isValidElement<{ className?: string; style?: React.CSSProperties }>(child)

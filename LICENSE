@@ -10,9 +10,8 @@ repository, or by copying them from the documentation. The koalaui CLI itself
 Koala UI comes in two tiers:
 
   Free  Everything installable without a license key: the components in components/ui,
-        the helpers in lib, the tokens in registry/koala.css, and the one sample section
-        of each section family that the Koala UI website shows with its source.
-  Pro   Everything that needs a license key: every other section, the page examples, the
+        the helpers in lib and the tokens in registry/koala.css.
+  Pro   Everything that needs a license key: every section, the page examples, the
         source of the templates shown as demos on the Koala UI website, and the Figma
         library.
 
@@ -86,4 +85,4 @@ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 OUT OF OR IN CONNECTION WITH KOALA UI OR THE USE OR OTHER DEALINGS IN KOALA UI.
 
 
-Questions about what this license allows: https://koala-ui.vercel.app
+Questions about what this license allows: https://www.koalaui.com

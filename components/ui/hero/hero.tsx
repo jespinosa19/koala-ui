@@ -497,10 +497,9 @@ export const heroVariants = tv({
     spreadTone: {
       brand: {
         spreadPanel: "bg-brand text-brand-foreground [--surface:var(--brand)]",
-        // The chip's label is `brand-strong`, not `brand`: contrast is symmetric, so a raw-accent
-        // label on white is the same 3.6:1 as white on the accent, and the darker step is what
-        // carries it to AA on all eight presets. Same call the on-media Button makes.
-        spreadIndex: "bg-white text-brand-strong",
+        // The chip's label is near-black ink, never a brand color: the panel already carries the
+        // accent. Same call the on-media Button makes.
+        spreadIndex: "bg-white text-neutral-950",
       },
       ink: {
         spreadPanel:

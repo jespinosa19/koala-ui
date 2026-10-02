@@ -22,6 +22,7 @@ export {
   type DropdownMenuCheckboxItemProps,
   type DropdownMenuRadioItemProps,
   type DropdownMenuLabelProps,
+  type DropdownMenuSubProps,
   type DropdownMenuSubTriggerProps,
   type DropdownMenuSubContentProps,
 } from "./dropdown-menu"

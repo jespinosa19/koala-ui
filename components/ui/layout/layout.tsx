@@ -29,19 +29,20 @@ import { SidebarShellContext } from "@/components/ui/sidebar"
  *    lets a window scroll-spy drive that nav. Reach for it for documentation, not for an app.
  *
  * **`docked` is the house structure for every app screen** (see memory
- * `docked-shell-for-dashboards`): the shell fills the viewport edge to edge, exactly as Linear,
- * Discord, and Slack do. There is no floating gutter and no drop shadow. Instead the rail sits on
- * a recessed `bg-canvas` floor and the content is the raised `bg-card` sheet, meeting along a
- * hairline; only the content's *leading* corners are rounded, so the canvas shows through as a
- * notch at the top and bottom of that seam. Everything else runs flush to the window.
+ * `docked-shell-for-dashboards`): a black frame with the content set into it as a sheet, the way
+ * the Shopify admin is built. The frame is `bg-canvas` and the rail sits on it pinned `.dark`; the
+ * content is the sheet, held off the top, right, and bottom of the window by a narrow gutter of
+ * frame, every corner rounded. In a light theme that is a white sheet in a black frame. In a dark
+ * theme frame and sheet are one tone, the theme's ground, and the sheet's ring is its edge.
  *
  *   <Layout>
  *     <LayoutSidebar>…nav…</LayoutSidebar>
- *     <LayoutContent>           // the raised sheet, flush to top/right/bottom
+ *     <LayoutContent>           // the sheet, set into the frame
+ *       <LayoutHeader>          // the sheet's bar: rail toggle · breadcrumbs · actions
+ *         <LayoutSidebarTrigger />
+ *         <Breadcrumb>…</Breadcrumb>
+ *       </LayoutHeader>
  *       <LayoutContainer>       // centered max-width column
- *         <LayoutHeader>        // breadcrumbs row at the top
- *           <Breadcrumb>…</Breadcrumb>
- *         </LayoutHeader>
  *         …page content…
  *       </LayoutContainer>
  *     </LayoutContent>
@@ -49,11 +50,9 @@ import { SidebarShellContext } from "@/components/ui/sidebar"
  *
  * `plain` and `docked` are the same shell at two levels of dress, which is a real axis (the DS
  * uses it elsewhere: `OrderSummary` plain, `List` card|plain). What the set deliberately does NOT
- * contain is a *second decorated* app shell — the floating card shadcn calls `inset`, content in a
- * shadowed panel with the canvas as a gutter. That would be the same job as `docked` in a rival
- * style, and two dressed shells for one job is how a system drifts. A screen that genuinely wants
- * it opts in per instance: `<LayoutContent className="m-2 rounded-2xl shadow-sm ring-1 ring-border
- * lg:ml-0">`. An escape hatch, not a supported structure.
+ * contain is a *second decorated* app shell (a flush Linear-style sheet, a light rail beside a
+ * floating card): that would be the same job as `docked` in a rival style, and two dressed shells
+ * for one job is how a system drifts.
  *
  * Structures. Every part is droppable, and *which* parts you drop in is the structure; nothing is
  * switched with a prop. The root reads its children and rearranges itself:
@@ -64,9 +63,9 @@ import { SidebarShellContext } from "@/components/ui/sidebar"
  *   two-tier rail           LayoutRail + LayoutSidebar collapsible="offcanvas" + LayoutContent
  *   list · detail           LayoutContent(LayoutPane + LayoutPane …)    (the sheet turns into a row)
  *
- * The sheet decorates whichever seam it actually has: a left hairline beside a rail, a top
- * hairline under a top band, both (with the corner rounded where they meet) under a band *and*
- * beside a rail. Below `lg`, where the rail moves into the drawer, the left seam goes with it.
+ * The sheet keeps the frame on whichever sides the chrome does not hold: it meets a rail with no
+ * gutter on the left, a top band with none on top, and keeps a gutter everywhere else. Below `lg`,
+ * where the rail moves into the drawer, the frame goes with it and the sheet fills the window.
  *
  * Height: defaults to `min-h-svh` so the shell fills the viewport and grows with the
  * page. For content that scrolls independently (sidebar pinned), give the root a fixed
@@ -75,8 +74,8 @@ import { SidebarShellContext } from "@/components/ui/sidebar"
  */
 export const layoutVariants = tv({
   slots: {
-    // The shell. Its floor colour is per-variant: `docked` recesses onto `bg-canvas` so the
-    // content sheet reads as raised without a shadow; the other two keep the page background.
+    // The shell. Its floor colour is per-variant: `docked` is the black `bg-canvas` frame the
+    // content sheet is set into; the other two keep the page background.
     // A row by default (rail · sheet); a top band among its children turns it into a column, so
     // the band spans the window and whatever follows it fills the rest. Keyed on the band being
     // there, not on a prop: drop `LayoutTopbar` in and the shell rearranges itself.
@@ -96,8 +95,8 @@ export const layoutVariants = tv({
     // `collapsed` through the same shell bridge the rail column uses. Pinned, stretched to its row
     // and capped at the viewport like the rail column, hidden below `lg`.
     rail: "sticky top-0 hidden max-h-svh w-12 shrink-0 flex-col lg:flex",
-    // The rail column. It lives in the canvas gutter and pins to the viewport so it stays put
-    // while the content panel scrolls. Hidden below `lg`; drive a mobile drawer from there.
+    // The rail column. It lives on the shell floor and pins to the viewport so it stays put
+    // while the content sheet scrolls. Hidden below `lg`; drive a mobile drawer from there.
     //
     // The column owns the *width* (and therefore the collapse animation, see the `collapsed`
     // axis) while the `Sidebar` nested inside owns its own chrome and padding: that split is
@@ -118,10 +117,9 @@ export const layoutVariants = tv({
       "transition-[width] duration-base ease-out",
     ],
     // The content region. `min-h-0` lets it become a scroll container when the root is given
-    // a fixed height. Its *surface* treatment is set per `variant` below. `panel` paints the
-    // elevated indent card (with the `--surface` contract); `flat` stays transparent on the
-    // page canvas. polish: in `panel`, a shadow over a hard border gives depth (the ring is
-    // the hairline that keeps it crisp where colors tie, e.g. white-on-white in light).
+    // a fixed height. Its *surface* treatment is set per `variant` below: `docked` paints the
+    // sheet set into the frame (with the `--surface` contract); `plain` and `flat` stay
+    // transparent on the page.
     //
     // Holding a `LayoutPane` turns it into a row of panes (list · detail), each scrolling on its
     // own, so the sheet itself stops scrolling and just clips them to its rounded corner.
@@ -153,9 +151,27 @@ export const layoutVariants = tv({
     container: "mx-auto w-full",
     // The top row of the column: breadcrumbs on the left, optional actions on the right.
     header: "flex items-center justify-between gap-4",
+    // The sheet's bar: what a `LayoutHeader` becomes when it sits straight inside `LayoutContent`
+    // instead of inside the column (the GitBook / Linear read). It spans the sheet, not the
+    // column, so its rule runs edge to edge: inside a centered `max-w-7xl` column the same rule
+    // stopped short of both sides on a wide screen and hung in the middle of the sheet, and the
+    // rail toggle at its start sat a column's margin away from the rail it folds. The row owns
+    // no justification: the crumbs lead and a cluster pushed right with `ml-auto` follows, so a
+    // bar holding only one of them still reads correctly. The height is per density, see below.
+    bar: [
+      "sticky top-0 z-20 flex shrink-0 items-center gap-1 border-b border-border",
+      "bg-card/85 backdrop-blur-sm supports-[backdrop-filter]:bg-card/75",
+      // The padding is the column's, so crumbs that lead (a phone, where the toggle is hidden)
+      // start on the content's left edge. A leading rail toggle is a 40px box around a 20px
+      // glyph, so it steps back half its inset to put the glyph, not the box, near the edge.
+      "[&>[data-slot=layout-sidebar-trigger]:first-child]:-ml-2",
+      // Below `lg` a `LayoutMobileBar` already pins the top of the sheet, and a phone has no room
+      // for two pinned bands: under it, the bar scrolls away with the page.
+      "max-lg:[[data-slot=layout-mobile-bar]~&]:static",
+    ],
     // The mobile bar: a slim sticky band shown only below `lg` (where the sidebar is hidden).
     // It holds the LayoutMobileSidebar trigger and a brand lockup. Lives at the top of
-    // LayoutContent so it pins to the panel and its corners clip to the panel rounding.
+    // LayoutContent so it pins to the sheet it belongs to.
     mobileBar:
       "sticky top-0 z-30 flex items-center gap-2 border-b border-border bg-card/85 backdrop-blur-sm supports-[backdrop-filter]:bg-card/75 lg:hidden",
     // The hamburger trigger inside the mobile bar; opens the sidebar drawer. Hidden at `lg`
@@ -181,9 +197,8 @@ export const layoutVariants = tv({
   },
   variants: {
     // `plain` and `docked` are one app shell at two levels of dress; `flat` is the docs/reading
-    // layout, a different job. There is deliberately no *second decorated* app shell (the
-    // floating card shadcn calls `inset`): that would be the same job as `docked` in a rival
-    // style, which is how a design system drifts.
+    // layout, a different job. There is deliberately no *second decorated* app shell: that
+    // would be the same job as `docked` in a rival style, which is how a design system drifts.
     variant: {
       // THE CLASSIC SHELL. Rail · content, one background, one hairline, nothing raised and
       // nothing recessed. It is defined mostly by what it does *not* do: the root keeps the page
@@ -205,55 +220,85 @@ export const layoutVariants = tv({
         // (the sticky header gets the same treatment in the compounds below). Left on bg-card
         // they contradicted the `--background` surface the content declares, and a search
         // field dropped in the bar would have painted the wrong ground.
+        bar: "bg-background/85 supports-[backdrop-filter]:bg-background/75",
         mobileBar: "bg-background/85 supports-[backdrop-filter]:bg-background/75",
         paneHeader: "bg-background/85 supports-[backdrop-filter]:bg-background/75",
       },
       // THE DASHBOARD SHELL: `plain` with the surfaces turned on. Same structure, same parts,
-      // same scroll model; what changes is that the rail now recedes and the content rises.
-      // Nothing floats: the columns still run to all four window edges. Depth comes from the
-      // surfaces themselves rather than a shadow, which is why the root recedes
-      // to `bg-canvas` (a role that exists precisely because `--background` equals `--card` in
-      // the light theme, so it could not express "one step below the content sheet").
+      // same scroll model; what changes is that the shell becomes a black frame and the content
+      // a sheet set into it (the Shopify admin read). In a light theme (light, cream) that is a
+      // black frame around a white sheet. In a dark theme (dark, moonlight) the two are one tone:
+      // a lighter card set into the black read as a second, muddier grey, so there the sheet
+      // paints the theme's ground and only its ring draws the edge.
       //
-      // The seam is the only decorated edge: a hairline where the rail meets the sheet, plus a
-      // rounded corner where that seam meets the top of the window. ONLY the top-left: the sheet
-      // runs to the bottom edge, and a rounded bottom-left corner there would leave a notch
-      // floating against the window floor, which is the tell of a mis-clipped panel. Linear,
-      // Discord, and Slack all round the top-left and keep the other three square, for that
-      // reason. The hairline is deliberate rather than decorative: it is what keeps the seam
-      // legible in the light theme, where canvas and card are only a whisper apart.
+      // The frame is `bg-canvas`: black under the light themes, the theme's own ground under the
+      // dark ones (see `--canvas` in globals.css). The chrome that sits on it (the rail column,
+      // the strip, the top band) pins itself `.dark`, so its labels, hover chips, hairlines and
+      // nested controls resolve their dark values with no hand-picked colours, whether the page
+      // is light, cream, dark or moonlight (the pinned-band idiom, see memory `pinned-dark-band`).
+      // The rail paints nothing, so it reads as one piece with the gutter around the sheet.
+      //
+      // The sheet is set in by a gutter on the three sides the chrome does not hold (top, right
+      // and bottom beside a rail; right and bottom under a band), and every corner is rounded:
+      // with the frame all the way round, no corner meets the window wall, so none of them can
+      // read as a mis-clipped notch. The gutter is the rail's own `p-2`, so the frame reads the
+      // same width on every side of the sheet. No shadow. The ring is for the dark themes, where
+      // frame and sheet share a tone and the hairline is the whole edge; over the black frame in
+      // light it simply vanishes.
       //
       // `--surface` is the DS contract for "what surface am I sitting on" (the same one Dialog
-      // sets to `--popover`): `--card` makes every opaque, surface-aware child (Input, Select, a
-      // minimal DataTable) rebase onto the sheet and read as transparent, while the rail column
-      // rebases onto the canvas.
+      // sets to `--popover`): the sheet's ground makes every opaque, surface-aware child (Input,
+      // Select, a minimal DataTable) rebase onto the sheet and read as transparent, while the
+      // chrome rebases onto the canvas. The sheet's bars blur over that same ground, so each bar
+      // below carries the dark theme's ground too.
       //
-      // The seam follows the structure. Under a top band with no rail beside it, the seam turns
-      // horizontal and runs wall to wall: a top hairline and no rounding, because a rounded corner
-      // against the window's side wall is the same mis-clipped notch as one against its floor.
-      // Under a band *and* beside a rail (`LayoutBody`), the sheet has two seams, so it draws both
-      // and rounds the one corner where they meet: the Slack / Discord read. Below `lg` the rail
-      // moves into the drawer, so the left seam (and its corner) go with it and the sheet runs
-      // flush to the window like any phone screen.
+      // Below `lg` the rail moves into the drawer and a phone has no room for a frame, so the
+      // sheet runs flush to the window: no gutter, no radius, no ring. A top band stays, dark,
+      // above it.
       //
-      // The strip and the band sit on the canvas beside the rail, so they rebase onto it too.
       // Between a strip and the panel after it there is a hairline (drawn by the panel, so it
       // vanishes with the panel when that slides shut): two canvas columns with no surface change
       // between them would otherwise run together into one wide, muddled rail.
       docked: {
         root: "bg-canvas",
         content: [
-          "rounded-tl-xl border-l border-border bg-card text-card-foreground [--surface:var(--card)]",
-          "max-lg:rounded-none max-lg:border-l-0",
-          "[[data-slot=layout-topbar]~&]:rounded-none [[data-slot=layout-topbar]~&]:border-t [[data-slot=layout-topbar]~&]:border-l-0",
-          "[[data-slot=layout-body]_&]:border-t",
+          "bg-card text-card-foreground [--surface:var(--card)]",
+          "dark:bg-background dark:text-foreground dark:[--surface:var(--background)]",
+          "lg:m-2 lg:rounded-lg lg:ring-1 lg:ring-border",
+          // The rounded corners have to clip what scrolls inside too, and `overflow` alone doesn't
+          // in Chromium once a child is composited: the sticky `LayoutHeader` / `LayoutPaneHeader`
+          // (their `backdrop-blur`) painted a square corner past the radius. A clip-path is applied
+          // to composited layers as well; drawn 1px out (radius + 1) so it keeps the ring. Unlike a
+          // `translateZ(0)` promotion it doesn't make the sheet a containing block for `fixed`
+          // descendants. See memory `rounded-clip-composited-child`.
+          "lg:[clip-path:inset(-1px_round_calc(var(--radius-lg)+1px))]",
+          "lg:[[data-slot=layout-sidebar]~&]:ml-0 lg:[[data-slot=layout-rail]~&]:ml-0",
+          "lg:[[data-slot=layout-topbar]~&]:mt-0 lg:[[data-slot=layout-body]_&]:mt-0",
+          // In a resizable shell the rail is a panel and the sheet sits in the next one: the
+          // handle between them is the rail's edge, so the sheet meets it with no gutter.
+          "lg:[[data-slot=resizable-handle]+*>&]:ml-0",
         ],
+        // On the frame the rail reads as one black surface, so the nested Sidebar's header and
+        // footer rules go: they sat at a different height from the sheet's own header rule
+        // across the seam (the switcher row is shorter than a search bar and the sheet starts a
+        // gutter lower), and two near-miss hairlines either side of the gap read as a mistake.
+        // The spacing alone separates the switchers from the nav, as in the Shopify rail.
         sidebar: [
-          "[--surface:var(--canvas)]",
+          "dark text-foreground [color-scheme:dark] [--surface:var(--canvas)]",
+          "[&_[data-slot=sidebar-header]]:border-b-0 [&_[data-slot=sidebar-footer]]:border-t-0",
           "[[data-slot=layout-rail]+&]:border-l [[data-slot=layout-rail]+&]:border-border",
         ],
-        topbar: "bg-canvas [--surface:var(--canvas)]",
-        rail: "[--surface:var(--canvas)]",
+        topbar: "dark bg-canvas text-foreground [color-scheme:dark] [--surface:var(--canvas)]",
+        rail: [
+          "dark text-foreground [color-scheme:dark] [--surface:var(--canvas)]",
+          "[&_[data-slot=sidebar-header]]:border-b-0 [&_[data-slot=sidebar-footer]]:border-t-0",
+        ],
+        // The sheet's bars keep the base `bg-card` blur in a light theme and take the sheet's
+        // ground in a dark one (the sticky `LayoutHeader` gets the same in the compounds below).
+        bar: "dark:bg-background/85 dark:supports-[backdrop-filter]:bg-background/75",
+        mobileBar: "dark:bg-background/85 dark:supports-[backdrop-filter]:bg-background/75",
+        paneHeader: "dark:bg-background/85 dark:supports-[backdrop-filter]:bg-background/75",
+        sidebarTrigger: "dark:focus-visible:ring-offset-background",
       },
       // Content is flat on the page canvas; the sidebar/aside are divided from it by hairlines
       // rather than a raised sheet. The page scrolls as a whole (content is `overflow-visible`,
@@ -269,6 +314,7 @@ export const layoutVariants = tv({
         topbar:
           "border-b border-border bg-background/85 backdrop-blur-sm supports-[backdrop-filter]:bg-background/75 [--surface:var(--background)]",
         rail: "border-r border-border [--surface:var(--background)]",
+        bar: "bg-background/85 supports-[backdrop-filter]:bg-background/75",
         mobileBar: "bg-background/85 supports-[backdrop-filter]:bg-background/75",
         paneHeader: "bg-background/85 supports-[backdrop-filter]:bg-background/75",
         sidebarTrigger: "focus-visible:ring-offset-background",
@@ -287,6 +333,11 @@ export const layoutVariants = tv({
         container: "px-4 py-6 sm:px-6 lg:px-8",
         aside: "px-6 py-6",
         header: "mb-6",
+        // 44px: the height of the rail's switcher row at this density (its p-2 zone around a
+        // p-1 row and a 36px mark), and the sheet starts a gutter below the window top, which is
+        // where that row starts too. So the bar's rule lands level with the switcher's bottom
+        // edge and the two rows share a centre across the seam. 56px left them 6px apart.
+        bar: "h-11 px-4",
         mobileBar: "h-14 px-3",
         // The same 56px as the mobile bar and a compact `Navbar`, so a pane header lines up with
         // the top band it sits beside.
@@ -298,6 +349,9 @@ export const layoutVariants = tv({
         container: "px-6 py-10 sm:px-8 lg:px-10",
         aside: "px-8 py-10",
         header: "mb-8",
+        // The comfortable rail's switcher row is 48px from 12px down (p-3 zone, p-1.5 row), so
+        // its centre sits 36px down: a 56px bar from the 8px gutter centres there too.
+        bar: "h-14 px-6",
         mobileBar: "h-16 px-4",
         paneHeader: "h-16 px-6",
         pageHeader: "mb-8",
@@ -349,6 +403,14 @@ export const layoutVariants = tv({
     // Flat's and plain's sticky headers blur over the page canvas, not the card: neither shell
     // raises the content into a sheet, and both rebase `--surface` to the page. Listed after
     // the density compounds so their `bg-background` wins the merge over those `bg-card`.
+    // Docked's sheet is the ground itself in a dark theme, so its header follows it there.
+    {
+      variant: "docked",
+      sticky: true,
+      class: {
+        header: "dark:bg-background/85 dark:supports-[backdrop-filter]:bg-background/75",
+      },
+    },
     {
       variant: "flat",
       sticky: true,
@@ -516,9 +578,9 @@ export function useLayoutSidebar() {
  *     <Sidebar aria-label="Main">…</Sidebar>
  *   </LayoutSidebar>
  *
- * Whether the rail docks depends on whether the *shell* owns its surface. In `docked` the rail
- * sits bare on the recessed canvas beside the raised sheet (no divider at all); in `flat` this
- * column draws the dividing hairline itself. In both cases the nested rail must not paint a
+ * Whether the rail docks depends on whether the *shell* owns its surface. In `docked` the column
+ * pins itself `.dark` and the rail sits bare on the black frame beside the sheet (no divider at
+ * all); in `flat` this column draws the dividing hairline itself. In both cases the nested rail must not paint a
  * second card fill or a second border on top, so it docks.
  *
  * `plain` is the exception, and deliberately so: there the rail is meant to look exactly like a
@@ -619,8 +681,9 @@ const plainBar = { docked: false }
  *
  * It is the `Navbar`'s host the way `LayoutSidebar` is the `Sidebar`'s: it publishes
  * `NavbarShellContext`, so a bar inside docks onto the band (no fill, no bottom rule, a full-width
- * row) with no props. The seam under the band belongs to the sheet, which draws it as its own top
- * hairline. Renders a plain `<div>`, since the `Navbar` inside is already the `<header>` landmark.
+ * row) with no props. In `docked` the band is part of the black frame (pinned `.dark`) and the sheet
+ * starts right under it. Renders a plain `<div>`, since the `Navbar` inside is already the
+ * `<header>` landmark.
  */
 export function LayoutTopbar({ className, children, ...props }: React.ComponentProps<"div">) {
   const { slots, variant } = useLayoutContext("LayoutTopbar")
@@ -650,8 +713,8 @@ export interface LayoutSidebarTriggerProps extends React.ComponentProps<"button"
 
 /**
  * The rail toggle: collapses the shell's sidebar to an icon column and back, the ⌘B button in
- * Linear's top bar. Put it at the start of a `LayoutHeader` (or a `LayoutMobileBar`, where it
- * sits beside the drawer trigger). Desktop only: below `lg` the rail is hidden entirely and
+ * Linear's top bar. Put it at the start of the sheet's `LayoutHeader`, where it sits right beside
+ * the rail it folds (or in a `LayoutMobileBar`, beside the drawer trigger). Desktop only: below `lg` the rail is hidden entirely and
  * `LayoutMobileSidebar` takes over, so collapsing has nothing to act on.
  *
  * It's a thin wrapper over `useLayoutSidebar()`, so a bespoke trigger (a menu item, a keyboard
@@ -716,6 +779,10 @@ export interface LayoutContainerProps extends React.ComponentProps<"div"> {
   width?: keyof typeof layoutContainerWidths
 }
 
+/** True inside a `LayoutContainer`: tells a `LayoutHeader` it is the column's row, not the
+ *  sheet's bar. A plain context with a `false` default: outside a column is a valid place too. */
+const LayoutColumnContext = React.createContext(false)
+
 export function LayoutContainer({
   className,
   width = "default",
@@ -723,11 +790,13 @@ export function LayoutContainer({
 }: LayoutContainerProps) {
   const { slots } = useLayoutContext("LayoutContainer")
   return (
-    <div
-      data-slot="layout-container"
-      className={slots.container({ className: cn(layoutContainerWidths[width], className) })}
-      {...props}
-    />
+    <LayoutColumnContext.Provider value>
+      <div
+        data-slot="layout-container"
+        className={slots.container({ className: cn(layoutContainerWidths[width], className) })}
+        {...props}
+      />
+    </LayoutColumnContext.Provider>
   )
 }
 
@@ -794,21 +863,37 @@ export function LayoutPaneHeader({ className, ...props }: React.ComponentProps<"
 
 export interface LayoutHeaderProps extends React.ComponentProps<"div"> {
   /**
-   * Pin the header to the top of the scrolling panel with a translucent, blurred fill that
-   * bleeds to the column edges. Use it for a persistent breadcrumbs/actions bar. @default false
+   * Inside a `LayoutContainer` only: pin the row to the top of the scrolling panel with a
+   * translucent, blurred fill that bleeds to the column edges. The sheet's bar (a header outside
+   * the column) is always pinned, so it ignores this. @default false
    */
   sticky?: boolean
 }
 
 /**
- * The top row of the column: breadcrumbs on the left, optional actions on the right. With
- * `sticky`, it stays pinned as the panel scrolls. Slots are recomputed here (rather than read
- * from context) so the per-instance `sticky` flag can fold in, while density flows from the root.
+ * The header row. Where you put it decides what it is, like the rest of the shell:
+ *
+ *  - **Straight inside `LayoutContent`**, before the column: the sheet's bar, the app header of the
+ *    docked shell. It spans the sheet edge to edge with its rule, pins to the top, and takes the
+ *    height of the rail's switcher row so the two line up across the seam. Lead with a
+ *    `LayoutSidebarTrigger` and the breadcrumbs; push page actions right with `ml-auto`.
+ *  - **Inside `LayoutContainer`**: a row at the top of the column that scrolls with it (or pins,
+ *    with `sticky`). The reading layouts' breadcrumbs row.
+ *
+ * Slots are recomputed here (rather than read from context) so the per-instance `sticky` flag can
+ * fold in, while density flows from the root.
  */
 export function LayoutHeader({ className, sticky = false, ...props }: LayoutHeaderProps) {
   const { density, variant } = useLayoutContext("LayoutHeader")
-  const slots = layoutVariants({ density, variant, sticky })
-  return <div data-slot="layout-header" className={slots.header({ className })} {...props} />
+  const inColumn = React.useContext(LayoutColumnContext)
+  const slots = layoutVariants({ density, variant, sticky: inColumn && sticky })
+  return (
+    <div
+      data-slot="layout-header"
+      className={inColumn ? slots.header({ className }) : slots.bar({ className })}
+      {...props}
+    />
+  )
 }
 
 /**

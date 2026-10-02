@@ -79,9 +79,9 @@ export const rankingVariants = tv({
         list: "flex h-44 flex-row items-end justify-between gap-2 sm:gap-3",
         item: "flex h-full flex-1 flex-col items-center justify-end gap-2 text-center",
         // The track is the full-height column; the fill rises from the bottom. Top corners round
-        // at 4px to match the Chart's bars (blue-500, radius 4); the base sits square on the row.
-        barTrack: "flex w-8 flex-1 flex-col justify-end overflow-hidden rounded-t-[4px] bg-muted/60 sm:w-10",
-        barFill: "w-full rounded-t-[4px] bg-blue-500 h-(--ranking-bar) transition-[height] duration-slow ease-out",
+        // at rounded-sm (8px), the one data-bar radius the Chart's bars share; the base sits square.
+        barTrack: "flex w-8 flex-1 flex-col justify-end overflow-hidden rounded-t-sm bg-muted/60 sm:w-10",
+        barFill: "w-full rounded-t-sm bg-blue-500 h-(--ranking-bar) transition-[height] duration-slow ease-out",
       },
       // A horizontal bar chart: the name holds a fixed column and the bar runs beside it, thick
       // enough to read as the row's figure. The bars rest neutral, and the brand is the hover:
@@ -95,9 +95,10 @@ export const rankingVariants = tv({
         content: "w-16 flex-none",
         barTrack: "group/bar h-8 min-w-0 flex-1 outline-none",
         // Two clocks: the width eases slow (a new range settles), the color answers the pointer
-        // fast. The focus ring sits on the fill, the shape that actually lights up.
+        // fast. The focus ring sits on the fill, the shape that actually lights up. rounded-sm
+        // (8px) is the one data-bar radius, shared with the Chart's bars.
         barFill:
-          "h-full w-(--ranking-bar) rounded-md bg-foreground/10 [transition:width_var(--duration-slow)_var(--ease-out),background-color_var(--duration-fast)_var(--ease-out)] group-hover/bar:bg-brand group-focus-visible/bar:bg-brand group-focus-visible/bar:ring-2 group-focus-visible/bar:ring-brand group-focus-visible/bar:ring-offset-2 group-focus-visible/bar:ring-offset-background motion-reduce:transition-none",
+          "h-full w-(--ranking-bar) rounded-sm bg-foreground/10 [transition:width_var(--duration-slow)_var(--ease-out),background-color_var(--duration-fast)_var(--ease-out)] group-hover/bar:bg-brand group-focus-visible/bar:bg-brand group-focus-visible/bar:ring-2 group-focus-visible/bar:ring-brand group-focus-visible/bar:ring-offset-2 group-focus-visible/bar:ring-offset-background motion-reduce:transition-none",
       },
     },
     /**

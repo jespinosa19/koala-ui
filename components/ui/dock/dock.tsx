@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 import { createContext } from "@/lib/create-context"
 import { hitY } from "@/lib/hit-area"
 import { duration } from "@/lib/motion"
+import { useDensity } from "@/lib/density"
 import { Kbd } from "@/components/ui/kbd"
 import { Tooltip, TooltipGroup, type TooltipProps } from "@/components/ui/tooltip"
 
@@ -36,22 +37,12 @@ import { Tooltip, TooltipGroup, type TooltipProps } from "@/components/ui/toolti
  * collapsed icon and as the row's text in the panel. One source, two shapes.
  */
 
-// Shared interaction base for anything pressable in the dock, rail icon and panel row alike.
-// It deliberately omits geometry (size, radius, padding) and color: the `size` variant sets the
-// first, the `variant` the second, so the two shapes never drift on interaction. Same idea as
-// the Toolbar's control-base, kept local because a dock control is a different animal (it has a
-// resting label, and its press-scale differs between the square icon and the wide row).
+// Shared base for anything pressable in the dock, rail icon and panel row alike. It deliberately
+// omits geometry and color: the two shapes are different controls (a square icon with a hit
+// extender and a focus ring; a menu row that highlights like DropdownMenu's), so each slot adds its
+// own. Only what must never drift between them lives here.
 const controlBase = [
   "relative inline-flex shrink-0 cursor-pointer select-none items-center outline-none",
-  // Hit extender (#9), vertical-only so a rail icon never steals its neighbour's tap.
-  hitY,
-  // Specific transition (#14), never `transition: all`. `scale` is named because in Tailwind v4
-  // `scale-*` compiles to the standalone `scale` property, so `transition-colors` alone would make
-  // the press snap instead of ease.
-  "transition-[background-color,color,scale] duration-fast ease-out",
-  "motion-reduce:transition-none motion-reduce:active:scale-100",
-  "focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1",
-  "disabled:pointer-events-none disabled:opacity-40",
   "[&_svg]:pointer-events-none [&_svg]:shrink-0",
 ]
 
@@ -82,32 +73,48 @@ export const dockVariants = tv({
       "data-[direction=backward]:slide-in-from-left-2",
     ],
     rail: "flex-row items-center",
-    panel: "flex-col items-stretch",
-    railItem: [...controlBase, "justify-center", "active:scale-[0.96]"],
-    // A row is as wide as the panel, so it presses to 0.99: 0.96 across a 224px box reads as a
-    // lurch, not a press (ARCHITECTURE §5, "wide surfaces are the exception").
-    // The current row also gains weight, not just a chip: on the floating surface the active fill
-    // and the hover fill are the same `accent`, so colour alone cannot say which row you are on.
-    // Same answer the Sidebar gives its active item.
+    // The panel IS a DropdownMenu surface, row for row (see `dropdownMenuVariants`): 4px of
+    // container padding, rows of 8px padding, so every icon, label, shortcut and caret sits 12px
+    // from the outer edge. No gap between rows, exactly like the menu. What differs is behaviour
+    // (the box morphs out of the rail, groups drill in place), never anatomy.
+    panel: "min-w-56 flex-col items-stretch p-1",
+    railItem: [
+      ...controlBase,
+      "justify-center",
+      // Hit extender (#9), vertical-only so a rail icon never steals its neighbour's tap.
+      hitY,
+      // Specific transition (#14), never `transition: all`. `scale` is named because in Tailwind v4
+      // `scale-*` compiles to the standalone `scale` property, so `transition-colors` alone would
+      // make the press snap instead of ease.
+      "transition-[background-color,color,scale] duration-fast ease-out",
+      "active:scale-[0.96] motion-reduce:transition-none motion-reduce:active:scale-100",
+      "focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1",
+      "disabled:pointer-events-none disabled:opacity-40",
+    ],
+    // DropdownMenuItem's row: text-sm/500 label, 20px muted leading icon 8px from it, rounded-md
+    // (the panel's rounded-lg minus its 4px padding), highlight = the accent fill, keyboard focus
+    // included, no ring and no press-scale. Height comes from `density`, like the menu's.
+    // The current row also gains weight: its fill is the same one hover paints, so the fill alone
+    // cannot say which row you are on. Same answer the Sidebar gives its active item.
     panelItem: [
       ...controlBase,
-      "w-full justify-start font-medium data-[active]:font-semibold",
-      "active:scale-[0.99]",
+      "w-full justify-start gap-2 rounded-md px-2 text-sm font-medium",
+      "transition-colors duration-fast ease-out motion-reduce:transition-none",
+      "disabled:pointer-events-none disabled:opacity-50",
+      "[&_svg:not([class*='size-'])]:size-5 data-[active]:font-semibold",
     ],
     // `w-max` above means a label never wraps; nowrap keeps that true when a consumer pins a
     // width on the root.
     itemLabel: "whitespace-nowrap",
-    // "There is more behind this row." Pinned to the far edge, on the same line as the label.
-    itemCaret: "ml-auto",
-    // The row's shortcut. A `ghost` Kbd, never a raised cap: a keycap with its own fill inside a
-    // row that already has one reads as a second, competing control (Kbd's own rule). The dock's
-    // variant tints it, because a default chip is `bg-foreground/8` and would vanish on the
-    // inverted slab.
+    // "There is more behind this row." DropdownMenuSubTrigger's caret: 16px, on the 12px edge line.
+    itemCaret: "ml-auto size-4",
+    // The row's shortcut: DropdownMenuShortcut's gray chip, on the same 12px edge line. The solid
+    // variant re-tints it, because a `bg-foreground/8` chip would vanish on the inverted slab.
     itemShortcut: "ml-auto",
-    // A caption above a run of rows, for a panel long enough to need sorting into topics. Never
-    // in the rail: there is no room for a word, and the tooltips already name each icon.
-    label: "select-none font-medium",
-    separator: "shrink-0 rounded-full",
+    // A caption above a run of rows (DropdownMenuLabel). Never in the rail: there is no room for
+    // a word, and the tooltips already name each icon.
+    label: "select-none px-2 text-xs font-medium",
+    separator: "shrink-0",
   },
   variants: {
     // NOTE: in a slotted recipe every variant value MUST be a `{ slot: "…" }` object. A bare
@@ -117,22 +124,32 @@ export const dockVariants = tv({
       // or a video. It reads dark on the light themes and light on the dark ones because it flips
       // foreground↔background rather than hardcoding black, the same trick the Toolbar's `solid`
       // plays. Declares `--surface` so anything nested blends onto it.
+      //
+      // One highlight tone for hover, keyboard focus and the current destination: the house accent
+      // re-tinted for an inverted surface. A dark slab (light themes) takes the dark themes' accent
+      // step (/8); a light slab (dark themes, the `dark:` pair) takes the light theme's far fainter
+      // one (/4), so the current icon never reads as a grey button pressed into a white pill.
+      // Where you are is said in ink, never in brand: full-strength glyph against 70% ones.
       solid: {
         root: "bg-foreground text-background [--surface:var(--foreground)]",
-        // Where you are is BRAND, not a brighter grey: the chip says "this row", the brand glyph
-        // says "this is the one you are on" (see the Sidebar's active item). It is also the one
-        // spot of colour in the whole component, so the dock reads as ours at a glance.
-        railItem:
-          "text-background/70 hover:bg-background/15 hover:text-background data-[active]:bg-background/20 data-[active]:text-brand focus-visible:ring-offset-foreground",
+        railItem: [
+          "text-background/70 focus-visible:ring-offset-foreground",
+          "hover:bg-background/8 hover:text-background dark:hover:bg-background/4",
+          "data-[active]:bg-background/8 data-[active]:text-background dark:data-[active]:bg-background/4",
+        ],
         // A panel row is reading text, so it rests at full strength and lets the leading icon
         // carry the hierarchy at 60%: the house menu-row pattern, re-tinted for an inverted
         // surface (muted-foreground would be invisible here).
-        panelItem:
-          "text-background hover:bg-background/12 data-[active]:bg-background/20 focus-visible:ring-offset-foreground [&>svg]:text-background/60 data-[active]:[&>svg]:text-brand",
-        itemCaret: "text-background/50",
-        itemShortcut: "text-background/50",
-        label: "text-background/45",
-        separator: "bg-background/25",
+        panelItem: [
+          "text-background [&>svg]:text-background/60 data-[active]:[&>svg]:text-background",
+          "hover:bg-background/8 dark:hover:bg-background/4",
+          "focus-visible:bg-background/8 dark:focus-visible:bg-background/4",
+          "data-[active]:bg-background/8 dark:data-[active]:bg-background/4",
+        ],
+        itemCaret: "text-background/60",
+        itemShortcut: "bg-background/10 text-background/70",
+        label: "text-background/60",
+        separator: "bg-background/15",
       },
       // Floating (default): the house's elevated popover surface. It is the default because a
       // dock is chrome, and chrome should inherit the page's theme rather than punch a slab of
@@ -141,51 +158,51 @@ export const dockVariants = tv({
       floating: {
         root: "bg-popover text-popover-foreground ring-1 ring-inset ring-border [--surface:var(--popover)]",
         railItem:
-          "text-muted-foreground hover:bg-accent hover:text-foreground data-[active]:bg-accent data-[active]:text-brand focus-visible:ring-offset-popover",
-        panelItem:
-          "text-foreground hover:bg-accent data-[active]:bg-accent focus-visible:ring-offset-popover [&>svg]:text-muted-foreground data-[active]:[&>svg]:text-brand",
+          "text-muted-foreground hover:bg-accent hover:text-foreground data-[active]:bg-accent data-[active]:text-foreground focus-visible:ring-offset-popover",
+        panelItem: [
+          "text-popover-foreground [&>svg]:text-muted-foreground data-[active]:[&>svg]:text-foreground",
+          "hover:bg-accent hover:text-accent-foreground",
+          "focus-visible:bg-accent focus-visible:text-accent-foreground",
+          "data-[active]:bg-accent data-[active]:text-accent-foreground",
+        ],
         itemCaret: "text-muted-foreground",
-        itemShortcut: "text-muted-foreground",
+        itemShortcut: "",
         label: "text-muted-foreground",
         separator: "bg-border",
       },
     },
     /**
-     * `size` is the dock's OWN density axis, deliberately not the page's comfortable/compact
-     * knob (same call as Toolbar): a floating control bar that shrinks to form-compact becomes
-     * hard to hit. Each step is built on one identity, **8px padding + half the icon button =
-     * the rail's corner**, so the buttons come out as true circles AND concentric inside the
-     * pill at every size (24 − 8 = 16 = 32/2, 28 − 8 = 20 = 40/2, 32 − 8 = 24 = 48/2).
+     * `size` is the RAIL's density axis, deliberately not the page's comfortable/compact knob
+     * (same call as Toolbar): a floating control bar that shrinks to form-compact becomes hard to
+     * hit. Each step is built on one identity, **4px padding + half the icon button = the rail's
+     * corner**, so the buttons come out as true circles AND concentric inside the pill at every
+     * size (16 − 4 = 12 = 24/2, 20 − 4 = 16 = 32/2, 24 − 4 = 20 = 40/2). The 4px is the panel's
+     * own padding, and the md button is a compact row's height with the same 20px glyph, so the
+     * rail is the panel's rows laid on their side: one object at one scale in both shapes, never
+     * a chunky capsule that turns thin when it opens. hitY still grows each icon to 40px tall.
+     * The panel ignores `size`: a menu is a menu, so it follows `density` like every DropdownMenu.
      */
     size: {
       sm: {
-        layer: "gap-0.5 p-2",
-        panel: "min-w-48",
-        railItem: "size-8 rounded-lg [&_svg:not([class*='size-'])]:size-4",
-        panelItem: "min-h-8 gap-2 rounded-md px-2 text-sm [&_svg:not([class*='size-'])]:size-4",
-        itemCaret: "size-3",
-        label: "px-2 pt-1.5 pb-1 text-xs",
-        separator: "",
+        rail: "gap-0.5 p-1",
+        railItem: "size-6 rounded-md [&_svg:not([class*='size-'])]:size-4",
       },
       md: {
-        layer: "gap-1 p-2",
-        panel: "min-w-56 gap-0.5",
-        railItem: "size-10 rounded-xl [&_svg:not([class*='size-'])]:size-5",
-        panelItem: "min-h-10 gap-2.5 rounded-lg px-2 text-sm [&_svg:not([class*='size-'])]:size-5",
-        itemCaret: "size-4",
-        label: "px-2 pt-2 pb-1 text-xs",
-        separator: "",
+        rail: "gap-1 p-1",
+        railItem: "size-8 rounded-lg [&_svg:not([class*='size-'])]:size-5",
       },
       lg: {
-        layer: "gap-1 p-2",
-        panel: "min-w-64 gap-1",
-        railItem: "size-12 rounded-2xl [&_svg:not([class*='size-'])]:size-6",
-        panelItem:
-          "min-h-12 gap-3 rounded-xl px-2.5 text-base [&_svg:not([class*='size-'])]:size-6",
-        itemCaret: "size-4",
-        label: "px-2.5 pt-2.5 pb-1.5 text-xs",
-        separator: "",
+        rail: "gap-1 p-1",
+        railItem: "size-10 rounded-xl [&_svg:not([class*='size-'])]:size-6",
       },
+    },
+    /**
+     * The panel's row height, the same two steps as DropdownMenu: 36px comfortable (py-2 around a
+     * 20px line), 32px compact (py-1.5). Radius and edge inset never move with it.
+     */
+    density: {
+      comfortable: { panelItem: "py-2", label: "py-1.5" },
+      compact: { panelItem: "py-1.5", label: "py-1" },
     },
     /**
      * The shape the box is currently in. It drives the corner (below, per size) and flips the
@@ -193,25 +210,29 @@ export const dockVariants = tv({
      * and in a column.
      */
     expanded: {
-      true: { separator: "my-1 h-px w-full" },
-      false: { separator: "mx-1 h-5 w-px" },
+      // -mx-0.75, like the menu's rule: it stops at the ring's inner edge instead of painting over
+      // it. No `w-full`: the column stretches it, and a percentage width would cancel the bleed.
+      true: { separator: "-mx-0.75 h-px" },
+      false: { separator: "mx-1 h-5 w-px rounded-full" },
     },
   },
   compoundVariants: [
     // Collapsed, the box is a true pill: the corner is exactly half the rail's height
-    // (8 + button + 8), so it reads as a capsule rather than a rounded rectangle.
-    { expanded: false, size: "sm", class: { root: "rounded-2xl" } },
-    { expanded: false, size: "md", class: { root: "rounded-3xl" } },
-    { expanded: false, size: "lg", class: { root: "rounded-4xl" } },
-    // Expanded, it steps one notch down the radius scale (a panel, not a capsule) and stays
-    // concentric with its rows (panel corner − 8px padding = the row's corner).
-    { expanded: true, size: "sm", class: { root: "rounded-xl" } },
-    { expanded: true, size: "md", class: { root: "rounded-2xl" } },
-    { expanded: true, size: "lg", class: { root: "rounded-3xl" } },
+    // (4 + button + 4), so it reads as a capsule rather than a rounded rectangle.
+    { expanded: false, size: "sm", class: { root: "rounded-lg" } },
+    { expanded: false, size: "md", class: { root: "rounded-xl" } },
+    { expanded: false, size: "lg", class: { root: "rounded-2xl" } },
+    // Expanded, it is the DropdownMenu surface at every size: rounded-lg (16) over 4px of padding
+    // over rounded-md (12) rows, concentric.
+    { expanded: true, class: { root: "rounded-lg" } },
+    // The panel's rule breathes like the menu's; the rail's tick keeps its own margins.
+    { expanded: true, density: "comfortable", class: { separator: "my-1.5" } },
+    { expanded: true, density: "compact", class: { separator: "my-1" } },
   ],
   defaultVariants: {
     variant: "floating",
     size: "md",
+    density: "comfortable",
     expanded: false,
   },
 })
@@ -232,7 +253,7 @@ interface DockContextValue {
   /** What opens the dock: a click on the expander, or hovering it. */
   trigger: "click" | "hover"
   closeOnSelect: boolean
-  /** Disable the tactile press-scale on every control. */
+  /** Disable the tactile press-scale on the rail icons. */
   isStatic: boolean
   tooltipPlacement: TooltipProps["placement"]
   /** Hover mode: the pointer came back before the grace period ran out. */
@@ -268,13 +289,14 @@ export interface DockProps
   closeOnSelect?: boolean
   /** Tooltip placement for the collapsed icons. @default "top" */
   tooltipPlacement?: TooltipProps["placement"]
-  /** Disable the tactile scale-on-press across the dock. */
+  /** Disable the tactile scale-on-press on the rail icons (panel rows never scale, like menu rows). */
   static?: boolean
 }
 
 export function Dock({
   className,
   variant,
+  density,
   size,
   expanded: expandedProp,
   defaultExpanded = false,
@@ -409,7 +431,7 @@ export function Dock({
 
   React.useEffect(() => cancelClose, [cancelClose])
 
-  const slots = dockVariants({ variant, size, expanded })
+  const slots = dockVariants({ variant, size, density: useDensity(density), expanded })
 
   return (
     <DockProvider
@@ -527,12 +549,7 @@ function DockControl({
         {label}
       </span>
       {shortcut && (
-        <Kbd
-          size="sm"
-          variant="ghost"
-          data-slot="dock-item-shortcut"
-          className={slots.itemShortcut()}
-        >
+        <Kbd size="sm" data-slot="dock-item-shortcut" className={slots.itemShortcut()}>
           {shortcut}
         </Kbd>
       )}
@@ -561,9 +578,11 @@ function DockControl({
       disabled={disabled}
       asChild={asChild}
       onClick={onSelect}
-      className={(expanded ? slots.panelItem : slots.railItem)({
-        className: cn(isStatic && "active:scale-100", className),
-      })}
+      className={
+        expanded
+          ? slots.panelItem({ className })
+          : slots.railItem({ className: cn(isStatic && "active:scale-100", className) })
+      }
     >
       {inner}
     </ToolbarPrimitive.Button>

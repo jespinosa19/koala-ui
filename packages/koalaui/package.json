@@ -1,6 +1,6 @@
 {
   "name": "koalaui-cli",
-  "version": "0.6.0",
+  "version": "0.7.1",
   "description": "Add Koala UI components to your React project: copies the source in, you own the code.",
   "type": "module",
   "// name": "npm refuses `koalaui`: it is too close to an unrelated package called koala-ui, and the @koalaui scope belongs to someone else. The published name carries the -cli suffix; the command it installs stays `koalaui`, with `koalaui-cli` as an alias so both spellings work.",
@@ -14,7 +14,7 @@
     "README.md",
     "LICENSE"
   ],
-  "author": "Koala UI (https://koala-ui.vercel.app)",
+  "author": "Koala UI (https://www.koalaui.com)",
   "keywords": [
     "koala-ui",
     "react",
@@ -23,7 +23,7 @@
     "radix",
     "design-system"
   ],
-  "homepage": "https://koala-ui.vercel.app",
+  "homepage": "https://www.koalaui.com",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jespinosa19/koala-ui.git"

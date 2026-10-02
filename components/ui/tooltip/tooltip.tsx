@@ -46,9 +46,8 @@ export const tooltipVariants = tv({
     // trades the tight label padding for room to breathe.
     variant: {
       // The hint: an inverted chip, the page's ink as its ground and no border, so a short label
-      // reads at a glance and never passes for a card (the same call AlignUI, Untitled UI and
-      // Linear make). Centered, gap 4px, padding 4px 8px, medium weight: 12px stays legible on
-      // the inverted ground.
+      // reads at a glance and never passes for a card. Centered, gap 4px, padding 4px 8px,
+      // medium weight: 12px stays legible on the inverted ground.
       text: "items-center justify-center gap-1 rounded-md bg-foreground px-2 py-1 font-medium text-background shadow-md [--surface:var(--foreground)]",
       // The card: Popover's own shell (soft border, lg radius, lg shadow on the popover
       // surface), left-aligned, padding 8px 12px so multi-line content isn't cramped. The gap
@@ -645,6 +644,13 @@ function GroupTooltip({
   // `content`/`placement` stay on the instance's props so the group can read them on hover.
   React.useEffect(() => {
     if (!triggerEl) return
+    // The shared bubble measures this trigger through this function (the group lists it in
+    // `overrides`), never through tippy's default, which reads `references[index]` with the index
+    // it saw on hover. That list shifts whenever a trigger mounts or unmounts (a Dock swapping its
+    // layer, a chart losing columns), so the old index measured the wrong trigger, or `undefined`,
+    // and Popper threw. A trigger that has left the page answers with where it last was, so the
+    // bubble never jumps to the corner in the moment before the group closes it.
+    let lastRect: DOMRect | null = null
     const instance = tippy(triggerEl, {
       // Required by headless tippy, but never shown — the singleton owns display.
       render: () => ({ popper: document.createElement("div") }),
@@ -653,6 +659,10 @@ function GroupTooltip({
       content: content as unknown as Content,
       placement,
       trigger: trigger ?? "mouseenter focus",
+      getReferenceClientRect: () => {
+        if (triggerEl.isConnected || !lastRect) lastRect = triggerEl.getBoundingClientRect()
+        return lastRect
+      },
     }) as Instance
     instanceRef.current = instance
     const unregister = register(instance)
@@ -722,6 +732,8 @@ export function TooltipGroup({
   const [container, setContainer] = React.useState<HTMLDivElement | null>(null)
   const singletonRef = React.useRef<CreateSingletonInstance | null>(null)
   const instancesRef = React.useRef<Instance[]>([])
+  // The trigger the shared bubble is showing (or about to show) for.
+  const activeRef = React.useRef<Element | null>(null)
 
   // Push the current trigger list onto the singleton (no-op until it's created below).
   const syncInstances = React.useCallback(() => {
@@ -736,6 +748,15 @@ export function TooltipGroup({
       syncInstances()
       return () => {
         instancesRef.current = instancesRef.current.filter((i) => i !== instance)
+        // The trigger under the bubble is leaving (a view swapped under the pointer). A removed node
+        // never sends the `mouseleave` that would close it, so close it here, along with a show
+        // still waiting on its delay.
+        const singleton = singletonRef.current
+        if (singleton && activeRef.current === instance.reference) {
+          activeRef.current = null
+          singleton.clearDelayTimeouts()
+          singleton.hide()
+        }
         syncInstances()
       }
     },
@@ -750,8 +771,16 @@ export function TooltipGroup({
       // live here; the per-trigger instances are disabled and never show.
       ...positioning,
       ...focusGate,
-      // Per-trigger placement wins; `content` always tracks the hovered trigger.
-      overrides: ["placement"],
+      onTrigger(instance, event) {
+        focusGate.onTrigger(instance, event)
+        activeRef.current = event.currentTarget as Element
+      },
+      onHidden() {
+        activeRef.current = null
+      },
+      // Per-trigger placement and measuring win (see GroupTooltip); `content` always tracks the
+      // hovered trigger.
+      overrides: ["placement", "getReferenceClientRect"],
       delay: delay as Props["delay"],
       offset: offset as [number, number],
       appendTo: mountPoint,

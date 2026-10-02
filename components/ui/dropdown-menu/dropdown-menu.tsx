@@ -2,11 +2,12 @@
 
 import * as React from "react"
 import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui"
-import { CaretRight, Check } from "@phosphor-icons/react"
+import { ArrowLeft, CaretRight, Check } from "@phosphor-icons/react"
 
 import { tv, type VariantProps } from "@/lib/tv"
 import { cn } from "@/lib/utils"
 import { useDensity } from "@/lib/density"
+import { duration, easing, prefersReducedMotion } from "@/lib/motion"
 import { Kbd } from "@/components/ui/kbd"
 import { SwitchIndicator } from "@/components/ui/switch"
 
@@ -83,6 +84,15 @@ export const dropdownMenuVariants = tv({
     // it. --border carries alpha on dark themes, so an overlap would brighten both ends.
     separator: "-mx-0.75 h-px bg-border",
     subCaret: "ml-auto size-4 text-muted-foreground",
+    // `submenu="navigation"`: the box that animates the menu's height between layers. It bleeds
+    // over the content's p-1 (-mx-1 px-1) so a separator's -mx-0.75 reaches the ring instead of
+    // being clipped 4px short. `data-[ready]` withholds the tween until the first measurement,
+    // so the menu never grows in from zero as it opens.
+    navigationViewport: [
+      "-mx-1 overflow-hidden px-1",
+      "data-[ready]:transition-[height] data-[ready]:duration-base data-[ready]:ease-out",
+      "motion-reduce:transition-none",
+    ],
   },
   variants: {
     // 12px edge inset, both sides, both densities: content p-1 (4) + row px-2 (8). Leading
@@ -138,8 +148,40 @@ export const DropdownMenu = DropdownMenuPrimitive.Root
 export const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger
 export const DropdownMenuGroup = DropdownMenuPrimitive.Group
 export const DropdownMenuRadioGroup = DropdownMenuPrimitive.RadioGroup
-export const DropdownMenuSub = DropdownMenuPrimitive.Sub
 export const DropdownMenuPortal = DropdownMenuPrimitive.Portal
+
+// ─── Navigation submenus ──────────────────────────────────────────────────────
+// `submenu="navigation"` trades the flyout for a drill-down: a sub-menu opens IN PLACE, its rows
+// replacing the menu's behind a Back row, and the surface resizes to fit. The same tree describes
+// every layer; each part renders only while its own layer is the one on screen (the Dock's model,
+// on the menu's anatomy). Plain React contexts rather than `createContext`: in the default nested
+// mode there is no provider, and that absence is how a part knows to be a plain Radix part.
+
+interface MenuNavigation {
+  /** The open branch, one sub id per level. Empty = the menu's own rows. */
+  path: string[]
+  /** Enter `id`'s layer from `depth`, truncating any deeper branch. */
+  openLayer: (depth: number, id: string) => void
+  /** Leave the current layer for its parent. */
+  back: () => void
+}
+
+const MenuNavigationContext = React.createContext<MenuNavigation | null>(null)
+// The layer a part belongs to: 0 for the content's own rows, one deeper inside each sub.
+const MenuLayerContext = React.createContext(0)
+// The sub a trigger and its content belong to (navigation mode only).
+const MenuSubContext = React.createContext<{ id: string; depth: number } | null>(null)
+
+/** In navigation mode, true for a part whose layer is not the one on screen. */
+function useOffLayer() {
+  const navigation = React.useContext(MenuNavigationContext)
+  const depth = React.useContext(MenuLayerContext)
+  return navigation !== null && navigation.path.length !== depth
+}
+
+function isRtl(element: Element) {
+  return getComputedStyle(element).direction === "rtl"
+}
 
 export interface DropdownMenuContentProps
   extends React.ComponentProps<typeof DropdownMenuPrimitive.Content>,
@@ -150,6 +192,13 @@ export interface DropdownMenuContentProps
    * on the body would open invisibly behind a full-screen player or file preview.
    */
   container?: HTMLElement | null
+  /**
+   * How a `DropdownMenuSub` opens. `nested` (the default) flies its menu out beside the row.
+   * `navigation` drills in place: the sub's rows replace the menu's behind a Back row, and the
+   * surface resizes to fit. Reach for it when a menu is deep, or has no room beside it.
+   * @default "nested"
+   */
+  submenu?: "nested" | "navigation"
 }
 
 export function DropdownMenuContent({
@@ -157,21 +206,180 @@ export function DropdownMenuContent({
   sideOffset = 6,
   density,
   container,
+  submenu = "nested",
+  children,
+  onKeyDown,
+  onPointerDown,
+  onEscapeKeyDown,
+  onCloseAutoFocus,
   ...props
 }: DropdownMenuContentProps) {
   const slots = dropdownMenuVariants({ density: useDensity(density) })
   // Read as the menu opens (the content mounts on open); there is no full screen on the server.
   const fullscreen = typeof document === "undefined" ? null : (document.fullscreenElement as HTMLElement | null)
+
+  const [path, setPath] = React.useState<string[]>([])
+  // What drove the last layer change. A keyboard user has to land on a row of the new layer; a
+  // pointer user must not get one lit up under a cursor that is somewhere else.
+  const input = React.useRef<"keyboard" | "pointer">("pointer")
+  const openLayer = React.useCallback((depth: number, id: string) => {
+    setPath((current) => [...current.slice(0, depth), id])
+  }, [])
+  const back = React.useCallback(() => setPath((current) => current.slice(0, -1)), [])
+  const navigation = React.useMemo(
+    () => (submenu === "navigation" ? { path, openLayer, back } : null),
+    [submenu, path, openLayer, back],
+  )
+
   return (
     <DropdownMenuPrimitive.Portal container={container ?? fullscreen ?? undefined}>
       <DropdownMenuPrimitive.Content
         data-slot="dropdown-menu-content"
+        data-submenu={submenu}
         sideOffset={sideOffset}
         className={slots.content({ className })}
+        onPointerDown={(event) => {
+          input.current = "pointer"
+          onPointerDown?.(event)
+        }}
+        onKeyDown={(event) => {
+          input.current = "keyboard"
+          onKeyDown?.(event)
+          // The key that closes a flyout (ArrowLeft, ArrowRight in RTL) steps back one layer.
+          if (event.defaultPrevented || !navigation || navigation.path.length === 0) return
+          if (event.key === (isRtl(event.currentTarget) ? "ArrowRight" : "ArrowLeft")) {
+            event.preventDefault()
+            back()
+          }
+        }}
+        onEscapeKeyDown={(event) => {
+          onEscapeKeyDown?.(event)
+          // Escape undoes one decision at a time: back out of a layer before closing the menu.
+          if (event.defaultPrevented || !navigation || navigation.path.length === 0) return
+          event.preventDefault()
+          input.current = "keyboard"
+          back()
+        }}
+        onCloseAutoFocus={(event) => {
+          onCloseAutoFocus?.(event)
+          // The menu has unmounted: the next open starts from its own rows, not the last branch.
+          setPath([])
+        }}
         {...props}
-      />
+      >
+        {navigation ? (
+          <MenuNavigationContext.Provider value={navigation}>
+            <MenuNavigationViewport className={slots.navigationViewport()} path={path} input={input}>
+              {children}
+            </MenuNavigationViewport>
+          </MenuNavigationContext.Provider>
+        ) : (
+          children
+        )}
+      </DropdownMenuPrimitive.Content>
     </DropdownMenuPrimitive.Portal>
   )
+}
+
+/**
+ * Navigation mode's stage: animates the menu's height between layers, slides the new layer in
+ * from the side it came from, and puts focus somewhere sensible once the row that held it is gone.
+ * It mounts with the content, so its measurement starts fresh on every open.
+ */
+function MenuNavigationViewport({
+  className,
+  path,
+  input,
+  children,
+}: {
+  className: string
+  path: string[]
+  input: React.RefObject<"keyboard" | "pointer">
+  children: React.ReactNode
+}) {
+  const viewportRef = React.useRef<HTMLDivElement>(null)
+  const [height, setHeight] = React.useState<number | null>(null)
+
+  // Measured from an inner box that keeps its natural height while the clip around it tweens, so
+  // every layer change writes where the menu is *going* and CSS eases between the two.
+  React.useLayoutEffect(() => {
+    const viewport = viewportRef.current
+    if (!viewport) return
+    const measure = () => setHeight(viewport.offsetHeight)
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(viewport)
+    return () => observer.disconnect()
+  }, [])
+
+  const layer = path.join("/")
+  const shown = React.useRef({ layer, path })
+  React.useEffect(() => {
+    const previous = shown.current
+    if (previous.layer === layer) return
+    shown.current = { layer, path }
+    const viewport = viewportRef.current
+    if (!viewport) return
+
+    // In, or back out. WAAPI rather than a re-keyed CSS animation: re-keying would remount every
+    // sub on the way, and a sub's identity is minted on mount.
+    const forward = path.length > previous.path.length
+    if (typeof viewport.animate === "function" && !prefersReducedMotion()) {
+      const offset = (forward ? 8 : -8) * (isRtl(viewport) ? -1 : 1)
+      viewport.animate(
+        [
+          { opacity: 0, transform: `translateX(${offset}px)` },
+          { opacity: 1, transform: "none" },
+        ],
+        { duration: duration.base, easing: easing.out },
+      )
+    }
+
+    if (input.current === "keyboard") {
+      // Going in lands on the layer's first row (its Back row); coming back lands on the row
+      // that opened the layer you just left, so you are where you were.
+      const left = forward ? null : previous.path[previous.path.length - 1]
+      const target =
+        (left && viewport.querySelector<HTMLElement>(`[data-menu-sub="${CSS.escape(left)}"]`)) ||
+        viewport.querySelector<HTMLElement>('[role^="menuitem"]:not([data-disabled])')
+      target?.focus({ preventScroll: true })
+    } else {
+      // The focused row unmounted with its layer; hand focus to the menu itself so arrow keys and
+      // typeahead keep working (a modal menu's focus trap does this too, a non-modal one does not).
+      const content = viewport.closest<HTMLElement>('[data-slot="dropdown-menu-content"]')
+      if (content && !content.contains(document.activeElement)) content.focus({ preventScroll: true })
+    }
+  }, [layer, path, input])
+
+  return (
+    <div
+      data-slot="dropdown-menu-navigation"
+      data-ready={height === null ? undefined : ""}
+      style={height === null ? undefined : { height }}
+      className={className}
+    >
+      <div ref={viewportRef}>{children}</div>
+    </div>
+  )
+}
+
+export type DropdownMenuSubProps = React.ComponentProps<typeof DropdownMenuPrimitive.Sub>
+
+/**
+ * A sub-menu: a `DropdownMenuSubTrigger` row plus the `DropdownMenuSubContent` it opens. How it
+ * opens is the content's call (`submenu`): a flyout beside the row, or a layer that replaces the
+ * rows in place. In navigation mode `open`/`onOpenChange` do not apply; the open branch belongs
+ * to the menu.
+ */
+export function DropdownMenuSub(props: DropdownMenuSubProps) {
+  const navigation = React.useContext(MenuNavigationContext)
+  const depth = React.useContext(MenuLayerContext)
+  // Minted on mount, which is safe here (the Dock's keyed layer could not use it): nothing
+  // remounts an open sub, since layers swap by rendering null and the entrance runs on WAAPI.
+  const id = React.useId()
+  const sub = React.useMemo(() => ({ id, depth }), [id, depth])
+  if (!navigation) return <DropdownMenuPrimitive.Sub {...props} />
+  return <MenuSubContext.Provider value={sub}>{props.children}</MenuSubContext.Provider>
 }
 
 export interface DropdownMenuItemProps
@@ -189,6 +397,8 @@ export function DropdownMenuItem({
   ...props
 }: DropdownMenuItemProps) {
   const slots = dropdownMenuVariants({ density: useDensity(density), variant })
+  // Navigation mode: a row that is not on the layer on screen is not hidden, it is not mounted.
+  if (useOffLayer()) return null
   return (
     <DropdownMenuPrimitive.Item
       data-slot="dropdown-menu-item"
@@ -255,6 +465,7 @@ export function DropdownMenuCheckboxItem({
   ...props
 }: DropdownMenuCheckboxItemProps) {
   const slots = dropdownMenuVariants({ density: useDensity(density), indicator: variant })
+  if (useOffLayer()) return null
   return (
     <DropdownMenuPrimitive.CheckboxItem
       data-slot="dropdown-menu-checkbox-item"
@@ -300,6 +511,7 @@ export function DropdownMenuRadioItem({
   ...props
 }: DropdownMenuRadioItemProps) {
   const slots = dropdownMenuVariants({ density: useDensity(density) })
+  if (useOffLayer()) return null
   return (
     <DropdownMenuPrimitive.RadioItem
       data-slot="dropdown-menu-radio-item"
@@ -332,6 +544,7 @@ export function DropdownMenuLabel({
   ...props
 }: DropdownMenuLabelProps) {
   const slots = dropdownMenuVariants({ density: useDensity(density) })
+  if (useOffLayer()) return null
   return (
     <DropdownMenuPrimitive.Label
       data-slot="dropdown-menu-label"
@@ -348,6 +561,7 @@ export function DropdownMenuSeparator({
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Separator> &
   VariantProps<typeof dropdownMenuVariants>) {
   const slots = dropdownMenuVariants({ density: useDensity(density) })
+  if (useOffLayer()) return null
   return (
     <DropdownMenuPrimitive.Separator
       data-slot="dropdown-menu-separator"
@@ -387,6 +601,42 @@ export function DropdownMenuSubTrigger({
   ...props
 }: DropdownMenuSubTriggerProps) {
   const slots = dropdownMenuVariants({ density: useDensity(density) })
+  const navigation = React.useContext(MenuNavigationContext)
+  const sub = React.useContext(MenuSubContext)
+  const offLayer = useOffLayer()
+
+  if (navigation && sub) {
+    if (offLayer) return null
+    const { onKeyDown, ...rest } = props
+    const open = () => navigation.openLayer(sub.depth, sub.id)
+    // A plain item that changes the layer. Same row, same caret: only what pressing it does differs.
+    return (
+      <DropdownMenuPrimitive.Item
+        data-slot="dropdown-menu-sub-trigger"
+        data-menu-sub={sub.id}
+        className={slots.subTrigger({ className: cn(inset && "pl-9", className) })}
+        {...rest}
+        onSelect={(event) => {
+          // Stay open: this row moves you somewhere, it does not choose anything.
+          event.preventDefault()
+          open()
+        }}
+        onKeyDown={(event) => {
+          onKeyDown?.(event)
+          // The key that opens a flyout (ArrowRight, ArrowLeft in RTL) drills in.
+          if (event.defaultPrevented) return
+          if (event.key === (isRtl(event.currentTarget) ? "ArrowLeft" : "ArrowRight")) {
+            event.preventDefault()
+            open()
+          }
+        }}
+      >
+        {children}
+        <CaretRight weight="bold" className={slots.subCaret()} />
+      </DropdownMenuPrimitive.Item>
+    )
+  }
+
   return (
     <DropdownMenuPrimitive.SubTrigger
       data-slot="dropdown-menu-sub-trigger"
@@ -401,19 +651,58 @@ export function DropdownMenuSubTrigger({
 
 export interface DropdownMenuSubContentProps
   extends React.ComponentProps<typeof DropdownMenuPrimitive.SubContent>,
-    VariantProps<typeof dropdownMenuVariants> {}
+    VariantProps<typeof dropdownMenuVariants> {
+  /**
+   * Navigation mode only: the label of the row that returns to the parent layer.
+   * @default "Back"
+   */
+  backLabel?: string
+}
 
 export function DropdownMenuSubContent({
   className,
   density,
+  backLabel = "Back",
+  children,
   ...props
 }: DropdownMenuSubContentProps) {
   const slots = dropdownMenuVariants({ density: useDensity(density) })
+  const navigation = React.useContext(MenuNavigationContext)
+  const sub = React.useContext(MenuSubContext)
+
+  if (navigation && sub) {
+    if (navigation.path[sub.depth] !== sub.id) return null
+    // Open, but not necessarily on screen: a deeper sub may be open inside it. Only the layer
+    // actually showing contributes its Back row, or every ancestor would stack one.
+    const current = navigation.path.length === sub.depth + 1
+    // No surface of its own (so no `className`): its rows take the menu's place, at its width.
+    return (
+      <MenuLayerContext.Provider value={sub.depth + 1}>
+        {current && (
+          <DropdownMenuPrimitive.Item
+            data-slot="dropdown-menu-back"
+            className={slots.item()}
+            onSelect={(event) => {
+              event.preventDefault()
+              navigation.back()
+            }}
+          >
+            <ArrowLeft weight="bold" />
+            {backLabel}
+          </DropdownMenuPrimitive.Item>
+        )}
+        {children}
+      </MenuLayerContext.Provider>
+    )
+  }
+
   return (
     <DropdownMenuPrimitive.SubContent
       data-slot="dropdown-menu-sub-content"
       className={slots.subContent({ className })}
       {...props}
-    />
+    >
+      {children}
+    </DropdownMenuPrimitive.SubContent>
   )
 }

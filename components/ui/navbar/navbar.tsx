@@ -17,6 +17,7 @@ import {
   type InputRootProps,
   type InputFieldProps,
 } from "@/components/ui/input"
+import { ExpandableSearch } from "@/components/ui/expandable-search"
 
 /**
  * Navbar: multi-part top navigation bar for marketing, product, and ecommerce shells.
@@ -30,8 +31,9 @@ import {
  * in `NavbarActions`.
  *
  * `linkStyle` is the one thing composition can't express, because it changes what a link IS:
- * a ghost chip floating in the bar (`pill`) or a full-height tab welded to its bottom rule
- * (`underline`). Everything else about a bar is the parts you assemble.
+ * a ghost chip floating in the bar (`pill`), a full-height tab welded to its bottom rule
+ * (`underline`), or a plain word that lights up (`text`). Everything else about a bar is the
+ * parts you assemble.
  */
 export const navbarVariants = tv({
   slots: {
@@ -68,18 +70,25 @@ export const navbarVariants = tv({
       "[&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:caret-turn-fast [&[data-state=open]_svg]:rotate-180",
       // polish: ≥40px vertical hit target, never overlapping a horizontal neighbor.
       hitY,
-      // Active affordance: a soft-capped brand underline pinned to the bottom rule of the
-      // bar (like a tab indicator), not tucked under the label. The link is h-9, centered
-      // in the h-16/h-14 bar, so the vertical offset to reach the rule is density-specific
-      // (see the density variant below: (barH − 36) / 2).
+      // Every style shows the current page at full-strength ink; the indicator that rides with
+      // it (if any) belongs to the linkStyle below.
       "data-[active=true]:text-foreground",
-      "data-[active=true]:after:absolute data-[active=true]:after:inset-x-3 data-[active=true]:after:h-0.5 data-[active=true]:after:rounded-full data-[active=true]:after:bg-brand",
     ],
     // Right-hand action cluster (buttons, search, cart, avatar…).
-    actions: "flex shrink-0 items-center gap-2",
+    actions: [
+      "flex shrink-0 items-center gap-2",
+      // One icon anatomy per bar: an icon-only Button takes the hamburger's chip (36px square,
+      // `rounded-md`, the bar's hover fill) instead of the Button's 32px circle, and a run of them
+      // sits flush, gap 0, so search · account · cart read as one strip. Text buttons and avatars
+      // keep the cluster's gap.
+      "[&>[data-icon-only]]:size-9 [&>[data-icon-only]]:rounded-md [&>[data-icon-only]]:dark:hover:bg-foreground/8",
+      "[&>[data-icon-only]+[data-icon-only]]:-ml-2",
+    ],
     // Hamburger: only below md, where the inline nav is hidden.
     toggle: [
       "relative inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-md text-foreground md:hidden",
+      // Flush against an icon strip it follows, the same gap 0 the strip keeps inside itself.
+      "[[data-slot=navbar-actions]:has(>[data-icon-only]:last-child)+&]:-ml-2",
       "transition duration-fast ease-out hover:bg-accent dark:hover:bg-foreground/8 active:scale-[0.96]",
       "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
       "[&_svg]:size-5 [&_svg]:shrink-0",
@@ -118,22 +127,42 @@ export const navbarVariants = tv({
       true: {},
       false: {},
     },
-    // How a link carries its shape and its current-page indicator. Two different mental
-    // models, not two skins: `pill` is a ghost button that happens to live in a bar, `underline`
-    // is a tab strip. They differ in box (h-9 chip vs full-bar-height cell), in hover (a
-    // rounded `bg-accent` chip vs a previewed indicator), and in the indicator itself.
+    // How a link carries its shape and its current-page indicator. Three different mental
+    // models, not three skins: `pill` is a ghost button that happens to live in a bar,
+    // `underline` is a tab strip, `text` is a line of plain words. They differ in box (h-9 chip
+    // vs full-bar-height cell), in hover (a rounded `bg-accent` chip, a previewed indicator, or
+    // the label alone lighting up), and in the indicator itself.
     linkStyle: {
       // A ghost-button chip, centered in the bar, with a soft-capped brand underline dropped
       // onto the bar's bottom rule. The Koala default; every existing bar keeps this look.
-      // The chip lives here, not on the base link, so `underline` never has to cancel it (a
-      // `dark:hover:` class survives a plain `hover:bg-transparent` in tailwind-merge). On dark
-      // themes `--accent` reads as a heavy grey block against the near-black ground, so the chip
-      // swaps to a faint translucent foreground tint: a step quieter, and it tracks whatever
-      // surface the bar sits on (floating card, transparent hero).
+      // The chip and the underline live here, not on the base link, so the other styles never
+      // have to cancel them (a `dark:hover:` class survives a plain `hover:bg-transparent` in
+      // tailwind-merge). On dark themes `--accent` reads as a heavy grey block against the
+      // near-black ground, so the chip swaps to a faint translucent foreground tint: a step
+      // quieter, and it tracks whatever surface the bar sits on (floating card, transparent hero).
       pill: {
         link: [
           "hover:bg-accent data-[state=open]:bg-accent",
           "dark:hover:bg-foreground/8 dark:data-[state=open]:bg-foreground/8",
+          // The underline is pinned to the bottom rule of the bar (like a tab indicator), not
+          // tucked under the label. The link is h-9, centered in the h-16/h-14 bar, so the
+          // vertical offset to reach the rule is density-specific (compoundVariants below).
+          "data-[active=true]:after:absolute data-[active=true]:after:inset-x-3 data-[active=true]:after:h-0.5 data-[active=true]:after:rounded-full data-[active=true]:after:bg-brand",
+        ],
+      },
+      // Plain words: no chip, no stroke. Links rest in the meta grey and light up to full ink on
+      // hover, when their menu is open, and for the current page, so the only thing that moves is
+      // the label's color. Being here reads as "the one link that stays lit", which is enough
+      // on a marketing bar and keeps the row as quiet as a line of text.
+      text: {
+        link: [
+          "text-muted-foreground",
+          // Nothing to press: a label that shrinks under the pointer reads as a glitch, not as
+          // a button going down. Hover and the focus ring carry the feedback.
+          "active:scale-100",
+          // The rest state is already muted, so a page that is not live yet steps one further
+          // down; otherwise it would read exactly like its live siblings.
+          "aria-disabled:text-muted-foreground/60",
         ],
       },
       // A tab: the link box fills the bar's height so its indicator can weld to the bar's
@@ -160,7 +189,7 @@ export const navbarVariants = tv({
           // white on dark/moonlight and near-black on light/cream, so the current tab is the
           // highest-contrast mark in the bar in every theme. The `pill` underline stays brand:
           // a soft-capped stroke under a centered chip is small enough to want the color.
-          "data-[active=true]:after:inset-x-0 data-[active=true]:after:h-[3px] data-[active=true]:after:rounded-none data-[active=true]:after:bg-foreground",
+          "data-[active=true]:after:bg-foreground",
           "data-[active=true]:hover:after:bg-foreground",
           // Pressing must not peel the indicator off the bar's edge, so the tap dims the
           // label rather than scaling the box (the one place the DS scale-on-press backs off).
@@ -421,8 +450,9 @@ export interface NavbarLinkProps extends Omit<React.ComponentProps<"a">, "ref"> 
   /** Render the child as the link (Radix Slot), e.g. a Next.js `<Link>` or a menu trigger. */
   asChild?: boolean
   /**
-   * Marks the link for the current page: adds the active indicator (a soft-capped brand
-   * underline under `pill`, a square ink stroke under `underline`) and full-strength text.
+   * Marks the link for the current page: full-strength text, plus the style's indicator (a
+   * soft-capped brand underline under `pill`, a square ink stroke under `underline`; `text`
+   * adds none, the lit label is the mark).
    */
   active?: boolean
 }
@@ -475,6 +505,18 @@ export interface NavbarSearchProps extends Omit<InputRootProps, "children"> {
   inputProps?: InputFieldProps
   /** Trailing content inside the field, e.g. a `<Kbd>⌘K</Kbd>` hint. */
   children?: React.ReactNode
+  /**
+   * Rest as an icon button that expands into the field on click (the DS `ExpandableSearch`),
+   * instead of an always-open field. `className` then sets the OPEN width.
+   * @default false
+   */
+  collapsible?: boolean
+  /** Controlled open state of a `collapsible` search. */
+  open?: boolean
+  /** @default false */
+  defaultOpen?: boolean
+  /** Notified when a `collapsible` search expands or collapses. */
+  onOpenChange?: (open: boolean) => void
 }
 
 /**
@@ -483,19 +525,50 @@ export interface NavbarSearchProps extends Omit<InputRootProps, "children"> {
  * (give it `flex-1` to fill the center, or a `bg-muted border-transparent` className for the
  * filled-pill look). It is the standard `Input`, so it inherits Field wiring, sizes, and
  * focus ring. No bespoke search styling.
+ *
+ * `collapsible` swaps it for an `ExpandableSearch`: a magnifier chip that grows into the same
+ * field on click, for a bar that can't spare the width until someone actually searches.
  */
 export function NavbarSearch({
   className,
   placeholder = "Search",
-  size = "sm",
+  size,
   inputProps,
   children,
+  collapsible = false,
+  open,
+  defaultOpen,
+  onOpenChange,
   ...props
 }: NavbarSearchProps) {
+  if (collapsible) {
+    return (
+      <ExpandableSearch
+        data-navbar-search=""
+        // md, not the field's sm: at rest it is one of the bar's icon chips, and those are 36px
+        // (the hamburger, the icon-only actions), so it must not read 4px smaller beside them.
+        size={size ?? "md"}
+        placeholder={placeholder}
+        inputProps={inputProps}
+        open={open}
+        defaultOpen={defaultOpen}
+        onOpenChange={onOpenChange}
+        className={cn(
+          // The bar's icon chip, the hamburger's exact anatomy: `rounded-md` (so the box keeps its
+          // corners as it widens into the field) and the faint foreground tint on dark themes.
+          "shrink-0 data-[state=closed]:rounded-md dark:data-[state=closed]:hover:bg-foreground/8",
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </ExpandableSearch>
+    )
+  }
   return (
     <InputRoot
       data-slot="navbar-search"
-      size={size}
+      size={size ?? "sm"}
       className={cn("w-full min-w-40 max-w-xs", className)}
       {...props}
     >

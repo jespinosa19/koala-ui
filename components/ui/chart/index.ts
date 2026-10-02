@@ -12,6 +12,9 @@ export {
   ChartTooltip,
   ChartTooltipItem,
   ChartLegend,
+  ChartAnnotation,
+  ChartFunnel,
+  ChartPie,
   chartVariants,
   type ChartProps,
   type ChartConfig,
@@ -33,4 +36,15 @@ export {
   type ChartTooltipItemProps,
   type ChartLegendProps,
   type ChartLegendItem,
+  type ChartLegendValue,
+  type ChartAnnotationProps,
+  type ChartFunnelProps,
+  type ChartPieProps,
 } from "./chart"
+export {
+  CategoryBar,
+  CategoryBarLegend,
+  categoryBarVariants,
+  type CategoryBarProps,
+  type CategoryBarLegendProps,
+} from "./category-bar"

@@ -57,15 +57,34 @@ export const sidebarVariants = tv({
       "bg-card text-card-foreground [--surface:var(--card)]",
     ],
     // Top zone: holds the workspace switcher. Hairline below separates it from the scroll.
-    header: "flex shrink-0 flex-col gap-1 border-b border-border",
+    // Holding a `SidebarActions` turns it into a row: the switcher, then the icon buttons beside
+    // it (the GitBook header), keyed on the part being there rather than on a prop. In that row
+    // the switcher hugs its content, so its caret follows the name instead of landing against
+    // the first icon, where it read as one more button in the cluster.
+    header: [
+      "flex shrink-0 flex-col gap-1 border-b border-border",
+      "has-[>[data-slot=sidebar-actions]]:flex-row has-[>[data-slot=sidebar-actions]]:items-center",
+      "[&:has(>[data-slot=sidebar-actions])>[data-slot=sidebar-switcher]]:w-auto",
+    ],
     // The scroll region. `min-h-0` lets it actually become the flex scroll container;
     // `gap` opens air between sections. `relative` makes it the containing block for the
     // absolutely-positioned sliding `indicator` pill, so the pill is measured and placed in
     // the same coordinate space (without it the pill resolves against an outer positioned
     // ancestor and lands on the wrong row).
     content: "relative flex min-h-0 flex-1 flex-col overflow-y-auto",
-    // Bottom zone: holds the profile switcher. Hairline above mirrors the header.
-    footer: "flex shrink-0 flex-col gap-1 border-t border-border",
+    // Bottom zone: holds the profile switcher. Hairline above mirrors the header, and like the
+    // header it turns into a row when it holds a `SidebarActions`.
+    footer: [
+      "flex shrink-0 flex-col gap-1 border-t border-border",
+      "has-[>[data-slot=sidebar-actions]]:flex-row has-[>[data-slot=sidebar-actions]]:items-center",
+      "[&:has(>[data-slot=sidebar-actions])>[data-slot=sidebar-switcher]]:w-auto",
+    ],
+    // A cluster of icon buttons in the header or footer, beside the switcher: search and
+    // notifications up top (GitBook, Squarespace), help and settings at the foot. Pushed to the
+    // zone's far edge, so it lines up with the ends of the rows below. It sets the rail's muted
+    // ink for the ghost buttons inside (which inherit colour at rest and lift to foreground on
+    // hover), so they read at the weight of the row icons, not as white glyphs.
+    actions: "ml-auto flex shrink-0 items-center gap-0.5 text-muted-foreground",
     // A labeled section ("clear sections"). Items stack tight inside.
     group: "flex flex-col gap-0.5",
     // The small, muted section heading.
@@ -110,8 +129,9 @@ export const sidebarVariants = tv({
     // The switcher trigger: an identity row (avatar/logo · title/subtitle · caret) that
     // opens a DropdownMenu. `data-[state=open]` keeps it lit while the menu is open. The
     // gap, hover fill, and padding are set by the `variant` axis below (compact default vs full).
+    // `min-w-0` so beside a `SidebarActions` it is the one that gives way, truncating its text.
     switcher: [
-      "group/switcher relative flex w-full cursor-pointer items-center text-left",
+      "group/switcher relative flex w-full min-w-0 cursor-pointer items-center text-left",
       "rounded-md outline-none transition duration-fast ease-out",
       "focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1 focus-visible:ring-offset-card",
       "data-[state=open]:bg-accent",
@@ -246,9 +266,19 @@ export const sidebarVariants = tv({
         // so the width is identical in both densities), leaving a 40px tap column for the icon
         // chips below.
         root: "w-12",
-        header: "items-center p-1",
+        // A zone holding `SidebarActions` goes back to a column: the icon buttons stack under the
+        // switcher's mark instead of being cut off, so search and notifications stay in reach.
+        // The row's hug-content rule outranks the switcher's own 40px square, so it is restated.
+        header: [
+          "items-center p-1 has-[>[data-slot=sidebar-actions]]:flex-col",
+          "[&:has(>[data-slot=sidebar-actions])>[data-slot=sidebar-switcher]]:w-10",
+        ],
         content: "items-center gap-2 p-1",
-        footer: "items-center p-1",
+        footer: [
+          "items-center p-1 has-[>[data-slot=sidebar-actions]]:flex-col",
+          "[&:has(>[data-slot=sidebar-actions])>[data-slot=sidebar-switcher]]:w-10",
+        ],
+        actions: "ml-0 flex-col",
         // The section heading can't show in the rail, so it goes to screen readers only. To
         // keep the sections legible without it, each group after the first draws a short
         // centered rule above itself: a 40px divider aligned to the icon column.
@@ -276,10 +306,10 @@ export const sidebarVariants = tv({
       true: { root: "rounded-xl border border-border shadow-lg" },
       false: {},
     },
-    // Docked (inset) shell treatment: the rail stops being its own card and becomes part of the
-    // app canvas, so the elevated content panel beside it is the only surface in the frame. This
-    // is the Linear / Discord / shadcn-`inset` look, and the house structure for every Koala
-    // dashboard (see memory `docked-shell-for-dashboards`): no `bg-card` fill, no separating
+    // Docked shell treatment: the rail stops being its own card and becomes part of the app
+    // shell's black frame, so the content sheet set into that frame is the only surface. This is
+    // the house structure for every Koala dashboard (see memory `docked-shell-for-dashboards`;
+    // the host column pins the rail `.dark`, not this variant): no `bg-card` fill, no separating
     // hairline (the compounds below opt out), and the width is surrendered to the shell column
     // that hosts it (`LayoutSidebar`), which is what animates it between expanded and collapsed.
     //
@@ -612,6 +642,27 @@ export function SidebarContent({ className, children, ...props }: React.Componen
 export function SidebarFooter({ className, ...props }: React.ComponentProps<"div">) {
   const { slots } = useSidebarContext("SidebarFooter")
   return <div data-slot="sidebar-footer" className={slots.footer({ className })} {...props} />
+}
+
+/**
+ * Icon buttons beside the switcher, in the `SidebarHeader` or `SidebarFooter`: search and
+ * notifications next to the workspace (the GitBook header), help or settings at the foot. Drop
+ * it in after the switcher and the zone lays the two out as a row; fill it with ghost icon-only
+ * `Button`s, which take the rail's muted ink at rest:
+ *
+ *   <SidebarHeader>
+ *     <SidebarSwitcher … />
+ *     <SidebarActions>
+ *       <Button variant="ghost" iconOnly aria-label="Search"><MagnifyingGlass /></Button>
+ *       <Button variant="ghost" iconOnly aria-label="Notifications"><Bell /></Button>
+ *     </SidebarActions>
+ *   </SidebarHeader>
+ *
+ * In the collapsed rail the buttons stack under the switcher's mark, so they stay in reach.
+ */
+export function SidebarActions({ className, ...props }: React.ComponentProps<"div">) {
+  const { slots } = useSidebarContext("SidebarActions")
+  return <div data-slot="sidebar-actions" className={slots.actions({ className })} {...props} />
 }
 
 export interface SidebarGroupProps extends React.ComponentProps<"nav"> {

@@ -2,9 +2,9 @@
 
 A polished React design system: components built on Tailwind CSS v4, Radix UI and
 `tailwind-variants`, with four themes (light, cream, dark, moonlight) and a density system.
-Explore every component at [koala-ui.vercel.app](https://koala-ui.vercel.app).
+Explore every component at [koalaui.com](https://www.koalaui.com).
 
-This repository holds the **free tier**: 122 components, 21 sample
+This repository holds the **free tier**: 123 components, 0 sample
 sections (one of each family), the lib helpers and the design tokens. The CLI copies the source into your project, so you own and edit the code; Koala UI is
 not a runtime dependency.
 
@@ -17,24 +17,24 @@ npx koalaui-cli@latest update                    # later: updates, files you edi
 ```
 
 Requires React 19 and Tailwind CSS v4. Full guide:
-[koala-ui.vercel.app/docs/installation](https://koala-ui.vercel.app/docs/installation).
+[koalaui.com/docs/installation](https://www.koalaui.com/docs/installation).
 
 ## For coding agents
 
 `npx koalaui-cli@latest skill` writes the Koala UI agent skill ([skills/koala-ui](./skills/koala-ui)) into
 `.claude/skills/koala-ui/`: the house rules plus one reference per component, generated from the
 docs. Every docs page is also served as markdown at its URL plus `.md`, indexed by
-[llms.txt](https://koala-ui.vercel.app/llms.txt).
+[llms.txt](https://www.koalaui.com/llms.txt).
 
 ## Free and Pro
 
 | Tier | What | Install |
 | --- | --- | --- |
-| **Free** | components, lib helpers, tokens, one sample section per family | `npx koalaui-cli@latest add <name>`, no account |
-| **Pro** | every other section, page examples, templates | a license, then `npx koalaui-cli@latest login <key>` |
+| **Free** | components, lib helpers, tokens | `npx koalaui-cli@latest add <name>`, no account |
+| **Pro** | every section, page examples, templates | a license, then `npx koalaui-cli@latest login <key>` |
 
 Pro source lives in a private repository and reaches buyers through the licensing API, so a
-license is the only thing that grants access. [See the plans](https://koala-ui.vercel.app/pro).
+license is the only thing that grants access. [See the plans](https://www.koalaui.com/pro).
 
 ## License
 

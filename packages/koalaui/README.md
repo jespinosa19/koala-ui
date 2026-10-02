@@ -1,13 +1,13 @@
 # koalaui-cli
 
-The CLI for [Koala UI](https://koala-ui.vercel.app). It copies component source into your React project (you own and edit the code; it is **not** a runtime dependency).
+The CLI for [Koala UI](https://www.koalaui.com). It copies component source into your React project (you own and edit the code; it is **not** a runtime dependency).
 
 The package is `koalaui-cli`; the command it installs is `koalaui` (and `koalaui-cli`, which is the same thing). Run it with `npx koalaui-cli@latest …` (`@latest` makes npx fetch a new release instead of reusing the copy it cached last time), or install it and call `koalaui …`. The examples use the npx form, and so do the hints the CLI prints when it runs through a package runner.
 
 ## Two tiers
 
-- **Free** - all components (`components/ui/*`), lib helpers, tokens, and one sample section of every section family. Fetched from the public repo, **no auth, no account**.
-- **PRO** 🔒 - every other section, full page examples, templates. Requires a license key: [buy one](https://koala-ui.vercel.app/pro), then `npx koalaui-cli@latest login <key>`. PRO items can depend on free components - those still come from the public repo automatically.
+- **Free** - all components (`components/ui/*`), lib helpers and tokens. Fetched from the public repo, **no auth, no account**.
+- **PRO** 🔒 - every section, full page examples, templates. Requires a license key: [buy one](https://www.koalaui.com/pro), then `npx koalaui-cli@latest login <key>`. PRO items can depend on free components - those still come from the public repo automatically.
 
 ## Usage
 
@@ -59,7 +59,7 @@ A single-theme app pins it: `<ThemeProvider forcedTheme="dark">`. The `@/*` alia
 
 ### Coming from shadcn/ui
 
-`init` replaces shadcn's stock `lib/utils.ts` (Koala's `cn` has the same signature; `lib/tv.ts` needs the merge config next to it). Swap components one at a time: delete `components/ui/<name>.tsx`, then `add <name>`. `add` refuses while such a flat file is there, for the component and for every Koala component it pulls in, because `@/components/ui/<name>` would resolve to the file instead of Koala's folder. The full map: <https://koala-ui.vercel.app/docs/migrating-from-shadcn>.
+`init` replaces shadcn's stock `lib/utils.ts` (Koala's `cn` has the same signature; `lib/tv.ts` needs the merge config next to it). Swap components one at a time: delete `components/ui/<name>.tsx`, then `add <name>`. `add` refuses while such a flat file is there, for the component and for every Koala component it pulls in, because `@/components/ui/<name>` would resolve to the file instead of Koala's folder. The full map: <https://www.koalaui.com/docs/migrating-from-shadcn>.
 
 Your tsconfig needs the `@/*` path alias; `init` tells you if it is missing.
 
@@ -87,7 +87,7 @@ Claude Code loads project skills from `.claude/skills/`, so a new session picks 
 
 ## PRO access
 
-Buy a license at <https://koala-ui.vercel.app/pro>. Lemon Squeezy emails your key with your receipt (it is also in your orders at <https://app.lemonsqueezy.com/my-orders>). Activate it once per machine:
+Buy a license at <https://www.koalaui.com/pro>. Lemon Squeezy emails your key with your receipt (it is also in your orders at <https://app.lemonsqueezy.com/my-orders>). Activate it once per machine:
 
 ```bash
 npx koalaui-cli@latest login 38b1460a-5104-4067-a91d-77b872934d51
@@ -96,7 +96,7 @@ npx koalaui-cli@latest add hero-section-3
 
 Activating claims one seat of your plan and saves the key and the seat's id to `~/.koalaui/config.json`, readable by you only. Every Pro install presents both, so a key alone installs nothing. `whoami` shows the active license; `logout` releases the seat and forgets the key, so run it before you wipe a machine.
 
-Your key is exchanged for the source at the entitlement API, which checks the license and the seat and sends the files back stamped with a fingerprint of your license (never the key itself). You never receive a GitHub token, and no repo access is granted to your account. You can also read the Pro source on the website: unlock it at <https://koala-ui.vercel.app/account>.
+Your key is exchanged for the source at the entitlement API, which checks the license and the seat and sends the files back stamped with a fingerprint of your license (never the key itself). You never receive a GitHub token, and no repo access is granted to your account. You can also read the Pro source on the website: unlock it at <https://www.koalaui.com/account>.
 
 ### Templates
 

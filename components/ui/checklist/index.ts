@@ -10,10 +10,12 @@ export {
   ChecklistItemTitle,
   ChecklistItemDescription,
   ChecklistItemAction,
+  ChecklistMark,
   checklistVariants,
   type ChecklistProps,
   type ChecklistTitleProps,
   type ChecklistProgressProps,
   type ChecklistItemProps,
+  type ChecklistMarkProps,
   type ChecklistStatus,
 } from "./checklist"

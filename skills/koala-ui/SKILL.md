@@ -124,11 +124,11 @@ Colors are semantic roles backed by CSS variables, so one class is right in ever
 
 - This skill: `references/<name>.md` for each component, generated from its docs page.
 - Any docs page as markdown: its URL plus `.md`, for example
-  `https://koala-ui.vercel.app/docs/components/button.md` or
-  `https://koala-ui.vercel.app/docs/foundations/colors.md`.
+  `https://www.koalaui.com/docs/components/button.md` or
+  `https://www.koalaui.com/docs/foundations/colors.md`.
 - The index of every page, with the install commands and conventions:
-  `https://koala-ui.vercel.app/llms.txt`. Every free docs page in one file:
-  `https://koala-ui.vercel.app/llms-full.txt`.
+  `https://www.koalaui.com/llms.txt`. Every free docs page in one file:
+  `https://www.koalaui.com/llms-full.txt`.
 
 ## Components
 
@@ -152,7 +152,7 @@ Colors are semantic roles backed by CSS variables, so one class is right in ever
 - [Button Group](references/button-group.md): A set of related buttons arranged as a visual unit. Supports attached (fused pill) and detached (spaced) layouts, with shared variant, size, and density propagated via context.
 - [Card](references/card.md): A surface that groups related content. The reference multi-part component: one tv recipe with slots, shared variants flowing to every part through React Context.
 - [Carousel](references/carousel.md): A horizontal slide viewer with a clickable indicator. The track translates between full-width slides, arrow keys step it, and the indicator ships with a closed set of forms: dots, lines, fraction, thumbnails.
-- [Chart](references/chart.md): A dependency-free plotting primitive for line, area and bar trends. Compose the named parts (grid, axes, series, tooltip) into one measured SVG. Series paint from semantic hues, so every chart re-themes.
+- [Chart](references/chart.md): A dependency-free plotting primitive for trends, funnels and pies. Compose the named parts into one measured SVG; the legend focuses and toggles series, and every hue re-themes.
 - [Chat](references/chat.md): The AI conversation thread, the second piece of the AI module. The assistant answers as a document, the Notion and ChatGPT style; the user turn stays a bubble. Streaming and reasoning included.
 - [Checkbox](references/checkbox.md): A control for a binary or tri-state choice, built on Radix Checkbox. Supports the indeterminate state a “select all” needs. It's the same control the DataTable uses for row selection.
 - [Checklist](references/checklist.md): The onboarding panel: a card that tracks a short list of setup tasks and their progress. The bar and the 3-of-6 read-out derive from value and total, and the bar turns green the moment every step is done.
@@ -173,6 +173,7 @@ Colors are semantic roles backed by CSS variables, so one class is right in ever
 - [Dropdown Menu](references/dropdown-menu.md): A contextual menu that opens on trigger. Built on Radix DropdownMenu for keyboard navigation, focus management, and a11y; animated with interruptible enter/exit transitions.
 - [Emoji Picker](references/emoji-picker.md): A complete picker: searchable, with a scroll-spy category nav, a pinned frequently-used row, persisted recents and a hovered preview. Categories mount lazily, so a large set never paints at once.
 - [Empty State](references/empty-state.md): The zero-data, no-results and first-run placeholder. A neutral icon tile, a balanced title, a readable description and a single outline action, composed from named parts, with a density axis for in-panel use.
+- [Expandable Search](references/expandable-search.md): A search that rests as an icon button and grows into a full field on click. One box widens under the magnifier, so the glyph never moves and the open field is the DS Input, pixel for pixel.
 - [FAQs](references/faqs.md): A marketing-ready frequently-asked-questions section built on the Accordion. It pairs a header with a single-expand question list and an optional contact CTA, in a centered stack or a sticky two-column split.
 - [Feedback Form](references/feedback-form.md): A compact sentiment and comment block. A row of five faces reveals an optional comment field once one is picked, then submits. It owns its rating and message state; wire onSubmit to your sink.
 - [Field](references/field.md): The wrapper that turns any control into a labelled form field. Field generates the id, htmlFor and aria-describedby wiring for you and cascades error and disabled state to the control inside.
@@ -194,7 +195,7 @@ Colors are semantic roles backed by CSS variables, so one class is right in ever
 - [Job Card](references/job-card.md): The canonical open-role block: a category badge, the role title, a one-line summary and a meta tier of location, employment type and salary band. Renders as a chrome-less row or a bordered card.
 - [Kbd](references/kbd.md): A keyboard key indicator for documenting shortcuts. Renders a native <kbd>; the default variant is a flat gray chip (no border, no shadow) that re-themes everywhere. Compose combos by placing several side by side.
 - [Label](references/label.md): The one label and helper-text recipe behind every form control in Koala. Input, Field and OTP Input all compose Label and Hint, and inside a Field they auto-wire their own ids, htmlFor and aria.
-- [Layout](references/layout.md): The application and page shell. One set of parts and two app shells that share it: plain, the classic rail-and-content layout, and docked, the default, with the rail on a recessed canvas.
+- [Layout](references/layout.md): The application and page shell. One set of parts and two app shells that share it: plain, the classic rail-and-content layout, and docked, the default, a black frame with the content set into it.
 - [Lightbox](references/lightbox.md): A full-screen, browsable image viewer over Radix Dialog. Give it the image list once and any LightboxTrigger opens it at that index. Page between images with arrow buttons, arrow keys and a thumbnail rail.
 - [Link](references/link.md): The text link, in both house treatments. default and muted are the standalone UI link for chrome, warming to the brand accent on hover; prose is the hyperlink embedded in running copy, underlined at rest.
 - [List](references/list.md): The canonical vertical list group: stacked rows with leading media, a title and description, and trailing meta or actions. Rows are inert by default and become links or buttons via asChild.

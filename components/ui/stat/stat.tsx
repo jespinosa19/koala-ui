@@ -44,7 +44,8 @@ export const statVariants = tv({
       "inline-flex w-fit shrink-0 items-center gap-0.5 whitespace-nowrap rounded-md border px-1.5 py-0.5 text-xs font-medium tabular-nums [&>svg]:size-3.5",
     caption: "text-sm text-pretty text-muted-foreground",
     footer: "flex items-center gap-2",
-    // Concentric radius: the card is rounded-xl (16px), so the inner tile drops to lg.
+    // The card is rounded-xl (20px), so the inner tile steps down to lg (16px): one rung smaller,
+    // never the same radius as its parent.
     icon: "grid shrink-0 place-items-center rounded-lg bg-muted text-muted-foreground [&>svg]:size-5",
     sparkline: "w-full",
   },

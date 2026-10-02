@@ -18,6 +18,10 @@ export const twMergeConfig = {
       // `rounded-md` instead of replacing it, and CSS source order picked the winner.
       rounded: [{ rounded: ["pill"] }],
       "transition-duration": [{ duration: ["fast", "base", "slow"] }],
+      // tw-animate-css's animation-fill-mode utilities. tailwind-merge reads `fill-mode-both` as a
+      // fill COLOR, so beside an SVG's `fill-current` one of the two was dropped (a Chart funnel's
+      // drop-off lost its hue and painted black). Their own group keeps both.
+      "koala-animation-fill-mode": [{ "fill-mode": ["none", "forwards", "backwards", "both"] }],
       // The canonical section-heading size utility (app/globals.css). Joins the font-size group so
       // a `text-*` passed via className still overrides it (last wins), exactly as two text sizes
       // would dedupe.

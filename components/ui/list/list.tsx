@@ -60,8 +60,8 @@ export const listVariants = tv({
     },
     // Hairline rule between rows: the list-group identity.
     //
-    // A LINE OF ITS OWN, not a `border-b`. A plain interactive row is rounded, and in the
-    // non-`asChild` shape `row` and `item` land on the SAME <li>, so a bottom border would
+    // A LINE OF ITS OWN, not a `border-b`. A row can be rounded (a consumer's `rounded-*`), and
+    // in the non-`asChild` shape `row` and `item` land on the SAME <li>, so a bottom border would
     // inherit that radius and curve up at both ends. A pseudo-element is a separate box with no
     // radius, so it stays straight whatever the row does. (An inset box-shadow would follow the
     // radius too, so it is no alternative.) `::after` generates as the last child, so the rule
@@ -97,14 +97,36 @@ export const listVariants = tv({
         item: "relative bg-muted hover:bg-muted before:pointer-events-none before:absolute before:top-1/2 before:left-0 before:h-4 before:w-[3px] before:-translate-y-1/2 before:rounded-r-full before:bg-brand before:content-['']",
       },
     },
+    // Set by {@link ListItem} under `asChild`: the row surface is the <li>'s child, not the <li>
+    // itself, so `row` and `item` are two boxes that can differ in width. No classes of its own.
+    nested: {
+      true: {},
+    },
   },
   compoundVariants: [
     // Plain rows align flush to the container's left edge (no surface to inset from).
     { variant: "plain", class: { item: "px-0" } },
-    // …but an interactive plain row pulls its hover fill back into a detached pill so it
-    // doesn't bleed to the very edge: negative margin keeps the text aligned flush. The width
-    // grows by the same 1rem, or a <button> row (sized, not stretched) stops 8px short on the right.
-    { variant: "plain", interactive: true, class: { item: "-mx-2 w-[calc(100%+1rem)] rounded-lg px-2" } },
+    // …but an interactive plain row gives its fill 8px of air around the text: negative margin
+    // bleeds it out, padding brings the text back to the column. The width grows by the same
+    // 1rem, or a <button> row (sized, not stretched) stops 8px short on the right.
+    { variant: "plain", interactive: true, class: { item: "-mx-2 w-[calc(100%+1rem)] px-2" } },
+    // What the fill looks like depends on whether rules bound it. With none, it is a detached
+    // rounded pill, a menu row. Between rules it stays square and fills the band they draw: a
+    // rounded fill would press its corners against two straight lines, a card jammed between
+    // rules. Straight edges against straight edges, and the current row next to a hovered one
+    // reads as two bands split by the rule rather than two pills colliding.
+    // Pills keep 2px apart (the Sidebar's row gap), so the current row and a hovered neighbour
+    // stay two shapes instead of fusing into one blob with notched corners.
+    {
+      variant: "plain",
+      interactive: true,
+      divided: false,
+      class: { row: "not-last:mb-0.5", item: "rounded-lg" },
+    },
+    // …and the rule spans exactly that band. Without asChild the <li> IS the widened surface, so
+    // its own line already does; under asChild the <li> stays on the text column while the <a>/
+    // <button> inside bleeds, so the line bleeds with it.
+    { variant: "plain", interactive: true, divided: true, nested: true, class: { row: "after:-inset-x-2" } },
   ],
   defaultVariants: {
     variant: "card",
@@ -125,7 +147,7 @@ const [ListProvider, useListContext] = createContext<{
 
 export interface ListProps
   extends React.ComponentProps<"ul">,
-    Omit<VariantProps<typeof listVariants>, "interactive" | "current"> {
+    Omit<VariantProps<typeof listVariants>, "interactive" | "current" | "nested"> {
   asChild?: boolean
 }
 
@@ -191,7 +213,12 @@ export function ListItem({
 }: ListItemProps) {
   const { config } = useListContext("ListItem")
   const isInteractive = interactive ?? asChild
-  const slots = listVariants({ ...config, interactive: isInteractive, current: Boolean(current) })
+  const slots = listVariants({
+    ...config,
+    interactive: isInteractive,
+    current: Boolean(current),
+    nested: asChild,
+  })
   // Written before `props` is spread, so a consumer's own `aria-current` keeps the last word.
   const ariaCurrent = current === true ? "true" : current || undefined
 

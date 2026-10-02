@@ -4,6 +4,8 @@ export {
   HoverCardContent,
   HoverCardTitle,
   HoverCardDescription,
+  HoverCardMedia,
+  HoverCardFooter,
   hoverCardVariants,
   type HoverCardContentProps,
 } from "./hover-card"
