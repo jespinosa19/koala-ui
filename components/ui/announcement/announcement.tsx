@@ -13,7 +13,7 @@ import { hitX } from "@/lib/hit-area"
  *
  * It is deliberately NOT a Badge. A Badge is one chip carrying one label; an Announcement PAIRS
  * two pieces of information, a standing label and the thing being announced ("Update available" +
- * "Koala UI v11 is here!"), and the pill is what pairs them. Compose it with our own parts: drop a
+ * "Koala UI v12 is here!"), and the pill is what pairs them. Compose it with our own parts: drop a
  * `Badge` in for the announced half, and the recipe nests it properly (see below). No trailing
  * caret or icon: marketing furniture in this DS is text-only unless asked.
  *

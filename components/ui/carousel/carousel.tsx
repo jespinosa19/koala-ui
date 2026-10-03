@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { CaretLeft, CaretRight } from "@phosphor-icons/react"
+import { CaretLeft, CaretRight, Pause, Play } from "@phosphor-icons/react"
 
 import { cn } from "@/lib/utils"
 import { createContext } from "@/lib/create-context"
@@ -107,6 +107,12 @@ export const carouselVariants = tv({
       // so the row is fully clickable and adjacent chips never overlap.
       "before:absolute before:-inset-x-[2px] before:top-1/2 before:h-10 before:-translate-y-1/2 before:content-[''] pointer-coarse:before:h-11",
     ],
+    // The autoplay countdown inside the active dot/line: grows across one interval and holds when
+    // the carousel pauses (hover, focus, a hidden tab, the play/pause button).
+    indicatorFill: [
+      "pointer-events-none absolute inset-y-0 left-0 rounded-full bg-foreground animate-carousel-fill",
+      "in-data-[autoplay=paused]:[animation-play-state:paused]",
+    ],
     // A single continuous progress track + fill (variant="progress"). The fill width tracks
     // (index+1)/count so slide 1 already reads as progress instead of an empty bar. A readout like
     // `fraction` (not per-slide clickable); navigate with arrows/drag/keys.
@@ -124,6 +130,38 @@ export const carouselVariants = tv({
     ],
   },
   variants: {
+    // How slides change. `slide` translates the track; `fade` stacks every slide in one grid cell
+    // and fades the incoming one in on top (the `stage` variant below runs it).
+    effect: {
+      slide: {},
+      fade: { track: "grid", slide: "col-start-1 row-start-1" },
+    },
+    // Where a slide is in a fade. `current` is the first slide on load (shown, no animation, so the
+    // page never fades in its own hero); `entering` fades in on top; `leaving` holds underneath until
+    // the fade is done; `hidden` is out of view and out of the accessibility tree.
+    stage: {
+      current: { slide: "z-10" },
+      entering: { slide: "z-10 animate-carousel-fade-in motion-reduce:animate-none" },
+      leaving: { slide: "animate-carousel-fade-out motion-reduce:invisible motion-reduce:animate-none" },
+      hidden: { slide: "invisible" },
+    },
+    // A slow push-in on the slide's photo (its direct img / video / picture child) while it shows.
+    // The slide clips it, so it never spills into a neighbour on the sliding track.
+    kenBurns: {
+      true: { slide: "overflow-hidden" },
+      false: {},
+    },
+    // The slide is on screen (or fading out), so its photo keeps drifting. Re-applied when the slide
+    // comes back, which restarts the drift.
+    moving: {
+      true: {},
+      false: {},
+    },
+    // Autoplay is on: the active dot/line becomes a track for the countdown fill instead of a solid.
+    timed: {
+      true: {},
+      false: {},
+    },
     // Active is COLOR only (fill on dots/lines; the ring for thumbnails lives in the compounds).
     // Each form owns its own size/shape so the dot's pill-morph never leaks into lines.
     active: {
@@ -265,6 +303,17 @@ export const carouselVariants = tv({
     // Overlay placement for dots/lines/fraction/thumbnails.
     { overlay: true, align: "end", class: { indicators: "right-3" } },
     { overlay: true, align: "center", class: { indicators: "left-1/2 -translate-x-1/2" } },
+    // Ken Burns on the slide's own photo, while it is on screen.
+    {
+      kenBurns: true,
+      moving: true,
+      class: { slide: "[&>:is(img,video,picture)]:animate-ken-burns motion-reduce:[&>:is(img,video,picture)]:animate-none" },
+    },
+    // Timed: the active tick keeps the resting paint as its track; the fill carries the ink. Listed
+    // last so it beats the active paints above.
+    { timed: true, active: true, class: { indicator: "bg-border hover:bg-border" } },
+    { timed: true, active: true, contained: true, class: { indicator: "bg-foreground/20 hover:bg-foreground/20" } },
+    { timed: true, active: true, overlay: true, class: { indicator: "bg-white/50 hover:bg-white/50", indicatorFill: "bg-white" } },
   ],
 })
 
@@ -275,10 +324,34 @@ type CarouselContextValue = {
   count: number
   setIndex: (i: number) => void
   slots: CarouselSlots
+  /** Wraps past either end (arrows, keys, autoplay). */
+  loop: boolean
+  /** The autoplay interval in ms; 0 when autoplay is off. */
+  autoplay: number
+  /** Autoplay is on and nothing is holding it. */
+  playing: boolean
+  /** The play/pause button's own hold, separate from hover and focus. */
+  stopped: boolean
+  setStopped: (stopped: boolean) => void
 }
 
 const [CarouselProvider, useCarouselContext] =
   createContext<CarouselContextValue>("Carousel")
+
+/** Where one slide sits, handed to each CarouselSlide by CarouselContent. */
+type CarouselSlideContextValue = {
+  index: number
+  effect: "slide" | "fade"
+  stage: "current" | "entering" | "leaving" | "hidden"
+  kenBurns: boolean
+}
+
+// A plain context with a null default (not the throwing helper): a CarouselSlide rendered outside
+// CarouselContent keeps working as the plain sliding panel it always was.
+const CarouselSlideContext = React.createContext<CarouselSlideContextValue | null>(null)
+
+/** The interval `autoplay={true}` runs at. */
+const AUTOPLAY_DEFAULT = 5000
 
 /**
  * Count the slides by finding the CarouselContent among the children and measuring its own
@@ -314,6 +387,14 @@ export interface CarouselProps extends Omit<React.ComponentProps<"div">, "onChan
   onIndexChange?: (index: number) => void
   /** Accessible label for the carousel region. @default "Carousel" */
   label?: string
+  /**
+   * Advance on its own: `true` every 5 seconds, or a number of ms. It holds while the pointer is
+   * over the carousel, while focus is inside it, while the tab is hidden and while a
+   * CarouselPlayPause is set to pause; a manual step restarts the count. Turns `loop` on.
+   */
+  autoplay?: boolean | number
+  /** Wrap past either end (arrows, keys, swipe). @default true with `autoplay`, else false */
+  loop?: boolean
 }
 
 export function Carousel({
@@ -321,8 +402,15 @@ export function Carousel({
   defaultIndex = 0,
   onIndexChange,
   label = "Carousel",
+  autoplay: autoplayProp = false,
+  loop: loopProp,
   className,
+  style,
   children,
+  onPointerEnter,
+  onPointerLeave,
+  onFocus,
+  onBlur,
   ...props
 }: CarouselProps) {
   // Count slides synchronously from the CarouselContent child so the dots render on the
@@ -331,27 +419,64 @@ export function Carousel({
   const [uncontrolled, setUncontrolled] = React.useState(defaultIndex)
   const isControlled = indexProp != null
   const index = isControlled ? indexProp : uncontrolled
+  const autoplay = autoplayProp === true ? AUTOPLAY_DEFAULT : autoplayProp || 0
+  const loop = loopProp ?? autoplay > 0
 
   const setIndex = React.useCallback(
     (i: number) => {
       const max = Math.max(count - 1, 0)
-      const clamped = Math.min(Math.max(i, 0), max)
-      if (!isControlled) setUncontrolled(clamped)
-      onIndexChange?.(clamped)
+      const next = loop && count > 0 ? ((i % count) + count) % count : Math.min(Math.max(i, 0), max)
+      if (!isControlled) setUncontrolled(next)
+      onIndexChange?.(next)
     },
-    [count, isControlled, onIndexChange],
+    [count, loop, isControlled, onIndexChange],
   )
+
+  // What holds autoplay: a hovering pointer, focus inside, a hidden tab, the play/pause button.
+  const [hovered, setHovered] = React.useState(false)
+  const [focused, setFocused] = React.useState(false)
+  const [stopped, setStopped] = React.useState(false)
+  const hidden = React.useSyncExternalStore(subscribeVisibility, isDocumentHidden, () => false)
+  const playing = autoplay > 0 && count > 1 && !hovered && !focused && !stopped && !hidden
+
+  // The countdown. A pause keeps what was left of the interval, so the indicator fill (which pauses
+  // with it) and the step stay in step; a new index starts a full interval.
+  const remaining = React.useRef(autoplay)
+  React.useEffect(() => {
+    remaining.current = autoplay
+  }, [index, autoplay])
+  React.useEffect(() => {
+    if (!playing) return
+    const started = performance.now()
+    const timer = window.setTimeout(() => setIndex(index + 1), remaining.current)
+    return () => {
+      clearTimeout(timer)
+      remaining.current = Math.max(0, remaining.current - (performance.now() - started))
+    }
+  }, [playing, index, setIndex])
 
   const slots = carouselVariants()
 
   return (
-    <CarouselProvider index={index} count={count} setIndex={setIndex} slots={slots}>
+    <CarouselProvider
+      index={index}
+      count={count}
+      setIndex={setIndex}
+      slots={slots}
+      loop={loop}
+      autoplay={autoplay}
+      playing={playing}
+      stopped={stopped}
+      setStopped={setStopped}
+    >
       <div
         data-slot="carousel"
         role="group"
         aria-roledescription="carousel"
         aria-label={label}
+        data-autoplay={autoplay > 0 ? (playing ? "playing" : "paused") : undefined}
         className={slots.root({ className })}
+        style={autoplay > 0 ? { ["--carousel-interval" as string]: `${autoplay}ms`, ...style } : style}
         onKeyDown={(e) => {
           if (e.key === "ArrowLeft") {
             e.preventDefault()
@@ -361,6 +486,25 @@ export function Carousel({
             setIndex(index + 1)
           }
         }}
+        // A finger has no hover: a tap would pause the slides until the next tap elsewhere.
+        onPointerEnter={(e) => {
+          onPointerEnter?.(e)
+          if (e.pointerType === "mouse") setHovered(true)
+        }}
+        onPointerLeave={(e) => {
+          onPointerLeave?.(e)
+          setHovered(false)
+        }}
+        // Keyboard focus only: a clicked dot keeps focus, and that must not stop the slides for
+        // good once the pointer has left.
+        onFocus={(e) => {
+          onFocus?.(e)
+          if (e.target.matches(":focus-visible")) setFocused(true)
+        }}
+        onBlur={(e) => {
+          onBlur?.(e)
+          if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocused(false)
+        }}
         {...props}
       >
         {children}
@@ -369,11 +513,27 @@ export function Carousel({
   )
 }
 
+const subscribeVisibility = (onChange: () => void) => {
+  document.addEventListener("visibilitychange", onChange)
+  return () => document.removeEventListener("visibilitychange", onChange)
+}
+const isDocumentHidden = () => document.visibilityState === "hidden"
+
 // ─── CarouselContent: viewport + sliding track ──────────────────────────────────
 
 export interface CarouselContentProps extends React.ComponentProps<"div"> {
   /** Enable mouse/touch drag-to-swipe. @default true */
   draggable?: boolean
+  /**
+   * How slides change: `slide` translates the track; `fade` stacks the slides and fades the
+   * incoming one in over the outgoing one (a swipe still steps it). @default "slide"
+   */
+  effect?: "slide" | "fade"
+  /**
+   * A slow push-in and drift on each slide's photo (its direct `img`, `video` or `picture`
+   * child) while it shows. Off under reduced motion.
+   */
+  kenBurns?: boolean
 }
 
 /**
@@ -386,8 +546,20 @@ export interface CarouselContentProps extends React.ComponentProps<"div"> {
  * snaps back. Rubber-band resistance past the first/last slide signals the bound. A real drag
  * suppresses the trailing click so a swipe never fires a link inside a slide.
  */
-export function CarouselContent({ className, children, draggable = true, ...props }: CarouselContentProps) {
-  const { slots, index, count, setIndex } = useCarouselContext("CarouselContent")
+export function CarouselContent({
+  className,
+  children,
+  draggable = true,
+  effect = "slide",
+  kenBurns = false,
+  ...props
+}: CarouselContentProps) {
+  const { slots, index, count, setIndex, loop, playing, autoplay } = useCarouselContext("CarouselContent")
+  // The slide that was showing before this one: under `fade` it holds underneath while the new
+  // one fades in, and its photo keeps drifting until it is gone. -1 until the first change, so the
+  // first slide is simply there on load. Tracked during render (no effect), from the index.
+  const [shown, setShown] = React.useState({ index, previous: -1 })
+  if (shown.index !== index) setShown({ index, previous: shown.index })
   const [dragging, setDragging] = React.useState(false)
   const [offset, setOffset] = React.useState(0)
   // Transient gesture bookkeeping: read/written only in handlers, never during render.
@@ -429,7 +601,7 @@ export function CarouselContent({ className, children, draggable = true, ...prop
       setDragging(true)
     }
     // Rubber-band: only a third of the travel registers when dragging past either end.
-    const overscroll = (index <= 0 && dx > 0) || (index >= count - 1 && dx < 0)
+    const overscroll = !loop && ((index <= 0 && dx > 0) || (index >= count - 1 && dx < 0))
     d.offset = overscroll ? dx * 0.35 : dx
     setOffset(d.offset)
   }
@@ -471,15 +643,41 @@ export function CarouselContent({ className, children, draggable = true, ...prop
     >
       <div
         data-slot="carousel-track"
-        className={slots.track({ dragging, className })}
-        style={{
-          transform: dragging
-            ? `translate3d(calc(${-index * 100}% + ${offset}px), 0, 0)`
-            : `translateX(${-index * 100}%)`,
-        }}
+        // A rotating carousel stays quiet; once it holds, each new slide is announced.
+        aria-live={autoplay > 0 && playing ? "off" : "polite"}
+        className={slots.track({ dragging, effect, className })}
+        style={
+          effect === "fade"
+            ? undefined
+            : {
+                transform: dragging
+                  ? `translate3d(calc(${-index * 100}% + ${offset}px), 0, 0)`
+                  : `translateX(${-index * 100}%)`,
+              }
+        }
         {...props}
       >
-        {children}
+        {/* Each slide learns where it sits from a provider around it: no cloning, no registry. */}
+        {React.Children.toArray(children).map((child, i) => (
+          <CarouselSlideContext
+            key={React.isValidElement(child) && child.key != null ? child.key : i}
+            value={{
+              index: i,
+              effect,
+              kenBurns,
+              stage:
+                i === index
+                  ? shown.previous === -1
+                    ? "current"
+                    : "entering"
+                  : i === shown.previous
+                    ? "leaving"
+                    : "hidden",
+            }}
+          >
+            {child}
+          </CarouselSlideContext>
+        ))}
       </div>
     </div>
   )
@@ -489,14 +687,35 @@ export function CarouselContent({ className, children, draggable = true, ...prop
 
 export type CarouselSlideProps = React.ComponentProps<"div">
 
-export function CarouselSlide({ className, ...props }: CarouselSlideProps) {
-  const { slots } = useCarouselContext("CarouselSlide")
+export function CarouselSlide({ className, style, ...props }: CarouselSlideProps) {
+  const { slots, index: active, count } = useCarouselContext("CarouselSlide")
+  const place = React.useContext(CarouselSlideContext)
+  const fade = place?.effect === "fade"
+  const stage = fade ? place.stage : undefined
+  const kenBurns = place?.kenBurns ?? false
+  const isActive = place ? place.index === active : undefined
+  // The photo drifts while the slide is up, and on a fade while it is still fading out.
+  const moving = kenBurns && (isActive || stage === "leaving")
   return (
     <div
       data-slot="carousel-slide"
       role="group"
       aria-roledescription="slide"
-      className={slots.slide({ className })}
+      aria-label={place ? `${place.index + 1} of ${count}` : undefined}
+      data-active={isActive ? "true" : undefined}
+      // A stacked slide that is not showing keeps its links and buttons out of the tab order.
+      inert={fade && !isActive ? true : undefined}
+      className={slots.slide({ effect: place?.effect, stage, kenBurns, moving, className })}
+      style={
+        kenBurns && place
+          ? {
+              // Alternate the drift so consecutive photos never travel the same way.
+              ["--kb-x" as string]: place.index % 2 ? "-2%" : "2%",
+              ["--kb-y" as string]: place.index % 3 ? "1%" : "-1%",
+              ...style,
+            }
+          : style
+      }
       {...props}
     />
   )
@@ -519,8 +738,8 @@ function arrowReveal(disabled: boolean) {
 }
 
 export function CarouselPrevious({ className, ...props }: CarouselArrowProps) {
-  const { slots, index, setIndex } = useCarouselContext("CarouselPrevious")
-  const disabled = index <= 0
+  const { slots, index, setIndex, loop } = useCarouselContext("CarouselPrevious")
+  const disabled = !loop && index <= 0
   return (
     <Button
       data-slot="carousel-previous"
@@ -540,8 +759,8 @@ export function CarouselPrevious({ className, ...props }: CarouselArrowProps) {
 }
 
 export function CarouselNext({ className, ...props }: CarouselArrowProps) {
-  const { slots, index, count, setIndex } = useCarouselContext("CarouselNext")
-  const disabled = index >= count - 1
+  const { slots, index, count, setIndex, loop } = useCarouselContext("CarouselNext")
+  const disabled = !loop && index >= count - 1
   return (
     <Button
       data-slot="carousel-next"
@@ -556,6 +775,41 @@ export function CarouselNext({ className, ...props }: CarouselArrowProps) {
       {...props}
     >
       <CaretRight weight="bold" />
+    </Button>
+  )
+}
+
+// ─── CarouselPlayPause: the autoplay's own switch ────────────────────────────────
+
+export interface CarouselPlayPauseProps
+  extends Omit<React.ComponentProps<typeof Button>, "iconOnly" | "variant" | "children"> {
+  /** The frosted dark chip for a button placed on the photo, instead of the secondary fill. */
+  overlay?: boolean
+}
+
+/**
+ * Pauses and resumes `autoplay`, for anyone who needs the slides to hold still (WCAG 2.2.2). The
+ * hover and focus holds still apply on top; this is the one that lasts. Renders nothing without
+ * autoplay. Place it yourself (a corner of the photo, beside the indicators).
+ */
+export function CarouselPlayPause({ overlay = false, size = "sm", className, onClick, ...props }: CarouselPlayPauseProps) {
+  const { autoplay, count, stopped, setStopped } = useCarouselContext("CarouselPlayPause")
+  if (autoplay <= 0 || count <= 1) return null
+  return (
+    <Button
+      data-slot="carousel-play-pause"
+      variant={overlay ? "overlay" : "secondary"}
+      size={size}
+      iconOnly
+      aria-label={stopped ? "Play slideshow" : "Pause slideshow"}
+      onClick={(e) => {
+        onClick?.(e)
+        if (!e.defaultPrevented) setStopped(!stopped)
+      }}
+      className={cn("rounded-full", className)}
+      {...props}
+    >
+      {stopped ? <Play weight="fill" /> : <Pause weight="fill" />}
     </Button>
   )
 }
@@ -683,7 +937,7 @@ export function CarouselIndicators({
   labels,
   ...props
 }: CarouselIndicatorsProps) {
-  const { slots, count, index, setIndex } = useCarouselContext("CarouselIndicators")
+  const { slots, count, index, setIndex, autoplay } = useCarouselContext("CarouselIndicators")
   // Hooks must run before the `count <= 1` bailout; the ref only attaches on the tabs branch.
   const tabRowRef = React.useRef<HTMLDivElement>(null)
   const tab = useTabIndicator(tabRowRef, index, variant === "tabs")
@@ -849,7 +1103,9 @@ export function CarouselIndicators({
           )
         }
 
-        // dots & lines: one morphing (dots) or fixed (lines) tick per slide.
+        // dots & lines: one morphing (dots) or fixed (lines) tick per slide. Under autoplay the
+        // active one counts down: a fill keyed on the index, so every new slide starts it empty.
+        const timed = autoplay > 0
         return (
           <button
             key={i}
@@ -857,8 +1113,12 @@ export function CarouselIndicators({
             aria-label={label}
             aria-current={active || undefined}
             onClick={() => setIndex(i)}
-            className={slots.indicator({ variant, active, overlay, contained })}
-          />
+            className={slots.indicator({ variant, active, overlay, contained, timed })}
+          >
+            {timed && active && (
+              <span key={index} aria-hidden className={slots.indicatorFill({ timed, active, overlay })} />
+            )}
+          </button>
         )
       })}
     </div>

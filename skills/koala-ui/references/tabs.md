@@ -123,6 +123,32 @@ import { House, ActivityIcon, Gear } from "@phosphor-icons/react/ssr"
 </Tabs>
 ```
 
+## Selected icon
+
+`TabsTriggerIcon` lets the glyph mark the selection: the tab's own icon at rest, a filled check once it is the chosen one. Both stay mounted and cross-fade (opacity, scale and blur) on the trigger's state, so a quick switch back reverses mid-way instead of restarting. The check is the label's ink, not brand. Pass `activeIcon` for another mark. It suits a filter rail, where the selected chip says what the grid below is showing.
+
+```tsx
+import { House, PencilSimpleLine, Money } from "@phosphor-icons/react/ssr"
+
+<Tabs defaultValue="home" variant="chip">
+  <TabsList>
+    <TabsTrigger value="home">
+      <TabsTriggerIcon icon={<House weight="bold" />} />
+      Home
+    </TabsTrigger>
+    <TabsTrigger value="blog">
+      <TabsTriggerIcon icon={<PencilSimpleLine weight="bold" />} />
+      Blog article
+    </TabsTrigger>
+    <TabsTrigger value="pricing">
+      <TabsTriggerIcon icon={<Money weight="bold" />} />
+      Pricing
+    </TabsTrigger>
+  </TabsList>
+  …
+</Tabs>
+```
+
 ## Density
 
 Tabs ship at one tight size (a 14px label in a 32px-tall trigger). `density` tightens the pill chrome for application UI: a snugger container and tighter concentric radii. Set it per tabs or for a whole subtree with `DensityProvider` - see [Density](https://www.koalaui.com/docs/foundations/density.md).
@@ -220,7 +246,7 @@ Drop a Phosphor icon as a child of `TabsTrigger` alongside the label. The recipe
 
 `npx koalaui-cli@latest add tabs` writes `components/ui/tabs/`. Import from `@/components/ui/tabs`:
 
-- Components and helpers: `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`, `TabsPanels`, `tabsVariants`
-- Types: `TabsProps`, `TabsTriggerProps`
+- Components and helpers: `Tabs`, `TabsList`, `TabsTrigger`, `TabsTriggerIcon`, `TabsContent`, `TabsPanels`, `tabsVariants`
+- Types: `TabsProps`, `TabsTriggerProps`, `TabsTriggerIconProps`
 - Koala lib helpers it uses: `create-context`, `density`, `hit-area`, `morph`, `tv`, `utils`
-- npm packages: `radix-ui`
+- npm packages: `@phosphor-icons/react`, `radix-ui`

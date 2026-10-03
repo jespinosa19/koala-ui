@@ -5,10 +5,12 @@ export {
   CarouselPrevious,
   CarouselNext,
   CarouselIndicators,
+  CarouselPlayPause,
   carouselVariants,
   type CarouselProps,
   type CarouselContentProps,
   type CarouselSlideProps,
   type CarouselArrowProps,
   type CarouselIndicatorsProps,
+  type CarouselPlayPauseProps,
 } from "./carousel"

@@ -14,7 +14,7 @@ A centered marketing hero section. Named parts you assemble: an announcement eye
   <HeroContent>
     <Announcement>
       Update available
-      <Badge variant="orange" dot pill>Koala UI v11 is here!</Badge>
+      <Badge variant="orange" dot pill>Koala UI v12 is here!</Badge>
     </Announcement>
     <HeroTitle>A design system built to feel finished</HeroTitle>
     <HeroSubtitle>89 accessible React components and four themes, with the real source copied straight into your repo. Assemble production screens in an afternoon, not a sprint.</HeroSubtitle>
@@ -110,7 +110,7 @@ Drop the features and social-proof rows for a lean hero: just the eyebrow, title
   <HeroContent className="max-w-5xl">
     <Announcement>
       Update available
-      <Badge variant="orange" dot pill>Koala UI v11 is here!</Badge>
+      <Badge variant="orange" dot pill>Koala UI v12 is here!</Badge>
     </Announcement>
     <HeroTitle size="xl">A Design System built for AI-Powered Products</HeroTitle>
     <HeroSubtitle>A Design System for builders of AI assistants, copilots and intelligent tools, ship MVPs fast.</HeroSubtitle>

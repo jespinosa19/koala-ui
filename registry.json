@@ -26,7 +26,7 @@
       "utils",
       "tv"
     ],
-    "hash": "b0873fbdf5c98d24"
+    "hash": "bef705001c0620f5"
   },
   "items": [
     {
@@ -170,7 +170,7 @@
         "components/ui/announcement/announcement.tsx",
         "components/ui/announcement/index.ts"
       ],
-      "hash": "c7ef2cae03de89bd"
+      "hash": "ed35b90053cb2c95"
     },
     {
       "name": "auth-community",
@@ -1167,7 +1167,7 @@
         "components/ui/carousel/carousel.tsx",
         "components/ui/carousel/index.ts"
       ],
-      "hash": "dc668c78e6b3f391"
+      "hash": "9a908f3710ad319b"
     },
     {
       "name": "changelog-section-1",
@@ -3091,6 +3091,192 @@
         "components/ui/dialog/index.ts"
       ],
       "hash": "7c492e008ce0983b"
+    },
+    {
+      "name": "dispatch",
+      "type": "template",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Metro Dispatch",
+      "demo": "https://www.koalaui.com/demo/dispatch",
+      "dependencies": {},
+      "registryDependencies": [],
+      "libDependencies": [],
+      "assets": {
+        "count": 2,
+        "bytes": 733199
+      },
+      "files": [
+        "templates/dispatch/.gitignore",
+        "templates/dispatch/LICENSE",
+        "templates/dispatch/README.md",
+        "templates/dispatch/THIRD_PARTY.md",
+        "templates/dispatch/app/(site)/admin/styleguide/page.tsx",
+        "templates/dispatch/app/(site)/dispatch.css",
+        "templates/dispatch/app/(site)/layout.tsx",
+        "templates/dispatch/app/(site)/page.tsx",
+        "templates/dispatch/app/(site)/styleguide/page.tsx",
+        "templates/dispatch/app/globals.css",
+        "templates/dispatch/app/koala.css",
+        "templates/dispatch/app/layout.tsx",
+        "templates/dispatch/components/dispatch/calls-panel.tsx",
+        "templates/dispatch/components/dispatch/console.tsx",
+        "templates/dispatch/components/dispatch/dispatch-map.tsx",
+        "templates/dispatch/components/dispatch/lib/data.ts",
+        "templates/dispatch/components/dispatch/lib/dispatch.ts",
+        "templates/dispatch/components/dispatch/lib/format.ts",
+        "templates/dispatch/components/dispatch/lib/geo.ts",
+        "templates/dispatch/components/dispatch/lib/graph.ts",
+        "templates/dispatch/components/dispatch/lib/map-engine.ts",
+        "templates/dispatch/components/dispatch/lib/people.ts",
+        "templates/dispatch/components/dispatch/lib/sound.ts",
+        "templates/dispatch/components/dispatch/lib/types.ts",
+        "templates/dispatch/components/dispatch/new-call.tsx",
+        "templates/dispatch/components/dispatch/person/fingerprints.tsx",
+        "templates/dispatch/components/dispatch/person/people-list.tsx",
+        "templates/dispatch/components/dispatch/person/person-record.tsx",
+        "templates/dispatch/components/dispatch/person/portrait.tsx",
+        "templates/dispatch/components/dispatch/pieces.tsx",
+        "templates/dispatch/components/dispatch/provider.tsx",
+        "templates/dispatch/components/dispatch/radio.tsx",
+        "templates/dispatch/components/dispatch/search.tsx",
+        "templates/dispatch/components/dispatch/styleguide-specimens.tsx",
+        "templates/dispatch/components/dispatch/styleguide.ts",
+        "templates/dispatch/components/dispatch/top-bar.tsx",
+        "templates/dispatch/components/dispatch/units-panel.tsx",
+        "templates/dispatch/components/styleguide.tsx",
+        "templates/dispatch/components/theme-provider.tsx",
+        "templates/dispatch/components/ui/activity-feed/activity-feed.tsx",
+        "templates/dispatch/components/ui/activity-feed/index.ts",
+        "templates/dispatch/components/ui/alert/alert.tsx",
+        "templates/dispatch/components/ui/alert/index.ts",
+        "templates/dispatch/components/ui/animated-label/animated-label.tsx",
+        "templates/dispatch/components/ui/animated-label/index.ts",
+        "templates/dispatch/components/ui/animated-number/animated-number.tsx",
+        "templates/dispatch/components/ui/animated-number/index.ts",
+        "templates/dispatch/components/ui/avatar/avatar.tsx",
+        "templates/dispatch/components/ui/avatar/index.ts",
+        "templates/dispatch/components/ui/badge/badge.tsx",
+        "templates/dispatch/components/ui/badge/index.ts",
+        "templates/dispatch/components/ui/button/button.tsx",
+        "templates/dispatch/components/ui/button/index.ts",
+        "templates/dispatch/components/ui/button/social-button.tsx",
+        "templates/dispatch/components/ui/button/social-logos.tsx",
+        "templates/dispatch/components/ui/card/card.tsx",
+        "templates/dispatch/components/ui/card/index.ts",
+        "templates/dispatch/components/ui/chart/category-bar.tsx",
+        "templates/dispatch/components/ui/chart/chart.tsx",
+        "templates/dispatch/components/ui/chart/index.ts",
+        "templates/dispatch/components/ui/checkbox/checkbox.tsx",
+        "templates/dispatch/components/ui/checkbox/index.ts",
+        "templates/dispatch/components/ui/command/command.tsx",
+        "templates/dispatch/components/ui/command/index.ts",
+        "templates/dispatch/components/ui/data-table/data-table-empty.tsx",
+        "templates/dispatch/components/ui/data-table/data-table-faceted-filter.tsx",
+        "templates/dispatch/components/ui/data-table/data-table-reorder.tsx",
+        "templates/dispatch/components/ui/data-table/data-table-selection-bar.tsx",
+        "templates/dispatch/components/ui/data-table/data-table-tabs.tsx",
+        "templates/dispatch/components/ui/data-table/data-table-toolbar.tsx",
+        "templates/dispatch/components/ui/data-table/data-table-view-options.tsx",
+        "templates/dispatch/components/ui/data-table/data-table.tsx",
+        "templates/dispatch/components/ui/data-table/index.ts",
+        "templates/dispatch/components/ui/data-table/table.tsx",
+        "templates/dispatch/components/ui/description-list/description-list.tsx",
+        "templates/dispatch/components/ui/description-list/index.ts",
+        "templates/dispatch/components/ui/dialog/dialog.tsx",
+        "templates/dispatch/components/ui/dialog/index.ts",
+        "templates/dispatch/components/ui/divider/divider.tsx",
+        "templates/dispatch/components/ui/divider/index.ts",
+        "templates/dispatch/components/ui/dropdown-menu/dropdown-menu.tsx",
+        "templates/dispatch/components/ui/dropdown-menu/index.ts",
+        "templates/dispatch/components/ui/empty-state/empty-state.tsx",
+        "templates/dispatch/components/ui/empty-state/index.ts",
+        "templates/dispatch/components/ui/field/field.tsx",
+        "templates/dispatch/components/ui/field/index.ts",
+        "templates/dispatch/components/ui/input-group/index.ts",
+        "templates/dispatch/components/ui/input-group/input-group.tsx",
+        "templates/dispatch/components/ui/input/countries.ts",
+        "templates/dispatch/components/ui/input/country-select.tsx",
+        "templates/dispatch/components/ui/input/index.ts",
+        "templates/dispatch/components/ui/input/input.tsx",
+        "templates/dispatch/components/ui/input/number-input.tsx",
+        "templates/dispatch/components/ui/input/phone-input.tsx",
+        "templates/dispatch/components/ui/kbd/index.ts",
+        "templates/dispatch/components/ui/kbd/kbd.tsx",
+        "templates/dispatch/components/ui/label/index.ts",
+        "templates/dispatch/components/ui/label/label.tsx",
+        "templates/dispatch/components/ui/link/index.ts",
+        "templates/dispatch/components/ui/link/link.tsx",
+        "templates/dispatch/components/ui/list/index.ts",
+        "templates/dispatch/components/ui/list/list.tsx",
+        "templates/dispatch/components/ui/map/index.ts",
+        "templates/dispatch/components/ui/map/map-style.ts",
+        "templates/dispatch/components/ui/map/map.tsx",
+        "templates/dispatch/components/ui/pagination/index.ts",
+        "templates/dispatch/components/ui/pagination/pagination.tsx",
+        "templates/dispatch/components/ui/placeholder-logos/index.ts",
+        "templates/dispatch/components/ui/placeholder-logos/placeholder-logos.tsx",
+        "templates/dispatch/components/ui/popover/index.ts",
+        "templates/dispatch/components/ui/popover/popover.tsx",
+        "templates/dispatch/components/ui/progress/index.ts",
+        "templates/dispatch/components/ui/progress/progress.tsx",
+        "templates/dispatch/components/ui/push-to-talk/index.ts",
+        "templates/dispatch/components/ui/push-to-talk/push-to-talk.tsx",
+        "templates/dispatch/components/ui/scroll-area/index.ts",
+        "templates/dispatch/components/ui/scroll-area/scroll-area.tsx",
+        "templates/dispatch/components/ui/select/index.ts",
+        "templates/dispatch/components/ui/select/select-search.tsx",
+        "templates/dispatch/components/ui/select/select.tsx",
+        "templates/dispatch/components/ui/sheet/index.ts",
+        "templates/dispatch/components/ui/sheet/sheet.tsx",
+        "templates/dispatch/components/ui/skeleton/index.ts",
+        "templates/dispatch/components/ui/skeleton/skeleton.tsx",
+        "templates/dispatch/components/ui/spinner/index.ts",
+        "templates/dispatch/components/ui/spinner/spinner.tsx",
+        "templates/dispatch/components/ui/stat/index.ts",
+        "templates/dispatch/components/ui/stat/stat.tsx",
+        "templates/dispatch/components/ui/stepper/index.ts",
+        "templates/dispatch/components/ui/stepper/stepper.tsx",
+        "templates/dispatch/components/ui/switch/index.ts",
+        "templates/dispatch/components/ui/switch/switch.tsx",
+        "templates/dispatch/components/ui/tabs/index.ts",
+        "templates/dispatch/components/ui/tabs/tabs.tsx",
+        "templates/dispatch/components/ui/textarea/index.ts",
+        "templates/dispatch/components/ui/textarea/textarea.tsx",
+        "templates/dispatch/components/ui/toast/index.ts",
+        "templates/dispatch/components/ui/toast/toast.tsx",
+        "templates/dispatch/components/ui/toast/toaster.tsx",
+        "templates/dispatch/components/ui/toast/use-toast.ts",
+        "templates/dispatch/components/ui/toggle-group/index.ts",
+        "templates/dispatch/components/ui/toggle-group/toggle-group.tsx",
+        "templates/dispatch/components/ui/toggle/index.ts",
+        "templates/dispatch/components/ui/toggle/toggle.tsx",
+        "templates/dispatch/components/ui/toolbar/control-base.ts",
+        "templates/dispatch/components/ui/toolbar/index.ts",
+        "templates/dispatch/components/ui/toolbar/toolbar-overflow.tsx",
+        "templates/dispatch/components/ui/toolbar/toolbar.tsx",
+        "templates/dispatch/components/ui/tooltip/index.ts",
+        "templates/dispatch/components/ui/tooltip/tooltip.tsx",
+        "templates/dispatch/koala.json",
+        "templates/dispatch/lib/create-context.tsx",
+        "templates/dispatch/lib/density.tsx",
+        "templates/dispatch/lib/field-context.tsx",
+        "templates/dispatch/lib/field-group-context.tsx",
+        "templates/dispatch/lib/hit-area.ts",
+        "templates/dispatch/lib/in-view.ts",
+        "templates/dispatch/lib/morph.ts",
+        "templates/dispatch/lib/motion.ts",
+        "templates/dispatch/lib/stagger.tsx",
+        "templates/dispatch/lib/tv.ts",
+        "templates/dispatch/lib/utils.ts",
+        "templates/dispatch/next.config.ts",
+        "templates/dispatch/package-lock.json",
+        "templates/dispatch/package.json",
+        "templates/dispatch/postcss.config.mjs",
+        "templates/dispatch/template.json",
+        "templates/dispatch/tsconfig.json"
+      ],
+      "hash": "bfbee32f5ee5423b"
     },
     {
       "name": "divider",
@@ -6084,6 +6270,30 @@
       "hash": "5576ebc796d921e2"
     },
     {
+      "name": "map",
+      "type": "component",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "Map",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10",
+        "maplibre-gl": "^6.11.2"
+      },
+      "registryDependencies": [
+        "toolbar"
+      ],
+      "libDependencies": [
+        "hit-area",
+        "tv"
+      ],
+      "files": [
+        "components/ui/map/index.ts",
+        "components/ui/map/map-style.ts",
+        "components/ui/map/map.tsx"
+      ],
+      "hash": "9c1e11b5a7e6b62e"
+    },
+    {
       "name": "marketing-hero",
       "type": "section",
       "tier": "pro",
@@ -6941,7 +7151,9 @@
       "tier": "pro",
       "repo": "jespinosa19/koala-ui-pro",
       "title": "Product List Section 2",
-      "dependencies": {},
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
       "registryDependencies": [
         "badge",
         "button",
@@ -6956,7 +7168,7 @@
         "components/sections/product-list-section-2/product-card.tsx",
         "components/sections/product-list-section-2/product-list-section-2.tsx"
       ],
-      "hash": "78401ed62d133761"
+      "hash": "fb685f6826d86df6"
     },
     {
       "name": "product-list-section-3",
@@ -7166,6 +7378,26 @@
         "components/ui/prose/prose.tsx"
       ],
       "hash": "41994cf9671fc650"
+    },
+    {
+      "name": "push-to-talk",
+      "type": "component",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "Push To Talk",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [],
+      "libDependencies": [
+        "hit-area",
+        "tv"
+      ],
+      "files": [
+        "components/ui/push-to-talk/index.ts",
+        "components/ui/push-to-talk/push-to-talk.tsx"
+      ],
+      "hash": "d6fb53c6845c553b"
     },
     {
       "name": "qr-code",
@@ -8339,6 +8571,7 @@
       "repo": "jespinosa19/koala-ui",
       "title": "Tabs",
       "dependencies": {
+        "@phosphor-icons/react": "^2.1.10",
         "radix-ui": "^1.5.0"
       },
       "registryDependencies": [],
@@ -8354,7 +8587,7 @@
         "components/ui/tabs/index.ts",
         "components/ui/tabs/tabs.tsx"
       ],
-      "hash": "a5797eb71218602a"
+      "hash": "8eefdee8899195a9"
     },
     {
       "name": "tasks-board",

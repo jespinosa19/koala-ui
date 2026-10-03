@@ -2,7 +2,7 @@
 
 # Carousel
 
-A horizontal slide viewer with a clickable indicator. The track translates between full-width slides, arrow keys step it, and the indicator ships with a closed set of forms: dots, lines, fraction, thumbnails.
+A slide viewer with a clickable indicator. The track slides or fades between full-width slides, arrow keys step it, autoplay counts down in the indicator, and the indicator ships with a closed set of forms: dots, lines, fraction, thumbnails.
 
 ```tsx
 <Carousel label="Product highlights">
@@ -136,6 +136,60 @@ For photo galleries, add `CarouselPrevious` / `CarouselNext`: overlay arrows tha
 </Carousel>
 ```
 
+## Fade
+
+`effect="fade"` on `CarouselContent` stacks the slides and fades the incoming one in on top of the outgoing one, which holds underneath until the fade is done, so the page never shows through mid-way. Arrows, keys, dots and a swipe all still step it. The first slide is simply there on load; only changes fade.
+
+```tsx
+<Carousel label="Interior gallery">
+  <CarouselContent effect="fade">
+    <CarouselSlide>…</CarouselSlide>
+    <CarouselSlide>…</CarouselSlide>
+  </CarouselContent>
+  <CarouselPrevious />
+  <CarouselNext />
+  <CarouselIndicators overlay />
+</Carousel>
+```
+
+## Autoplay
+
+`autoplay` advances on its own: `true` every five seconds, or a number of milliseconds. The active dot or line counts down the interval. It holds while the pointer is over the carousel, while keyboard focus is inside it and while the tab is hidden, and picks up where it left off; a manual step starts a fresh interval. Autoplay turns `loop` on, so the arrows and keys wrap too. `CarouselPlayPause` is the switch that lasts, for anyone who needs the slides to hold still.
+
+```tsx
+<Carousel autoplay={4000} label="Cabin gallery">
+  <CarouselContent effect="fade">{/* slides */}</CarouselContent>
+  <div className="flex items-center justify-between">
+    <CarouselIndicators variant="lines" />
+    <CarouselPlayPause />
+  </div>
+</Carousel>
+```
+
+## Slideshow
+
+`kenBurns` adds a slow push-in and drift to each slide's photo (its direct `img`, `video` or `picture` child) while it shows, alternating direction so consecutive photos never travel the same way. With a fade and autoplay it is a slideshow: a welcome or loading screen, a hero backdrop. Put the words outside the slides and they hold still while the photos move. Off under reduced motion.
+
+```tsx
+<Carousel autoplay={5000} label="Autumn retreats" className="relative gap-0 overflow-hidden rounded-xl">
+  <CarouselContent effect="fade" kenBurns draggable={false} className="aspect-video">
+    {photos.map((photo) => (
+      <CarouselSlide key={photo.src}>
+        <img src={photo.src} alt={photo.alt} className="size-full object-cover" />
+      </CarouselSlide>
+    ))}
+  </CarouselContent>
+  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/75 to-transparent" />
+  <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-8 text-white">
+    <h3>Autumn retreats</h3>
+    <div className="flex items-center gap-2">
+      <CarouselIndicators variant="lines" overlay className="static" />
+      <CarouselPlayPause overlay />
+    </div>
+  </div>
+</Carousel>
+```
+
 ## Controlled
 
 Pass `index` and `onIndexChange` to drive the active slide from your own state, e.g. to pair the dots with external prev/next buttons or a step counter. Omit them for uncontrolled use with `defaultIndex`.
@@ -177,6 +231,14 @@ Pass index and onIndexChange to drive it from your own state, for example to pai
 
 Yes. The region exposes aria-roledescription="carousel" with your label, ArrowLeft and ArrowRight step the active slide while it is focused, and each dot is a button with an aria-label from dotLabel plus aria-current on the active one.
 
+### Does autoplay meet the accessibility rules for moving content?
+
+It pauses on hover, on keyboard focus and in a hidden tab, and CarouselPlayPause gives a lasting pause (WCAG 2.2.2). While it rotates the slides are not announced; once it holds, each new slide is announced politely. Every slide is labelled with its position ("2 of 4").
+
+### Where does Ken Burns apply?
+
+To the slide's direct img, video or picture child, so a caption or a badge inside the slide never zooms. The slide clips it, so it works on the sliding track too, and it is off under prefers-reduced-motion.
+
 ### Can I disable swipe and customize the dot labels?
 
 Pass draggable={false} on CarouselContent to turn off pointer and touch swiping, and pass a dotLabel function to CarouselIndicators to build each dot's accessible label, for example by slide title.
@@ -185,8 +247,8 @@ Pass draggable={false} on CarouselContent to turn off pointer and touch swiping,
 
 `npx koalaui-cli@latest add carousel` writes `components/ui/carousel/`. Import from `@/components/ui/carousel`:
 
-- Components and helpers: `Carousel`, `CarouselContent`, `CarouselSlide`, `CarouselPrevious`, `CarouselNext`, `CarouselIndicators`, `carouselVariants`
-- Types: `CarouselProps`, `CarouselContentProps`, `CarouselSlideProps`, `CarouselArrowProps`, `CarouselIndicatorsProps`
+- Components and helpers: `Carousel`, `CarouselContent`, `CarouselSlide`, `CarouselPrevious`, `CarouselNext`, `CarouselIndicators`, `CarouselPlayPause`, `carouselVariants`
+- Types: `CarouselProps`, `CarouselContentProps`, `CarouselSlideProps`, `CarouselArrowProps`, `CarouselIndicatorsProps`, `CarouselPlayPauseProps`
 - Koala components it installs with it: `button`
 - Koala lib helpers it uses: `create-context`, `hit-area`, `tv`, `utils`
 - npm packages: `@phosphor-icons/react`

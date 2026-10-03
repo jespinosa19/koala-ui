@@ -562,6 +562,36 @@
   --animate-shake-b: shake-alt 650ms var(--ease-sine);
 
   /*
+   * Talk halo: the ring PushToTalk sends out while it is live, the universal "on air" signal. It
+   * is a box-shadow spread rather than a scale, so it grows the same few pixels around a 40px
+   * circle and a full-width pill alike. Two staggered copies make a continuous pulse.
+   */
+  --animate-talk-halo: talk-halo 1200ms var(--ease-out) infinite;
+  --animate-talk-halo-echo: talk-halo 1200ms var(--ease-out) 600ms infinite;
+
+  /*
+   * Carousel fade (`effect="fade"`): the incoming slide fades in ON TOP of the outgoing one, which
+   * holds fully visible underneath and only hides when the fade is done. A symmetric cross-fade
+   * would dip both to half and let the page show through mid-way; this never does. Photo-length,
+   * so past the `--duration-*` scale on purpose.
+   */
+  --animate-carousel-fade-in: carousel-fade-in 900ms var(--ease-in-out) both;
+  --animate-carousel-fade-out: carousel-fade-out 900ms linear both;
+
+  /*
+   * Ken Burns (`kenBurns`): a slow push-in and drift on a slide's photo while it shows. It runs a
+   * little longer than the slide stays up (`--carousel-interval`, set from `autoplay`), so it never
+   * comes to rest on screen. The drift direction is per slide (`--kb-x` / `--kb-y`).
+   */
+  --animate-ken-burns: ken-burns calc(var(--carousel-interval, 6000ms) + 1500ms) linear both;
+
+  /*
+   * The autoplay countdown inside the active dot or line: fills across exactly one interval, and
+   * pauses with the carousel (`animation-play-state`), so it always says how long is left.
+   */
+  --animate-carousel-fill: carousel-fill var(--carousel-interval, 6000ms) linear both;
+
+  /*
    * Toast pop: a re-raised confirmation (the same `id` again, or a promise that resolved) dips a hair
    * and springs back past full size before settling. `--ease-spring` is the confirmations-only
    * overshoot; the a/b pair restarts it the same way as the shake.
@@ -1005,6 +1035,59 @@
   }
   83% {
     transform: translate3d(calc(var(--shake-distance, 3px) * -0.25), 0, 0);
+  }
+}
+
+/*
+ * Talk halo: a destructive-tinted ring that leaves the control's edge and fades as it widens. The
+ * colour mixes from the token, so it follows every theme.
+ */
+@keyframes talk-halo {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in oklch, var(--destructive) 50%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 9px color-mix(in oklch, var(--destructive) 0%, transparent);
+  }
+}
+
+/* Carousel fade: in on top, while the outgoing slide holds visible and hides at the end. */
+@keyframes carousel-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes carousel-fade-out {
+  from {
+    visibility: visible;
+  }
+  to {
+    visibility: hidden;
+  }
+}
+
+/* Ken Burns: a push-in of a tenth with a drift of a couple of percent; scale/translate only. */
+@keyframes ken-burns {
+  from {
+    scale: 1.02;
+    translate: 0 0;
+  }
+  to {
+    scale: 1.12;
+    translate: var(--kb-x, 2%) var(--kb-y, -1%);
+  }
+}
+
+@keyframes carousel-fill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
   }
 }
 
@@ -1527,6 +1610,78 @@
   --shadow-md: 0 4px 6px -1px oklch(0.1 0.04 265 / 0.5), 0 2px 4px -2px oklch(0.1 0.04 265 / 0.4);
   --shadow-lg: 0 10px 15px -3px oklch(0.1 0.04 265 / 0.5), 0 4px 6px -4px oklch(0.1 0.04 265 / 0.4);
   --shadow-xl: 0 20px 25px -5px oklch(0.1 0.04 265 / 0.55), 0 8px 10px -6px oklch(0.1 0.04 265 / 0.35);
+}
+
+/* ─── Map: the basemap's palette ─────────────────────────────────────────────────
+ * The Map component paints its vector basemap from these roles (components/ui/map/map-style.ts
+ * reads them off the map element and re-reads them when the theme changes). Every role mixes the
+ * theme's own tokens, so a map is light, cream, dark or moonlight with the page and needs no
+ * per-theme hex. Declared on the map element, not :root, so they resolve against the NEAREST theme
+ * scope, and so one map can be re-tinted with a utility (`[--map-water:…]`).
+ *
+ * Light grounds: grey land under white streets, the way a printed city map reads. Dark grounds
+ * flip it: near-black land under streets that brighten with their rank. Water takes a little of
+ * `--info`, parks a little of `--success`; nothing else carries a hue, so whatever an app draws on
+ * top owns the colour.
+ * ──────────────────────────────────────────────────────────────────────────── */
+[data-slot="map"] {
+  --map-land: color-mix(in oklch, var(--foreground) 4%, var(--background));
+  --map-landuse: color-mix(in oklch, var(--foreground) 6%, var(--background));
+  --map-park: color-mix(in oklch, var(--success) 14%, var(--map-land));
+  --map-water: color-mix(in oklch, var(--info) 15%, var(--background));
+  --map-building: color-mix(in oklch, var(--foreground) 10%, var(--background));
+  --map-road: var(--background);
+  --map-road-major: var(--background);
+  --map-road-motorway: color-mix(in oklch, var(--foreground) 3%, var(--background));
+  --map-road-casing: color-mix(in oklch, var(--foreground) 16%, var(--background));
+  --map-rail: color-mix(in oklch, var(--foreground) 24%, var(--background));
+  --map-boundary: color-mix(in oklch, var(--foreground) 30%, var(--background));
+  --map-label: var(--muted-foreground);
+  --map-label-strong: var(--foreground);
+  --map-label-water: color-mix(in oklch, var(--info) 60%, var(--foreground));
+  --map-halo: var(--map-land);
+
+  @variant dark {
+    --map-land: color-mix(in oklch, var(--foreground) 2%, var(--background));
+    --map-landuse: color-mix(in oklch, var(--foreground) 4%, var(--background));
+    --map-park: color-mix(in oklch, var(--success) 9%, var(--map-land));
+    --map-water: color-mix(in oklch, var(--info) 12%, var(--background));
+    --map-building: color-mix(in oklch, var(--foreground) 9%, var(--background));
+    --map-road: color-mix(in oklch, var(--foreground) 12%, var(--background));
+    --map-road-major: color-mix(in oklch, var(--foreground) 19%, var(--background));
+    --map-road-motorway: color-mix(in oklch, var(--foreground) 27%, var(--background));
+    --map-road-casing: var(--background);
+    --map-rail: color-mix(in oklch, var(--foreground) 18%, var(--background));
+    --map-label-water: color-mix(in oklch, var(--info) 55%, var(--background));
+  }
+
+  /* MapLibre's own chrome, on Koala's type and tokens. */
+  & .maplibregl-map {
+    font: inherit;
+  }
+  & .maplibregl-canvas {
+    outline: none;
+  }
+  & .maplibregl-canvas:focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: -2px;
+  }
+  /* Doubled classes to beat MapLibre's own `.maplibregl-ctrl.maplibregl-ctrl-attrib` white box. */
+  & .maplibregl-ctrl.maplibregl-ctrl-attrib,
+  & .maplibregl-ctrl-attrib.maplibregl-compact {
+    background: color-mix(in oklch, var(--background) 85%, transparent);
+    color: var(--muted-foreground);
+    font-size: var(--text-xs);
+  }
+  & .maplibregl-ctrl-attrib a {
+    color: inherit;
+  }
+  /* The (i) glyph is a black data-URI; on a dark ground it turns white. */
+  @variant dark {
+    & .maplibregl-ctrl-attrib-button {
+      filter: invert(1);
+    }
+  }
 }
 
 

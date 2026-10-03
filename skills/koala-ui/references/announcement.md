@@ -7,7 +7,7 @@ The pill above a hero title: a standing label paired with the thing being announ
 ```tsx
 <Announcement>
   Update available
-  <Badge variant="orange" dot pill>Koala UI v11 is here!</Badge>
+  <Badge variant="orange" dot pill>Koala UI v12 is here!</Badge>
 </Announcement>
 ```
 
@@ -33,7 +33,7 @@ export function Example() {
   return (
     <Announcement>
       Update available
-      <Badge variant="orange" dot pill>Koala UI v11 is here!</Badge>
+      <Badge variant="orange" dot pill>Koala UI v12 is here!</Badge>
     </Announcement>
   )
 }
@@ -54,7 +54,7 @@ The label is held off the chip by 16px as well, not by the row's 8px gap. 8px is
 ```tsx
 <Announcement>
   Update available
-  <Badge variant="orange" dot pill>Koala UI v11 is here!</Badge>
+  <Badge variant="orange" dot pill>Koala UI v12 is here!</Badge>
 </Announcement>
 
 <Announcement>
@@ -98,7 +98,7 @@ Pass `asChild` to render the pill as an `<a>` pointing at the changelog. The hov
 <Announcement asChild>
   <a href="/changelog">
     Update available
-    <Badge variant="orange" dot pill>Koala UI v11 is here!</Badge>
+    <Badge variant="orange" dot pill>Koala UI v12 is here!</Badge>
   </a>
 </Announcement>
 
@@ -116,7 +116,7 @@ Where it earns its keep. The pill is the first child of [HeroContent](https://ww
   <HeroContent>
     <Announcement>
       Update available
-      <Badge variant="orange" dot pill>Koala UI v11 is here!</Badge>
+      <Badge variant="orange" dot pill>Koala UI v12 is here!</Badge>
     </Announcement>
     <HeroTitle>A Design System built for AI-Powered Products</HeroTitle>
     {/* … */}
@@ -150,7 +150,7 @@ Renders a leading dot in the current text color. Use it for the one-line shape; 
 
 ### When should I use Announcement instead of a Badge?
 
-A Badge carries one label. An Announcement pairs two pieces of information: a standing label (“Update available”) and the thing being announced (“Koala UI v11 is here!”), and the pill is what pairs them. If you only have the second half, a single dot Badge is the lighter choice and the pill adds nothing.
+A Badge carries one label. An Announcement pairs two pieces of information: a standing label (“Update available”) and the thing being announced (“Koala UI v12 is here!”), and the pill is what pairs them. If you only have the second half, a single dot Badge is the lighter choice and the pill adds nothing.
 
 ### And instead of a Banner?
 

@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Tabs as TabsPrimitive } from "radix-ui"
+import { CheckCircle } from "@phosphor-icons/react"
 
 import { createContext } from "@/lib/create-context"
 import { useDensity } from "@/lib/density"
@@ -43,8 +44,9 @@ export const tabsVariants = tv({
       "data-[orientation=vertical]:overflow-visible data-[orientation=vertical]:[mask-image:none]",
     ],
     trigger: [
-      // `relative z-10` keeps the label above the indicator that slides behind it.
-      "relative z-10 inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap",
+      // `relative z-10` keeps the label above the indicator that slides behind it. `group/tabs-trigger`
+      // lets a TabsTriggerIcon inside read whether its tab is the selected one.
+      "group/tabs-trigger relative z-10 inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap",
       // In a column the label reads from the left edge, and it wraps instead of forcing the rail
       // wider than the column it was given.
       "data-[orientation=vertical]:justify-start data-[orientation=vertical]:whitespace-normal data-[orientation=vertical]:text-left",
@@ -84,6 +86,21 @@ export const tabsVariants = tv({
     panels: "[&>[data-slot=tabs-content]]:ring-inset [&>[data-slot=tabs-content]]:ring-offset-0",
     // Positioned/sized by JS (see useActiveIndicator); transition added once ready.
     indicator: "pointer-events-none absolute left-0 top-0 z-0",
+    // TabsTriggerIcon: two glyphs in one grid cell, cross-faded on the trigger's state. A CSS
+    // transition on the three properties the polish rules name for an icon swap, so a quick
+    // switch back reverses mid-way instead of restarting.
+    triggerIcon: "inline-grid shrink-0 place-items-center",
+    // At rest: the tab's own glyph. Selected: it shrinks to a quarter, fades and blurs out.
+    triggerIconIdle: [
+      "col-start-1 row-start-1 flex transition-[opacity,scale,filter] duration-base ease-out motion-reduce:transition-none",
+      "group-data-[state=active]/tabs-trigger:scale-25 group-data-[state=active]/tabs-trigger:opacity-0 group-data-[state=active]/tabs-trigger:blur-xs",
+    ],
+    // The mirror image: hidden at rest, the selected mark resolves into place.
+    triggerIconActive: [
+      "col-start-1 row-start-1 flex transition-[opacity,scale,filter] duration-base ease-out motion-reduce:transition-none",
+      "scale-25 opacity-0 blur-xs",
+      "group-data-[state=active]/tabs-trigger:scale-100 group-data-[state=active]/tabs-trigger:opacity-100 group-data-[state=active]/tabs-trigger:blur-none",
+    ],
   },
   variants: {
     variant: {
@@ -139,10 +156,14 @@ export const tabsVariants = tv({
       chip: {
         list: "gap-2 py-1",
         trigger: [
-          "h-9 rounded-md border border-border px-3 text-base text-foreground shadow-xs has-[>svg]:pl-2.5",
+          // The leading glyph sits 2px tighter to the edge (optical: a glyph's box is airier than a
+          // letter's), whether it is a bare icon or a TabsTriggerIcon cell.
+          "h-9 rounded-md border border-border px-3 text-base text-foreground shadow-xs has-[>svg]:pl-2.5 has-[>[data-slot=tabs-trigger-icon]]:pl-2.5",
           "bg-[var(--surface,var(--background))]",
           "hover:border-foreground/20 hover:text-foreground data-[state=active]:bg-muted",
-          "[&_svg]:size-5 [&_svg]:text-muted-foreground",
+          // Glyphs rest muted; the chosen chip's goes to full ink (a faint chip and a full-strength
+          // glyph is how this system marks a selection), its check included.
+          "[&_svg]:size-5 [&_svg]:text-muted-foreground data-[state=active]:[&_svg]:text-foreground",
         ],
         indicator: "hidden",
       },
@@ -323,6 +344,44 @@ export function TabsTrigger({ className, static: isStatic = false, ...props }: T
       className={slots.trigger({ className: cn(isStatic && "active:scale-100", className) })}
       {...props}
     />
+  )
+}
+
+export interface TabsTriggerIconProps extends Omit<React.ComponentProps<"span">, "children"> {
+  /** The tab's own glyph, shown while it is not selected. */
+  icon: React.ReactNode
+  /** The glyph once selected. @default a filled check circle */
+  activeIcon?: React.ReactNode
+}
+
+/**
+ * The glyph of a trigger that marks the selection itself: the tab's own icon at rest, a check once
+ * it is the selected one. Both stay mounted and cross-fade (opacity, scale, blur) on the trigger's
+ * `data-state`, so the swap is as interruptible as the indicator sliding under it. The check is the
+ * label's ink, full strength, not brand: selection is ink in this system. Decorative
+ * (`aria-hidden`): the trigger's `aria-selected` already says which tab is chosen.
+ *
+ *   <TabsTrigger value="portfolio">
+ *     <TabsTriggerIcon icon={<Briefcase weight="bold" />} />
+ *     Portfolio
+ *   </TabsTrigger>
+ */
+export function TabsTriggerIcon({
+  icon,
+  activeIcon = <CheckCircle weight="fill" />,
+  className,
+  ...props
+}: TabsTriggerIconProps) {
+  const { slots } = useTabsContext("TabsTriggerIcon")
+  return (
+    <span data-slot="tabs-trigger-icon" aria-hidden className={slots.triggerIcon({ className })} {...props}>
+      <span data-slot="tabs-trigger-icon-idle" className={slots.triggerIconIdle()}>
+        {icon}
+      </span>
+      <span data-slot="tabs-trigger-icon-active" className={slots.triggerIconActive()}>
+        {activeIcon}
+      </span>
+    </span>
   )
 }
 

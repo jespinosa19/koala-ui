@@ -4,7 +4,7 @@ A polished React design system: components built on Tailwind CSS v4, Radix UI an
 `tailwind-variants`, with four themes (light, cream, dark, moonlight) and a density system.
 Explore every component at [koalaui.com](https://www.koalaui.com).
 
-This repository holds the **free tier**: 123 components, 0 sample
+This repository holds the **free tier**: 125 components, 0 sample
 sections (one of each family), the lib helpers and the design tokens. The CLI copies the source into your project, so you own and edit the code; Koala UI is
 not a runtime dependency.
 
