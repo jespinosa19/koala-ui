@@ -206,24 +206,30 @@ function PasswordStrengthLabel({
   const { strength, slots } = usePasswordStrengthContext("PasswordStrengthLabel")
   const { tone, label } = strength
 
-  const text = label || placeholder || ""
-
   return (
     // Polite live region so the strength is announced as it changes, not on every keypress burst.
-    // Only the incoming label is announced: the outgoing one is aria-hidden while it rolls away.
+    // Only the incoming label is announced: the outgoing one is aria-hidden while it rolls away. The
+    // paragraph stays mounted from hint to verdict, so the region exists before its first change.
     <p
       data-slot="password-strength-label"
       aria-live="polite"
-      className={slots.label({ className: [TONE_TEXT[tone], className] })}
+      className={slots.label({ className: [TONE_TEXT[tone], "text-pretty", className] })}
       {...props}
     >
-      {/* The level reads as a *verdict*, so it rolls to the next one instead of being overwritten
-          in place. `align="start"` keeps it anchored to the left edge while the box eases between
-          the two word widths, and the tone rides on the layer rather than the paragraph so the
-          departing verdict keeps its own color on the way out (Weak leaves red, not orange). */}
-      <AnimatedLabel swapKey={text} align="start">
-        <span className={TONE_TEXT[tone]}>{text}</span>
-      </AnimatedLabel>
+      {label ? (
+        // The level reads as a *verdict*, so it rolls to the next one instead of being overwritten
+        // in place. `align="start"` keeps it anchored to the left edge while the box eases between
+        // the two word widths, and the tone rides on the layer rather than the paragraph so the
+        // departing verdict keeps its own color on the way out (Weak leaves red, not orange).
+        <AnimatedLabel swapKey={label} align="start">
+          <span className={TONE_TEXT[tone]}>{label}</span>
+        </AnimatedLabel>
+      ) : (
+        // With no verdict yet the placeholder is a hint, often a whole sentence ("Use 8+ characters…"):
+        // plain text that wraps like copy. The roll measures one line and never breaks it, so a long
+        // hint rode past the edge of a narrow card. The roll is for the verdicts, single words.
+        placeholder
+      )}
     </p>
   )
 }

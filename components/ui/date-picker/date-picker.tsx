@@ -72,6 +72,32 @@ const isoKey = (d: Date) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`
 /** Order two dates ascending into a range. */
 const orderRange = (a: Date, b: Date): DateRange => (a <= b ? { from: a, to: b } : { from: b, to: a })
 
+const subscribeNever = () => () => {}
+
+/** The locale the server render and the hydrating render share when no `locale` is passed. */
+const SERVER_LOCALE = "en-US"
+const runtimeLocale = () => new Intl.DateTimeFormat().resolvedOptions().locale
+
+/**
+ * The locale the labels are formatted in. An explicit `locale` always wins. Without one, the server
+ * and the hydrating render both use SERVER_LOCALE, then React re-renders once with the visitor's own:
+ * a server and a browser rarely share a default locale, and a month caption formatted in each
+ * ("October 2026" against "octubre de 2026") fails hydration.
+ */
+function useLocale(locale?: string): string {
+  const runtime = React.useSyncExternalStore(subscribeNever, runtimeLocale, () => SERVER_LOCALE)
+  return locale ?? runtime
+}
+
+/**
+ * Today's key, or null on the server and while hydrating. A page rendered ahead of time (a static
+ * page is rendered at build) would otherwise mark the day it was built as today; the marker appears
+ * with the first client render instead.
+ */
+function useTodayKey(): string | null {
+  return React.useSyncExternalStore(subscribeNever, () => isoKey(new Date()), () => null)
+}
+
 /** The 42-day (6-week) window covering `month`, padded with leading/trailing days. */
 function getMonthMatrix(month: Date, weekStartsOn: WeekStart): Date[] {
   const start = startOfWeek(startOfMonth(month), weekStartsOn)
@@ -272,7 +298,10 @@ interface CalendarBaseProps {
   isDateDisabled?: (date: Date) => boolean
   /** First column of the week. @default 1 (Monday) */
   weekStartsOn?: WeekStart
-  /** BCP-47 locale for month/weekday labels. Defaults to the runtime locale. */
+  /**
+   * BCP-47 locale for month/weekday labels. Defaults to the visitor's locale; a server render and the
+   * hydrating render use en-US, so the HTML always hydrates, then the visitor's locale takes over.
+   */
   locale?: string
   /** Number of month grids shown side by side. @default 1 */
   numberOfMonths?: number
@@ -306,11 +335,13 @@ export function Calendar(props: CalendarProps) {
     max,
     isDateDisabled,
     weekStartsOn = 1,
-    locale,
+    locale: localeProp,
     numberOfMonths = 1,
     className,
     density,
   } = props as CalendarBaseProps & { mode?: "single" | "range" }
+  const locale = useLocale(localeProp)
+  const todayKey = useTodayKey()
 
   const d = useDensity(density)
   const slots = calendarVariants({ density: d })
@@ -577,7 +608,7 @@ export function Calendar(props: CalendarProps) {
               {matrix.slice(week * 7, week * 7 + 7).map((day, col) => {
                 const outside = !isSameMonth(day, monthDate)
                 const disabled = isDisabled(day)
-                const isToday = isSameDay(day, today)
+                const isToday = todayKey === isoKey(day)
 
                 // Selection flags.
                 const isStart = mode === "range" && isSameDay(day, rFrom)
@@ -823,7 +854,7 @@ export function DatePicker({
   max,
   isDateDisabled,
   weekStartsOn = 1,
-  locale,
+  locale: localeProp,
   numberOfMonths = 1,
   density,
   align = "start",
@@ -831,6 +862,7 @@ export function DatePicker({
   triggerClassName,
   id,
 }: DatePickerProps) {
+  const locale = useLocale(localeProp)
   const [open, setOpen] = React.useState(false)
   const [date, setDate] = useControllableState<Date | undefined>({ value, defaultValue, onChange })
   const field = useFieldContext()
@@ -943,7 +975,7 @@ export function DateRangePicker({
   max,
   isDateDisabled,
   weekStartsOn = 1,
-  locale,
+  locale: localeProp,
   numberOfMonths = 2,
   density,
   align = "start",
@@ -951,6 +983,7 @@ export function DateRangePicker({
   triggerClassName,
   id,
 }: DateRangePickerProps) {
+  const locale = useLocale(localeProp)
   const [open, setOpen] = React.useState(false)
   const [range, setRange] = useControllableState<DateRange | undefined>({ value, defaultValue, onChange })
   const field = useFieldContext()
