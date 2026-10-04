@@ -3947,7 +3947,7 @@
         "components/sections/feature-section-12/themes.ts",
         "components/sections/feature-section-12/variable-fan.tsx"
       ],
-      "hash": "626ca807bdcca7cc"
+      "hash": "fd73611f675929e3"
     },
     {
       "name": "feature-section-13",
@@ -5036,7 +5036,7 @@
         "components/sections/gallery-section-7/gallery-section-7.tsx",
         "components/sections/gallery-section-7/index.ts"
       ],
-      "hash": "577cbec87ce319e7"
+      "hash": "fc31cee2570195cd"
     },
     {
       "name": "gallery-section-8",
