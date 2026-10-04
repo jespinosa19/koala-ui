@@ -7098,7 +7098,7 @@
         "components/sections/pricing-section-1/index.ts",
         "components/sections/pricing-section-1/pricing-section-1.tsx"
       ],
-      "hash": "3aa4496bfdc838cd"
+      "hash": "23174954be7a9bbb"
     },
     {
       "name": "pricing-section-2",
@@ -8617,13 +8617,50 @@
       ],
       "libDependencies": [
         "koala-mark",
+        "motion",
         "utils"
       ],
       "files": [
         "components/pages/tasks-board/index.ts",
-        "components/pages/tasks-board/tasks-board.tsx"
+        "components/pages/tasks-board/tasks-board.tsx",
+        "components/pages/tasks-board/use-board-drag.ts"
       ],
-      "hash": "9e0b3d111f07d227"
+      "hash": "6e31f9a46d2664be"
+    },
+    {
+      "name": "tasks-kanban",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Tasks Kanban",
+      "dependencies": {
+        "@phosphor-icons/react": "^2.1.10"
+      },
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "breadcrumb",
+        "button",
+        "card",
+        "dropdown-menu",
+        "input",
+        "kbd",
+        "layout",
+        "scroll-area",
+        "sidebar",
+        "tooltip"
+      ],
+      "libDependencies": [
+        "koala-mark",
+        "motion",
+        "utils"
+      ],
+      "files": [
+        "components/pages/tasks-kanban/index.ts",
+        "components/pages/tasks-kanban/tasks-kanban.tsx",
+        "components/pages/tasks-kanban/use-kanban-drag.ts"
+      ],
+      "hash": "88d23071aac432c6"
     },
     {
       "name": "team-member",
