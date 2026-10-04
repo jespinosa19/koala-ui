@@ -33,7 +33,17 @@ export const carouselVariants = tv({
     viewport: "overflow-hidden rounded-lg [transform:translateZ(0)]",
     // Specific transition (never `transition: all`); honors reduced-motion.
     track: "flex transition-transform duration-base ease-out motion-reduce:transition-none",
-    slide: "min-w-0 shrink-0 grow-0 basis-full",
+    // `relative` anchors a CarouselCaption. A slide holding one is promoted to its own layer: while
+    // the track animates, an overlay that overlaps it is otherwise force-promoted to a separate
+    // "Overlap" layer that lags behind its photo instead of travelling with it.
+    slide: "relative min-w-0 shrink-0 grow-0 basis-full has-[>[data-slot=carousel-caption]]:[transform:translateZ(0)]",
+    // Words over the slide's photo, on a bottom scrim so white text holds on a bright frame. Under
+    // `peek` the neighbours' captions dim: out quickly as a slide leaves, back in slowly as it lands.
+    caption: [
+      "absolute inset-x-0 bottom-0 z-10 flex flex-col items-start gap-3 p-6 pt-16 text-white",
+      "bg-gradient-to-t from-black/60 to-transparent",
+      "transition-opacity ease-out motion-reduce:transition-none",
+    ],
     indicators: "flex items-center justify-center gap-1.5",
     // A dot that morphs into a pill when active (dots) or a fixed thin tick (lines). Height/width
     // come from the `variant` slot; this base owns color, transition, focus and the hit target.
@@ -120,11 +130,11 @@ export const carouselVariants = tv({
     progressFill:
       "absolute inset-y-0 left-0 rounded-full bg-foreground transition-[width] duration-base ease-out motion-reduce:transition-none",
     // Overlay-only overrides layered onto an icon-only <Button>: position it on the image edge,
-    // make it a circle, and swap the variant fill for a translucent blurred surface that stays
+    // keep its soft square, and swap the variant fill for a translucent blurred surface that stays
     // legible on any photo. Behavior (press scale, focus ring, 40px hit, icon sizing) all comes
     // from Button. Sits OUTSIDE the viewport's clip (root child) so it never gets cropped.
     arrow: [
-      "absolute top-1/2 z-10 -translate-y-1/2 rounded-full",
+      "absolute top-1/2 z-10 -translate-y-1/2",
       "bg-background/80 text-foreground shadow-md backdrop-blur-sm",
       "hover:bg-background hover:text-foreground",
     ],
@@ -135,6 +145,19 @@ export const carouselVariants = tv({
     effect: {
       slide: {},
       fade: { track: "grid", slide: "col-start-1 row-start-1" },
+    },
+    // Slides narrower than the viewport, centered, with the neighbours showing at both edges. The
+    // viewport drops its radius (it is a window onto the row, not a frame) and each slide becomes its
+    // own rounded card, promoted so its clip also holds over a video or a Ken Burns photo. The two
+    // custom properties set the card width and the gutter; override them on CarouselContent.
+    peek: {
+      true: {
+        viewport: "rounded-none",
+        track:
+          "gap-(--carousel-gap) [--carousel-slide:87.5%] [--carousel-gap:calc(var(--spacing)*3)] sm:[--carousel-gap:calc(var(--spacing)*5)]",
+        slide: "basis-(--carousel-slide) overflow-hidden rounded-3xl [transform:translateZ(0)]",
+      },
+      false: {},
     },
     // Where a slide is in a fade. `current` is the first slide on load (shown, no animation, so the
     // page never fades in its own hero); `entering` fades in on top; `leaving` holds underneath until
@@ -165,8 +188,19 @@ export const carouselVariants = tv({
     // Active is COLOR only (fill on dots/lines; the ring for thumbnails lives in the compounds).
     // Each form owns its own size/shape so the dot's pill-morph never leaks into lines.
     active: {
-      true: { indicator: "bg-foreground hover:bg-foreground" },
-      false: {},
+      true: { indicator: "bg-foreground hover:bg-foreground", caption: "duration-slow" },
+      false: { caption: "opacity-40 duration-fast" },
+    },
+    // Indicator scale. `lg` is the showcase row under a wide `peek` carousel: 8px dots whose active
+    // pill stretches long, and a contained pill as tall as an `xl` button so a CarouselPlayPause sits
+    // level beside it. The hit target widens with the gap (half of gap-3 each side).
+    size: {
+      md: {},
+      lg: {
+        indicators: "gap-3",
+        indicator: "before:-inset-x-1.5",
+        progressTrack: "h-1.5 w-32",
+      },
     },
     // The visual form of the indicator. Positioning (`overlay`/`align`) is orthogonal and composes
     // with every form. CarouselIndicators branches its rendering on this; see below.
@@ -244,6 +278,11 @@ export const carouselVariants = tv({
     // Dots morph width with active state; lines keep their fixed width and only swap color.
     { variant: "dots", active: true, class: { indicator: "w-5" } },
     { variant: "dots", active: false, class: { indicator: "w-1.5" } },
+    { variant: "dots", size: "lg", class: { indicator: "h-2" } },
+    { variant: "dots", size: "lg", active: true, class: { indicator: "w-8 sm:w-12" } },
+    { variant: "dots", size: "lg", active: false, class: { indicator: "w-2" } },
+    { variant: "lines", size: "lg", class: { indicator: "h-1 w-10" } },
+    { contained: true, size: "lg", class: { indicators: "h-11 px-5" } },
     // Overlay dots/lines switch to fixed white (theme tokens can vanish over a photo).
     { overlay: true, active: true, class: { indicator: "bg-white shadow-sm hover:bg-white" } },
     { overlay: true, active: false, class: { indicator: "bg-white/50 shadow-sm hover:bg-white/70" } },
@@ -344,6 +383,9 @@ type CarouselSlideContextValue = {
   effect: "slide" | "fade"
   stage: "current" | "entering" | "leaving" | "hidden"
   kenBurns: boolean
+  peek: boolean
+  /** A copy past either end of a looping `peek` row: shown, never announced or focused. */
+  clone: boolean
 }
 
 // A plain context with a null default (not the throwing helper): a CarouselSlide rendered outside
@@ -389,8 +431,9 @@ export interface CarouselProps extends Omit<React.ComponentProps<"div">, "onChan
   label?: string
   /**
    * Advance on its own: `true` every 5 seconds, or a number of ms. It holds while the pointer is
-   * over the carousel, while focus is inside it, while the tab is hidden and while a
-   * CarouselPlayPause is set to pause; a manual step restarts the count. Turns `loop` on.
+   * over the carousel, while focus is inside it, while it is scrolled out of view, while the tab
+   * is hidden and while a CarouselPlayPause is set to pause; a manual step restarts the count.
+   * Turns `loop` on.
    */
   autoplay?: boolean | number
   /** Wrap past either end (arrows, keys, swipe). @default true with `autoplay`, else false */
@@ -411,6 +454,7 @@ export function Carousel({
   onPointerLeave,
   onFocus,
   onBlur,
+  ref,
   ...props
 }: CarouselProps) {
   // Count slides synchronously from the CarouselContent child so the dots render on the
@@ -432,12 +476,31 @@ export function Carousel({
     [count, loop, isControlled, onIndexChange],
   )
 
-  // What holds autoplay: a hovering pointer, focus inside, a hidden tab, the play/pause button.
+  // What holds autoplay: a hovering pointer, focus inside, scrolled out of view, a hidden tab, the
+  // play/pause button.
   const [hovered, setHovered] = React.useState(false)
   const [focused, setFocused] = React.useState(false)
   const [stopped, setStopped] = React.useState(false)
+  const [offscreen, setOffscreen] = React.useState(false)
   const hidden = React.useSyncExternalStore(subscribeVisibility, isDocumentHidden, () => false)
-  const playing = autoplay > 0 && count > 1 && !hovered && !focused && !stopped && !hidden
+  const playing = autoplay > 0 && count > 1 && !hovered && !focused && !stopped && !hidden && !offscreen
+
+  // A carousel below the fold holds its first slide until someone scrolls to it.
+  const rootRef = React.useRef<HTMLDivElement>(null)
+  const setRootRef = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      rootRef.current = node
+      assignRef(ref, node)
+    },
+    [ref],
+  )
+  React.useEffect(() => {
+    const el = rootRef.current
+    if (!el || autoplay <= 0 || typeof IntersectionObserver === "undefined") return
+    const io = new IntersectionObserver(([entry]) => setOffscreen(!entry.isIntersecting))
+    io.observe(el)
+    return () => io.disconnect()
+  }, [autoplay])
 
   // The countdown. A pause keeps what was left of the interval, so the indicator fill (which pauses
   // with it) and the step stay in step; a new index starts a full interval.
@@ -470,6 +533,7 @@ export function Carousel({
       setStopped={setStopped}
     >
       <div
+        ref={setRootRef}
         data-slot="carousel"
         role="group"
         aria-roledescription="carousel"
@@ -519,6 +583,12 @@ const subscribeVisibility = (onChange: () => void) => {
 }
 const isDocumentHidden = () => document.visibilityState === "hidden"
 
+/** Point a caller's `ref` (callback or object) at `node`, from a part's own ref callback. */
+function assignRef<T>(ref: React.Ref<T> | undefined, node: T | null) {
+  if (typeof ref === "function") return ref(node)
+  if (ref) (ref as React.RefObject<T | null>).current = node
+}
+
 // ─── CarouselContent: viewport + sliding track ──────────────────────────────────
 
 export interface CarouselContentProps extends React.ComponentProps<"div"> {
@@ -534,6 +604,24 @@ export interface CarouselContentProps extends React.ComponentProps<"div"> {
    * child) while it shows. Off under reduced motion.
    */
   kenBurns?: boolean
+  /**
+   * Slides narrower than the viewport, centered, with the neighbours showing at both edges, each
+   * one its own rounded card. With `loop` (or `autoplay`) the row never ends: the last slide steps
+   * forward onto the first instead of rewinding past them all. Set the card width and the gutter
+   * with `[--carousel-slide:80%]` and `[--carousel-gap:2rem]` in `className`. `effect="slide"` only.
+   */
+  peek?: boolean
+}
+
+/** The track's transform for a position (in slides from the first real one) and a drag offset. */
+function trackTransform(pos: number, offset: number, dragging: boolean, peek: boolean, clones: number) {
+  if (!peek) {
+    return dragging ? `translate3d(calc(${-pos * 100}% + ${offset}px), 0, 0)` : `translateX(${-pos * 100}%)`
+  }
+  // Center slide `pos`: half the leftover width in, then one card and one gutter per slide before
+  // it (the clones ahead of the first real slide count too).
+  const x = `(100% - var(--carousel-slide)) / 2 - ${pos + clones} * (var(--carousel-slide) + var(--carousel-gap))`
+  return dragging ? `translate3d(calc(${x} + ${offset}px), 0, 0)` : `translateX(calc(${x}))`
 }
 
 /**
@@ -545,6 +633,10 @@ export interface CarouselContentProps extends React.ComponentProps<"div"> {
  * 1:1 (transition off); past a width-relative threshold on release we step a slide, otherwise it
  * snaps back. Rubber-band resistance past the first/last slide signals the bound. A real drag
  * suppresses the trailing click so a swipe never fires a link inside a slide.
+ *
+ * Endless `peek` row: the first slides are repeated after the last and the last ones before the
+ * first. A wrapping step moves one slide on, onto a copy, and once that move has finished the track
+ * jumps, unanimated, to the real slide the copy stands for, which looks the same.
  */
 export function CarouselContent({
   className,
@@ -552,16 +644,41 @@ export function CarouselContent({
   draggable = true,
   effect = "slide",
   kenBurns = false,
+  peek: peekProp = false,
+  ref,
   ...props
 }: CarouselContentProps) {
   const { slots, index, count, setIndex, loop, playing, autoplay } = useCarouselContext("CarouselContent")
+  const peek = peekProp && effect === "slide"
+  const endless = peek && loop && count > 1
+  // Two copies each side: the slide a wrap lands on, and the neighbour peeking past it.
+  const clones = endless ? Math.min(count, 2) : 0
   // The slide that was showing before this one: under `fade` it holds underneath while the new
   // one fades in, and its photo keeps drifting until it is gone. -1 until the first change, so the
   // first slide is simply there on load. Tracked during render (no effect), from the index.
   const [shown, setShown] = React.useState({ index, previous: -1 })
   if (shown.index !== index) setShown({ index, previous: shown.index })
+  // Where the track sits, in slides from the first real one. It equals `index` except straight after
+  // a wrap on an endless row, when it rests on a copy (-1 or `count`) until it is put back. `from`
+  // asks the layout effect below to jump to a real slide first, when the track is still on a copy.
+  const [track, setTrack] = React.useState({ index, pos: index, from: null as number | null })
+  if (track.index !== index) {
+    let step = index - track.index
+    if (endless && track.index === count - 1 && index === 0) step = 1
+    // With two slides the backward wrap is the same index change as a forward step; go forward.
+    else if (endless && count > 2 && track.index === 0 && index === count - 1) step = -1
+    setTrack({ index, pos: track.index + step, from: track.pos !== track.index ? track.index : null })
+  }
   const [dragging, setDragging] = React.useState(false)
   const [offset, setOffset] = React.useState(0)
+  const trackRef = React.useRef<HTMLDivElement>(null)
+  const setTrackRef = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      trackRef.current = node
+      assignRef(ref, node)
+    },
+    [ref],
+  )
   // Transient gesture bookkeeping: read/written only in handlers, never during render.
   const drag = React.useRef<{
     pointerId: number
@@ -572,6 +689,31 @@ export function CarouselContent({
     active: boolean
   } | null>(null)
   const didDrag = React.useRef(false)
+
+  // Move the track without animating it, before the frame paints. With `from`, it then animates on
+  // from there to where React just put it.
+  const jump = React.useCallback(
+    (pos: number, then?: string) => {
+      const el = trackRef.current
+      if (!el) return
+      el.style.transition = "none"
+      el.style.transform = trackTransform(pos, 0, false, peek, clones)
+      void el.offsetWidth
+      el.style.transition = ""
+      if (then) el.style.transform = then
+    },
+    [peek, clones],
+  )
+  React.useLayoutEffect(() => {
+    if (track.from != null) jump(track.from, trackRef.current?.style.transform)
+  }, [track, jump])
+
+  // A wrap has landed on a copy: swap it for the real slide, which looks the same.
+  function putBack() {
+    if (track.pos === track.index) return
+    jump(track.index)
+    setTrack({ index: track.index, pos: track.index, from: null })
+  }
 
   function handlePointerDown(e: React.PointerEvent<HTMLDivElement>) {
     // Ignore secondary/middle buttons and single-slide carousels; let those clicks through.
@@ -599,6 +741,8 @@ export function CarouselContent({
       didDrag.current = true
       e.currentTarget.setPointerCapture(e.pointerId)
       setDragging(true)
+      // Caught on a copy mid-wrap: hold the real slide instead (the transition is off while dragging).
+      if (track.pos !== track.index) setTrack({ index: track.index, pos: track.index, from: null })
     }
     // Rubber-band: only a third of the travel registers when dragging past either end.
     const overscroll = !loop && ((index <= 0 && dx > 0) || (index >= count - 1 && dx < 0))
@@ -630,10 +774,35 @@ export function CarouselContent({
     didDrag.current = false
   }
 
+  const items = React.Children.toArray(children)
+  const place = (child: React.ReactNode, i: number, key: React.Key, clone: boolean) => (
+    // Each slide learns where it sits from a provider around it: no cloning, no registry.
+    <CarouselSlideContext
+      key={key}
+      value={{
+        index: i,
+        effect,
+        kenBurns,
+        peek,
+        clone,
+        stage:
+          i === index
+            ? shown.previous === -1
+              ? "current"
+              : "entering"
+            : i === shown.previous
+              ? "leaving"
+              : "hidden",
+      }}
+    >
+      {child}
+    </CarouselSlideContext>
+  )
+
   return (
     <div
       data-slot="carousel-viewport"
-      className={slots.viewport({ draggable, dragging })}
+      className={slots.viewport({ draggable, dragging, peek })}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={endDrag}
@@ -642,42 +811,20 @@ export function CarouselContent({
       onDragStart={(e) => e.preventDefault()}
     >
       <div
+        ref={setTrackRef}
         data-slot="carousel-track"
         // A rotating carousel stays quiet; once it holds, each new slide is announced.
         aria-live={autoplay > 0 && playing ? "off" : "polite"}
-        className={slots.track({ dragging, effect, className })}
-        style={
-          effect === "fade"
-            ? undefined
-            : {
-                transform: dragging
-                  ? `translate3d(calc(${-index * 100}% + ${offset}px), 0, 0)`
-                  : `translateX(${-index * 100}%)`,
-              }
-        }
+        className={slots.track({ dragging, effect, peek, className })}
+        style={effect === "fade" ? undefined : { transform: trackTransform(track.pos, offset, dragging, peek, clones) }}
+        onTransitionEnd={(e) => {
+          if (e.target === e.currentTarget && e.propertyName === "transform") putBack()
+        }}
         {...props}
       >
-        {/* Each slide learns where it sits from a provider around it: no cloning, no registry. */}
-        {React.Children.toArray(children).map((child, i) => (
-          <CarouselSlideContext
-            key={React.isValidElement(child) && child.key != null ? child.key : i}
-            value={{
-              index: i,
-              effect,
-              kenBurns,
-              stage:
-                i === index
-                  ? shown.previous === -1
-                    ? "current"
-                    : "entering"
-                  : i === shown.previous
-                    ? "leaving"
-                    : "hidden",
-            }}
-          >
-            {child}
-          </CarouselSlideContext>
-        ))}
+        {items.slice(count - clones).map((child, j) => place(child, count - clones + j, `clone-start-${j}`, true))}
+        {items.map((child, i) => place(child, i, React.isValidElement(child) && child.key != null ? child.key : i, false))}
+        {items.slice(0, clones).map((child, j) => place(child, j, `clone-end-${j}`, true))}
       </div>
     </div>
   )
@@ -693,19 +840,22 @@ export function CarouselSlide({ className, style, ...props }: CarouselSlideProps
   const fade = place?.effect === "fade"
   const stage = fade ? place.stage : undefined
   const kenBurns = place?.kenBurns ?? false
+  const clone = place?.clone ?? false
   const isActive = place ? place.index === active : undefined
   // The photo drifts while the slide is up, and on a fade while it is still fading out.
   const moving = kenBurns && (isActive || stage === "leaving")
   return (
     <div
       data-slot="carousel-slide"
-      role="group"
-      aria-roledescription="slide"
-      aria-label={place ? `${place.index + 1} of ${count}` : undefined}
+      // A copy on an endless row is scenery: the real slide it repeats carries the name and the focus.
+      role={clone ? undefined : "group"}
+      aria-roledescription={clone ? undefined : "slide"}
+      aria-label={place && !clone ? `${place.index + 1} of ${count}` : undefined}
+      aria-hidden={clone || undefined}
       data-active={isActive ? "true" : undefined}
       // A stacked slide that is not showing keeps its links and buttons out of the tab order.
-      inert={fade && !isActive ? true : undefined}
-      className={slots.slide({ effect: place?.effect, stage, kenBurns, moving, className })}
+      inert={(fade && !isActive) || clone ? true : undefined}
+      className={slots.slide({ effect: place?.effect, stage, kenBurns, moving, peek: place?.peek, className })}
       style={
         kenBurns && place
           ? {
@@ -719,6 +869,22 @@ export function CarouselSlide({ className, style, ...props }: CarouselSlideProps
       {...props}
     />
   )
+}
+
+// ─── CarouselCaption: words over a slide ─────────────────────────────────────────
+
+export type CarouselCaptionProps = React.ComponentProps<"div">
+
+/**
+ * A title, a line and an action over the bottom of a slide's photo, on a scrim that keeps white
+ * text legible. Put it inside a CarouselSlide, after the photo. On a `peek` row the neighbours'
+ * captions dim, so only the card in the middle reads at full strength.
+ */
+export function CarouselCaption({ className, ...props }: CarouselCaptionProps) {
+  const { slots, index } = useCarouselContext("CarouselCaption")
+  const place = React.useContext(CarouselSlideContext)
+  const active = place ? place.index === index : true
+  return <div data-slot="carousel-caption" className={slots.caption({ active, className })} {...props} />
 }
 
 // ─── CarouselPrevious / CarouselNext: overlay nav arrows ────────────────────────
@@ -802,11 +968,13 @@ export function CarouselPlayPause({ overlay = false, size = "sm", className, onC
       size={size}
       iconOnly
       aria-label={stopped ? "Play slideshow" : "Pause slideshow"}
+      // The glyph rolls between play and pause rather than hard-cutting.
+      swapKey={stopped ? "play" : "pause"}
       onClick={(e) => {
         onClick?.(e)
         if (!e.defaultPrevented) setStopped(!stopped)
       }}
-      className={cn("rounded-full", className)}
+      className={className}
       {...props}
     >
       {stopped ? <Play weight="fill" /> : <Pause weight="fill" />}
@@ -908,6 +1076,11 @@ export interface CarouselIndicatorsProps extends React.ComponentProps<"div"> {
    */
   contained?: boolean
   /**
+   * Scale of `dots`, `lines` and `progress`. `lg` is the showcase row under a wide `peek`
+   * carousel; contained, its pill stands as tall as an `xl` CarouselPlayPause. @default "md"
+   */
+  size?: "md" | "lg"
+  /**
    * One node per slide (e.g. an `<img>`), rendered inside each thumb button. Required by - and only
    * used for - `variant="thumbnails"`; index it to match the slide order.
    */
@@ -932,6 +1105,7 @@ export function CarouselIndicators({
   overlay = false,
   align = "end",
   contained: containedProp = false,
+  size = "md",
   thumbnails,
   thumbnailSize = "sm",
   labels,
@@ -1032,11 +1206,11 @@ export function CarouselIndicators({
     return (
       <div
         data-slot="carousel-indicators"
-        className={slots.indicators({ variant, overlay, align, contained, className })}
+        className={slots.indicators({ variant, overlay, align, contained, size, className })}
         {...props}
       >
         <span
-          className={slots.progressTrack({ variant, overlay, contained })}
+          className={slots.progressTrack({ variant, overlay, contained, size })}
           role="progressbar"
           aria-valuemin={1}
           aria-valuemax={count}
@@ -1057,7 +1231,7 @@ export function CarouselIndicators({
   return (
     <div
       data-slot="carousel-indicators"
-      className={slots.indicators({ variant, overlay, align, contained, className })}
+      className={slots.indicators({ variant, overlay, align, contained, size, className })}
       {...props}
     >
       {variant === "thumbnails" && (
@@ -1113,7 +1287,7 @@ export function CarouselIndicators({
             aria-label={label}
             aria-current={active || undefined}
             onClick={() => setIndex(i)}
-            className={slots.indicator({ variant, active, overlay, contained, timed })}
+            className={slots.indicator({ variant, active, overlay, contained, timed, size })}
           >
             {timed && active && (
               <span key={index} aria-hidden className={slots.indicatorFill({ timed, active, overlay })} />

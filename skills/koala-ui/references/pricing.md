@@ -249,8 +249,8 @@ For a lifetime or all-in bundle, the value isn't a have vs. have-not checklist, 
   {/* Each group is a labelled Divider header over its own icon list. */}
   <PricingFeatureGroup label="What's inside">
     <PricingFeature icon={<FigmaLogo weight="bold" />}>
-      {/* A row that links takes the DS Link's in-prose treatment. */}
-      <Link href="#" variant="prose">Desktop · Marketing &amp; Product Apps</Link>
+      {/* A row that links is a standalone Link: full ink, brand on hover, no underline. */}
+      <Link href="#">Desktop · Marketing &amp; Product Apps</Link>
     </PricingFeature>
     <PricingFeature icon={<Package weight="bold" />}>Product Application</PricingFeature>
   </PricingFeatureGroup>

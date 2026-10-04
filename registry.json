@@ -830,7 +830,7 @@
         "components/ui/button/social-button.tsx",
         "components/ui/button/social-logos.tsx"
       ],
-      "hash": "066c01450a5fd928"
+      "hash": "fdf333e51d0eece8"
     },
     {
       "name": "button-group",
@@ -1167,7 +1167,7 @@
         "components/ui/carousel/carousel.tsx",
         "components/ui/carousel/index.ts"
       ],
-      "hash": "9a908f3710ad319b"
+      "hash": "29bfce114b71f5a7"
     },
     {
       "name": "changelog-section-1",
@@ -1385,7 +1385,7 @@
         "components/ui/chart/chart.tsx",
         "components/ui/chart/index.ts"
       ],
-      "hash": "99a6108da1d462fe"
+      "hash": "4128305080a964cd"
     },
     {
       "name": "chat",
@@ -3493,7 +3493,7 @@
         "components/ui/expandable-search/expandable-search.tsx",
         "components/ui/expandable-search/index.ts"
       ],
-      "hash": "b001a6b63b195ca8"
+      "hash": "e69a9938e30ed99e"
     },
     {
       "name": "faq-section-1",
@@ -5461,7 +5461,7 @@
         "components/sections/hero-section-1/logos.tsx",
         "components/sections/hero-section-1/video-dialog.tsx"
       ],
-      "hash": "261eb24b02db7f60"
+      "hash": "7f9134d670314934"
     },
     {
       "name": "hero-section-10",
@@ -7072,7 +7072,7 @@
         "components/ui/pricing-comparison/index.ts",
         "components/ui/pricing-comparison/pricing-comparison.tsx"
       ],
-      "hash": "758b95533242d717"
+      "hash": "79a85751ec12b822"
     },
     {
       "name": "pricing-section-1",
@@ -7098,7 +7098,7 @@
         "components/sections/pricing-section-1/index.ts",
         "components/sections/pricing-section-1/pricing-section-1.tsx"
       ],
-      "hash": "23174954be7a9bbb"
+      "hash": "e7ebb0991c886dcf"
     },
     {
       "name": "pricing-section-2",

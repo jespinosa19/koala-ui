@@ -55,11 +55,13 @@ export const pricingComparisonVariants = tv({
     // featured tint never bleed through.
     head: "",
     headRow: "",
+    // Every cell runs a 12px gutter on a phone and 20px from sm, so a two-plan matrix fits a 390px
+    // screen without scrolling.
     // Top-left corner cell: empty by default, or a small caption via the Header `label` prop.
-    lead: "sticky top-0 z-10 bg-[var(--surface,var(--background))] p-5 align-bottom",
+    lead: "sticky top-0 z-10 bg-[var(--surface,var(--background))] p-3 align-bottom sm:p-5",
     // One plan column header: name, price, optional badge, and a CTA pinned to the bottom so
     // buttons line up across columns regardless of name length.
-    plan: "relative sticky top-0 z-10 bg-[var(--surface,var(--background))] p-5 align-bottom",
+    plan: "relative sticky top-0 z-10 bg-[var(--surface,var(--background))] p-3 align-bottom sm:p-5",
     // `relative z-10` lifts the plan content above the featured column's tint overlay.
     planInner: "relative z-10 flex flex-col items-start gap-3",
     planMeta: "flex flex-col gap-1",
@@ -76,11 +78,11 @@ export const pricingComparisonVariants = tv({
 
     // Section band: a quiet uppercase label that groups related rows.
     sectionRow: "",
-    sectionTitle: "bg-muted/40 px-5 py-2.5 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground",
+    sectionTitle: "bg-muted/40 px-3 py-2.5 sm:px-5 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground",
 
     // Feature row. A hairline top rule plus a hover wash makes long lists scannable.
     row: "border-t border-border transition-colors duration-fast ease-out hover:bg-muted/30",
-    rowHeader: "px-5 py-3.5 text-left align-middle font-medium text-foreground",
+    rowHeader: "px-3 py-3.5 text-left sm:px-5 align-middle font-medium text-foreground",
     rowHeaderInner: "flex items-center gap-1.5",
     // Trailing info affordance, identical in feel to PricingFeature's hint.
     hint: [
@@ -92,8 +94,10 @@ export const pricingComparisonVariants = tv({
     ],
 
     // Value cell. Centered, tabular so digit values line up down the column.
-    cell: "px-5 py-3.5 text-center align-middle tabular-nums text-muted-foreground",
-    cellIcon: "inline-flex size-5 items-center justify-center [&>svg]:size-5",
+    cell: "px-3 py-3.5 sm:px-5 text-center align-middle tabular-nums text-muted-foreground",
+    // Block-level and centered, not inline: an inline box sits on the text baseline and the line box
+    // grows by the descender, so a check row would stand ~5px taller than a value row.
+    cellIcon: "mx-auto flex size-5 items-center justify-center [&>svg]:size-5",
   },
   // `featured` highlighting is applied per-cell from the root index (positional, see below), not as
   // a variant axis. The one axis is where the plan headers sit in their columns.

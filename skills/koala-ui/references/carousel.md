@@ -2,7 +2,7 @@
 
 # Carousel
 
-A slide viewer with a clickable indicator. The track slides or fades between full-width slides, arrow keys step it, autoplay counts down in the indicator, and the indicator ships with a closed set of forms: dots, lines, fraction, thumbnails.
+A slide viewer with a clickable indicator. The track slides or fades between full-width or peeking slides, arrow keys step it, autoplay counts down in the indicator, and the indicator ships with a closed set of forms: dots, lines, fraction, thumbnails.
 
 ```tsx
 <Carousel label="Product highlights">
@@ -75,12 +75,13 @@ The indicator ships as one component with a closed set of forms, picked with the
 
 ## Contained
 
-Pass `contained` to seat `dots`, `lines` or `progress` in a pill, the same one `fraction` wears. In the flow it is a muted fill; with `overlay` it turns dark and frosted so the white dots hold on any photo.
+Pass `contained` to seat `dots`, `lines` or `progress` in a pill, the same one `fraction` wears. In the flow it is a muted fill; with `overlay` it turns dark and frosted so the white dots hold on any photo. `size="lg"` scales the dots, lines or bar up for a wide showcase row; contained, its pill stands as tall as an `xl` button.
 
 ```tsx
 <CarouselIndicators contained />
 <CarouselIndicators variant="lines" contained />
 <CarouselIndicators variant="progress" contained />
+<CarouselIndicators variant="lines" contained size="lg" />
 
 {/* over the image */}
 <CarouselIndicators contained overlay align="center" />
@@ -166,6 +167,30 @@ For photo galleries, add `CarouselPrevious` / `CarouselNext`: overlay arrows tha
 </Carousel>
 ```
 
+## Peek
+
+`peek` on `CarouselContent` narrows the slides to centered cards with the neighbours showing at both edges. With `loop` or `autoplay` the row never ends: the last card steps forward onto the first instead of rewinding past them all. `CarouselCaption` sets words over a card's photo, and the neighbours' captions dim so only the middle one reads at full strength. Size the cards with `[--carousel-slide:80%]` and the gutter with `[--carousel-gap:2rem]` in its `className`.
+
+```tsx
+<Carousel autoplay={5000} label="Cabin interiors" className="gap-6">
+  <CarouselContent peek>
+    {rooms.map((room) => (
+      <CarouselSlide key={room.id}>
+        <img src={room.src} alt={room.alt} className="aspect-[16/10] w-full object-cover" />
+        <CarouselCaption>
+          <h3>{room.title}</h3>
+          <p>{room.line}</p>
+        </CarouselCaption>
+      </CarouselSlide>
+    ))}
+  </CarouselContent>
+  <div className="flex items-center justify-center gap-3">
+    <CarouselIndicators contained size="lg" className="mx-0" />
+    <CarouselPlayPause size="xl" />
+  </div>
+</Carousel>
+```
+
 ## Slideshow
 
 `kenBurns` adds a slow push-in and drift to each slide's photo (its direct `img`, `video` or `picture` child) while it shows, alternating direction so consecutive photos never travel the same way. With a fade and autoplay it is a slideshow: a welcome or loading screen, a hero backdrop. Put the words outside the slides and they hold still while the photos move. Off under reduced motion.
@@ -235,6 +260,10 @@ Yes. The region exposes aria-roledescription="carousel" with your label, ArrowLe
 
 It pauses on hover, on keyboard focus and in a hidden tab, and CarouselPlayPause gives a lasting pause (WCAG 2.2.2). While it rotates the slides are not announced; once it holds, each new slide is announced politely. Every slide is labelled with its position ("2 of 4").
 
+### How does the peek row loop without rewinding?
+
+With peek and loop (or autoplay), CarouselContent repeats the first two slides after the last and the last two before the first. A wrapping step moves one card on, onto a copy, and once that move ends the track jumps unanimated to the real slide the copy stands for, which looks identical. The copies are aria-hidden and inert, so assistive tech and the tab order only ever meet the real slides.
+
 ### Where does Ken Burns apply?
 
 To the slide's direct img, video or picture child, so a caption or a badge inside the slide never zooms. The slide clips it, so it works on the sliding track too, and it is off under prefers-reduced-motion.
@@ -247,8 +276,8 @@ Pass draggable={false} on CarouselContent to turn off pointer and touch swiping,
 
 `npx koalaui-cli@latest add carousel` writes `components/ui/carousel/`. Import from `@/components/ui/carousel`:
 
-- Components and helpers: `Carousel`, `CarouselContent`, `CarouselSlide`, `CarouselPrevious`, `CarouselNext`, `CarouselIndicators`, `CarouselPlayPause`, `carouselVariants`
-- Types: `CarouselProps`, `CarouselContentProps`, `CarouselSlideProps`, `CarouselArrowProps`, `CarouselIndicatorsProps`, `CarouselPlayPauseProps`
+- Components and helpers: `Carousel`, `CarouselContent`, `CarouselSlide`, `CarouselCaption`, `CarouselPrevious`, `CarouselNext`, `CarouselIndicators`, `CarouselPlayPause`, `carouselVariants`
+- Types: `CarouselProps`, `CarouselContentProps`, `CarouselSlideProps`, `CarouselCaptionProps`, `CarouselArrowProps`, `CarouselIndicatorsProps`, `CarouselPlayPauseProps`
 - Koala components it installs with it: `button`
 - Koala lib helpers it uses: `create-context`, `hit-area`, `tv`, `utils`
 - npm packages: `@phosphor-icons/react`

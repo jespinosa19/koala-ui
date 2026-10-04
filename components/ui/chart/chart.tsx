@@ -1609,8 +1609,8 @@ export interface ChartAreasProps extends React.ComponentProps<"g"> {
 
 /**
  * ChartAreas: several area series at once. Set `stack` on {@link Chart} to stack them into a band
- * chart (each series sits on the cumulative total below it, with a more opaque fill so the bands
- * read apart); without it they overlap from the baseline like layered {@link ChartArea}s. Each band
+ * chart (each series sits on the cumulative total below it, as a flat translucent wash under its
+ * full-strength edge line); without it they overlap from the baseline like layered {@link ChartArea}s. Each band
  * carries its own top-edge line. For a single area, reach for {@link ChartArea} + {@link ChartLine}.
  */
 export function ChartAreas({
@@ -1683,10 +1683,12 @@ export function ChartAreas({
           <SeriesGroup key={key} color={hue} dimmed={isDimmed(key)}>
             <defs>
               <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
-                {/* Stacked bands are flat fills: next to each other a fade would muddy one shade into
-                    the next. Overlapping areas stay airy, fading to the baseline. */}
-                <stop offset="0%" stopColor="currentColor" stopOpacity={stacked ? 1 : 0.22} />
-                <stop offset="100%" stopColor="currentColor" stopOpacity={stacked ? 1 : 0} />
+                {/* Stacked bands are flat washes: next to each other a fade would muddy one shade into
+                    the next, and a solid slab swallows the edge line. Bands never overlap, so a
+                    translucent tint stays clean while the full-strength line marks each seam.
+                    Overlapping areas stay airy, fading to the baseline. */}
+                <stop offset="0%" stopColor="currentColor" stopOpacity={stacked ? 0.32 : 0.22} />
+                <stop offset="100%" stopColor="currentColor" stopOpacity={stacked ? 0.32 : 0} />
               </linearGradient>
             </defs>
             <path {...bandProps} clipPath={split ? `url(#${clips[0]})` : undefined} />

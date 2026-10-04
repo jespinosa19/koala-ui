@@ -253,7 +253,7 @@ The label reads as one object rather than text in a box, and a row of pills stay
 
 ### What does iconOnly do beyond hiding the label?
 
-It collapses the button to a circle that tracks the active size and zeroes the label padding and gap so the glyph optically centers. It also auto-wraps the button in a Tooltip from your `aria-label`, and Koala warns in development if no accessible name is present.
+It collapses the button to a square that tracks the active size, with the same corner as Input, Select and Toggle (`rounded-md`, which follows the radius knob), and zeroes the label padding and gap so the glyph optically centers. It also auto-wraps the button in a Tooltip from your `aria-label`, and Koala warns in development if no accessible name is present.
 
 ### How is loading different from disabled?
 

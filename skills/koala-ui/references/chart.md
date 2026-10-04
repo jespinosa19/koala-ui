@@ -281,7 +281,7 @@ const lit = active ?? months.length - 1
 
 ## Stacked area
 
-`ChartAreas` stacks several area series into a band chart when `stack` is set on `Chart`: each series sits on the cumulative total below it as a flat band with its own edge line. A stack reads by its order, so series that name no color take shades of the house blue, dark at the floor to light at the top (`palette="tonal"`, the default whenever `stack` is set). Without `stack` the series overlap from the baseline.
+`ChartAreas` stacks several area series into a band chart when `stack` is set on `Chart`: each series sits on the cumulative total below it as a translucent band under its own edge line. A stack reads by its order, so series that name no color take shades of the house blue, dark at the floor to light at the top (`palette="tonal"`, the default whenever `stack` is set). Without `stack` the series overlap from the baseline.
 
 ```tsx
 // Stacked band chart: "stack" on Chart + ChartAreas.

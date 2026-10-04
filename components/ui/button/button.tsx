@@ -31,7 +31,9 @@ declare const process: { env: { NODE_ENV?: string } }
 export const buttonVariants = tv({
   base: [
     // The pill (`rounded-pill`, globals.css): fully round at every radius preset, square only at
-    // `None`, so an icon-only button is a circle. The label reads as an object, not boxed text.
+    // `None`. The label reads as an object, not boxed text. An icon-only button is the exception:
+    // a square with the fields' corner (`rounded-md`, like Input, Select and Toggle), set with its
+    // size in compoundVariants below, so it sits level with the controls beside it.
     "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-pill text-sm font-medium",
     // Specific transition (never `transition: all`, #14); `transition` covers colors + scale.
     "transition duration-fast ease-out",
@@ -166,10 +168,10 @@ export const buttonVariants = tv({
     // centered box extender. The label-wrapper selector is re-stated here (and last) because
     // `:has(… [data-slot] svg)` outweighs `:has(>svg)` on specificity: without it a swapping or
     // loading icon-only button would take the text size's padding and stop being square.
-    { size: "sm", iconOnly: true, className: `w-8 gap-0 px-0 has-[>svg]:px-0 has-[>[data-slot=button-label]_svg]:px-0 ${hitBox}` },
-    { size: "md", iconOnly: true, className: "w-9 gap-0 px-0 has-[>svg]:px-0 has-[>[data-slot=button-label]_svg]:px-0" },
-    { size: "lg", iconOnly: true, className: "w-10 gap-0 px-0 has-[>svg]:px-0 has-[>[data-slot=button-label]_svg]:px-0" },
-    { size: "xl", iconOnly: true, className: "w-11 gap-0 px-0 has-[>svg]:px-0 has-[>[data-slot=button-label]_svg]:px-0" },
+    { size: "sm", iconOnly: true, className: `w-8 gap-0 rounded-md px-0 has-[>svg]:px-0 has-[>[data-slot=button-label]_svg]:px-0 ${hitBox}` },
+    { size: "md", iconOnly: true, className: "w-9 gap-0 rounded-md px-0 has-[>svg]:px-0 has-[>[data-slot=button-label]_svg]:px-0" },
+    { size: "lg", iconOnly: true, className: "w-10 gap-0 rounded-md px-0 has-[>svg]:px-0 has-[>[data-slot=button-label]_svg]:px-0" },
+    { size: "xl", iconOnly: true, className: "w-11 gap-0 rounded-md px-0 has-[>svg]:px-0 has-[>[data-slot=button-label]_svg]:px-0" },
 
     // sm text (32px) is under the 40px hit target, so it gets a vertical-only hit extender.
     { size: "sm", iconOnly: false, className: hitX },

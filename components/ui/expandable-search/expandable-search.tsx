@@ -40,9 +40,9 @@ export const expandableSearchVariants = tv({
       // icon Button. The frame and surface fade in as the box widens.
       "data-[state=closed]:border-transparent data-[state=closed]:bg-transparent",
       "data-[state=closed]:hover:bg-accent",
-      // Specific properties, never `all`. Radius is on the list because the closed chip is a
-      // circle and the open field is `rounded-md`; both are lengths, so they interpolate cleanly.
-      "transition-[width,border-color,background-color,box-shadow,border-radius] duration-base ease-out",
+      // Specific properties, never `all`. No radius on the list: closed or open it is the field's
+      // `rounded-md`, the same corner the icon Button wears.
+      "transition-[width,border-color,background-color,box-shadow] duration-base ease-out",
       "motion-reduce:transition-none",
     ],
     trigger: [
@@ -65,22 +65,19 @@ export const expandableSearchVariants = tv({
   variants: {
     // The Input's own size axis. Closed, the box is a square of the field's height (a ghost icon
     // Button of the same size); open, the right padding is the Input's, so the field's text and
-    // trailing content sit where a plain Input puts them. The closed radius is the pill clamped
-    // to half the height: a circle at every radius preset and square at `None`, like the icon
-    // Button, but as a real length it can interpolate to the field's `rounded-md` (a raw
-    // `--radius-pill` would hold the circle until the last frame and snap).
+    // trailing content sit where a plain Input puts them.
     size: {
       sm: {
-        root: "data-[state=closed]:w-8 data-[state=closed]:rounded-[min(var(--radius-pill),16px)] data-[state=open]:pr-2.5",
+        root: "data-[state=closed]:w-8 data-[state=open]:pr-2.5",
         trigger: "size-8 [&_svg]:size-[15px]",
         body: "gap-1.5",
       },
       md: {
-        root: "data-[state=closed]:w-9 data-[state=closed]:rounded-[min(var(--radius-pill),18px)] data-[state=open]:pr-3",
+        root: "data-[state=closed]:w-9 data-[state=open]:pr-3",
         trigger: "size-9 [&_svg]:size-4",
       },
       lg: {
-        root: "data-[state=closed]:w-10 data-[state=closed]:rounded-[min(var(--radius-pill),20px)] data-[state=open]:pr-3.5",
+        root: "data-[state=closed]:w-10 data-[state=open]:pr-3.5",
         trigger: "size-10 [&_svg]:size-[18px]",
       },
     },
