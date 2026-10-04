@@ -207,14 +207,21 @@ export const navbarVariants = tv({
     },
     // Where the inline links hand over to the hamburger. `md` (768px) suits a bar with a handful
     // of links; a marketing bar carrying six links plus two actions runs out of row well before
-    // that, so it collapses at `lg` (1024px) instead of overflowing or wrapping. One switch moves
-    // all three parts together: the inline nav, the toggle and the disclosed panel.
+    // that, so it collapses at `lg` (1024px) instead of overflowing or wrapping. `xl` (1280px) is
+    // for a bar whose labels only fit on a desktop row: seven links, or six in a language with long
+    // words. One switch moves all three parts together: the inline nav, the toggle and the
+    // disclosed panel.
     collapseAt: {
       md: {},
       lg: {
         nav: "md:hidden lg:flex",
         toggle: "md:inline-flex lg:hidden",
         mobileMenu: "md:flex lg:hidden",
+      },
+      xl: {
+        nav: "md:hidden xl:flex",
+        toggle: "md:inline-flex xl:hidden",
+        mobileMenu: "md:flex xl:hidden",
       },
     },
     // Docked into an app shell's top band (`LayoutTopbar`), the Linear/Vercel read. The shell owns

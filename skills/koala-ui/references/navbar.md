@@ -530,7 +530,7 @@ The root `<header>`. Owns the mobile disclosure state and provides the styling c
 - `variant`: `"full"` (default) or `"floating"`.
 - `linkStyle`: `"pill"` (default), `"underline"` or `"text"`. Ghost chips floating in the bar, full-height tabs whose ink indicator welds to the bar's bottom rule, or plain muted words that light up to full ink on hover.
 - `density`: `"comfortable"` (default) or `"compact"`. Falls back to the nearest `DensityProvider`.
-- `collapseAt`: `"md"` (default) or `"lg"`. Where the inline links hand over to the hamburger. A bar carrying six links and two actions runs out of row well before 768px, so it collapses at 1024px instead of overflowing; the nav, the toggle and the mobile panel all move together.
+- `collapseAt`: `"md"` (default), `"lg"` or `"xl"`. Where the inline links hand over to the hamburger. A bar carrying six links and two actions runs out of row well before 768px, so it collapses at 1024px instead of overflowing; seven links, or labels in a language with long words, wait for 1280px. The nav, the toggle and the mobile panel all move together.
 - `docked`: sit the bar on an app shell's surface instead of painting its own: no fill, no bottom rule, and a full-width row instead of the marketing column. Inherited inside a [`LayoutTopbar`](https://www.koalaui.com/docs/components/layout.md#top-navigation), so you rarely pass it; `docked={false}` keeps a bar's standalone chrome inside a shell.
 - `open` / `defaultOpen` / `onOpenChange`: control the mobile menu.
 

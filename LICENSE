@@ -31,9 +31,8 @@ An "end product" is a website, application or other work whose value to its user
 than Koala UI itself. A client site built with Koala UI is an end product; a template, theme
 or UI kit made from Koala UI is not (see section 2).
 
-Seats. A Pro license covers the number of people its plan states: one person for Solo, and
-up to six people for Agency. Each person activates their own seat with the koalaui CLI; a
-continuous-integration job run for a licensed person may use one of that person's seats.
+Seats. A Pro license covers one person, who activates their seat with the koalaui CLI; a
+continuous-integration job run for that person may use the seat.
 Unlocking the source on the Koala UI website uses no seat, and is limited to the people the
 plan covers. You may not share a license key, or the activation ids issued for it, beyond
 the seats you bought.

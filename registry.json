@@ -693,7 +693,7 @@
         "components/sections/blog-section-1/blog-section-1.tsx",
         "components/sections/blog-section-1/index.ts"
       ],
-      "hash": "982baadb9d09bed5"
+      "hash": "41dc0d70c6e1863f"
     },
     {
       "name": "blog-section-2",
@@ -6442,7 +6442,7 @@
         "components/ui/navbar/index.ts",
         "components/ui/navbar/navbar.tsx"
       ],
-      "hash": "7db6d538b3401887"
+      "hash": "a47aab636b04113a"
     },
     {
       "name": "navbar-section-1",
@@ -7090,7 +7090,9 @@
         "section",
         "section-header"
       ],
-      "libDependencies": [],
+      "libDependencies": [
+        "utils"
+      ],
       "frameworks": [
         "next"
       ],
@@ -7098,7 +7100,7 @@
         "components/sections/pricing-section-1/index.ts",
         "components/sections/pricing-section-1/pricing-section-1.tsx"
       ],
-      "hash": "e7ebb0991c886dcf"
+      "hash": "765a9bc0730633a6"
     },
     {
       "name": "pricing-section-2",
