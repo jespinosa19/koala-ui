@@ -1,6 +1,6 @@
 ---
 name: koala-ui
-description: Build React UI with Koala UI, the owned-source design system on Tailwind CSS v4, Radix UI and tailwind-variants. Use when writing, editing or reviewing components, pages, forms, dashboards or marketing sections in a project that uses Koala UI (a koala.json at the root, components under components/ui), when installing or updating Koala components with the koalaui CLI, when migrating an existing project with its own components, CSS or UI kit to Koala, or whenever the user asks for Koala by name.
+description: Build React UI with Koala UI, the owned-source design system on Tailwind CSS v4, Radix UI and tailwind-variants. Use when writing, editing or reviewing components, pages, forms, dashboards or marketing sections in a project that uses Koala UI (a koala.json at the root, components under components/ui), when installing or updating Koala components with the koalaui CLI, when migrating an existing or legacy project with its own components, CSS or UI kit entirely to Koala, or whenever the user asks for Koala by name.
 ---
 
 # Koala UI
@@ -51,17 +51,24 @@ npx koalaui-cli@latest skill                 # refresh this skill
 
 ## Migrating an existing project
 
-When the user asks to move a project with its own components, CSS or UI kit to Koala, read
-[references/migrate.md](references/migrate.md) and follow it from the audit on.
+When the user asks to move a project with its own components, CSS or UI kit to Koala, however old,
+read [references/migrate.md](references/migrate.md) and follow it from the top. The goal is the
+whole interface on Koala and nothing of the old one left, so the job ends when its Step 7 passes.
 
+- The owner may not be technical. Decide the technical questions yourself and bring them only
+  product and money decisions, in plain language, one at a time.
 - Write the plan to `koala-migration.md` at the project root and stop there until the user approves
   it. If that file already exists, read it and resume from the first unticked surface.
-- Change markup and styles only. Handlers, validation, routes, data fetching, analytics, test ids
-  and copy stay exactly as they were.
-- Keep the screens, regions, navigation and their order unless the approved plan lists a change.
-  The plan records that decision: never restructure on your own initiative.
-- One surface per commit, running the project's checks after each. Do not commit unless the user
-  asked for commits; otherwise stop after each surface for review.
+- Work and commit on a `koala-migration` branch, one surface per commit, with the project's checks
+  and smoke tests after each. Merging and deploying belong to the owner.
+- Delete old interface code, its styles and its overrides as you replace it. Never delete data,
+  uploads, database migrations, environment files, or backend and business logic.
+- Improve the structure, not just the paint: propose one shell, navigation grouped by task and
+  shared screen layouts, with reasons and a before and after, and build what the owner approves.
+  Nothing structural changes without that approval, and every feature stays reachable.
+- Handlers, validation, data fetching and analytics stay exactly as they were. A changed URL
+  redirects from the old one.
+- Never skip or weaken a check to move on. If something fails or cannot be moved, say so.
 - A project coming from shadcn/ui or AI Elements also reads its own guide:
   `https://www.koalaui.com/docs/migrating-from-shadcn.md` or
   `https://www.koalaui.com/docs/migrating-from-ai-elements.md`.

@@ -2,7 +2,15 @@
 
 # Migrating a custom project
 
-Your app has its own components, its own CSS or another UI kit. Here is how to move it onto Koala one surface at a time, by hand or with a coding agent, without changing what it does.
+Your app has its own components, years of CSS or an old UI kit. You do not need to know how to move it: a coding agent replaces the whole interface with Koala, deletes everything old, and keeps what your product does.
+
+## What you end up with
+
+- Every screen drawn with Koala, in your brand.
+- No old stylesheets, overrides, duplicate components or unused packages left in the repo.
+- A clearer structure: one shell, navigation grouped by what people do, and screens that follow the same layouts.
+- The same features, data and business rules as before.
+- A written report of what changed and proof that each part still works.
 
 ## With a coding agent
 
@@ -15,11 +23,23 @@ npx koalaui-cli@latest skill
 Then ask for the audit first:
 
 ```text
-Migrate this project to Koala UI. Follow references/migrate.md in the koala-ui skill.
-Start with the audit and write the plan to koala-migration.md. Change nothing until I approve it.
+Migrate this whole project to Koala UI and leave nothing of the old UI behind.
+Follow references/migrate.md in the koala-ui skill.
+Explain everything in plain language: I am not an expert.
+Start with the audit and write the plan to koala-migration.md.
+Change nothing until I approve it.
 ```
 
-The agent stops at the plan so you can review it, then works through it and ticks off each surface. The plan lives in your repo, so a later session picks up where the last one stopped. Cursor, Codex and other agents need one line pointing at the skill, see [AI and agents](https://www.koalaui.com/docs/agents.md).
+The agent makes the technical decisions and proposes a better structure for your product. It only stops for yours: approving the plan and that structure, choosing on Pro items, and accepting the result. The plan lives in your repo, so a later session picks up where the last one stopped. Cursor, Codex and other agents need one line pointing at the skill, see [AI and agents](https://www.koalaui.com/docs/agents.md).
+
+## If you are the agent
+
+- **Lead.** Assume the owner cannot judge technical options. Decide them, and put only product and money decisions to the owner, in plain words, one at a time.
+- **Finish.** The job is done when Step 7 passes, not when the new screens look right.
+- **Improve the structure.** A structure that grew by accident is part of the problem. Propose a better one with reasons, then build what the owner approves.
+- **Delete only code.** Old interface code goes. Never delete data, uploads, database migrations, environment files, or backend and business logic.
+- **Stay on the branch.** Work and commit on `koala-migration`. Merging and deploying belong to the owner.
+- **Report the truth.** If a check fails or something cannot be moved, say so in the plan and to the owner. Never skip or weaken a test to continue.
 
 ## Before you start
 
@@ -29,7 +49,34 @@ The agent stops at the plan so you can review it, then works through it and tick
 | Tailwind CSS v4 | Upgrade from v3 first. On a project without Tailwind, add it, then read Keeping both working below. |
 | The `@/*` path alias | Add it to `tsconfig.json`, and to `vite.config.ts` in Vite. `init` checks it. |
 | Next.js or Vite | `init` detects both. Anywhere else it prints the steps to wire by hand. |
-| A clean branch | Commit or stash first, so each step of the migration is one reviewable diff. |
+| Git | Put the project in git first, even if it never was. Every deletion must be recoverable. |
+| A `koala-migration` branch | Commit or stash everything else first. The running product stays untouched until the owner merges. |
+
+## Old software
+
+An app from years ago rarely meets those requirements. Bring the foundations up first, one commit each, and confirm the app still runs before any screen changes.
+
+| If it has | Do this first |
+| --- | --- |
+| React 15 to 18 | Upgrade one major version at a time, each as its own commit. React 19 removes `ReactDOM.render`, `findDOMNode`, string refs and legacy context. Class components still work. |
+| Create React App, Gulp, Grunt, an old webpack | Move the build to Vite, and keep the routes and environment variables. |
+| Plain JavaScript | Add TypeScript with `allowJs`. Old files keep working, and Koala's components arrive typed. |
+| An old Node version | Move to the current LTS first. Old build tools often break here, so fix them in this step. |
+| Tailwind v1 or v2 | Move to v3 first, then run `npx @tailwindcss/upgrade` to reach v4. |
+| Tailwind v3 | Run `npx @tailwindcss/upgrade` to reach v4. |
+| Bootstrap, jQuery UI, an old Material-UI | Replaced surface by surface, then removed with their stylesheets and themes. |
+| jQuery in the pages | List what each script does, rebuild it as React state or a Koala component, then delete the script. |
+| Sass, Less, global CSS | Replaced by tokens and Tailwind. Every stylesheet is deleted by the end. |
+| AngularJS, Vue, Backbone, or pages rendered by PHP, Rails or similar | Koala is React, so this is a rebuild of the interface. A new Vite or Next.js app replaces it screen by screen, on the same backend. Say so clearly before planning, with what it means for time and cost. |
+
+## Protect what works
+
+Old projects often have no tests, so nothing would catch a break. Before the first change:
+
+1. **Tag the start.** Run `git tag koala-migration-start`, so the original can always be recovered.
+2. **Capture every screen.** Screenshot each route at desktop and phone width, signed in and signed out, into `koala-migration/before/`.
+3. **List what people do.** Write the main flows in `koala-migration.md`, such as signing in, creating a record or taking a payment, and have the owner confirm the list.
+4. **Add smoke tests.** Cover those flows with Playwright against the old interface, selecting by role and text so the same tests still pass on the new one.
 
 ## Step 1: Audit
 
@@ -39,11 +86,12 @@ Read the project before touching it, and record what you find:
 - **The surfaces.** Every reusable UI component, or every kit component in use, with how many files import it. Usage count sets the order.
 - **The structure.** The kind of product, each screen’s regions and their order, how navigation works, what scrolls, what happens on small screens, and whether it runs on touch.
 - **The brand.** The primary color, neutrals, radius, fonts and any dark mode, read from the existing tokens or the most repeated values.
-- **What is yours.** Domain components that mean something only in this product, such as a shipment timeline or a seat map. Koala does not replace them.
+- **What is yours.** Domain components that mean something only in this product, such as a shipment timeline or a seat map. They stay as features, rebuilt from Koala parts and tokens, and their old CSS goes.
+- **The leftovers.** Every stylesheet, `!important`, inline style, CDN script, vendored file in `public/`, duplicate component and class name built from strings. This list is what Step 7 has to bring to zero.
 
 ## Step 2: Plan
 
-Write `koala-migration.md` at the project root and get it approved before any code changes. Each surface gets its Koala counterpart from the maps below, its tier from `npx koalaui-cli@latest list`, and a place in the order. Anything with no counterpart stays and moves to tokens only.
+Write `koala-migration.md` at the project root and get it approved before any code changes. Each surface gets its Koala counterpart from the maps below, its tier from `npx koalaui-cli@latest list`, and a place in the order. Anything with no counterpart is rebuilt from Koala parts and tokens.
 
 ```text title="koala-migration.md"
 # Koala migration
@@ -57,8 +105,10 @@ Primary #0f766e, radius 12px, Inter
 ## Structure
 Point of sale on a touch screen: density compact, controls size lg
 Regions: top nav, open tickets, product grid, ticket panel
-Decision: keep (approved by the owner)
-Shell: LayoutTopbar + Navbar (Pro, ask), three LayoutPane columns
+Problems: 8 top-level items, clock-in and messages mixed with sales, cart scrolls away
+Proposal: Sell, Tickets, Customers, Inventory, Till; the rest under the profile menu
+Shell: LayoutTopbar + Navbar (Pro, ask), three LayoutPane columns, Charge always in view
+Decision: approved by the owner, on the sell screen the columns keep their order
 
 ## Surfaces, in order
 - [ ] Button (41 uses): src/components/Btn.tsx > Button
@@ -66,18 +116,27 @@ Shell: LayoutTopbar + Navbar (Pro, ask), three LayoutPane columns
 - [ ] Modal (6 uses): src/components/Modal.tsx > Dialog
 - [ ] Data grid (3 uses): react-table > Data Table (Pro, ask)
 
-## Stays as it is
-src/components/CashCount.tsx: domain component, tokens only
+## Domain features
+src/components/CashCount.tsx: rebuilt from Koala parts
+
+## Flows to protect
+Sign in, open the till, sell, refund, close the till
+
+## Leftovers to clear
+12 stylesheets, 340 !important, jQuery from a CDN, Bootstrap 3
 ```
 
 Mark every Pro item and let the project’s owner choose: buy a license, compose the free components, or keep what exists. Never rebuild a Pro component from its docs or preview.
 
-The plan also records one decision the owner has to make about the structure:
+Old software grows by accident: menus nobody ordered, screens that each work differently. Replacing the pieces alone would give you the same confusion in a better paint, so the plan also proposes a new structure, for the owner to approve. For each screen it records what is there today, what is wrong with it and what replaces it:
 
-| Decision | What it means | When |
-| --- | --- | --- |
-| Keep | Same screens, regions and order. Only the pieces that draw them change. | The default, and the right call for tools people use all day. |
-| Reorganize | Listed changes only, each with its reason and its own commit. | When the owner asks, or approves a specific problem you found. |
+- **One shell.** Pick one app structure from Step 6 and use it everywhere, instead of a different frame per screen.
+- **Navigation by task.** Group items by what people do, not by how the code or the company is organized. Keep the top level to about seven items, and move settings and account actions under a profile menu.
+- **Repeated screens, one layout.** Every list, detail, form and settings page follows the same layout, with one page header and one primary action.
+- **The main action in view.** What people do all day stays on screen and within reach, on every size the product supports.
+- **The missing states.** Plan empty, loading and error states, which old screens rarely have.
+
+Show the proposal in plain language, with the worst screen as a before and after, and ask what people rely on. A tool used all day needs a lighter hand: habits are worth protecting, so move rarely used items out of the way and keep the positions people work from by memory. The owner can approve all of it, part of it, or keep the structure as it is.
 
 ## Step 3: Set up the foundation
 
@@ -94,7 +153,7 @@ npx koalaui-cli@latest login <your-key>
 npx koalaui-cli@latest add button input field dialog
 ```
 
-If you already have a `lib/utils.ts`, `init` keeps it. Merge Koala’s version in with `npx koalaui-cli@latest diff utils`: `lib/tv.ts` imports `twMergeConfig` from it. If you have a `components/ui/button.tsx` of your own, `add` refuses to run until it is moved. Move those files to `components/legacy/`, update their imports, and commit that on its own.
+If you already have a `lib/utils.ts`, `init` keeps it. Merge Koala’s version in with `npx koalaui-cli@latest diff utils`: `lib/tv.ts` imports `twMergeConfig` from it. If you have a `components/ui/button.tsx` of your own, `add` skips that file and keeps yours, with only a warning. Move those files to `components/legacy/` before the first `add`, update their imports, and commit that on its own.
 
 ## Step 4: Bring your brand
 
@@ -112,14 +171,15 @@ A light brand color also needs a dark `--brand-foreground`. Load your fonts as `
 ## Step 5: Swap one surface at a time
 
 1. **Start at the bottom.** Buttons and text fields first, then overlays, then the pieces inside navigation. Each layer leans on the one before it, and the shell comes last.
-2. **One surface, one commit.** Add the component, read its reference, replace every use, and remove the old one. Run the project’s checks before moving on.
-3. **Translate props, keep behavior.** Handlers, validation, routes, disabled conditions, analytics, test ids and copy all stay exactly as they were.
-4. **Move what stays to tokens.** Replace hard-coded colors and radii in the domain components with the map below, so they follow the themes too.
-5. **Tick it off.** Update `koala-migration.md`. When a step fails its checks, fix it or stop and say so: never skip a test to move on.
+2. **One surface, one commit.** Add the component, read its reference, replace every use, and run the project’s checks and the smoke tests before moving on.
+3. **Delete as you go.** In the same commit, remove the old component, its styles and every override aimed at it. Search for its name and its CSS classes first, including strings built at runtime. Do not leave a wrapper around Koala that keeps the old name.
+4. **Translate props, keep behavior.** Handlers, validation, disabled conditions and analytics stay exactly as they were. Screens only move as the approved structure says.
+5. **Rebuild the domain features.** Compose them from Koala parts, and replace hard-coded colors and radii with the map below, so they follow the themes too.
+6. **Tick it off.** Update `koala-migration.md`. When a step fails its checks, fix it or stop and say so: never skip a test to move on.
 
 ## Step 6: Move the structure
 
-With the pieces in place, move each screen’s shell, one at a time. What the structure is follows from the parts you drop in. [Layout](https://www.koalaui.com/docs/components/layout.md) and its [Navbar](https://www.koalaui.com/docs/components/navbar.md) and [Sidebar](https://www.koalaui.com/docs/components/sidebar.md) are Pro. Without a license, build the free column with Tailwind between Koala components.
+With the pieces in place, build the approved structure, one screen at a time. What the structure is follows from the parts you drop in. [Layout](https://www.koalaui.com/docs/components/layout.md) and its [Navbar](https://www.koalaui.com/docs/components/navbar.md) and [Sidebar](https://www.koalaui.com/docs/components/sidebar.md) are Pro. Without a license, build the free column with Tailwind between Koala components.
 
 | In your project | With Layout (Pro) | With the free components |
 | --- | --- | --- |
@@ -133,9 +193,10 @@ With the pieces in place, move each screen’s shell, one at a time. What the st
 | Sign-in or onboarding split | `SplitLayout`, `SplitPane`, `SplitMedia` | A two-column grid. |
 | Phone navigation | `LayoutMobileBar`, `LayoutMobileSidebar` | Drawer behind a menu Button. |
 
-- **Keep the routes.** Every link, active state, permission check and badge count stays. Whatever a screen showed in its navigation, it still shows.
+- **Lose nothing.** Every feature stays reachable, with its permission checks and badge counts. When a URL changes, the old one redirects to the new one, so bookmarks keep working.
 - **Set the density once.** `compact` for an app shell, `comfortable` for a marketing page, with a `DensityProvider` around the subtree. See [Density](https://www.koalaui.com/docs/foundations/density.md).
 - **Size for the hand.** Density tunes spacing, not control height. On a touch screen, pass `size="lg"` to the controls people hit all day.
+- **Keep the language.** Components say a few words on their own, such as Close or Next. In an app that is not in English, set them once with [Translations](https://www.koalaui.com/docs/foundations/translations.md), then check every screen for English left behind.
 - **Keep what scrolls.** A column that scrolled alone still does, and the action that was always in view stays in view. Check it at the smallest screen the product supports.
 
 ## Component map
@@ -160,7 +221,8 @@ What most projects have, whatever it is called there. Every Koala name links to 
 | Spinners, skeletons | [Spinner](https://www.koalaui.com/docs/components/spinner.md), [Skeleton](https://www.koalaui.com/docs/components/skeleton.md) | A loading button takes `loading`, not a spinner child. |
 | Tables, data grids | [Data Table](https://www.koalaui.com/docs/components/data-table.md) | Pro. Keep your query and sorting logic. |
 | Date pickers | [Date Picker](https://www.koalaui.com/docs/components/date-picker.md) | Pro. |
-| Charts | [Chart](https://www.koalaui.com/docs/components/chart.md) | Pro. Keep the old library if the charts are not part of the plan. |
+| Charts | [Chart](https://www.koalaui.com/docs/components/chart.md) | Pro. Without a license, keep the chart library and color it with tokens. |
+| Touch number pads, on-screen keyboards | [Keypad](https://www.koalaui.com/docs/components/keypad.md), [On-Screen Keyboard](https://www.koalaui.com/docs/components/on-screen-keyboard.md) | Pro. For a screen with no physical keyboard. |
 
 ## Token map
 
@@ -185,23 +247,58 @@ What most projects have, whatever it is called there. Every Koala name links to 
 - **Token names can collide.** `init` warns about your own `--background`, `--foreground` and `--radius`. Rename yours or remove them, or they override Koala’s themes.
 - **A kit’s theme provider stays** until its last component is gone. It can wrap the same tree as Koala’s `ThemeProvider`.
 
-## Step 7: Clean up
+All of this is temporary: side by side is how the migration runs, never how it ends.
 
-Once nothing imports them, delete `components/legacy/`, the old stylesheets and the packages Koala replaced, then run the checks and the production build one last time. Keep `koala.json` in git: `diff` and `update` use it to bring in fixes without touching the files you edited.
+## Step 7: Leave nothing behind
+
+The migration ends when every line below is true. Work through them in order.
+
+1. **Delete the old interface.** `components/legacy/`, old stylesheets, themes, icon fonts, images no screen uses, and vendored files in `public/`.
+2. **Delete what overrode it.** `!important` rules, global element selectors, and `className` overrides that only existed to fight the old look.
+3. **Remove the packages.** The old kit, jQuery and its plugins, Sass, old build tools and icon libraries, from `package.json` and the lockfile. Remove their CDN tags too.
+4. **Remove the scaffolding.** Compatibility wrappers, feature flags for the old interface, unused exports and dead routes.
+5. **Prove it.** Run the commands below, the project’s checks, the smoke tests and a production build. Then capture every screen again into `koala-migration/after/` and compare it with `before/`.
+6. **Report.** Add to `koala-migration.md` what was removed, what is left and why, and how to go back. Keep `koala.json` in git: `diff` and `update` use it to bring in fixes. Then ask the owner to review the branch.
+
+```bash
+# Unused files, exports and packages
+npx knip
+
+# Styles that fight the system: fix every hit, or note why it stays
+grep -rnE '!important|style=\{\{' src app components --exclude-dir=ui
+
+# Scripts and stylesheets still loaded from outside
+grep -rnE '<(script|link)[^>]+https?://' index.html public app src
+
+# Koala's own files, untouched
+npx koalaui-cli@latest diff
+```
 
 ## FAQ
 
-### Do I have to move everything?
+### I do not know how any of this works. Can I still do it?
 
-No. Stop after any surface: each one is finished and working on its own. Many teams move the shared components and leave domain components on tokens.
+Yes. Paste the prompt at the top of this page into your coding agent. It does the technical work, explains what it finds in plain language and only asks you about your product.
+
+### What if something breaks or I change my mind?
+
+All the work is on its own branch, so your running product is untouched until you merge it. The original is tagged koala-migration-start and can be restored at any time.
+
+### Does it delete my data?
+
+No. It deletes old interface code only. Databases, uploads, environment files and backend logic are off limits.
+
+### Can I stop halfway?
+
+Yes, each surface is finished and working on its own, and the plan records where it stopped. The old code stays until the migration completes, so the project is only clean once Step 7 passes.
 
 ### Will my product still look like my brand?
 
 Yes. Your color goes in --brand, your corners in --radius and your faces in --font-sans and --font-heading, and every component follows them. A custom palette is a theme of your own.
 
-### Can I keep CSS Modules or styled-components?
+### My app is ten years old. Is it too late?
 
-Yes, for the code you do not move. Koala's components need Tailwind CSS v4 in the project, but the two ways of styling can live side by side for as long as you need.
+No. The older the stack, the more of the work happens before the first screen: see Old software. If it is not React, the interface is rebuilt on your existing backend, and the agent tells you that before planning.
 
 ### Will the agent change my business logic?
 
@@ -209,7 +306,7 @@ It should not, and the skill tells it not to: only markup and styles change. Rev
 
 ### Will the migration change my navigation?
 
-Not unless you approve it. The plan keeps your screens, regions and routes by default, and any reorganization is listed there with its reason before work starts.
+If you approve it, yes. The agent proposes a clearer structure and explains why, and you can accept all of it, part of it, or keep what you have. Every feature stays reachable, and old links redirect.
 
 ### Do I need Koala UI Pro?
 
