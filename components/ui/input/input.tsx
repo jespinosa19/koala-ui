@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Eye, EyeSlash } from "@phosphor-icons/react"
+import { Eye, EyeSlash } from "koala-icons"
 import { tv, type VariantProps } from "@/lib/tv"
 import { createContext } from "@/lib/create-context"
 import { useControlSize, type Density } from "@/lib/density"
@@ -11,7 +11,7 @@ const inputVariants = tv({
   slots: {
     root: [
       "flex items-center w-full overflow-hidden",
-      "rounded-pill border border-input bg-[var(--surface,var(--background))]",
+      "border border-input bg-[var(--surface,var(--background))]",
       "transition-[border-color,box-shadow] duration-fast ease-out",
       "focus-within:outline-none focus-within:border-brand focus-within:brand-ring",
       "autofill-tint",
@@ -29,6 +29,21 @@ const inputVariants = tv({
       "[&_svg]:pointer-events-none [&_svg]:shrink-0",
       "[&_svg:not([class*='size-'])]:size-4",
     ],
+    floating: "relative flex min-w-0 flex-1 self-stretch",
+    floatingField: [
+      "peer size-full min-w-0 bg-transparent outline-none",
+      "autofill-clear",
+      "text-foreground placeholder:text-transparent focus:placeholder:text-muted-foreground",
+      "placeholder:transition-[color] placeholder:duration-fast placeholder:ease-out",
+      "disabled:cursor-not-allowed",
+    ],
+    floatingLabel: [
+      "pointer-events-none absolute left-0 top-1/2 max-w-full origin-left -translate-y-1/2 truncate select-none",
+      "text-muted-foreground",
+      "transition-[translate,scale,color] duration-base ease-out",
+      "motion-reduce:duration-fast motion-reduce:ease-linear",
+      "peer-focus:scale-[0.8] peer-[:not(:placeholder-shown)]:scale-[0.8] peer-autofill:scale-[0.8]",
+    ],
     prefixLabel: [
       "flex shrink-0 items-center self-stretch",
       "border-r border-input bg-[var(--surface,var(--background))] text-muted-foreground",
@@ -36,10 +51,8 @@ const inputVariants = tv({
     ],
     suffixButton: [
       "flex shrink-0 cursor-pointer items-center justify-center",
-      "rounded-pill",
       "text-muted-foreground hover:text-foreground hover:bg-accent",
       "transition-[color,background-color,scale] duration-fast ease-out",
-      "active:scale-[0.96]",
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
     ],
   },
@@ -58,25 +71,31 @@ const inputVariants = tv({
     },
     size: {
       sm: {
-        root: "h-8 gap-1.5 px-2.5 has-[>[data-slot=input-field]:first-child]:pl-3",
+        root: "h-8 rounded-md gap-1.5 px-2.5 has-[>[data-slot=input-field]:first-child]:pl-3 has-[>[data-slot=input-floating]]:h-11 has-[>[data-slot=input-floating]:first-child]:pl-3",
         field: "py-0 text-sm pointer-coarse:text-base",
         adornment: "[&_svg:not([class*='size-'])]:size-[15px]",
+        floatingField: "pt-3.5 text-sm pointer-coarse:text-base",
+        floatingLabel: "text-sm peer-focus:-translate-y-[calc(50%+0.5625rem)] peer-[:not(:placeholder-shown)]:-translate-y-[calc(50%+0.5625rem)] peer-autofill:-translate-y-[calc(50%+0.5625rem)]",
         prefixLabel: "-ml-2.5 pl-2.5 pr-2.5 text-xs",
-        suffixButton: "size-6 -mr-1.5",
+        suffixButton: "size-6 -mr-1.5 rounded-sm",
       },
       md: {
-        root: "h-9 gap-2 px-3 has-[>[data-slot=input-field]:first-child]:pl-3.5",
+        root: "h-9 rounded-[calc(var(--radius)*0.875)] gap-2 px-3 has-[>[data-slot=input-field]:first-child]:pl-3.5 has-[>[data-slot=input-floating]]:h-12 has-[>[data-slot=input-floating]:first-child]:pl-3.5",
         field: "py-0 text-sm pointer-coarse:text-base",
         adornment: "[&_svg:not([class*='size-'])]:size-4",
+        floatingField: "pt-4 text-sm pointer-coarse:text-base",
+        floatingLabel: "text-sm peer-focus:-translate-y-[calc(50%+0.625rem)] peer-[:not(:placeholder-shown)]:-translate-y-[calc(50%+0.625rem)] peer-autofill:-translate-y-[calc(50%+0.625rem)]",
         prefixLabel: "-ml-3 pl-3 pr-3 text-sm",
-        suffixButton: "size-7 -mr-2",
+        suffixButton: "size-7 -mr-2 rounded-[calc(var(--radius)*0.625)]",
       },
       lg: {
-        root: "h-10 gap-2 px-3.5 has-[>[data-slot=input-field]:first-child]:pl-4",
+        root: "h-10 rounded-lg gap-2 px-3.5 has-[>[data-slot=input-field]:first-child]:pl-4 has-[>[data-slot=input-floating]]:h-14 has-[>[data-slot=input-floating]:first-child]:pl-4",
         field: "py-0 text-sm pointer-coarse:text-base",
         adornment: "[&_svg:not([class*='size-'])]:size-[18px]",
+        floatingField: "pt-5 text-base",
+        floatingLabel: "text-base peer-focus:-translate-y-[calc(50%+0.75rem)] peer-[:not(:placeholder-shown)]:-translate-y-[calc(50%+0.75rem)] peer-autofill:-translate-y-[calc(50%+0.75rem)]",
         prefixLabel: "-ml-3.5 pl-3.5 pr-3.5 text-sm",
-        suffixButton: "size-8 -mr-2",
+        suffixButton: "size-8 -mr-2 rounded-md",
       },
     },
     hasError: {
@@ -85,6 +104,7 @@ const inputVariants = tv({
           "border-destructive",
           "focus-within:border-destructive focus-within:destructive-ring",
         ],
+        floatingLabel: "text-destructive",
       },
     },
     disabled: {
@@ -182,6 +202,48 @@ function InputField({
       aria-invalid={hasError || field?.hasError || undefined}
       {...props}
     />
+  )
+}
+
+export interface InputFloatingFieldProps extends InputFieldProps {
+  label: React.ReactNode
+  labelClassName?: string
+}
+
+function InputFloatingField({
+  label,
+  labelClassName,
+  className,
+  disabled,
+  id,
+  placeholder = " ",
+  "aria-describedby": ariaDescribedBy,
+  ...props
+}: InputFloatingFieldProps) {
+  const { slots, disabled: ctxDisabled, hasError } = useInputContext("InputFloatingField")
+  const field = useFieldContext()
+  const fallbackId = React.useId()
+  const inputId = id ?? field?.id ?? fallbackId
+  return (
+    <div data-slot="input-floating" className={slots.floating()}>
+      <input
+        data-slot="input-field"
+        id={inputId}
+        placeholder={placeholder}
+        className={slots.floatingField({ className })}
+        disabled={disabled ?? ctxDisabled}
+        aria-describedby={ariaDescribedBy ?? field?.describedBy}
+        aria-invalid={hasError || field?.hasError || undefined}
+        {...props}
+      />
+      <label
+        data-slot="input-floating-label"
+        htmlFor={inputId}
+        className={slots.floatingLabel({ className: labelClassName })}
+      >
+        {label}
+      </label>
+    </div>
   )
 }
 
@@ -298,6 +360,7 @@ function PasswordInput({
 export {
   InputRoot,
   InputField,
+  InputFloatingField,
   InputPrefix,
   InputSuffix,
   InputPrefixLabel,

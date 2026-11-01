@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Popover as PopoverPrimitive } from "radix-ui"
-import { CaretDown, Check, X } from "@phosphor-icons/react"
+import { CaretDown, Check, X } from "koala-icons"
 
 import { tv, type VariantProps } from "@/lib/tv"
 import { cn } from "@/lib/utils"
@@ -648,7 +648,7 @@ export function ComboboxItem({
       <span className={slots.itemIndicator()}>
         {isSelected ? <Check weight="bold" className="size-4" /> : null}
       </span>
-      <span>{children}</span>
+      <span data-slot="combobox-item-text">{children}</span>
     </div>
   )
 }

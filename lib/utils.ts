@@ -24,6 +24,9 @@ export const twMergeConfig = {
     },
   },
   extend: {
+    theme: {
+      ease: ["drawer", "spring", "lift", "sine"],
+    },
     classGroups: {
       "font-family": [{ font: ["heading", isArbitraryFontFamily] }],
       rounded: [{ rounded: ["pill"] }],

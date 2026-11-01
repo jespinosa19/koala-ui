@@ -6,6 +6,9 @@ export interface FieldGroupContextValue {
   hintId: string
   describedBy: string | undefined
   registerHint: () => () => void
+  /** The id of a label's `info` text, which joins `describedBy` while it is rendered. */
+  infoId: string
+  registerInfo: () => () => void
   hasError: boolean
   disabled: boolean
   required: boolean

@@ -70,6 +70,7 @@ Every knob here is a prop, because a Button is one element with nothing to compo
 <Button variant="secondary">Secondary</Button>
 <Button variant="outline">Outline</Button>
 <Button variant="ghost">Ghost</Button>
+<Button variant="subtle">Subtle</Button>
 <Button variant="destructive">Destructive</Button>
 <Button variant="destructiveGhost">Destructive ghost</Button>
 <Button variant="link">Link</Button>
@@ -136,12 +137,12 @@ Three control sizes on a 4px grid - `sm` (32px), `md` (36px, the default), and `
     <Trash />
   </Button>
   <Button size="xs" variant="ghost" iconOnly aria-label="More actions">
-    <DotsThree weight="bold" />
+    <DotsThree />
   </Button>
 </div>
 
 <Button size="xs" variant="outline">
-  <Plus weight="bold" /> Add row
+  <Plus /> Add row
 </Button>
 
 <Button size="xs" variant="ghost" iconOnly aria-label="Close">
@@ -306,7 +307,7 @@ A single `<button>` (or its child with `asChild`). Forwards all native `<button>
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| variant | "primary" \| "secondary" \| "neutral" \| "outline" \| "ghost" \| "overlay" \| "destructive" \| "destructiveGhost" \| "link" | "primary" | The fill. `primary` is the brand action; `destructive` is a soft red tint, `destructiveGhost` its chrome-less twin. |
+| variant | "primary" \| "secondary" \| "neutral" \| "outline" \| "ghost" \| "subtle" \| "overlay" \| "destructive" \| "destructiveGhost" \| "link" | "primary" | The fill. `primary` is the brand action; `subtle` is a ghost in the muted ink, for the secondary actions of a row; `destructive` is a soft red tint, `destructiveGhost` its chrome-less twin. |
 | size | "xs" \| "sm" \| "md" \| "lg" \| "xl" | "md" | 28, 32, 36, 40 or 44px tall (xs is the dense-UI tier: row actions, a floating card's close). Unset, it follows `density`, then the container's tier, then `md`. |
 | density | "comfortable" \| "compact" | - | Picks the default `size` only (compact is `sm`, comfortable is `md`). A Button ignores an ambient `DensityProvider`. |
 | iconOnly | boolean | false | A square that tracks the size, auto-wrapped in a Tooltip from `aria-label`. Warns in development without an accessible name. |
@@ -315,7 +316,7 @@ A single `<button>` (or its child with `asChild`). Forwards all native `<button>
 | swapKey | React.Key | - | Identifies the label on screen; change it with the children and the label rolls (AnimatedLabel). Ignored with `asChild` or while loading. |
 | tooltip | React.ReactNode \| false | - | Tooltip content for an `iconOnly` button. Defaults to `aria-label`; `false` opts out. |
 | tooltipPlacement | TooltipProps["placement"] | "top" | Where that tooltip sits. |
-| static | boolean | false | Drops the scale-on-press. |
+| static | boolean | false | Kept for compatibility; controls no longer scale on press. |
 | asChild | boolean | false | Renders its single child as the button (Radix Slot), e.g. a Next.js `<Link>`. |
 
 | Data attribute | Description |
@@ -344,6 +345,7 @@ A primary Button with a separate trailing DropdownMenu trigger. Button appearanc
 | menu* | React.ReactNode | - | Dropdown menu content, usually DropdownMenuItem and DropdownMenuSeparator. |
 | menuLabel | string | "More options" | Accessible name for the menu trigger. |
 | menuAlign | "start" \| "center" \| "end" | "end" | Alignment of the menu relative to its trigger. |
+| menuClassName | string | - | Classes for the menu content, such as a fixed width. |
 | asChild | boolean | false | Render the primary action on its child, such as a Next.js Link. |
 | variant | ButtonProps["variant"] | "primary" | Shared button appearance. |
 | size | ButtonProps["size"] | "md" | Shared button size. |
@@ -387,9 +389,9 @@ The band around it already carries the accent, so a brand-colored label on the c
 
 Pass `tone`. `onMedia` is a fixed white family for a brand fill, a photo, or a dark scrim; `onInverse` is the token-flipping twin for a `bg-foreground` band, which itself inverts with the theme. Each variant answers for itself: the solid action becomes the light shape, the outline keeps its hairline in the band ink, the ghost keeps no chrome. Do not reach for a `className` here - it can fix the fill but leaves the focus ring an invisible brand halo on a brand band, which `tone` re-points for you.
 
-### How do I opt out of the press animation?
+### Does the button animate on press?
 
-Pass the `static` prop, which neutralizes the active:scale press effect for places where the motion would distract.
+No. Buttons no longer scale on press: the focus ring and color carry the feedback. The `static` prop is kept for compatibility and has no visual effect.
 
 ### Why does swapKey need a key at all - can't the button see its label changed?
 
@@ -411,4 +413,4 @@ At least 44 by 44px. With a mouse every size meets 40px (xs and sm grow their ta
 - Types: `ButtonProps`, `SplitButtonProps`, `SocialButtonProps`, `SocialProvider`, `SocialMeta`
 - Koala components it installs with it: `animated-label`, `dropdown-menu`, `spinner`, `tooltip`
 - Koala lib helpers it uses: `density`, `hit-area`, `tv`, `utils`
-- npm packages: `@phosphor-icons/react`, `radix-ui`
+- npm packages: `koala-icons`, `radix-ui`

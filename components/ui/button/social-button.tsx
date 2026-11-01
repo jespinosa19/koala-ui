@@ -26,6 +26,7 @@ export function SocialButton({
 
   return (
     <Button
+      type="button"
       variant="outline"
       iconOnly={iconOnly}
       aria-label={iconOnly ? (ariaLabel ?? `Continue with ${label}`) : ariaLabel}

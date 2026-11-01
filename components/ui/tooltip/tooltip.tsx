@@ -679,7 +679,7 @@ export const tooltipGraphVariants = tv({
     },
     indent: { true: { stat: "pl-3" } },
   },
-  defaultVariants: { tone: "brand" },
+  defaultVariants: { tone: "neutral" },
 })
 
 export function TooltipHeader({ className, ...props }: React.ComponentProps<"div">) {

@@ -235,4 +235,4 @@ Yes. Every variant, including the categorical hues, derives from semantic tokens
 - Components and helpers: `Badge`, `badgeVariants`, `readableInk`
 - Types: `BadgeProps`
 - Koala lib helpers it uses: `tv`, `utils`
-- npm packages: `@phosphor-icons/react`, `radix-ui`
+- npm packages: `koala-icons`, `radix-ui`

@@ -135,13 +135,12 @@ A pill trough with the thumb sliding inside it, sized to each label rather than 
 A row of separate outlined chips for a showcase switcher, where each tab is a destination with its own icon rather than a view of one panel. The active chip settles onto a muted fill, so there is no sliding indicator. Chips take a 16px label with a 20px muted glyph, and paint an opaque fill (the ground they sit on) so the rail can be pinned with `sticky` over the artwork it switches. To fold the rail onto two rows on a phone, pass `flex-wrap` to `TabsList`.
 
 ```tsx
-import { House, PencilSimpleLine, Money } from "@phosphor-icons/react/ssr"
-
+import { House, PencilSimple as PencilSimpleLine, Money } from "koala-icons"
 <Tabs defaultValue="home" variant="chip">
   <TabsList>
-    <TabsTrigger value="home"><House weight="bold" />Home</TabsTrigger>
-    <TabsTrigger value="blog"><PencilSimpleLine weight="bold" />Blog article</TabsTrigger>
-    <TabsTrigger value="pricing"><Money weight="bold" />Pricing</TabsTrigger>
+    <TabsTrigger value="home"><House />Home</TabsTrigger>
+    <TabsTrigger value="blog"><PencilSimpleLine />Blog article</TabsTrigger>
+    <TabsTrigger value="pricing"><Money />Pricing</TabsTrigger>
   </TabsList>
   …
 </Tabs>
@@ -150,8 +149,7 @@ import { House, PencilSimpleLine, Money } from "@phosphor-icons/react/ssr"
 ## Icons
 
 ```tsx
-import { House, ActivityIcon, Gear } from "@phosphor-icons/react/ssr"
-
+import { House, Pulse as ActivityIcon, GearSix as Gear } from "koala-icons"
 <Tabs defaultValue="overview">
   <TabsList>
     <TabsTrigger value="overview"><House />Overview</TabsTrigger>
@@ -167,20 +165,19 @@ import { House, ActivityIcon, Gear } from "@phosphor-icons/react/ssr"
 `TabsTriggerIcon` lets the glyph mark the selection: the tab's own icon at rest, a filled check once it is the chosen one. Both stay mounted and cross-fade (opacity, scale and blur) on the trigger's state, so a quick switch back reverses mid-way instead of restarting. The check is the label's ink, not brand. Pass `activeIcon` for another mark. It suits a filter rail, where the selected chip says what the grid below is showing.
 
 ```tsx
-import { House, PencilSimpleLine, Money } from "@phosphor-icons/react/ssr"
-
+import { House, PencilSimple as PencilSimpleLine, Money } from "koala-icons"
 <Tabs defaultValue="home" variant="chip">
   <TabsList>
     <TabsTrigger value="home">
-      <TabsTriggerIcon icon={<House weight="bold" />} />
+      <TabsTriggerIcon icon={<House />} />
       Home
     </TabsTrigger>
     <TabsTrigger value="blog">
-      <TabsTriggerIcon icon={<PencilSimpleLine weight="bold" />} />
+      <TabsTriggerIcon icon={<PencilSimpleLine />} />
       Blog article
     </TabsTrigger>
     <TabsTrigger value="pricing">
-      <TabsTriggerIcon icon={<Money weight="bold" />} />
+      <TabsTriggerIcon icon={<Money />} />
       Pricing
     </TabsTrigger>
   </TabsList>
@@ -343,7 +340,7 @@ Each `TabsTrigger` and its matching `TabsContent` share the same `value` string,
 
 ### What is the difference between the pill, segmented, folder, line, and chip variants?
 
-`segmented` (the default) is the iOS control: a padded rounded-rect track, equal-width segments and hairlines between the resting ones. `pill` is a pill trough whose thumb sizes to each label, and the rail a vertical Tabs falls back to. `folder` keeps a pill background on the active tab plus a sliding bar on a bottom rule. `line` drops the container entirely and shows only the accent-colored underline bar. `chip` is a row of separate outlined chips with no sliding indicator, where the active chip settles onto a muted fill; reach for it when each tab is a destination with its own icon, like a marketing page switcher.
+`segmented` (the default) is the iOS control: a padded rounded-rect track, equal-width segments and hairlines between the resting ones. `pill` is a pill trough whose thumb sizes to each label, and the rail a vertical Tabs falls back to. `folder` keeps a pill background on the active tab plus a sliding bar on a bottom rule. `line` drops the container entirely and shows only the ink underline bar. `chip` is a row of separate outlined chips with no sliding indicator, where the active chip settles onto a muted fill; reach for it when each tab is a destination with its own icon, like a marketing page switcher.
 
 ### Can I change the size of the tabs?
 
@@ -363,7 +360,7 @@ Yes. Because Tabs is built on Radix Tabs you get arrow-key roving focus, Home an
 
 ### How do I add an icon to a trigger?
 
-Drop a Phosphor icon as a child of `TabsTrigger` alongside the label. The recipe already sizes any nested svg to 16px and spaces it from the text, so no extra classes are needed.
+Drop a Koala icon as a child of `TabsTrigger` alongside the label. The recipe already sizes any nested svg to 16px and spaces it from the text, so no extra classes are needed.
 
 ## Exports and dependencies
 
@@ -372,4 +369,4 @@ Drop a Phosphor icon as a child of `TabsTrigger` alongside the label. The recipe
 - Components and helpers: `Tabs`, `TabsList`, `TabsTrigger`, `TabsTriggerIcon`, `TabsContent`, `TabsPanels`, `tabsVariants`
 - Types: `TabsProps`, `TabsTriggerProps`, `TabsTriggerIconProps`
 - Koala lib helpers it uses: `create-context`, `density`, `hit-area`, `morph`, `tv`, `utils`
-- npm packages: `@phosphor-icons/react`, `radix-ui`
+- npm packages: `koala-icons`, `radix-ui`

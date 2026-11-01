@@ -3,6 +3,7 @@
 import * as React from "react"
 import { ScrollArea as ScrollAreaPrimitive } from "radix-ui"
 
+import "@/lib/scroll-fade"
 import { prefersReducedMotion } from "@/lib/motion"
 import { cn } from "@/lib/utils"
 import { tv } from "@/lib/tv"

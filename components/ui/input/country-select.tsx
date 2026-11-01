@@ -2,8 +2,7 @@
 
 import * as React from "react"
 import { Popover } from "radix-ui"
-import { CaretDown, Check, MagnifyingGlass } from "@phosphor-icons/react"
-import * as Flags from "country-flag-icons/react/3x2"
+import { CaretDown, Check, MagnifyingGlass } from "koala-icons"
 
 import { tv, type VariantProps } from "@/lib/tv"
 import { cn } from "@/lib/utils"
@@ -12,21 +11,38 @@ import { useFieldContext } from "@/lib/field-context"
 import { InputRoot, InputField, InputPrefix } from "./input"
 import { COUNTRIES, COUNTRY_BY_ISO2, type Country } from "./countries"
 
-const FLAGS = Flags as unknown as Record<
+type FlagArtSet = Record<
   string,
-  React.ComponentType<{ className?: string; title?: string; preserveAspectRatio?: string }>
+  React.ComponentType<{ className?: string; preserveAspectRatio?: string }>
 >
+
+let flagArt: FlagArtSet | undefined
+let flagArtLoad: Promise<void> | undefined
+
+function loadFlagArt() {
+  flagArtLoad ??= import("country-flag-icons/react/3x2").then((flags) => {
+    flagArt = flags as unknown as FlagArtSet
+  })
+  return flagArtLoad
+}
+
+if (typeof window === "undefined") void loadFlagArt()
+
+function FlagArt({ code, className }: { code: string; className?: string }) {
+  if (!flagArt) React.use(loadFlagArt())
+  const Art = flagArt?.[code]
+  return Art ? <Art className={className} preserveAspectRatio="xMidYMid slice" /> : null
+}
 
 const countrySelectVariants = tv({
   slots: {
     trigger: [
-      "group flex w-full cursor-pointer items-center justify-between gap-2 rounded-pill border border-input",
+      "group flex w-full cursor-pointer items-center justify-between gap-2 border border-input",
       "bg-[var(--surface,var(--background))] text-left text-foreground shadow-xs",
       "transition-[border-color,box-shadow] duration-fast ease-out",
       "hover:border-ring/50",
       "outline-none focus-visible:border-brand focus-visible:brand-ring",
       "data-[state=open]:border-brand data-[state=open]:brand-ring",
-      "active:scale-[0.99]",
       "disabled:cursor-not-allowed disabled:opacity-50",
       "aria-[invalid=true]:border-destructive aria-[invalid=true]:focus-visible:destructive-ring aria-[invalid=true]:data-[state=open]:destructive-ring",
     ],
@@ -53,21 +69,20 @@ const countrySelectVariants = tv({
       "[content-visibility:auto] [contain-intrinsic-size:auto_2.25rem]",
     ],
     optionName: "flex-1 truncate",
-    check: "size-4 shrink-0 text-brand",
+    check: "size-4 shrink-0 text-foreground",
     empty: "px-3 py-6 text-center text-sm text-muted-foreground",
   },
   variants: {
     size: {
-      sm: { trigger: "h-8 px-2.5 text-sm pointer-coarse:text-base" },
-      md: { trigger: "h-9 px-3 text-sm pointer-coarse:text-base" },
-      lg: { trigger: "h-10 px-3.5 text-sm pointer-coarse:text-base" },
+      sm: { trigger: "h-8 rounded-md px-2.5 text-sm pointer-coarse:text-base" },
+      md: { trigger: "h-9 rounded-[calc(var(--radius)*0.875)] px-3 text-sm pointer-coarse:text-base" },
+      lg: { trigger: "h-10 rounded-lg px-3.5 text-sm pointer-coarse:text-base" },
     },
   },
   defaultVariants: { size: "md" },
 })
 
 function CountryFlag({ iso2, className }: { iso2: string; className?: string }) {
-  const Flag = FLAGS[iso2]
   return (
     <span
       className={cn(
@@ -77,7 +92,9 @@ function CountryFlag({ iso2, className }: { iso2: string; className?: string }) 
       )}
       aria-hidden="true"
     >
-      {Flag ? <Flag className="size-full" preserveAspectRatio="xMidYMid slice" /> : null}
+      <React.Suspense fallback={null}>
+        <FlagArt code={iso2} className="size-full" />
+      </React.Suspense>
     </span>
   )
 }

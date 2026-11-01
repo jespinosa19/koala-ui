@@ -4,7 +4,7 @@ A polished React design system: components built on Tailwind CSS v4, Radix UI an
 `tailwind-variants`, with four themes (light, cream, dark, moonlight) and a density system.
 Explore every component at [koalaui.com](https://www.koalaui.com).
 
-This repository holds the **free tier**: the 46 foundation components, the lib helpers
+This repository holds the **free tier**: the 48 foundation components, the lib helpers
 and the design tokens. The CLI copies the source into your project, so you own and edit the code;
 Koala UI is not a runtime dependency.
 
@@ -30,8 +30,8 @@ docs. Every docs page is also served as markdown at its URL plus `.md`, indexed 
 
 | Tier | What | Install |
 | --- | --- | --- |
-| **Free** | the 46 foundation components, lib helpers, tokens | `npx koalaui-cli@latest add <name>`, no account |
-| **Pro** | the other 104 components, every section, page examples, templates | a license, then `npx koalaui-cli@latest login <key>` |
+| **Free** | the 48 foundation components, lib helpers, tokens | `npx koalaui-cli@latest add <name>`, no account |
+| **Pro** | the other 106 components, every section, page examples, templates | a license, then `npx koalaui-cli@latest login <key>` |
 
 Pro source lives in a private repository and reaches buyers through the licensing API, so a
 license is the only thing that grants access. [See the plans](https://www.koalaui.com/pro).

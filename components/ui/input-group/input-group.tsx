@@ -11,7 +11,7 @@ export const inputGroupVariants = tv({
   slots: {
     root: [
       "flex w-full items-stretch overflow-hidden",
-      "rounded-pill border border-input bg-[var(--surface,var(--background))]",
+      "border border-input bg-[var(--surface,var(--background))]",
       "transition-[border-color,box-shadow] duration-fast ease-out",
       "focus-within:border-brand focus-within:brand-ring",
 
@@ -38,15 +38,15 @@ export const inputGroupVariants = tv({
   variants: {
     size: {
       sm: {
-        root: "h-8 text-sm",
+        root: "h-8 rounded-md text-sm",
         addon: "gap-1 px-2.5 text-xs [&_svg:not([class*='size-'])]:size-[15px]",
       },
       md: {
-        root: "h-9 text-sm",
+        root: "h-9 rounded-[calc(var(--radius)*0.875)] text-sm",
         addon: "gap-1.5 px-3 text-sm",
       },
       lg: {
-        root: "h-10 text-sm pointer-coarse:text-base",
+        root: "h-10 rounded-lg text-sm pointer-coarse:text-base",
         addon: "gap-1.5 px-3.5 text-sm [&_svg:not([class*='size-'])]:size-[18px]",
       },
     },

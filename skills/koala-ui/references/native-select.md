@@ -193,4 +193,4 @@ On the frame around the select, so `w-56` or `flex-1` sizes the control and move
 - Components and helpers: `NativeSelect`, `NativeSelectOption`, `NativeSelectOptGroup`, `nativeSelectVariants`
 - Types: `NativeSelectProps`
 - Koala lib helpers it uses: `density`, `field-context`, `tv`
-- npm packages: `@phosphor-icons/react`
+- npm packages: `koala-icons`

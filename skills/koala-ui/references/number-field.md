@@ -348,4 +348,4 @@ With `name`, a hidden input submits the raw number (`1299.5`), never the formatt
 - Types: `NumberFieldProps`, `NumberFieldGroupProps`, `NumberFieldInputProps`, `NumberFieldStepperProps`, `NumberFieldScrubAreaProps`, `NumberFieldScrubAreaCursorProps`
 - Koala components it installs with it: `input`
 - Koala lib helpers it uses: `create-context`, `density`, `field-context`, `tv`
-- npm packages: `@phosphor-icons/react`
+- npm packages: `koala-icons`

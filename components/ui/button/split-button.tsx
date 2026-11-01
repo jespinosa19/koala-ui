@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { CaretDown } from "@phosphor-icons/react"
+import { CaretDown } from "koala-icons"
 
 import {
   DropdownMenu,
@@ -16,6 +16,7 @@ export interface SplitButtonProps extends Omit<ButtonProps, "children" | "iconOn
   menu: React.ReactNode
   menuLabel?: string
   menuAlign?: React.ComponentProps<typeof DropdownMenuContent>["align"]
+  menuClassName?: string
   asChild?: boolean
   children: React.ReactNode
 }
@@ -25,6 +26,7 @@ export function SplitButton({
   menu,
   menuLabel = "More options",
   menuAlign = "end",
+  menuClassName,
   variant,
   size,
   density,
@@ -36,7 +38,7 @@ export function SplitButton({
   ...buttonProps
 }: SplitButtonProps) {
   return (
-    <div data-slot="split-button" className="inline-flex">
+    <div data-slot="split-button" className="inline-flex shrink-0">
       <Button
         {...buttonProps}
         data-slot="split-button-action"
@@ -67,12 +69,12 @@ export function SplitButton({
             tooltip={false}
             aria-label={menuLabel}
             disabled={disabled}
-            className="rounded-l-none rounded-r-pill border-l-0"
+            className="rounded-l-none rounded-r-[var(--button-radius,var(--button-corner))] border-l-0"
           >
             <CaretDown weight="bold" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align={menuAlign} density={density}>
+        <DropdownMenuContent align={menuAlign} density={density} className={menuClassName}>
           {menu}
         </DropdownMenuContent>
       </DropdownMenu>

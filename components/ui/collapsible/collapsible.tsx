@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Collapsible as CollapsiblePrimitive } from "radix-ui"
-import { CaretDown, CaretRight, Plus } from "@phosphor-icons/react"
+import { CaretDown, CaretRight, Plus } from "koala-icons"
 
 import { createContext } from "@/lib/create-context"
 import { hitX } from "@/lib/hit-area"

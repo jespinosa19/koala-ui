@@ -226,7 +226,7 @@ A `<div role="group">` whose variant and size flow to every item. Forwards all n
 
 ### ButtonGroupItem
 
-One button in the group, with no press scale so fused neighbours never shift. Forwards all native `<button>` props.
+One button in the group. Forwards all native `<button>` props.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -257,10 +257,6 @@ Yes. Any prop on a ButtonGroupItem overrides the group context, for example a pr
 ### Do icon-only items need anything special?
 
 Set iconOnly on the item to collapse it to a square, and always pass an `aria-label` since there is no visible text. Koala warns in development when an iconOnly item has no accessible name.
-
-### Why does the group lose the press-scale animation?
-
-ButtonGroupItem sets active:scale-100 so adjacent fused items do not visually shift against each other on press. The focus ring, lifted above its neighbours with a z-index, still marks the focused item.
 
 ## Exports and dependencies
 

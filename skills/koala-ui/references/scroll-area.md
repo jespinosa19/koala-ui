@@ -193,5 +193,5 @@ Yes. The viewport is a native scroller: browsers let it take focus when nothing 
 
 - Components and helpers: `ScrollArea`, `scrollAreaVariants`
 - Types: `ScrollAreaProps`
-- Koala lib helpers it uses: `motion`, `tv`, `utils`
+- Koala lib helpers it uses: `motion`, `scroll-fade`, `tv`, `utils`
 - npm packages: `radix-ui`

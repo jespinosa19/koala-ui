@@ -131,7 +131,7 @@ import {
 
 ## Checkbox, radio and switch rows
 
-The rows are Dropdown Menu's: a checked row or the chosen radio carries the brand check on the right, on the same 12px edge line as the shortcuts. `variant="switch"` on a checkbox row draws a mini Switch there instead, for a setting that applies the moment it flips, and keeps the menu open so several can be flipped in a row.
+The rows are Dropdown Menu's: a checked row or the chosen radio carries the ink check on the right, on the same 12px edge line as the shortcuts. `variant="switch"` on a checkbox row draws a mini Switch there instead, for a setting that applies the moment it flips, and keeps the menu open so several can be flipped in a row.
 
 ```tsx
 <MenubarMenu>
@@ -254,7 +254,7 @@ A toggle row. Forwards Radix `Menubar.CheckboxItem` props (`checked`, `onChecked
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| variant | "check" \| "switch" | "check" | `check` is the brand check; `switch` is a mini Switch, for a setting that applies the moment it flips. |
+| variant | "check" \| "switch" | "check" | `check` is the ink check; `switch` is a mini Switch, for a setting that applies the moment it flips. |
 | closeOnSelect | boolean | - | Closes the menu on toggle. Defaults to `true` for `check` and `false` for `switch`. |
 | density | "comfortable" \| "compact" | - | Row height (36 or 32px). Inherits the nearest `DensityProvider` when unset. |
 
@@ -275,7 +275,7 @@ Groups radio rows. Radix `Menubar.RadioGroup`, re-exported as is.
 
 ### MenubarRadioItem
 
-One exclusive choice inside a `MenubarRadioGroup`, sharing the checkbox row's brand check. Forwards Radix `Menubar.RadioItem` props.
+One exclusive choice inside a `MenubarRadioGroup`, sharing the checkbox row's ink check. Forwards Radix `Menubar.RadioItem` props.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -379,4 +379,4 @@ No, `MenubarShortcut` only shows the keys. Bind them where your app handles keyb
 - Types: `MenubarProps`, `MenubarContentProps`, `MenubarItemProps`, `MenubarCheckboxItemProps`, `MenubarRadioItemProps`, `MenubarLabelProps`, `MenubarSubTriggerProps`
 - Koala components it installs with it: `dropdown-menu`, `kbd`, `switch`
 - Koala lib helpers it uses: `density`, `hit-area`, `tv`, `utils`
-- npm packages: `@phosphor-icons/react`, `radix-ui`
+- npm packages: `koala-icons`, `radix-ui`

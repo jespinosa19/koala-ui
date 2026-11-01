@@ -5,6 +5,7 @@ export type {
   ToastData,
   ToastOptions,
   ToastVariant,
+  ToastAppearance,
   ToastAnchorRect,
   ToastPromiseMessages,
   ToastPromiseResult,

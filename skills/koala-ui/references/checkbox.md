@@ -57,7 +57,7 @@ import { Checkbox, CheckboxGroup } from "@/components/ui/checkbox"
 
 ## States
 
-Checked and indeterminate both fill with the accent (brand) color; indeterminate shows a minus rather than a check. Drive the tri-state by passing `checked="indeterminate"`.
+Checked and indeterminate both fill with the primary (ink) color; indeterminate shows a minus rather than a check. Drive the tri-state by passing `checked="indeterminate"`.
 
 ```tsx
 <Checkbox checked={false} />
@@ -69,7 +69,7 @@ Checked and indeterminate both fill with the accent (brand) color; indeterminate
 
 ## Sizes
 
-`sm` (16px) sits inside dense tables; `md` (20px) is the default for forms. The indicator scales with the box.
+`sm` (14px) sits inside dense tables; `md` (16px) is the default for forms. The indicator scales with the box.
 
 ```tsx
 <Checkbox size="sm" defaultChecked />
@@ -177,7 +177,7 @@ The box, Radix `Checkbox.Root`. Renders a `<button role="checkbox">` and forward
 | onCheckedChange | (checked: boolean \| "indeterminate") => void | - | Called when the box toggles, inside a group too. |
 | value | string | "on" | The form value. Inside a `CheckboxGroup` it is also the member's identity in the group's list. |
 | parent | boolean | false | Inside a `CheckboxGroup`: governs the group's `allValues`, reading checked, indeterminate or unchecked from them. |
-| size | "sm" \| "md" | "md" | 16px for dense tables, 20px for forms. |
+| size | "sm" \| "md" | "md" | 14px for dense tables, 16px for forms. |
 | disabled | boolean | false | Disables the box. Falls back to the group's, then the Field's. |
 | name | string | - | Submitted with the form when checked. |
 | required | boolean | false | Marks the box required in a form. |
@@ -212,7 +212,7 @@ Use a Checkbox for selecting items in a set or accepting terms, especially where
 
 ### How do I drive the indeterminate state?
 
-Pass checked="indeterminate" rather than a boolean. It fills with the accent (brand) color like checked but shows a minus instead of a check, which is exactly what a select-all header needs.
+Pass checked="indeterminate" rather than a boolean. It fills with the primary (ink) color like checked but shows a minus instead of a check, which is exactly what a select-all header needs.
 
 ### How do I build a select-all parent?
 
@@ -224,7 +224,7 @@ Checkbox renders only the box. Pair it with a `<label htmlFor>` for an accessibl
 
 ### Which size should I pick?
 
-Use size="sm" (16px) inside dense tables and size="md" (20px, the default) for forms. The drawn indicator scales with the box, and the corner radius stays proportional across both sizes.
+Use size="sm" (14px) inside dense tables and size="md" (16px, the default) for forms. The drawn indicator scales with the box, and the corner radius stays proportional across both sizes.
 
 ### Does it support controlled and uncontrolled use?
 

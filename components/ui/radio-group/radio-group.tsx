@@ -14,9 +14,9 @@ export const radioGroupVariants = tv({
     item: [
       "peer relative inline-flex shrink-0 cursor-pointer items-center justify-center rounded-full border border-input bg-[var(--surface,var(--background))] shadow-xs",
       hitCoarse,
-      "transition-colors duration-fast ease-out active:scale-[0.96]",
+      "transition-colors duration-fast ease-out",
       "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-      "data-[state=checked]:border-brand data-[state=checked]:bg-brand",
+      "data-[state=checked]:border-primary data-[state=checked]:bg-primary",
       "disabled:cursor-not-allowed disabled:opacity-50",
     ],
     indicator: [
@@ -24,13 +24,13 @@ export const radioGroupVariants = tv({
       "transition-[scale,opacity] duration-fast ease-out",
       "data-[state=checked]:scale-100 data-[state=checked]:opacity-100",
     ],
-    dot: "rounded-full bg-brand-foreground",
+    dot: "rounded-full bg-primary-foreground",
     swatch: [
       "inline-flex shrink-0 cursor-pointer rounded-full",
       hitBox,
       "after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:ring-1 after:ring-inset after:ring-black/10 dark:after:ring-white/15",
       "ring-offset-[3px] ring-offset-[var(--surface,var(--background))]",
-      "transition-[box-shadow,scale] duration-fast ease-out active:scale-[0.96]",
+      "transition-[box-shadow,scale] duration-fast ease-out",
       "data-[state=unchecked]:hover:ring-[1.5px] data-[state=unchecked]:hover:ring-foreground/25",
       "data-[state=checked]:ring-[1.5px] data-[state=checked]:ring-foreground",
       "outline-none focus-visible:outline-2 focus-visible:outline-offset-[6px] focus-visible:outline-brand",
@@ -39,8 +39,8 @@ export const radioGroupVariants = tv({
   },
   variants: {
     size: {
-      sm: { item: "size-4", dot: "size-1.5", swatch: "size-6" },
-      md: { item: "size-5", dot: "size-2", swatch: "size-8" },
+      sm: { item: "size-3.5", dot: "size-1.25", swatch: "size-6" },
+      md: { item: "size-4", dot: "size-1.5", swatch: "size-8" },
     },
   },
   defaultVariants: {
@@ -125,29 +125,30 @@ export const radioCardVariants = tv({
   slots: {
     card: [
       "group relative flex w-full cursor-pointer items-start border border-input bg-transparent text-left text-card-foreground shadow-xs",
-      "transition-[border-color,box-shadow,background-color,scale] duration-fast ease-out active:scale-[0.99]",
-      "outline-none focus-visible:border-brand focus-visible:brand-ring",
-      "data-[state=unchecked]:hover:border-brand/40",
-      "data-[state=checked]:border-brand data-[state=checked]:brand-ring",
+      "transition-[border-color,box-shadow] duration-fast ease-out",
+      "outline-none",
+      "data-[state=unchecked]:hover:border-primary/25",
+      "data-[state=checked]:border-primary",
+      "focus-visible:brand-ring focus-visible:data-[state]:border-brand",
       "disabled:cursor-not-allowed disabled:opacity-50",
     ],
-    icon: "mt-px shrink-0 text-muted-foreground transition-colors duration-fast ease-out group-data-[state=checked]:text-brand",
+    icon: "mt-px shrink-0 text-muted-foreground transition-colors duration-fast ease-out group-data-[state=checked]:text-foreground",
     body: "flex min-w-0 flex-1 flex-col gap-1 break-words",
     title: "block text-sm font-semibold leading-none text-foreground",
     description: "block text-pretty text-sm leading-snug text-muted-foreground",
     control:
-      "mt-0.5 grid shrink-0 place-items-center self-start rounded-full border border-input bg-[var(--surface,var(--background))] transition-colors duration-fast ease-out group-data-[state=checked]:border-brand group-data-[state=checked]:bg-brand",
-    dot: "rounded-full bg-brand-foreground scale-50 opacity-0 transition-[scale,opacity] duration-fast ease-out group-data-[state=checked]:scale-100 group-data-[state=checked]:opacity-100",
+      "-mt-px grid shrink-0 place-items-center self-start rounded-full border border-input bg-[var(--surface,var(--background))] transition-colors duration-fast ease-out group-data-[state=checked]:border-primary group-data-[state=checked]:bg-primary",
+    dot: "rounded-full bg-primary-foreground scale-50 opacity-0 transition-[scale,opacity] duration-fast ease-out group-data-[state=checked]:scale-100 group-data-[state=checked]:opacity-100",
   },
   variants: {
     size: {
       sm: {
         card: "items-center gap-2.5 rounded-lg p-3 [&_[data-slot=radio-card-title]]:font-medium",
         icon: "mt-0 [&>svg]:size-5",
-        control: "mt-0 size-4 self-center",
-        dot: "size-1.5",
+        control: "mt-0 size-3.5 self-center",
+        dot: "size-1.25",
       },
-      md: { card: "gap-3 rounded-xl p-4", icon: "[&>svg]:size-6", control: "size-5", dot: "size-2" },
+      md: { card: "gap-3 rounded-xl p-4", icon: "[&>svg]:size-6", control: "size-4", dot: "size-1.5" },
     },
   },
   defaultVariants: {

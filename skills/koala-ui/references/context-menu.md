@@ -86,8 +86,7 @@ import {
   ContextMenuItem, ContextMenuSeparator, ContextMenuShortcut,
 } from "@/components/ui/context-menu"
 import { Card } from "@/components/ui/card"
-import { Copy, PencilSimple, Trash } from "@phosphor-icons/react"
-
+import { Copy, PencilSimple, Trash } from "koala-icons"
 export function Example() {
   return (
     <ContextMenu>
@@ -367,7 +366,7 @@ The menu, Radix `ContextMenu.Content` portalled to the body and anchored to the 
 
 ### ContextMenuItem
 
-One action row, Radix `ContextMenu.Item`; forwards all its props. A leading Phosphor icon is muted and sized to 20px.
+One action row, Radix `ContextMenu.Item`; forwards all its props. A leading Koala icon is muted and sized to 20px.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -387,7 +386,7 @@ One action row, Radix `ContextMenu.Item`; forwards all its props. A leading Phos
 
 ### ContextMenuCheckboxItem
 
-A toggle row, Radix `ContextMenu.CheckboxItem` (`menuitemcheckbox`); forwards all its props. Shows a brand check on the right, or a mini Switch.
+A toggle row, Radix `ContextMenu.CheckboxItem` (`menuitemcheckbox`); forwards all its props. Shows an ink check on the right, or a mini Switch.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -416,7 +415,7 @@ Holds one exclusive choice, Radix `ContextMenu.RadioGroup`. Forwards all native 
 
 ### ContextMenuRadioItem
 
-One option in a radio group, Radix `ContextMenu.RadioItem` (`menuitemradio`); the selected row shows the same brand check as a checkbox row.
+One option in a radio group, Radix `ContextMenu.RadioItem` (`menuitemradio`); the selected row shows the same ink check as a checkbox row.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -547,4 +546,4 @@ Rows are `compact` (32px) by default. For 36px rows, set `density="comfortable"`
 - Types: `ContextMenuContentProps`, `ContextMenuItemProps`, `ContextMenuCheckboxItemProps`, `ContextMenuRadioItemProps`, `ContextMenuLabelProps`, `ContextMenuSubTriggerProps`, `ContextMenuSubContentProps`
 - Koala components it installs with it: `kbd`, `switch`
 - Koala lib helpers it uses: `density`, `tv`, `utils`
-- npm packages: `@phosphor-icons/react`, `radix-ui`
+- npm packages: `koala-icons`, `radix-ui`

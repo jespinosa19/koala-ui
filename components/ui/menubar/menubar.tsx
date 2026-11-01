@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Menubar as MenubarPrimitive } from "radix-ui"
-import { CaretRight, Check } from "@phosphor-icons/react"
+import { CaretRight, Check } from "koala-icons"
 
 import { tv, type VariantProps } from "@/lib/tv"
 import { cn } from "@/lib/utils"

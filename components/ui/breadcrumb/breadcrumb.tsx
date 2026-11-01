@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Slot } from "radix-ui"
-import { CaretRight, DotsThree } from "@phosphor-icons/react/ssr"
+import { CaretRight, DotsThree } from "koala-icons"
 
 import { cn } from "@/lib/utils"
 import { hitBox, hitY } from "@/lib/hit-area"

@@ -3,6 +3,7 @@ export const easing = {
   inOut: "cubic-bezier(0.77, 0, 0.175, 1)",
   drawer: "cubic-bezier(0.32, 0.72, 0, 1)",
   spring: "cubic-bezier(0.34, 1.56, 0.64, 1)",
+  lift: "cubic-bezier(0.175, 0.885, 0.32, 1.1)",
   sine: "cubic-bezier(0.37, 0, 0.63, 1)",
 } as const;
 
@@ -11,6 +12,7 @@ export const easingPoints = {
   inOut: [0.77, 0, 0.175, 1],
   drawer: [0.32, 0.72, 0, 1],
   spring: [0.34, 1.56, 0.64, 1],
+  lift: [0.175, 0.885, 0.32, 1.1],
   sine: [0.37, 0, 0.63, 1],
 } as const;
 
@@ -59,6 +61,7 @@ export function cubicBezier([x1, y1, x2, y2]: readonly [number, number, number, 
 export function prefersReducedMotion() {
   return (
     typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches
   );
 }

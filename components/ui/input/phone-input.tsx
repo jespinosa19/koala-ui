@@ -2,8 +2,7 @@
 
 import * as React from "react"
 import { Popover } from "radix-ui"
-import { CaretDown, Check, MagnifyingGlass } from "@phosphor-icons/react"
-import * as Flags from "country-flag-icons/react/3x2"
+import { CaretDown, Check, MagnifyingGlass } from "koala-icons"
 
 import { tv } from "@/lib/tv"
 import { cn } from "@/lib/utils"
@@ -18,10 +17,28 @@ import {
 } from "./input"
 import { COUNTRIES, COUNTRY_BY_ISO2, type Country } from "./countries"
 
-const FLAGS = Flags as unknown as Record<
+type FlagArtSet = Record<
   string,
-  React.ComponentType<{ className?: string; title?: string; preserveAspectRatio?: string }>
+  React.ComponentType<{ className?: string; preserveAspectRatio?: string }>
 >
+
+let flagArt: FlagArtSet | undefined
+let flagArtLoad: Promise<void> | undefined
+
+function loadFlagArt() {
+  flagArtLoad ??= import("country-flag-icons/react/3x2").then((flags) => {
+    flagArt = flags as unknown as FlagArtSet
+  })
+  return flagArtLoad
+}
+
+if (typeof window === "undefined") void loadFlagArt()
+
+function FlagArt({ code, className }: { code: string; className?: string }) {
+  if (!flagArt) React.use(loadFlagArt())
+  const Art = flagArt?.[code]
+  return Art ? <Art className={className} preserveAspectRatio="xMidYMid slice" /> : null
+}
 
 const phoneInputVariants = tv({
   slots: {
@@ -51,7 +68,7 @@ const phoneInputVariants = tv({
     ],
     optionName: "flex-1 truncate",
     optionDial: "shrink-0 tabular-nums text-muted-foreground",
-    check: "size-4 shrink-0 text-brand",
+    check: "size-4 shrink-0 text-foreground",
     empty: "px-3 py-6 text-center text-sm text-muted-foreground",
   },
   variants: {
@@ -65,7 +82,6 @@ const phoneInputVariants = tv({
 })
 
 function CountryFlag({ iso2, className }: { iso2: string; className?: string }) {
-  const Flag = FLAGS[iso2]
   return (
     <span
       className={cn(
@@ -75,7 +91,9 @@ function CountryFlag({ iso2, className }: { iso2: string; className?: string }) 
       )}
       aria-hidden="true"
     >
-      {Flag ? <Flag className="size-full" preserveAspectRatio="xMidYMid slice" /> : null}
+      <React.Suspense fallback={null}>
+        <FlagArt code={iso2} className="size-full" />
+      </React.Suspense>
     </span>
   )
 }

@@ -87,8 +87,7 @@ import {
   DropdownMenuShortcut,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { Gear, SignOut, UserCircle } from "@phosphor-icons/react"
-
+import { GearSix as Gear, SignOut, UserCircle } from "koala-icons"
 export function Example() {
   return (
     <DropdownMenu>
@@ -161,7 +160,7 @@ Any element can be the trigger via `asChild`. A common pattern is a header avata
   <DropdownMenuTrigger asChild>
     <button
       aria-label="Open user menu"
-      className="cursor-pointer rounded-full outline-none ring-brand ring-offset-2 ring-offset-background transition-transform duration-fast ease-out focus-visible:ring-2 active:scale-[0.96]"
+      className="cursor-pointer rounded-full outline-none ring-brand ring-offset-2 ring-offset-background transition-transform duration-fast ease-out focus-visible:ring-2"
     >
       <Avatar size="md">
         <AvatarImage src="/avatar.jpg" alt="Jordi Espinosa" />
@@ -544,7 +543,7 @@ A toggle row, Radix `DropdownMenu.CheckboxItem` (`role="menuitemcheckbox"`); for
 | --- | --- | --- | --- |
 | checked | boolean \| "indeterminate" | - | The checked state. |
 | onCheckedChange | (checked: boolean) => void | - | Called when the row is toggled. |
-| variant | "check" \| "switch" | "check" | A brand check on the right, or a mini Switch on the same line for a setting that applies at once. |
+| variant | "check" \| "switch" | "check" | An ink check on the right, or a mini Switch on the same line for a setting that applies at once. |
 | closeOnSelect | boolean | true | Close the menu on toggle. Defaults to `false` when `variant="switch"`. |
 | disabled | boolean | false | Dims the row and skips it in keyboard navigation. |
 | density | "comfortable" \| "compact" | "compact" | Row height, 36px or 32px. Falls back to the menu's `density`, then the nearest `DensityProvider`. |
@@ -566,7 +565,7 @@ Groups radio rows into one exclusive choice, Radix `DropdownMenu.RadioGroup`. Fo
 
 ### DropdownMenuRadioItem
 
-One choice in a `DropdownMenuRadioGroup`, Radix `DropdownMenu.RadioItem`; shows the same brand check as a checkbox row. Forwards all its props.
+One choice in a `DropdownMenuRadioGroup`, Radix `DropdownMenu.RadioItem`; shows the same ink check as a checkbox row. Forwards all its props.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -708,4 +707,4 @@ Fly out (the default, `submenu="nested"`) when the menu is shallow and has room 
 - Types: `DropdownMenuContentProps`, `DropdownMenuItemProps`, `DropdownMenuCheckboxItemProps`, `DropdownMenuRadioItemProps`, `DropdownMenuLabelProps`, `DropdownMenuSubProps`, `DropdownMenuSubTriggerProps`, `DropdownMenuSubContentProps`
 - Koala components it installs with it: `kbd`, `switch`
 - Koala lib helpers it uses: `density`, `motion`, `tv`, `utils`
-- npm packages: `@phosphor-icons/react`, `radix-ui`
+- npm packages: `koala-icons`, `radix-ui`

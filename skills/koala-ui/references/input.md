@@ -166,7 +166,7 @@ Use `InputSuffix` to place a decorative icon on the right - useful for status in
 
 ## Password
 
-`PasswordInput` is a convenience wrapper that manages the show/hide toggle internally. It renders `InputRoot` + `InputField` + `InputSuffixButton` with an Eye / EyeSlash icon from Phosphor. Pass `rootClassName` to style the wrapper, and all other props go to the underlying `input` element.
+`PasswordInput` is a convenience wrapper that manages the show/hide toggle internally. It renders `InputRoot` + `InputField` + `InputSuffixButton` with an Eye / EyeSlash icon from Koala Icons. Pass `rootClassName` to style the wrapper, and all other props go to the underlying `input` element.
 
 ```tsx
 <div className="flex flex-col gap-1.5">
@@ -288,6 +288,34 @@ Pass `variant="inline"` to `InputRoot` for a chromeless field: the border and fi
 </div>
 ```
 
+## Floating label
+
+Swap `InputField` for `InputFloatingField` and the label lives inside the frame. It rests where the placeholder would and, the moment you click in, shrinks and rises to the top edge, so the label never disappears while you type. A field that already holds a value renders floated from the first paint.
+
+```tsx
+<InputRoot>
+  <InputFloatingField label="Email address" type="email" placeholder="you@example.com" />
+</InputRoot>
+
+<InputRoot>
+  <InputPrefix>
+    <Globe />
+  </InputPrefix>
+  <InputFloatingField label="Website" defaultValue="koalaui.com" />
+</InputRoot>
+
+<InputRoot hasError>
+  <InputFloatingField
+    label="Workspace"
+    defaultValue="Koala Studio"
+    aria-describedby="floating-error-hint"
+  />
+</InputRoot>
+<InputHint id="floating-error-hint" hasError>
+  Only lowercase letters, numbers and dashes.
+</InputHint>
+```
+
 ## API reference
 
 ### InputRoot
@@ -327,6 +355,16 @@ The shared `Hint`, re-exported: helper or error text below the frame. Renders a 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | hasError | boolean | - | Switches to the destructive tone, so the hint reads as the error. |
+
+### InputFloatingField
+
+An `<input>` with its label inside the frame: the label rests where the placeholder would and floats to the top edge on focus, on a value or on autofill. Pure CSS, so `defaultValue`, controlled values and autofill all render floated with no animation on load. Use it in place of `InputField`; the frame grows to 44, 48 or 56px. Other props go to the `<input>`.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| label | React.ReactNode | - | The floating label, tied to the input by `htmlFor`. |
+| placeholder | string | - | Shown only once the label has floated and the focused field is still empty. |
+| labelClassName | string | - | Merged onto the `<label>`; `className` goes to the `<input>`. |
 
 ### InputPrefix
 
@@ -371,7 +409,7 @@ A numeric field with steppers and arrow-key increments. Other props go to the `<
 | layout | "stacked" \| "inline" | "stacked" | `stacked` carets on the right, or `inline` minus and plus flanking the field. |
 | size | "sm" \| "md" \| "lg" | - | Height 32, 36 or 40px. Unset, it comes from a container (`Form` imposes `lg`) or density (`compact`, the default, is `sm`; `comfortable` is `md`). |
 | hasError | boolean | - | Destructive border and ring, and `aria-invalid` on the input. Inherited from a surrounding `Field` when unset. |
-| static | boolean | - | Turns off the press scale on the stepper buttons. |
+| static | boolean | - | Kept for compatibility; controls no longer scale on press. |
 | rootClassName | string | - | Merged onto the wrapping `InputRoot`; `className` goes to the `<input>`. |
 
 ### PhoneInput
@@ -430,8 +468,8 @@ The frame takes a 6% brand tint over whatever surface it sits on, and the text k
 
 `npx koalaui-cli@latest add input` writes `components/ui/input/`. Import from `@/components/ui/input`:
 
-- Components and helpers: `InputRoot`, `InputField`, `InputLabel`, `InputHint`, `InputPrefix`, `InputSuffix`, `InputPrefixLabel`, `InputSuffixButton`, `PasswordInput`, `inputVariants`, `NumberInput`, `PhoneInput`, `CountrySelect`, `COUNTRIES`, `COUNTRY_BY_ISO2`
-- Types: `InputRootProps`, `InputFieldProps`, `InputLabelProps`, `InputHintProps`, `InputPrefixProps`, `InputSuffixProps`, `InputPrefixLabelProps`, `InputSuffixButtonProps`, `PasswordInputProps`, `NumberInputProps`, `PhoneInputProps`, `PhoneChangePayload`, `CountrySelectProps`, `Country`
+- Components and helpers: `InputRoot`, `InputField`, `InputFloatingField`, `InputLabel`, `InputHint`, `InputPrefix`, `InputSuffix`, `InputPrefixLabel`, `InputSuffixButton`, `PasswordInput`, `inputVariants`, `NumberInput`, `PhoneInput`, `CountrySelect`, `COUNTRIES`, `COUNTRY_BY_ISO2`
+- Types: `InputRootProps`, `InputFieldProps`, `InputFloatingFieldProps`, `InputLabelProps`, `InputHintProps`, `InputPrefixProps`, `InputSuffixProps`, `InputPrefixLabelProps`, `InputSuffixButtonProps`, `PasswordInputProps`, `NumberInputProps`, `PhoneInputProps`, `PhoneChangePayload`, `CountrySelectProps`, `Country`
 - Koala components it installs with it: `label`
 - Koala lib helpers it uses: `create-context`, `density`, `field-context`, `tv`, `utils`
-- npm packages: `@phosphor-icons/react`, `country-flag-icons`, `radix-ui`
+- npm packages: `country-flag-icons`, `koala-icons`, `radix-ui`

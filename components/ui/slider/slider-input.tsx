@@ -27,7 +27,7 @@ export const sliderInputVariants = tv({
       "h-full min-w-[1ch] flex-initial field-sizing-content bg-transparent outline-none",
       "text-sm pointer-coarse:text-base tabular-nums text-foreground",
       "cursor-[inherit] autofill-clear",
-      "selection:bg-brand/25",
+      "selection:bg-foreground/15",
     ],
     suffix: "shrink-0 select-none text-sm tabular-nums text-muted-foreground",
     track: [

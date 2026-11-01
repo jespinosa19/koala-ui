@@ -22,8 +22,8 @@ export const linkVariants = tv({
   ],
   variants: {
     variant: {
-      default: [...standalone, "text-foreground hover:text-brand"],
-      muted: [...standalone, "text-muted-foreground hover:text-brand"],
+      default: [...standalone, "text-foreground hover:text-foreground/80"],
+      muted: [...standalone, "text-muted-foreground hover:text-foreground"],
       prose: [
         "inline font-medium underline decoration-border",
         "duration-fast",

@@ -103,10 +103,12 @@ The canonical use case. Because the content exposes `--surface`, nested `Input`s
     <Button variant="outline">Dimensions</Button>
   </PopoverTrigger>
   <PopoverContent className="w-80">
-    {/* title + inputs */}
-    <PopoverClose asChild>
-      <Button size="sm">Save</Button>
-    </PopoverClose>
+    <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
+      {/* title + inputs */}
+      <PopoverClose asChild>
+        <Button type="submit" size="sm">Save</Button>
+      </PopoverClose>
+    </form>
   </PopoverContent>
 </Popover>
 ```
@@ -326,14 +328,14 @@ const [copied, setCopied] = useState(false)
 <PopoverContent className="w-80">
   <PopoverTitle>Share link</PopoverTitle>
   <PopoverDescription>Anyone with this link can view the project.</PopoverDescription>
-  <div className="flex items-center gap-2">
+  <form className="flex items-center gap-2" onSubmit={(e) => e.preventDefault()}>
     <InputRoot size="sm" className="flex-1">
       <InputField readOnly value="koalaui.com/s/9f3a2" />
     </InputRoot>
     <Button size="sm" className="shrink-0" swapKey={copied ? "copied" : "copy"} onClick={copy}>
       {copied ? "Copied" : "Copy"}
     </Button>
-  </div>
+  </form>
 </PopoverContent>
 ```
 

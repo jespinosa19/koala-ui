@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { CaretDown } from "@phosphor-icons/react"
+import { CaretDown } from "koala-icons"
 
 import { tv, type VariantProps } from "@/lib/tv"
 import { useControlSize, type ControlSize, type Density } from "@/lib/density"
@@ -11,7 +11,7 @@ export const nativeSelectVariants = tv({
   slots: {
     root: "group/native-select relative flex w-full",
     field: [
-      "w-full min-w-0 cursor-pointer appearance-none truncate rounded-pill border border-input",
+      "w-full min-w-0 cursor-pointer appearance-none truncate border border-input",
       "bg-[var(--surface,var(--background))] pl-3 text-sm pointer-coarse:text-base font-medium text-foreground shadow-xs",
       "transition-[border-color,box-shadow] duration-fast ease-out",
       "hover:border-ring/50",
@@ -29,9 +29,9 @@ export const nativeSelectVariants = tv({
   },
   variants: {
     size: {
-      sm: { field: "h-8 pl-3 pr-8", icon: "right-2.75" },
-      md: { field: "h-9 pr-9", icon: "right-3.25" },
-      lg: { field: "h-10 pl-4 pr-10", icon: "right-3.75" },
+      sm: { field: "h-8 rounded-md pl-3 pr-8", icon: "right-2.75" },
+      md: { field: "h-9 rounded-[calc(var(--radius)*0.875)] pr-9", icon: "right-3.25" },
+      lg: { field: "h-10 rounded-lg pl-4 pr-10", icon: "right-3.75" },
     },
   },
   defaultVariants: { size: "md" },

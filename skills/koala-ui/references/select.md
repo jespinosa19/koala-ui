@@ -5,8 +5,7 @@
 A dropdown for picking one value from a list. Built on Radix Select for keyboard navigation, type-ahead and a11y, with interruptible enter and exit. Its sibling SelectSearch adds a search field.
 
 ```tsx
-import { Pizza, Hamburger, Fish, Egg, Coffee } from "@phosphor-icons/react"
-
+import { Pizza, Hamburger, Fish, Egg, Coffee } from "koala-icons"
 <Select>
   <SelectTrigger className="w-56">
     <SelectValue placeholder="Select a dish" />
@@ -46,7 +45,7 @@ Manual: run `npm install radix-ui tailwind-variants tailwind-merge`, then copy t
 ## Usage
 
 ```tsx title="usage.tsx"
-import { Pizza, Hamburger } from "@phosphor-icons/react"
+import { Pizza, Hamburger } from "koala-icons"
 import {
   Select, SelectTrigger, SelectValue, SelectContent,
   SelectItem, SelectGroup, SelectLabel, SelectSeparator,
@@ -104,8 +103,7 @@ import {
 Use `SelectGroup` and `SelectLabel` to group related options. Add `SelectSeparator` between groups for visual clarity.
 
 ```tsx
-import { Clock } from "@phosphor-icons/react"
-
+import { Clock } from "koala-icons"
 <Select>
   <SelectTrigger className="w-64">
     <SelectValue placeholder="Select a timezone" />
@@ -142,8 +140,7 @@ import { Clock } from "@phosphor-icons/react"
 When the options outgrow the available height the menu scrolls, and its top and bottom edges fade softly into the popover, the [scroll fade](https://www.koalaui.com/docs/foundations/scroll-fade.md) utility, so there’s a clear “more above / below” cue without a scrollbar. Open this and scroll: the leading edge stays crisp, the trailing edge dissolves, and a keyboard-focused row always lands clear of the fade. The list is capped at 20rem or the room left on screen, whichever is smaller, so on a phone it scrolls inside the panel instead of running off the viewport, and the arrows at either end sit over the fade rather than pushing the rows down.
 
 ```tsx
-import { MapPin } from "@phosphor-icons/react"
-
+import { MapPin } from "koala-icons"
 const cities = ["Amsterdam", "Bangkok", "Berlin" /* … */]
 
 <Select>
@@ -162,11 +159,10 @@ const cities = ["Amsterdam", "Bangkok", "Berlin" /* … */]
 
 ## Searching the list
 
-Past a couple of dozen options, scrolling stops being a way to find anything. `SelectSearch` is the same select with a search field in its panel: one value, the same trigger, the same rows and the same brand check, filtered as you type. Focus stays in the field the whole time, so typing never stops: arrows move the highlight, Enter commits the active row, Escape closes. Give each row a `textValue` (what the search reads, since `value` is an id) and `keywords` for the terms people actually type - here, a city finds its timezone. Rows that don’t match render nothing, so groups, separators and the empty state collapse on their own.
+Past a couple of dozen options, scrolling stops being a way to find anything. `SelectSearch` is the same select with a search field in its panel: one value, the same trigger, the same rows and the same ink check, filtered as you type. Focus stays in the field the whole time, so typing never stops: arrows move the highlight, Enter commits the active row, Escape closes. Give each row a `textValue` (what the search reads, since `value` is an id) and `keywords` for the terms people actually type - here, a city finds its timezone. Rows that don’t match render nothing, so groups, separators and the empty state collapse on their own.
 
 ```tsx
-import { Clock } from "@phosphor-icons/react"
-
+import { Clock } from "koala-icons"
 <SelectSearch>
   <SelectSearchTrigger className="w-80">
     <Clock />
@@ -250,8 +246,7 @@ const [country, setCountry] = useState("US")
 ## Disabled items
 
 ```tsx
-import { Gift, Lightning, Buildings } from "@phosphor-icons/react"
-
+import { Gift, Lightning, Buildings } from "koala-icons"
 <Select>
   <SelectTrigger className="w-56">
     <SelectValue placeholder="Select a plan" />
@@ -275,8 +270,7 @@ import { Gift, Lightning, Buildings } from "@phosphor-icons/react"
 Some labels are too terse to stand on their own. `High` and `Medium` say nothing about the trade-off behind them. Pass a `tooltip` to `SelectItem` to attach a hint that surfaces on hover and on keyboard focus, so the choice is informed without crowding the row. Use `tooltipPlacement` to change the side it grows toward (defaults to `right`).
 
 ```tsx
-import { Gauge, Lightning, Brain } from "@phosphor-icons/react"
-
+import { Gauge, Lightning, Brain } from "koala-icons"
 <Select defaultValue="low">
   <SelectTrigger className="w-56">
     <SelectValue placeholder="Reasoning effort" />
@@ -303,8 +297,7 @@ import { Gauge, Lightning, Brain } from "@phosphor-icons/react"
 The trigger height comes from `size` on `SelectTrigger` - `sm`/`md`/`lg` map to 32/36/40px, the same scale as Button and Input, so a Select lines up with them at a shared size. `density` no longer sets the trigger height; it picks the *default* size when you do not pass one (compact → `sm`, comfortable → `md`) and tightens the dropdown menu rows. Pass `density` to `SelectContent` (or a parent `DensityProvider`) for the menu spacing.
 
 ```tsx
-import { Circle } from "@phosphor-icons/react"
-
+import { Circle } from "koala-icons"
 <Select>
   <SelectTrigger className="w-48" density="compact">
     <SelectValue placeholder="Compact" />
@@ -390,7 +383,7 @@ The portalled list, on Radix `Select.Content`, with scroll arrows and a scroll f
 
 ### SelectItem
 
-An option, on Radix `Select.Item`, with a brand check on the right; children are a leading icon plus label. Forwards every Radix item prop.
+An option, on Radix `Select.Item`, with an ink check on the right; children are a leading icon plus label. Forwards every Radix item prop.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -571,7 +564,7 @@ Yes. Select is built on Radix Select, so arrow-key navigation, type-ahead search
 
 ### How do I add an icon to each option?
 
-Koala's convention is a leading Phosphor icon per option: wrap the icon and label in a `<span className="flex items-center gap-2">` inside the `SelectItem`. Render icons in outline weight to match the rest of the system.
+Koala's convention is a leading Koala icon per option: wrap the icon and label in a `<span className="flex items-center gap-2">` inside the `SelectItem`. Render icons in outline weight to match the rest of the system.
 
 ## Exports and dependencies
 
@@ -581,4 +574,4 @@ Koala's convention is a leading Phosphor icon per option: wrap the icon and labe
 - Types: `SelectTriggerProps`, `SelectContentProps`, `SelectItemProps`, `SelectSearchProps`, `SelectSearchTriggerProps`, `SelectSearchValueProps`, `SelectSearchContentProps`, `SelectSearchInputProps`, `SelectSearchListProps`, `SelectSearchItemProps`, `SelectSearchFilter`
 - Koala components it installs with it: `input`, `tooltip`
 - Koala lib helpers it uses: `create-context`, `density`, `field-context`, `tv`, `utils`
-- npm packages: `@phosphor-icons/react`, `radix-ui`
+- npm packages: `koala-icons`, `radix-ui`

@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { createPortal } from "react-dom"
-import { ArrowsHorizontal, ArrowsVertical, Minus, Plus } from "@phosphor-icons/react"
+import { ArrowsHorizontal, ArrowsVertical, Minus, Plus } from "koala-icons"
 
 import { tv } from "@/lib/tv"
 import { createContext } from "@/lib/create-context"

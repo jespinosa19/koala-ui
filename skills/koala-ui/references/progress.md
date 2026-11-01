@@ -211,7 +211,7 @@ The bar, `role="progressbar"`, over Radix `Progress.Root`; forwards its props bu
 | value | number \| null | 0 | 0 to `max`, clamped. `null` is indeterminate: the fill sweeps. |
 | max | number | 100 | The top of the scale, so `value={3} max={8}` is a step counter. |
 | size | "xs" \| "sm" \| "md" \| "lg" | "sm" | Track thickness: 4, 6, 8 or 12px (its width when vertical). |
-| tone | "brand" \| "foreground" \| "success" \| "warning" \| "destructive" \| "info" | "brand" | The fill's colour. |
+| tone | "brand" \| "foreground" \| "success" \| "warning" \| "destructive" \| "info" | "foreground" | The fill's colour. |
 | variant | "default" \| "chrome" | "default" | `chrome` drops the track and squares the ends, for a full-bleed reading or loading bar. |
 | transition | "smooth" \| "none" | "smooth" | `smooth` glides between steps; `none` welds the fill to a per-frame value like scroll position. |
 | orientation | "horizontal" \| "vertical" | "horizontal" | `vertical` fills from the floor; give the root a height (128px by default). |

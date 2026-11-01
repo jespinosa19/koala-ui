@@ -86,6 +86,52 @@ toast.error("Upload failed.", { description: "The server returned a 413 error." 
 toast.info("New version available.", { description: "Refresh the page to get v2.4.0." })
 ```
 
+## Minimal
+
+`appearance: "minimal"` trims the card to one compact row: a smaller icon, a medium-weight title and the action inline on the right. The close button rests hidden and appears on hover or focus; swipe or Esc still dismiss it. Set it on a single toast, or on `<Toaster appearance="minimal" />` to make it the default for the whole app.
+
+```tsx
+toast("Changes saved.", { appearance: "minimal" })
+toast.success("Link copied to clipboard.", { appearance: "minimal" })
+toast("Conversation archived.", {
+  appearance: "minimal",
+  action: { label: "Undo", onClick: restore },
+})
+
+// Or for every toast
+<Toaster appearance="minimal" />
+```
+
+## Countdown
+
+`countdown: true` draws a hairline along the bottom edge that drains across the toast's `duration`, in the variant's colour. It pauses whenever the toast does (hover, focus, or the window losing focus), so it always shows the time that is really left. Most useful on an Undo toast, where the window to act matters.
+
+```tsx
+toast("Message deleted.", {
+  appearance: "minimal",
+  countdown: true,
+  duration: 8000,
+  action: { label: "Undo", onClick: restore },
+})
+
+// Or for every toast
+<Toaster countdown />
+```
+
+## Progress
+
+Pass `progress` (0 to 100) for work you can measure, and raise the same `id` as it advances: the bar slides to the new value without the pop a re-raise usually plays, and the title stays put. Raise the result without `progress` when the work is done.
+
+```tsx
+const id = toast.loading("Uploading 5 files…", { progress: 0 })
+
+onProgress((done) =>
+  toast.loading("Uploading 5 files…", { id, progress: (done / 5) * 100 })
+)
+
+toast.success("Upload complete.", { id })
+```
+
 ## Loading
 
 `toast.loading` shows a spinner and stays up until you raise the same `id` again with the result. The card is updated in place: the spinner cross-fades into the result icon and the title rolls to its new line, so it reads as one piece of work finishing rather than a second message arriving.
@@ -180,6 +226,8 @@ Renders the fixed, bottom-centered Radix Toast viewport, the anchored bubbles an
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
+| appearance | "card" \| "minimal" | "card" | Default look for every toast; a toast's own `appearance` wins. |
+| countdown | boolean | false | Default for every toast: draw the draining bar along the bottom edge. |
 | swipeDirection | "right" \| "left" \| "up" \| "down" | "right" | Direction a toast is swiped to dismiss it. |
 | swipeThreshold | number | 50 | Distance in pixels a swipe must travel to dismiss. |
 | hotkey | string[] | ["F8"] | Keys that move focus to the toast stack. |
@@ -195,6 +243,7 @@ Renders the fixed, bottom-centered Radix Toast viewport, the anchored bubbles an
 | --- | --- |
 | --radix-toast-swipe-move-x | Horizontal offset while a toast is being swiped; the card follows it. |
 | --radix-toast-swipe-end-x | Horizontal offset where a swipe ended, for the dismiss exit. |
+| --toast-duration | Set on the countdown bar: how long it takes to drain, the toast's `duration`. |
 
 ### toast()
 
@@ -208,6 +257,9 @@ Raises a toast from anywhere: `toast("Saved.")`, `toast("Saved.", options)` or `
 | variant | "default" \| "success" \| "warning" \| "destructive" \| "info" \| "loading" | "default" | The status icon. `destructive` is announced assertively, `loading` shows a spinner and persists. |
 | duration | number | 5000 | Auto-dismiss delay in ms: `1500` when anchored, `Infinity` for `loading`. Pass `Infinity` to persist. |
 | action | { label: string; onClick: () => void } | - | A button below the description, a Radix `Action` with the label as its `altText`. |
+| appearance | "card" \| "minimal" | Toaster's | `minimal` is one compact row with the action inline and the close button revealed on hover or focus. |
+| countdown | boolean | Toaster's | A hairline along the bottom edge that drains across `duration` and pauses with the toast. Ignored when the toast persists. |
+| progress | number | - | 0 to 100: shows a progress bar under the text. Raise the same `id` to advance it; updates skip the pop and keep the title still. |
 | anchor | HTMLElement \| null | - | Shows a small icon-and-title bubble beside this element instead of the stack (no close button, no action). Closes on scroll or resize. |
 
 ### toast.success / warning / error / info / loading
@@ -284,7 +336,7 @@ Stacking is handled by the Toaster: older toasts compress behind the newest at d
 `npx koalaui-cli@latest add toast` writes `components/ui/toast/`. Import from `@/components/ui/toast`:
 
 - Components and helpers: `Toaster`, `toastVariants`, `toast`, `useToast`, `useToastStore`, `TOAST_DURATION`, `ANCHORED_TOAST_DURATION`
-- Types: `ToasterProps`, `ToastData`, `ToastOptions`, `ToastVariant`, `ToastAnchorRect`, `ToastPromiseMessages`, `ToastPromiseResult`
+- Types: `ToasterProps`, `ToastData`, `ToastOptions`, `ToastVariant`, `ToastAppearance`, `ToastAnchorRect`, `ToastPromiseMessages`, `ToastPromiseResult`
 - Koala components it installs with it: `animated-label`, `button`, `spinner`
 - Koala lib helpers it uses: `hit-area`, `motion`, `tv`, `utils`
-- npm packages: `@phosphor-icons/react`, `radix-ui`
+- npm packages: `koala-icons`, `radix-ui`

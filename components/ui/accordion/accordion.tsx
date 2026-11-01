@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Accordion as AccordionPrimitive } from "radix-ui"
-import { CaretDown, Plus } from "@phosphor-icons/react"
+import { CaretDown, Plus } from "koala-icons"
 
 import { createContext } from "@/lib/create-context"
 import { useDensity } from "@/lib/density"
@@ -49,7 +49,7 @@ export const accordionVariants = tv({
         item: [
           "interpolate-size w-fit max-w-full rounded-2xl bg-foreground/6",
           "transition-[width,background-color,transform] duration-base ease-out motion-reduce:transition-none",
-          "hover:bg-foreground/10 active:scale-[0.97]",
+          "hover:bg-foreground/10",
           "has-[[data-slot=accordion-content]:not([hidden])]:w-full",
           "has-[[data-slot=accordion-content]:not([hidden])]:transition-[background-color,transform]",
           "has-[[data-slot=accordion-content]:not([hidden])]:hover:bg-foreground/6",

@@ -262,4 +262,4 @@ The open/close tween relies on Radix's `--radix-accordion-content-height` variab
 - Components and helpers: `Accordion`, `AccordionItem`, `AccordionTrigger`, `AccordionContent`, `accordionVariants`
 - Types: `AccordionProps`
 - Koala lib helpers it uses: `create-context`, `density`, `tv`
-- npm packages: `@phosphor-icons/react`, `radix-ui`
+- npm packages: `koala-icons`, `radix-ui`

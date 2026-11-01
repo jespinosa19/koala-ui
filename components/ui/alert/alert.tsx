@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { CheckCircle, Warning, XCircle, Info, X } from "@phosphor-icons/react"
+import { CheckCircle, Warning, XCircle, Info, X } from "koala-icons"
 
 import { createContext } from "@/lib/create-context"
 import { ControlSizeProvider, type ControlSize } from "@/lib/density"
@@ -21,7 +21,6 @@ export const alertVariants = tv({
       "relative -mr-1 grid shrink-0 place-items-center self-start rounded-md",
       "text-muted-foreground/60",
       "transition-[color,background-color,scale] duration-fast ease-out",
-      "active:scale-[0.96]",
       "hover:bg-foreground/5 hover:text-foreground",
       "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1",
       "[&_svg]:pointer-events-none",

@@ -68,6 +68,19 @@ Set `required` to append a destructive asterisk to the label. Set `hasError` on 
 </Field>
 ```
 
+## Help behind an icon
+
+When the help is a nice-to-know rather than an instruction, and a form stacks enough fields that a line under each one doubles its height, pass it to `info` on the label instead of a `FieldHint`. It shows in a tooltip on an info icon, and screen readers still hear it as the control's description. Keep `FieldHint` for anything the person needs to read before typing, and for errors.
+
+```tsx
+<Field>
+  <FieldLabel info="A short, descriptive name for the report.">Title</FieldLabel>
+  <InputRoot>
+    <InputField placeholder="Robbery at the Pacific Standard" />
+  </InputRoot>
+</Field>
+```
+
 ## Validation
 
 Put the constraint on the control: `required`, `type="email"`, `pattern`, `minLength`. Inside a `Form`, a failed submit shows the message in the field, focuses the first invalid control and shakes it. No browser bubble. `FieldError` with `match` gives each failure its own copy, and takes the hint's place while it shows.
@@ -259,6 +272,27 @@ Wrap the fields in a [`Form`](https://www.koalaui.com/docs/components/form.md), 
 </Form>
 ```
 
+## Shape
+
+Fields are rounded rectangles, not pills: sm 12, md 14 and lg 16, the same corner as an icon-only Button of that size. Any Button inside a `<form>` takes that corner too, so a submit button always matches the field beside it. The same Button outside a form stays a pill.
+
+```tsx
+<form className="flex gap-2">
+  <InputRoot size="sm"><InputField placeholder="you@example.com" /></InputRoot>
+  <Button size="sm">Subscribe</Button>
+</form>
+
+<form className="flex gap-2">
+  <InputRoot size="md"><InputField placeholder="you@example.com" /></InputRoot>
+  <Button size="md">Subscribe</Button>
+</form>
+
+<form className="flex gap-2">
+  <InputRoot size="lg"><InputField placeholder="you@example.com" /></InputRoot>
+  <Button size="lg">Subscribe</Button>
+</form>
+```
+
 ## In a Dialog
 
 `Field` composes straight into a Dialog. The wiring flows through Radix's Portal because React context follows the component tree, not the DOM - so `htmlFor`, `aria-describedby`, and the `hasError` cascade all still work. The modal's own name comes from `DialogTitle` / `DialogDescription` (Radix), independent of the per-field labels. Try submitting with an invalid email to see the error cascade.
@@ -274,43 +308,45 @@ Wrap the fields in a [`Form`](https://www.koalaui.com/docs/components/form.md), 
       <DialogDescription>It takes less than a minute.</DialogDescription>
     </DialogHeader>
 
-    <FormSection>
-      <FieldRow>
-        <Field required>
-          <FieldLabel>First name</FieldLabel>
-          <InputRoot><InputField placeholder="Ada" /></InputRoot>
+    <form className="contents" onSubmit={(e) => { e.preventDefault(); handleSubmit() }}>
+      <FormSection>
+        <FieldRow>
+          <Field required>
+            <FieldLabel>First name</FieldLabel>
+            <InputRoot><InputField placeholder="Ada" /></InputRoot>
+          </Field>
+          <Field required>
+            <FieldLabel>Last name</FieldLabel>
+            <InputRoot><InputField placeholder="Lovelace" /></InputRoot>
+          </Field>
+        </FieldRow>
+
+        <Field required hasError={!!emailError}>
+          <FieldLabel>Email</FieldLabel>
+          <InputRoot><InputField type="email" value={email} onChange={…} /></InputRoot>
+          <FieldHint>{emailError ?? "We'll send a confirmation link here."}</FieldHint>
         </Field>
+
         <Field required>
-          <FieldLabel>Last name</FieldLabel>
-          <InputRoot><InputField placeholder="Lovelace" /></InputRoot>
+          <FieldLabel>Country</FieldLabel>
+          <Select>
+            <SelectTrigger><SelectValue placeholder="Select a country" /></SelectTrigger>
+            <SelectContent>{/* …items */}</SelectContent>
+          </Select>
         </Field>
-      </FieldRow>
 
-      <Field required hasError={!!emailError}>
-        <FieldLabel>Email</FieldLabel>
-        <InputRoot><InputField type="email" value={email} onChange={…} /></InputRoot>
-        <FieldHint>{emailError ?? "We'll send a confirmation link here."}</FieldHint>
-      </Field>
+        <Field required>
+          <FieldLabel>Password</FieldLabel>
+          <PasswordInput placeholder="Create a password" />
+          <FieldHint>At least 8 characters.</FieldHint>
+        </Field>
+      </FormSection>
 
-      <Field required>
-        <FieldLabel>Country</FieldLabel>
-        <Select>
-          <SelectTrigger><SelectValue placeholder="Select a country" /></SelectTrigger>
-          <SelectContent>{/* …items */}</SelectContent>
-        </Select>
-      </Field>
-
-      <Field required>
-        <FieldLabel>Password</FieldLabel>
-        <PasswordInput placeholder="Create a password" />
-        <FieldHint>At least 8 characters.</FieldHint>
-      </Field>
-    </FormSection>
-
-    <DialogFooter>
-      <Button variant="ghost">Cancel</Button>
-      <Button>Create account</Button>
-    </DialogFooter>
+      <DialogFooter>
+        <Button type="button" variant="ghost">Cancel</Button>
+        <Button type="submit">Create account</Button>
+      </DialogFooter>
+    </form>
   </DialogContent>
 </Dialog>
 ```
@@ -382,6 +418,7 @@ The shared `Label`, wired to the field's control through `htmlFor`.
 | --- | --- | --- | --- |
 | required | boolean | - | Appends the asterisk. Inherited from the Field. |
 | disabled | boolean | - | Dims the label. Inherited from the Field. |
+| info | ReactNode | - | Help behind an info icon after the text, in a tooltip. Screen readers get it as the control's description. |
 
 ### FieldHint
 
@@ -417,6 +454,7 @@ The group's `legend`.
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | required | boolean | - | Appends the asterisk. Inherited from the group. |
+| info | ReactNode | - | Help behind an info icon after the legend, in a tooltip. Describes the fieldset. |
 
 ### FieldRow
 
@@ -463,6 +501,10 @@ Yes. React context follows the component tree, not the DOM, so htmlFor, aria-des
 ### How do I place two fields side by side?
 
 Wrap sibling Fields in FieldRow. It is pure layout with no context, laying fields out in a grid that stacks to one column on narrow viewports, so it composes with any number of fields. Pass columns={3} for a three-up row; the default is 2.
+
+### Why does my Button look different inside a form?
+
+A Button inside a form element takes the field corner for its size (sm 12, md 14, lg 16) so it lines up with the inputs next to it. Outside a form, and inside a form that lives in a Popover, the same Button is a pill. Wrap a field and button row in a form to get the match; pass className="rounded-pill!" to keep a pill.
 
 ### Can I put a RadioGroup or a checkbox cluster in a Field?
 

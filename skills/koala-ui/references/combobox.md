@@ -390,7 +390,7 @@ The floating `listbox`, anchored to the field and exactly its width. Accepts Rad
 
 ### ComboboxItem
 
-An `option` row: Select's anatomy, with the brand check on the right.
+An `option` row: Select's anatomy, with the ink check on the right.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -460,4 +460,4 @@ It follows the WAI-ARIA combobox pattern: the input has `role="combobox"`, `aria
 - Types: `ComboboxProps`, `AutocompleteProps`, `ComboboxInputProps`, `ComboboxContentProps`, `ComboboxItemProps`, `ComboboxStatusProps`, `ComboboxFilter`
 - Koala components it installs with it: `input`, `select`, `spinner`
 - Koala lib helpers it uses: `create-context`, `density`, `field-context`, `tv`, `utils`
-- npm packages: `@phosphor-icons/react`, `radix-ui`
+- npm packages: `koala-icons`, `radix-ui`

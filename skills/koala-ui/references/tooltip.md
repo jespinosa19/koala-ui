@@ -25,7 +25,7 @@ Manual: run `npm install tippy.js`, then copy the source into `components/ui/too
 ## Usage
 
 ```tsx title="usage.tsx"
-import { FloppyDisk } from "@phosphor-icons/react"
+import { FloppyDisk } from "koala-icons"
 import { Button } from "@/components/ui/button"
 import { Tooltip } from "@/components/ui/tooltip"
 
@@ -359,52 +359,54 @@ Focus opens a tooltip only when it is keyboard focus. A dialog or drawer opened 
         Koala will POST a JSON payload to this URL on each event.
       </DialogDescription>
     </DialogHeader>
-    <div className="space-y-4">
-      <div className="space-y-1.5">
-        <div className="flex items-center gap-1.5">
-          <label className="text-sm font-medium">Endpoint URL</label>
-          <Tooltip content="Must be HTTPS and publicly reachable" trigger="mouseenter">
-            <button
-              type="button"
-              aria-label="Endpoint URL help"
-              className="rounded text-muted-foreground transition-colors duration-fast ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand"
-            >
-              <Info className="size-3.5" />
-            </button>
-          </Tooltip>
+    <form className="contents" onSubmit={(e) => e.preventDefault()}>
+      <div className="space-y-4">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-1.5">
+            <label className="text-sm font-medium">Endpoint URL</label>
+            <Tooltip content="Must be HTTPS and publicly reachable" trigger="mouseenter">
+              <button
+                type="button"
+                aria-label="Endpoint URL help"
+                className="rounded text-muted-foreground transition-colors duration-fast ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand"
+              >
+                <Info className="size-3.5" />
+              </button>
+            </Tooltip>
+          </div>
+          <InputRoot>
+            <InputField placeholder="https://…" />
+          </InputRoot>
         </div>
-        <InputRoot>
-          <InputField placeholder="https://…" />
-        </InputRoot>
-      </div>
-      <div className="space-y-1.5">
-        <div className="flex items-center gap-1.5">
-          <label className="text-sm font-medium">Secret</label>
-          <Tooltip
-            content="Signs the X-Koala-Signature header"
-            placement="right"
-            trigger="mouseenter"
-          >
-            <button
-              type="button"
-              aria-label="Secret help"
-              className="rounded text-muted-foreground transition-colors duration-fast ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand"
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-1.5">
+            <label className="text-sm font-medium">Secret</label>
+            <Tooltip
+              content="Signs the X-Koala-Signature header"
+              placement="right"
+              trigger="mouseenter"
             >
-              <Lock className="size-3.5" />
-            </button>
-          </Tooltip>
+              <button
+                type="button"
+                aria-label="Secret help"
+                className="rounded text-muted-foreground transition-colors duration-fast ease-out hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand"
+              >
+                <Lock className="size-3.5" />
+              </button>
+            </Tooltip>
+          </div>
+          <InputRoot>
+            <InputField placeholder="whsec_…" />
+          </InputRoot>
         </div>
-        <InputRoot>
-          <InputField placeholder="whsec_…" />
-        </InputRoot>
       </div>
-    </div>
-    <DialogFooter>
-      <DialogClose asChild>
-        <Button variant="ghost">Cancel</Button>
-      </DialogClose>
-      <Button>Create webhook</Button>
-    </DialogFooter>
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button type="button" variant="ghost">Cancel</Button>
+        </DialogClose>
+        <Button type="submit">Create webhook</Button>
+      </DialogFooter>
+    </form>
   </DialogContent>
 </Dialog>
 ```
@@ -609,7 +611,7 @@ A group of `TooltipStat` rows banded by a colored left rail. Forwards all native
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| tone | "brand" \| "info" \| "success" \| "warning" \| "destructive" \| "neutral" | "brand" | The rail color, a token role so it tracks the theme. |
+| tone | "brand" \| "info" \| "success" \| "warning" \| "destructive" \| "neutral" | "neutral" | The rail color, a token role so it tracks the theme. |
 
 ### TooltipStat
 

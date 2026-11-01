@@ -2,7 +2,7 @@
 
 # Toggle Group
 
-A set of pressable pills that hold a selection, built on Radix ToggleGroup. Use single for a one-of-N choice or multiple for independent toggles. A chosen pill carries the brand outline.
+A set of pressable buttons that hold a selection, built on Radix ToggleGroup. Use single for a one-of-N choice or multiple for independent toggles. A chosen item carries the ink outline.
 
 ```tsx
 <ToggleGroup type="single" defaultValue="yes" aria-label="Was this useful?">
@@ -74,7 +74,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 
 ## Variants
 
-`outline` (the default) gives each pill its own border on the page ground, and the chosen one takes the brand outline. Use it when the pills are independent choices. `segmented` puts them in one muted track and lifts the chosen pill off it instead, the same elevation the [Tabs](https://www.koalaui.com/docs/components/tabs.md) pill indicator uses. Reach for it when the set reads as a single control, such as the format switch in the [Color Picker](https://www.koalaui.com/docs/components/color-picker.md). The lift is one sliding thumb rather than a background on each pill, so choosing another option travels instead of blinking: it snaps into place on load and slides only on later changes. `ghost` drops the pill altogether: bare labels in the foreground, the chosen one underlined, for a dense set where a frame per option would read as a wall of boxes.
+`outline` (the default) gives each pill its own border on the page ground, and the chosen one takes the ink outline. Use it when the pills are independent choices. `segmented` puts them in one muted track and lifts the chosen pill off it instead, the same elevation the [Tabs](https://www.koalaui.com/docs/components/tabs.md) pill indicator uses. Reach for it when the set reads as a single control, such as the format switch in the [Color Picker](https://www.koalaui.com/docs/components/color-picker.md). The lift is one sliding thumb rather than a background on each pill, so choosing another option travels instead of blinking: it snaps into place on load and slides only on later changes. `ghost` drops the pill altogether: bare labels in the foreground, the chosen one underlined, for a dense set where a frame per option would read as a wall of boxes.
 
 ```tsx
 // Independent choices on the page ground:
@@ -121,7 +121,7 @@ The `ghost` variant is the size picker on a product page: lay the group out as a
 
 ## Sizes
 
-`sm` (32px) is the compact rating pill; `md` (40px) is the default. Set `size` on the group and every item inherits it through context.
+`sm` (32px) is the compact rating row; `md` (36px) is the default, the same heights as Button. Set `size` on the group and every item inherits it through context.
 
 ```tsx
 <ToggleGroup type="single" size="sm" defaultValue="yes">
@@ -137,7 +137,7 @@ The `ghost` variant is the size picker on a product page: lay the group out as a
 
 ## Icon-only with tooltips
 
-`iconOnly` squares an item around its glyph (32px at `sm`, 40px at `md`, where the glyph steps up to 20px), the same square the lone [Toggle](https://www.koalaui.com/docs/components/toggle.md) draws. A glyph is not a name, so an icon-only item always needs a hint, and `tooltip` gives it one with the same wiring as [Button](https://www.koalaui.com/docs/components/button.md): a string `tooltip` is shown on hover and focus and also names an item that has no `aria-label`, and an icon-only item with an `aria-label` shows that label as its hint on its own. On a labelled pill a `tooltip` is a supplementary hint. Pass `tooltip={false}` to opt out when you wrap the item in your own `Tooltip`.
+`iconOnly` squares an item around its glyph (32px at `sm`, 36px at `md`, a 16px glyph like an icon-only Button), the same square the lone [Toggle](https://www.koalaui.com/docs/components/toggle.md) draws. A glyph is not a name, so an icon-only item always needs a hint, and `tooltip` gives it one with the same wiring as [Button](https://www.koalaui.com/docs/components/button.md): a string `tooltip` is shown on hover and focus and also names an item that has no `aria-label`, and an icon-only item with an `aria-label` shows that label as its hint on its own. On a labelled pill a `tooltip` is a supplementary hint. Pass `tooltip={false}` to opt out when you wrap the item in your own `Tooltip`.
 
 ```tsx
 // A string tooltip is the hint and, with no aria-label, the item's name.
@@ -242,8 +242,8 @@ The group root, with roving focus across its items. Forwards all Radix ToggleGro
 | value | string \| string[] | - | The controlled value: a `string` for `single`, a `string[]` for `multiple`. |
 | defaultValue | string \| string[] | - | The initial value when uncontrolled. |
 | onValueChange | (value: string) => void \| (value: string[]) => void | - | Called when the selection changes, with the shape matching `type`. |
-| variant | "outline" \| "segmented" \| "ghost" | "outline" | Free-standing pills with a brand outline, one muted track with a sliding thumb, or bare labels with an underline. |
-| size | "sm" \| "md" | "md" | 32px or 40px items, shared with every item through context. |
+| variant | "outline" \| "segmented" \| "ghost" | "outline" | Free-standing pills with an ink outline, one muted track with a sliding thumb, or bare labels with an underline. |
+| size | "sm" \| "md" | "md" | 32px or 36px items, Button's scale, shared with every item through context. |
 | disabled | boolean | false | Disables every item. |
 | rovingFocus | boolean | true | Arrow keys move focus between items. |
 | loop | boolean | true | Arrow-key focus wraps from the last item to the first. |
@@ -260,13 +260,13 @@ The group root, with roving focus across its items. Forwards all Radix ToggleGro
 
 ### ToggleGroupItem
 
-One pressable pill. Forwards all Radix ToggleGroup `Item` props.
+One pressable item. Forwards all Radix ToggleGroup `Item` props.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | value* | string | - | The item's value in the group. |
 | disabled | boolean | false | Disables this item. |
-| iconOnly | boolean | false | A square pill around one glyph (20px at `md`). Name it with `aria-label` or a string `tooltip`. |
+| iconOnly | boolean | false | A square around one 16px glyph, Button's icon-only size. Name it with `aria-label` or a string `tooltip`. |
 | tooltip | React.ReactNode \| false | - | A hint on hover and focus; defaults to the `aria-label` on an `iconOnly` item, and a string names an unlabelled one. `false` opts out. |
 | tooltipPlacement | TooltipProps["placement"] | "top" | Where the tooltip sits. |
 
@@ -288,11 +288,11 @@ Use ToggleGroup when one or several options from a small, visible set should loo
 
 ### How do I change the size of every pill at once?
 
-Set `size` on the `ToggleGroup` root and every `ToggleGroupItem` inherits it through context, so you never set it per item. `sm` is the 32px compact rating pill and `md` (40px) is the default.
+Set `size` on the `ToggleGroup` root and every `ToggleGroupItem` inherits it through context, so you never set it per item. `sm` is the 32px compact rating pill and `md` (36px) is the default, matching Button.
 
 ### Why does a selected pill have no fill, just an outline?
 
-A chosen pill draws a brand outline plus a soft brand halo (`data-[state=on]`) with the label and glyph in the foreground, matching Figma. The fill is left off deliberately so the pill blends with whatever surface it sits on rather than painting a block that fights nested surfaces.
+A chosen pill draws an ink outline plus a soft ink halo (`data-[state=on]`) with the label and glyph in the foreground, matching Figma. The fill is left off deliberately so the pill blends with whatever surface it sits on rather than painting a block that fights nested surfaces.
 
 ### Does the segmented pill slide between options?
 
