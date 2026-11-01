@@ -58,6 +58,8 @@ When the user asks to move a project with its own components, CSS or UI kit to K
   it. If that file already exists, read it and resume from the first unticked surface.
 - Change markup and styles only. Handlers, validation, routes, data fetching, analytics, test ids
   and copy stay exactly as they were.
+- Keep the screens, regions, navigation and their order unless the approved plan lists a change.
+  The plan records that decision: never restructure on your own initiative.
 - One surface per commit, running the project's checks after each. Do not commit unless the user
   asked for commits; otherwise stop after each surface for review.
 - A project coming from shadcn/ui or AI Elements also reads its own guide:

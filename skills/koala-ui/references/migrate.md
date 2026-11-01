@@ -37,6 +37,7 @@ Read the project before touching it, and record what you find:
 
 - **The stack.** Framework, React and Tailwind versions, the styling method (CSS Modules, Sass, styled-components, Emotion, a kit such as MUI, Chakra, Ant or Bootstrap), and the checks the project has: tests, type checking, lint, build.
 - **The surfaces.** Every reusable UI component, or every kit component in use, with how many files import it. Usage count sets the order.
+- **The structure.** The kind of product, each screen’s regions and their order, how navigation works, what scrolls, what happens on small screens, and whether it runs on touch.
 - **The brand.** The primary color, neutrals, radius, fonts and any dark mode, read from the existing tokens or the most repeated values.
 - **What is yours.** Domain components that mean something only in this product, such as a shipment timeline or a seat map. Koala does not replace them.
 
@@ -53,6 +54,12 @@ Blockers: Tailwind 3 to 4
 ## Brand
 Primary #0f766e, radius 12px, Inter
 
+## Structure
+Point of sale on a touch screen: density compact, controls size lg
+Regions: top nav, open tickets, product grid, ticket panel
+Decision: keep (approved by the owner)
+Shell: LayoutTopbar + Navbar (Pro, ask), three LayoutPane columns
+
 ## Surfaces, in order
 - [ ] Button (41 uses): src/components/Btn.tsx > Button
 - [ ] Text field (18 uses): src/components/Input.tsx > Input, Field
@@ -60,10 +67,17 @@ Primary #0f766e, radius 12px, Inter
 - [ ] Data grid (3 uses): react-table > Data Table (Pro, ask)
 
 ## Stays as it is
-src/components/ShipmentTimeline.tsx: domain component, tokens only
+src/components/CashCount.tsx: domain component, tokens only
 ```
 
 Mark every Pro item and let the project’s owner choose: buy a license, compose the free components, or keep what exists. Never rebuild a Pro component from its docs or preview.
+
+The plan also records one decision the owner has to make about the structure:
+
+| Decision | What it means | When |
+| --- | --- | --- |
+| Keep | Same screens, regions and order. Only the pieces that draw them change. | The default, and the right call for tools people use all day. |
+| Reorganize | Listed changes only, each with its reason and its own commit. | When the owner asks, or approves a specific problem you found. |
 
 ## Step 3: Set up the foundation
 
@@ -97,11 +111,32 @@ A light brand color also needs a dark `--brand-foreground`. Load your fonts as `
 
 ## Step 5: Swap one surface at a time
 
-1. **Start at the bottom.** Buttons and text fields first, then overlays, then navigation and page layout. Each layer leans on the one before it.
+1. **Start at the bottom.** Buttons and text fields first, then overlays, then the pieces inside navigation. Each layer leans on the one before it, and the shell comes last.
 2. **One surface, one commit.** Add the component, read its reference, replace every use, and remove the old one. Run the project’s checks before moving on.
 3. **Translate props, keep behavior.** Handlers, validation, routes, disabled conditions, analytics, test ids and copy all stay exactly as they were.
 4. **Move what stays to tokens.** Replace hard-coded colors and radii in the domain components with the map below, so they follow the themes too.
 5. **Tick it off.** Update `koala-migration.md`. When a step fails its checks, fix it or stop and say so: never skip a test to move on.
+
+## Step 6: Move the structure
+
+With the pieces in place, move each screen’s shell, one at a time. What the structure is follows from the parts you drop in. [Layout](https://www.koalaui.com/docs/components/layout.md) and its [Navbar](https://www.koalaui.com/docs/components/navbar.md) and [Sidebar](https://www.koalaui.com/docs/components/sidebar.md) are Pro. Without a license, build the free column with Tailwind between Koala components.
+
+| In your project | With Layout (Pro) | With the free components |
+| --- | --- | --- |
+| Top navigation over the content | `LayoutTopbar` with `Navbar`, then `LayoutContent` | A `header` with Link or Button, and Tabs for the sections. |
+| Side navigation | `LayoutSidebar` with `Sidebar`, then `LayoutContent` | A flex row with a ScrollArea column of Buttons. |
+| Top bar over a side rail | `LayoutTopbar`, `LayoutBody`, `LayoutSidebar` | The two above, nested. |
+| Icon rail plus a second column | `LayoutRail`, `LayoutSidebar` | Two fixed columns, with Tooltip on the icons. |
+| Columns side by side: inbox, list and detail, point of sale | `LayoutPane` and `LayoutPaneHeader` | A CSS grid with one ScrollArea per column. |
+| Columns the user can resize | `Resizable` | Fixed widths. |
+| Page title with actions | `PageHeader`, `PageHeaderActions` | A flex row with a heading and Buttons. |
+| Sign-in or onboarding split | `SplitLayout`, `SplitPane`, `SplitMedia` | A two-column grid. |
+| Phone navigation | `LayoutMobileBar`, `LayoutMobileSidebar` | Drawer behind a menu Button. |
+
+- **Keep the routes.** Every link, active state, permission check and badge count stays. Whatever a screen showed in its navigation, it still shows.
+- **Set the density once.** `compact` for an app shell, `comfortable` for a marketing page, with a `DensityProvider` around the subtree. See [Density](https://www.koalaui.com/docs/foundations/density.md).
+- **Size for the hand.** Density tunes spacing, not control height. On a touch screen, pass `size="lg"` to the controls people hit all day.
+- **Keep what scrolls.** A column that scrolled alone still does, and the action that was always in view stays in view. Check it at the smallest screen the product supports.
 
 ## Component map
 
@@ -150,7 +185,7 @@ What most projects have, whatever it is called there. Every Koala name links to 
 - **Token names can collide.** `init` warns about your own `--background`, `--foreground` and `--radius`. Rename yours or remove them, or they override Koala’s themes.
 - **A kit’s theme provider stays** until its last component is gone. It can wrap the same tree as Koala’s `ThemeProvider`.
 
-## Step 6: Clean up
+## Step 7: Clean up
 
 Once nothing imports them, delete `components/legacy/`, the old stylesheets and the packages Koala replaced, then run the checks and the production build one last time. Keep `koala.json` in git: `diff` and `update` use it to bring in fixes without touching the files you edited.
 
@@ -171,6 +206,10 @@ Yes, for the code you do not move. Koala's components need Tailwind CSS v4 in th
 ### Will the agent change my business logic?
 
 It should not, and the skill tells it not to: only markup and styles change. Review each commit like any other, and let your tests confirm it.
+
+### Will the migration change my navigation?
+
+Not unless you approve it. The plan keeps your screens, regions and routes by default, and any reorganization is listed there with its reason before work starts.
 
 ### Do I need Koala UI Pro?
 
