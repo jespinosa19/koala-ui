@@ -267,6 +267,7 @@ tell the user the component is Pro instead of rebuilding it.
 - Ink Tray (`ink-tray`)
 - Island (`island`)
 - Job Card (`job-card`)
+- Keypad (`keypad`)
 - Layout (`layout`)
 - Lightbox (`lightbox`)
 - List (`list`)

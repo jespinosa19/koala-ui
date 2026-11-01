@@ -121,7 +121,7 @@ The `ghost` variant is the size picker on a product page: lay the group out as a
 
 ## Sizes
 
-`sm` (32px) is the compact rating row; `md` (36px) is the default, the same heights as Button. Set `size` on the group and every item inherits it through context.
+`sm` (32px) is the compact rating row; `md` (36px) is the default, `lg` is 40px and `xl` (44px) is the one for touch screens, the same heights as Button. Set `size` on the group and every item inherits it through context, or set it once for a whole screen with `ControlSizeProvider`.
 
 ```tsx
 <ToggleGroup type="single" size="sm" defaultValue="yes">
@@ -130,6 +130,16 @@ The `ghost` variant is the size picker on a product page: lay the group out as a
 </ToggleGroup>
 
 <ToggleGroup type="single" size="md" defaultValue="yes">
+  <ToggleGroupItem value="yes"><ThumbsUp />Yes</ToggleGroupItem>
+  <ToggleGroupItem value="no"><ThumbsDown />No</ToggleGroupItem>
+</ToggleGroup>
+
+<ToggleGroup type="single" size="lg" defaultValue="yes">
+  <ToggleGroupItem value="yes"><ThumbsUp />Yes</ToggleGroupItem>
+  <ToggleGroupItem value="no"><ThumbsDown />No</ToggleGroupItem>
+</ToggleGroup>
+
+<ToggleGroup type="single" size="xl" defaultValue="yes">
   <ToggleGroupItem value="yes"><ThumbsUp />Yes</ToggleGroupItem>
   <ToggleGroupItem value="no"><ThumbsDown />No</ToggleGroupItem>
 </ToggleGroup>
@@ -243,7 +253,7 @@ The group root, with roving focus across its items. Forwards all Radix ToggleGro
 | defaultValue | string \| string[] | - | The initial value when uncontrolled. |
 | onValueChange | (value: string) => void \| (value: string[]) => void | - | Called when the selection changes, with the shape matching `type`. |
 | variant | "outline" \| "segmented" \| "ghost" | "outline" | Free-standing pills with an ink outline, one muted track with a sliding thumb, or bare labels with an underline. |
-| size | "sm" \| "md" | "md" | 32px or 36px items, Button's scale, shared with every item through context. |
+| size | "sm" \| "md" \| "lg" \| "xl" | "md" | 32, 36, 40 or 44px items, Button's scale, shared with every item through context. Without a prop it follows `ControlSizeProvider`. |
 | disabled | boolean | false | Disables every item. |
 | rovingFocus | boolean | true | Arrow keys move focus between items. |
 | loop | boolean | true | Arrow-key focus wraps from the last item to the first. |
@@ -317,5 +327,5 @@ No. `tooltip` on a `ToggleGroupItem` is wired like Button's: it shows on hover a
 - Components and helpers: `ToggleGroup`, `ToggleGroupItem`, `toggleGroupVariants`
 - Types: `ToggleGroupProps`, `ToggleGroupItemProps`
 - Koala components it installs with it: `toggle`, `tooltip`
-- Koala lib helpers it uses: `create-context`, `hit-area`, `tv`, `utils`
+- Koala lib helpers it uses: `create-context`, `density`, `hit-area`, `tv`, `utils`
 - npm packages: `radix-ui`

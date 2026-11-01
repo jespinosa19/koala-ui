@@ -5,6 +5,7 @@ import { ToggleGroup as ToggleGroupPrimitive } from "radix-ui"
 
 import { createContext } from "@/lib/create-context"
 import { cn } from "@/lib/utils"
+import { useButtonSize } from "@/lib/density"
 import { tv, type VariantProps } from "@/lib/tv"
 import { hitY } from "@/lib/hit-area"
 import { toggleItemBase } from "@/components/ui/toggle"
@@ -54,6 +55,8 @@ export const toggleGroupVariants = tv({
     size: {
       sm: { root: "[--button-corner:var(--radius-md)]", item: `h-8 px-3 text-sm has-[>svg]:px-2.5 ${hitX}` },
       md: { root: "[--button-corner:calc(var(--radius)*0.875)]", item: "h-9 px-4 text-sm has-[>svg]:px-3" },
+      lg: { root: "[--button-corner:var(--radius-lg)]", item: "h-10 px-5 text-sm has-[>svg]:px-4" },
+      xl: { root: "[--button-corner:calc(var(--radius)*1.125)]", item: "h-11 px-6 text-base has-[>svg]:px-5 [&_svg:not([class*='size-'])]:size-5" },
     },
     iconOnly: {
       true: {},
@@ -63,6 +66,8 @@ export const toggleGroupVariants = tv({
   compoundVariants: [
     { size: "sm", iconOnly: true, className: { item: "w-8 px-0 has-[>svg]:px-0" } },
     { size: "md", iconOnly: true, className: { item: "w-9 px-0 has-[>svg]:px-0" } },
+    { size: "lg", iconOnly: true, className: { item: "w-10 px-0 has-[>svg]:px-0" } },
+    { size: "xl", iconOnly: true, className: { item: "w-11 px-0 has-[>svg]:px-0" } },
     {
       variant: "segmented",
       className: {
@@ -72,8 +77,12 @@ export const toggleGroupVariants = tv({
     },
     { variant: "segmented", size: "sm", className: { item: "h-7 px-2.5 has-[>svg]:px-2" } },
     { variant: "segmented", size: "md", className: { item: "h-8 px-3 has-[>svg]:px-2.5" } },
+    { variant: "segmented", size: "lg", className: { item: "h-9 px-4 has-[>svg]:px-3" } },
+    { variant: "segmented", size: "xl", className: { item: "h-10 px-5 has-[>svg]:px-4" } },
     { variant: "segmented", size: "sm", iconOnly: true, className: { item: "w-7 px-0 has-[>svg]:px-0" } },
     { variant: "segmented", size: "md", iconOnly: true, className: { item: "w-8 px-0 has-[>svg]:px-0" } },
+    { variant: "segmented", size: "lg", iconOnly: true, className: { item: "w-9 px-0 has-[>svg]:px-0" } },
+    { variant: "segmented", size: "xl", iconOnly: true, className: { item: "w-10 px-0 has-[>svg]:px-0" } },
   ],
   defaultVariants: {
     variant: "outline",
@@ -130,7 +139,8 @@ export type ToggleGroupProps = React.ComponentProps<typeof ToggleGroupPrimitive.
   Omit<VariantProps<typeof toggleGroupVariants>, "iconOnly">
 
 export function ToggleGroup({ className, size, variant, children, ref, ...props }: ToggleGroupProps) {
-  const slots = toggleGroupVariants({ size, variant })
+  const resolved = useButtonSize(size)
+  const slots = toggleGroupVariants({ size: resolved === "xs" ? "sm" : resolved, variant })
   const segmented = variant === "segmented"
   const rootRef = React.useRef<HTMLDivElement>(null)
   const { style, ready, animate } = useSelectedThumb(rootRef, segmented)
