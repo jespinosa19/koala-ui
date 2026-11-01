@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useLabels } from "@/lib/labels"
 import { CaretLeft, CaretRight } from "koala-icons"
 
 import { createContext } from "@/lib/create-context"
@@ -88,6 +89,7 @@ export function PaginationRoot({
   children,
   ...props
 }: PaginationRootProps) {
+  const labels = useLabels()
   const d = useDensity(density)
   const slots = paginationVariants({ density: d })
   const safeCount = Math.max(pageCount, 1)
@@ -116,7 +118,7 @@ export function PaginationRoot({
       <nav
         data-slot="pagination"
         role="navigation"
-        aria-label="Pagination"
+        aria-label={labels.pagination}
         className={slots.root({ className })}
         {...props}
       >
@@ -157,6 +159,7 @@ export function PaginationPrevButton({
   children,
   ...props
 }: PaginationNavButtonProps) {
+  const labels = useLabels()
   const { setPage, page, disabled, control } = usePaginationContext("PaginationPrevButton")
   return (
     <Button
@@ -165,7 +168,7 @@ export function PaginationPrevButton({
       variant="outline"
       size={control.button}
       iconOnly
-      aria-label="Previous page"
+      aria-label={labels.previousPage}
       disabled={disabled || page <= 1}
       onClick={() => setPage(page - 1)}
       className={className}
@@ -181,6 +184,7 @@ export function PaginationNextButton({
   children,
   ...props
 }: PaginationNavButtonProps) {
+  const labels = useLabels()
   const { setPage, page, pageCount, disabled, control } =
     usePaginationContext("PaginationNextButton")
   return (
@@ -190,7 +194,7 @@ export function PaginationNextButton({
       variant="outline"
       size={control.button}
       iconOnly
-      aria-label="Next page"
+      aria-label={labels.nextPage}
       disabled={disabled || page >= pageCount}
       onClick={() => setPage(page + 1)}
       className={className}
@@ -219,6 +223,7 @@ export interface PaginationGoToProps
 }
 
 export function PaginationGoTo({ label = "Go to", className, ...props }: PaginationGoToProps) {
+  const labels = useLabels()
   const { slots, page, pageCount, setPage, disabled, control } =
     usePaginationContext("PaginationGoTo")
   const id = React.useId()
@@ -257,7 +262,7 @@ export function PaginationGoTo({ label = "Go to", className, ...props }: Paginat
           inputMode="numeric"
           min={1}
           max={pageCount}
-          aria-label="Go to page"
+          aria-label={labels.goToPage}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onBlur={commit}
@@ -283,6 +288,7 @@ export function PaginationRowsPerPage({
   className,
   ...props
 }: PaginationRowsPerPageProps) {
+  const labels = useLabels()
   const { slots, rowsPerPage, onRowsPerPageChange, rowsPerPageOptions, disabled, control } =
     usePaginationContext("PaginationRowsPerPage")
   const id = React.useId()
@@ -306,7 +312,7 @@ export function PaginationRowsPerPage({
         <SelectTrigger
           id={id}
           density={control.select}
-          aria-label="Rows per page"
+          aria-label={labels.rowsPerPage}
           className="w-auto gap-2 tabular-nums"
         >
           <SelectValue placeholder="Rows" />

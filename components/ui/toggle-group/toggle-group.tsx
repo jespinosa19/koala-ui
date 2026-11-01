@@ -27,6 +27,7 @@ export const toggleGroupVariants = tv({
       ...toggleItemBase,
       "transition duration-fast ease-out",
     ],
+    mark: "size-2.5 shrink-0 rounded-full bg-(--toggle-group-mark)",
   },
   variants: {
     variant: {
@@ -179,7 +180,8 @@ export function ToggleGroup({ className, size, variant, children, ref, ...props 
   )
 }
 
-export interface ToggleGroupItemProps extends React.ComponentProps<typeof ToggleGroupPrimitive.Item> {
+export interface ToggleGroupItemProps extends Omit<React.ComponentProps<typeof ToggleGroupPrimitive.Item>, "color"> {
+  color?: string
   iconOnly?: boolean
   tooltip?: React.ReactNode | false
   tooltipPlacement?: TooltipProps["placement"]
@@ -187,6 +189,8 @@ export interface ToggleGroupItemProps extends React.ComponentProps<typeof Toggle
 
 export function ToggleGroupItem({
   className,
+  children,
+  color,
   iconOnly = false,
   tooltip,
   tooltipPlacement,
@@ -214,7 +218,17 @@ export function ToggleGroupItem({
       className={slots.item({ iconOnly, className })}
       {...props}
       aria-label={name}
-    />
+    >
+      {color ? (
+        <span
+          aria-hidden="true"
+          data-slot="toggle-group-item-mark"
+          className={slots.mark()}
+          style={{ "--toggle-group-mark": color } as React.CSSProperties}
+        />
+      ) : null}
+      {children}
+    </ToggleGroupPrimitive.Item>
   )
 
   const tooltipContent = tooltip === false ? null : (tooltip ?? (iconOnly ? ariaLabel : undefined))

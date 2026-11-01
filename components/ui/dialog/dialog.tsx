@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useLabels } from "@/lib/labels"
 import { Dialog as DialogPrimitive } from "radix-ui"
 import { X } from "koala-icons"
 
@@ -191,12 +192,13 @@ export function DialogContent({
   density,
   mobile,
   showClose = true,
-  closeLabel = "Close",
+  closeLabel,
   style,
   onCloseAutoFocus,
   onPointerDownOutside,
   ...props
 }: DialogContentProps) {
+  const labels = useLabels()
   const focusReturn = useFocusReturn({ onCloseAutoFocus, onPointerDownOutside })
   const resolvedDensity = useDensity(density)
   const slots = dialogVariants({ size, density: resolvedDensity, mobile })
@@ -216,7 +218,7 @@ export function DialogContent({
           {focusReturn.marker}
           <DensityProvider density={resolvedDensity}>{children}</DensityProvider>
           {showClose && (
-            <DialogPrimitive.Close aria-label={closeLabel} className={slots.close()}>
+            <DialogPrimitive.Close aria-label={closeLabel ?? labels.close} className={slots.close()}>
               <X weight="bold" />
             </DialogPrimitive.Close>
           )}

@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useLabels } from "@/lib/labels"
 import { createPortal } from "react-dom"
 import { ArrowsHorizontal, ArrowsVertical, Minus, Plus } from "koala-icons"
 
@@ -527,13 +528,14 @@ function Stepper({
   onClick,
   ...props
 }: NumberFieldStepperProps & { direction: 1 | -1; consumer: string }) {
+  const labels = useLabels()
   const { ctx, size, disabled, handlers } = useStepper(direction, consumer)
   const up = direction === 1
   return (
     <InputSuffixButton
       data-slot={up ? "number-field-increment" : "number-field-decrement"}
       tabIndex={-1}
-      aria-label={up ? "Increase" : "Decrease"}
+      aria-label={up ? labels.increase : labels.decrease}
       aria-controls={ctx.inputId}
       disabled={disabledProp || disabled}
       className={ctx.slots.button({ size, className })}

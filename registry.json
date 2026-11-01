@@ -3586,6 +3586,7 @@
         "density",
         "focus-return",
         "hit-area",
+        "labels",
         "tv",
         "utils"
       ],
@@ -3593,7 +3594,7 @@
         "components/ui/dialog/dialog.tsx",
         "components/ui/dialog/index.ts"
       ],
-      "hash": "97b94792bd2d1259"
+      "hash": "8d6db5c5ea8518ad"
     },
     {
       "name": "dispatch",
@@ -5217,6 +5218,7 @@
         "create-context",
         "focus-return",
         "hit-area",
+        "labels",
         "motion",
         "tv",
         "utils"
@@ -5227,7 +5229,7 @@
         "components/ui/file-preview/index.ts",
         "components/ui/file-preview/shared.ts"
       ],
-      "hash": "27851d8b52cb411f"
+      "hash": "0cc06e34e6390f0f"
     },
     {
       "name": "file-upload",
@@ -6644,6 +6646,7 @@
         "create-context",
         "density",
         "field-context",
+        "labels",
         "tv",
         "utils"
       ],
@@ -6655,7 +6658,7 @@
         "components/ui/input/number-input.tsx",
         "components/ui/input/phone-input.tsx"
       ],
-      "hash": "6b9011cef697cceb"
+      "hash": "fe2e6c75cd9e93ab"
     },
     {
       "name": "input-group",
@@ -6761,6 +6764,7 @@
       ],
       "libDependencies": [
         "create-context",
+        "labels",
         "motion",
         "tv"
       ],
@@ -6768,7 +6772,7 @@
         "components/ui/keypad/index.ts",
         "components/ui/keypad/keypad.tsx"
       ],
-      "hash": "69838b0082d644f4"
+      "hash": "54a8bd1adac01772"
     },
     {
       "name": "koala-mark",
@@ -6806,6 +6810,36 @@
         "components/ui/label/label.tsx"
       ],
       "hash": "bdb6ba090ad95755"
+    },
+    {
+      "name": "labels",
+      "type": "lib",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "labels",
+      "dependencies": {},
+      "registryDependencies": [],
+      "libDependencies": [],
+      "files": [
+        "lib/labels.tsx"
+      ],
+      "hash": "176e8f8b86dae364"
+    },
+    {
+      "name": "labels-es",
+      "type": "lib",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "labels-es",
+      "dependencies": {},
+      "registryDependencies": [],
+      "libDependencies": [
+        "labels"
+      ],
+      "files": [
+        "lib/labels-es.ts"
+      ],
+      "hash": "cc769b5da77ad577"
     },
     {
       "name": "layout",
@@ -7483,13 +7517,36 @@
         "create-context",
         "density",
         "field-context",
+        "labels",
         "tv"
       ],
       "files": [
         "components/ui/number-field/index.ts",
         "components/ui/number-field/number-field.tsx"
       ],
-      "hash": "14830e172c31e623"
+      "hash": "b9b0c464e15b18c6"
+    },
+    {
+      "name": "on-screen-keyboard",
+      "type": "component",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "On Screen Keyboard",
+      "dependencies": {
+        "koala-icons": "^0.1.1"
+      },
+      "registryDependencies": [
+        "button"
+      ],
+      "libDependencies": [
+        "labels",
+        "tv"
+      ],
+      "files": [
+        "components/ui/on-screen-keyboard/index.ts",
+        "components/ui/on-screen-keyboard/on-screen-keyboard.tsx"
+      ],
+      "hash": "b204fd9410b48c7d"
     },
     {
       "name": "onboarding-getting-started",
@@ -7539,6 +7596,7 @@
       "libDependencies": [
         "create-context",
         "density",
+        "labels",
         "tv",
         "utils"
       ],
@@ -7546,7 +7604,7 @@
         "components/ui/order-summary/index.ts",
         "components/ui/order-summary/order-summary.tsx"
       ],
-      "hash": "f35a643b1ef476ea"
+      "hash": "d4afdfe26acf4a61"
     },
     {
       "name": "otp-input",
@@ -7585,13 +7643,14 @@
       "libDependencies": [
         "create-context",
         "density",
+        "labels",
         "tv"
       ],
       "files": [
         "components/ui/pagination/index.ts",
         "components/ui/pagination/pagination.tsx"
       ],
-      "hash": "fb1c9d0f4e3f5997"
+      "hash": "9589a48da7fc6a8b"
     },
     {
       "name": "paper",
@@ -9524,6 +9583,7 @@
       "registryDependencies": [],
       "libDependencies": [
         "hit-area",
+        "labels",
         "motion",
         "tv",
         "utils"
@@ -9532,7 +9592,7 @@
         "components/ui/tab-strip/index.ts",
         "components/ui/tab-strip/tab-strip.tsx"
       ],
-      "hash": "f3484a12cfe2cad2"
+      "hash": "905f2e97b88bd6f3"
     },
     {
       "name": "table",
@@ -10155,7 +10215,7 @@
         "components/ui/toggle-group/index.ts",
         "components/ui/toggle-group/toggle-group.tsx"
       ],
-      "hash": "6e7e3bc843cc7435"
+      "hash": "35727198d0f9f5df"
     },
     {
       "name": "tool",

@@ -837,5 +837,5 @@ By default those dismissals are uncontrolled, so wire a controlled open and onOp
 - Components and helpers: `Dialog`, `DialogTrigger`, `DialogClose`, `DialogContent`, `DialogIcon`, `DialogHeader`, `DialogStepper`, `DialogBody`, `DialogFooter`, `DialogTitle`, `DialogDescription`, `dialogVariants`, `useDialogStack`
 - Types: `DialogContentProps`, `DialogFooterProps`, `DialogStepperProps`
 - Koala components it installs with it: `stepper`
-- Koala lib helpers it uses: `density`, `focus-return`, `hit-area`, `tv`, `utils`
+- Koala lib helpers it uses: `density`, `focus-return`, `hit-area`, `labels`, `tv`, `utils`
 - npm packages: `koala-icons`, `radix-ui`

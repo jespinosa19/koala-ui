@@ -238,5 +238,5 @@ Yes. The `density` prop (or a surrounding DensityProvider) lands the whole toolb
 - Components and helpers: `Pagination`, `PaginationRoot`, `PaginationInfo`, `PaginationControls`, `PaginationPrevButton`, `PaginationNextButton`, `PaginationGoTo`, `PaginationRowsPerPage`, `paginationVariants`
 - Types: `PaginationProps`, `PaginationRootProps`, `PaginationInfoProps`, `PaginationNavButtonProps`, `PaginationControlsProps`, `PaginationGoToProps`, `PaginationRowsPerPageProps`
 - Koala components it installs with it: `button`, `input`, `select`
-- Koala lib helpers it uses: `create-context`, `density`, `tv`
+- Koala lib helpers it uses: `create-context`, `density`, `labels`, `tv`
 - npm packages: `koala-icons`
