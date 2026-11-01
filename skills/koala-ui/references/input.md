@@ -175,6 +175,14 @@ Use `InputSuffix` to place a decorative icon on the right - useful for status in
 </div>
 ```
 
+## Decimal quantities
+
+A value is rounded to the decimals of `step`, so with `step=1` a typed 1.5 becomes 2. Set `precision` to keep decimals while the steppers still move by whole units.
+
+```tsx
+<NumberInput defaultValue={1.5} step={1} precision={3} layout="inline" aria-label="Kilos" />
+```
+
 ## Number
 
 `NumberInput` adds stepper controls that clamp to `min`/`max`, snap to `step`, and respond to `↑`/`↓` keys, click, and press-and-hold to repeat. The default `stacked` carets sit on the right; `layout="inline"` gives a `−` / `+` quantity stepper with full-height hit targets.
@@ -406,6 +414,7 @@ A numeric field with steppers and arrow-key increments. Other props go to the `<
 | min | number | - | Lower clamp. |
 | max | number | - | Upper clamp. |
 | step | number | 1 | Applied by the steppers and arrow keys. |
+| precision | number | - | Decimals a value keeps. Defaults to the decimals of `step`, so set it when quantities take decimals but the steppers move by whole units. |
 | layout | "stacked" \| "inline" | "stacked" | `stacked` carets on the right, or `inline` minus and plus flanking the field. |
 | size | "sm" \| "md" \| "lg" | - | Height 32, 36 or 40px. Unset, it comes from a container (`Form` imposes `lg`) or density (`compact`, the default, is `sm`; `comfortable` is `md`). |
 | hasError | boolean | - | Destructive border and ring, and `aria-invalid` on the input. Inherited from a surrounding `Field` when unset. |
@@ -471,5 +480,5 @@ The frame takes a 6% brand tint over whatever surface it sits on, and the text k
 - Components and helpers: `InputRoot`, `InputField`, `InputFloatingField`, `InputLabel`, `InputHint`, `InputPrefix`, `InputSuffix`, `InputPrefixLabel`, `InputSuffixButton`, `PasswordInput`, `inputVariants`, `NumberInput`, `PhoneInput`, `CountrySelect`, `COUNTRIES`, `COUNTRY_BY_ISO2`
 - Types: `InputRootProps`, `InputFieldProps`, `InputFloatingFieldProps`, `InputLabelProps`, `InputHintProps`, `InputPrefixProps`, `InputSuffixProps`, `InputPrefixLabelProps`, `InputSuffixButtonProps`, `PasswordInputProps`, `NumberInputProps`, `PhoneInputProps`, `PhoneChangePayload`, `CountrySelectProps`, `Country`
 - Koala components it installs with it: `label`
-- Koala lib helpers it uses: `create-context`, `density`, `field-context`, `tv`, `utils`
+- Koala lib helpers it uses: `create-context`, `density`, `field-context`, `labels`, `tv`, `utils`
 - npm packages: `country-flag-icons`, `koala-icons`, `radix-ui`

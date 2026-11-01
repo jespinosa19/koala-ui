@@ -31,7 +31,7 @@ docs. Every docs page is also served as markdown at its URL plus `.md`, indexed 
 | Tier | What | Install |
 | --- | --- | --- |
 | **Free** | the 48 foundation components, lib helpers, tokens | `npx koalaui-cli@latest add <name>`, no account |
-| **Pro** | the other 107 components, every section, page examples, templates | a license, then `npx koalaui-cli@latest login <key>` |
+| **Pro** | the other 108 components, every section, page examples, templates | a license, then `npx koalaui-cli@latest login <key>` |
 
 Pro source lives in a private repository and reaches buyers through the licensing API, so a
 license is the only thing that grants access. [See the plans](https://www.koalaui.com/pro).

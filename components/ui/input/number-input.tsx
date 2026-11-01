@@ -5,6 +5,7 @@ import { CaretUp, CaretDown, Minus, Plus } from "koala-icons"
 
 import { tv } from "@/lib/tv"
 import { useControlSize } from "@/lib/density"
+import { useLabels } from "@/lib/labels"
 import { useFieldContext } from "@/lib/field-context"
 import {
   InputRoot,
@@ -77,6 +78,7 @@ export interface NumberInputProps
   min?: number
   max?: number
   step?: number
+  precision?: number
   layout?: "stacked" | "inline"
   size?: InputRootProps["size"]
   hasError?: boolean
@@ -91,6 +93,7 @@ export function NumberInput({
   min,
   max,
   step = 1,
+  precision,
   layout = "stacked",
   size,
   hasError,
@@ -102,7 +105,8 @@ export function NumberInput({
   "aria-describedby": ariaDescribedBy,
   ...fieldProps
 }: NumberInputProps) {
-  const decimals = React.useMemo(() => decimalsOf(step), [step])
+  const labels = useLabels()
+  const decimals = React.useMemo(() => precision ?? decimalsOf(step), [precision, step])
   const isControlled = value !== undefined
 
   const [internal, setInternal] = React.useState(() =>
@@ -199,7 +203,7 @@ export function NumberInput({
         type="button"
         tabIndex={-1}
         data-slot={isUp ? "number-input-increment" : "number-input-decrement"}
-        aria-label={isUp ? "Increase" : "Decrease"}
+        aria-label={isUp ? labels.increase : labels.decrease}
         disabled={resolvedDisabled || atBound}
         className={slots.button()}
         onPointerDown={(e) => {

@@ -281,6 +281,7 @@ tell the user the component is Pro instead of rebuilding it.
 - Navigation Menu (`navigation-menu`)
 - Newsletter Form (`newsletter-form`)
 - Notebook Page (`notebook-page`)
+- On Screen Keyboard (`on-screen-keyboard`)
 - Order Summary (`order-summary`)
 - OTP Input (`otp-input`)
 - Paper (`paper`)

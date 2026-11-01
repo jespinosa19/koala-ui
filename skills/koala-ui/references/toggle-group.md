@@ -145,6 +145,18 @@ The `ghost` variant is the size picker on a product page: lay the group out as a
 </ToggleGroup>
 ```
 
+## Colour marks
+
+`color` takes any CSS colour, including one from your data, and draws a mark beside the label. The selected state stays the group's own.
+
+```tsx
+<ToggleGroup type="single" size="xl" defaultValue="drinks">
+  <ToggleGroupItem value="drinks" color="var(--color-blue-500)">Drinks</ToggleGroupItem>
+  <ToggleGroupItem value="bakery" color="var(--color-amber-400)">Bakery</ToggleGroupItem>
+  <ToggleGroupItem value="fresh" color="var(--color-green-500)">Fresh</ToggleGroupItem>
+</ToggleGroup>
+```
+
 ## Icon-only with tooltips
 
 `iconOnly` squares an item around its glyph (32px at `sm`, 36px at `md`, a 16px glyph like an icon-only Button), the same square the lone [Toggle](https://www.koalaui.com/docs/components/toggle.md) draws. A glyph is not a name, so an icon-only item always needs a hint, and `tooltip` gives it one with the same wiring as [Button](https://www.koalaui.com/docs/components/button.md): a string `tooltip` is shown on hover and focus and also names an item that has no `aria-label`, and an icon-only item with an `aria-label` shows that label as its hint on its own. On a labelled pill a `tooltip` is a supplementary hint. Pass `tooltip={false}` to opt out when you wrap the item in your own `Tooltip`.
@@ -275,6 +287,7 @@ One pressable item. Forwards all Radix ToggleGroup `Item` props.
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | value* | string | - | The item's value in the group. |
+| color | string | - | Any CSS colour. Draws a round mark before the label, for sets with colours of their own, such as product families. |
 | disabled | boolean | false | Disables this item. |
 | iconOnly | boolean | false | A square around one 16px glyph, Button's icon-only size. Name it with `aria-label` or a string `tooltip`. |
 | tooltip | React.ReactNode \| false | - | A hint on hover and focus; defaults to the `aria-label` on an `iconOnly` item, and a string names an unlabelled one. `false` opts out. |
