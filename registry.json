@@ -74,6 +74,34 @@
       "hash": "3807308a6a45a028"
     },
     {
+      "name": "agent-monitor",
+      "type": "component",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Agent Monitor",
+      "dependencies": {
+        "koala-icons": "^0.1.1",
+        "radix-ui": "^1.5.0"
+      },
+      "registryDependencies": [
+        "animated-label",
+        "badge",
+        "dot",
+        "plan"
+      ],
+      "libDependencies": [
+        "create-context",
+        "density",
+        "tv",
+        "utils"
+      ],
+      "files": [
+        "components/ui/agent-monitor/agent-monitor.tsx",
+        "components/ui/agent-monitor/index.ts"
+      ],
+      "hash": "481cce5ca6cfe9b3"
+    },
+    {
       "name": "ai-panel",
       "type": "component",
       "tier": "pro",

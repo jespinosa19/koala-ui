@@ -224,6 +224,7 @@ tell the user the component is Pro instead of rebuilding it.
 
 <!-- pro:start -->
 - Activity Feed (`activity-feed`)
+- Agent Monitor (`agent-monitor`)
 - AI Panel (`ai-panel`)
 - Animated Number (`animated-number`)
 - Announcement (`announcement`)
