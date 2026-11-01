@@ -68,7 +68,7 @@ import {
 
 ## Sizes
 
-`sm` (16px) matches the dense table checkbox; `md` (20px) is the default for forms. Set `size` on the group and every item inherits it through context.
+`sm` (14px) matches the dense table checkbox; `md` (16px) is the default for forms. Set `size` on the group and every item inherits it through context.
 
 ```tsx
 <RadioGroup size="sm" defaultValue="b">
@@ -100,13 +100,12 @@ Disable a single `RadioGroupItem` and roving focus skips it, or disable the whol
 
 ## With descriptions
 
-Give each option a line of supporting text with `RadioCardDescription`. The whole card is the radio, so the entire surface is the hit target: selected, it borders brand, lifts the accent halo and pops its icon, exactly like the plan picker below.
+Give each option a line of supporting text with `RadioCardDescription`. The whole card is the radio, so the entire surface is the hit target: selected, it takes an ink border and pops its icon, exactly like the plan picker below.
 
 ```tsx
 import { RadioGroup, RadioCard, RadioCardTitle, RadioCardDescription } from "@/components/ui/radio-group"
 import { FieldGroup, FieldGroupLabel } from "@/components/ui/field"
-import { Package, Truck, AirplaneTilt } from "@phosphor-icons/react"
-
+import { Package, Truck, AirplaneTilt } from "koala-icons"
 const SHIPPING = [
   { value: "standard", icon: <Package />, title: "Standard", hint: "4–6 business days. Free." },
   { value: "express", icon: <Truck />, title: "Express", hint: "2–3 business days. $9." },
@@ -128,13 +127,12 @@ const SHIPPING = [
 
 ## Cards
 
-Reach for `RadioCard` when each option deserves an icon and a line of supporting text, the affordance behind a plan, theme or payment-method picker. The card *is* the radio, so keyboard and focus come for free; selected, it borders `brand` and lifts the accent halo while the flooded dot tweens in.
+Reach for `RadioCard` when each option deserves an icon and a line of supporting text, the affordance behind a plan, theme or payment-method picker. The card *is* the radio, so keyboard and focus come for free; selected, it takes an ink border while the flooded dot tweens in. Reached by keyboard, it takes the same brand stroke and ring as a focused input.
 
 ```tsx
 import { RadioGroup, RadioCard, RadioCardTitle, RadioCardDescription } from "@/components/ui/radio-group"
 import { FieldGroup, FieldGroupLabel } from "@/components/ui/field"
-import { Rocket, Crown, Buildings } from "@phosphor-icons/react"
-
+import { Rocket, Crown, Buildings } from "koala-icons"
 const PLANS = [
   { value: "starter", icon: <Rocket />, title: "Starter", hint: "$0 / month. For side projects and prototypes." },
   { value: "pro", icon: <Crown />, title: "Pro", hint: "$59 / month. For growing teams that ship." },
@@ -161,8 +159,7 @@ const PLANS = [
 ```tsx
 import { RadioGroup, RadioCard, RadioCardTitle } from "@/components/ui/radio-group"
 import { FieldGroup, FieldGroupLabel } from "@/components/ui/field"
-import { User, Buildings, CreditCard, Wallet } from "@phosphor-icons/react"
-
+import { User, Buildings, CreditCard, Wallet } from "koala-icons"
 {/* One-line options: title-only, in a two-up grid. sm centers + sets the title to medium. */}
 <FieldGroup>
   <FieldGroupLabel>Billing type</FieldGroupLabel>
@@ -265,7 +262,7 @@ The group root. Wraps Radix `RadioGroup.Root` and forwards its props; inside a F
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| size | "sm" \| "md" | "md" | Shared with every `RadioGroupItem` (16px or 20px, matching Checkbox) and `RadioSwatch` (24px or 32px) through context. |
+| size | "sm" \| "md" | "md" | Shared with every `RadioGroupItem` (14px or 16px, matching Checkbox) and `RadioSwatch` (24px or 32px) through context. |
 | value | string | - | The selected value, controlled. Pair with `onValueChange`. |
 | defaultValue | string | - | The initially selected value, uncontrolled. |
 | onValueChange | (value: string) => void | - | Called when the selection changes. |
@@ -316,7 +313,7 @@ A whole selectable card that is the radio itself, with a trailing circle mirrori
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | value* | string | - | The value this card selects. |
-| icon | React.ReactNode | - | Optional leading glyph, muted until the card is selected, then brand. |
+| icon | React.ReactNode | - | Optional leading glyph, muted until the card is selected, then full ink. |
 | size | "sm" \| "md" | "md" | Set per card, not inherited from the group. `md` top-aligns a title and description; `sm` is a tighter, vertically centered one-line option. |
 | disabled | boolean | false | Disables this card. |
 
@@ -341,7 +338,7 @@ Use RadioGroup for a single choice from a small, visible set so every option is 
 
 ### How do I set the size, and why does it match Checkbox?
 
-Set `size` on the RadioGroup (`sm` is 16px, `md` is 20px) and each RadioGroupItem inherits it through context. The sizes mirror Checkbox exactly so radios and checkboxes line up pixel-for-pixel in the same form.
+Set `size` on the RadioGroup (`sm` is 14px, `md` is 16px) and each RadioGroupItem inherits it through context. The sizes mirror Checkbox exactly so radios and checkboxes line up pixel-for-pixel in the same form.
 
 ### RadioGroupItem renders only a circle. How do I give it a label and a bigger hit target?
 
@@ -353,7 +350,7 @@ It is built on Radix RadioGroup, so arrow keys move roving focus and select. Dis
 
 ### How do I make the whole option card highlight when selected, without JavaScript?
 
-Reach for `RadioCard` (same import): it dresses a RadioGroupItem as a full selectable card with an optional `icon`, plus `RadioCardTitle` and `RadioCardDescription`. The card itself is the radio, so the whole surface is the hit target and it borders brand and lifts the accent halo when selected, no JavaScript. See the Cards example above.
+Reach for `RadioCard` (same import): it dresses a RadioGroupItem as a full selectable card with an optional `icon`, plus `RadioCardTitle` and `RadioCardDescription`. The card itself is the radio, so the whole surface is the hit target and it takes an ink border when selected, no JavaScript. See the Cards example above.
 
 ### How do I build a colour picker for a product?
 

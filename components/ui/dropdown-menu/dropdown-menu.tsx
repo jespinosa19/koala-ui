@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { DropdownMenu as DropdownMenuPrimitive } from "radix-ui"
-import { ArrowLeft, CaretRight, Check } from "@phosphor-icons/react"
+import { ArrowLeft, CaretRight, Check } from "koala-icons"
 
 import { tv, type VariantProps } from "@/lib/tv"
 import { cn } from "@/lib/utils"
@@ -64,7 +64,7 @@ export const dropdownMenuVariants = tv({
       "data-[side=left]:starting:translate-x-2 data-[side=right]:starting:-translate-x-2",
       "data-[state=closed]:pointer-events-none data-[state=closed]:animate-presence-hold data-[state=closed]:opacity-0",
     ],
-    itemIndicator: "absolute right-2 flex size-4 items-center justify-center text-brand",
+    itemIndicator: "absolute right-2 flex size-4 items-center justify-center text-foreground",
     label: "font-medium text-muted-foreground",
     separator: "-mx-0.75 h-px bg-border",
     subCaret: "ml-auto size-4 text-muted-foreground",

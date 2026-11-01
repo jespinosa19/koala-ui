@@ -243,4 +243,4 @@ No. A closed region is removed once its exit animation ends, so it leaves the ta
 - Components and helpers: `Collapsible`, `CollapsibleTrigger`, `CollapsibleIcon`, `CollapsibleContent`, `collapsibleVariants`
 - Types: `CollapsibleProps`, `CollapsibleIconProps`
 - Koala lib helpers it uses: `create-context`, `hit-area`, `tv`, `utils`
-- npm packages: `@phosphor-icons/react`, `radix-ui`
+- npm packages: `koala-icons`, `radix-ui`

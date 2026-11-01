@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Slot } from "radix-ui"
-import { X } from "@phosphor-icons/react/ssr"
+import { X } from "koala-icons"
 
 import { cn } from "@/lib/utils"
 import { tv, type VariantProps } from "@/lib/tv"

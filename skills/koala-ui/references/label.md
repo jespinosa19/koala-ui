@@ -151,6 +151,8 @@ Pass `disabled` to `Label`, or set `disabled` on the surrounding `Field` and the
 
 `npx koalaui-cli@latest add label` writes `components/ui/label/`. Import from `@/components/ui/label`:
 
-- Components and helpers: `Label`, `Hint`, `labelVariants`
+- Components and helpers: `Label`, `Hint`, `LabelInfoIcon`, `LabelInfoText`, `labelVariants`
 - Types: `LabelProps`, `HintProps`
+- Koala components it installs with it: `tooltip`
 - Koala lib helpers it uses: `field-context`, `field-group-context`, `tv`
+- npm packages: `koala-icons`

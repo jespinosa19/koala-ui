@@ -3,9 +3,8 @@ import { hitBox, hitCoarse, hitX } from "@/lib/hit-area"
 
 export const buttonVariants = tv({
   base: [
-    "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-pill text-sm font-medium",
+    "inline-flex shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[var(--button-radius,var(--button-corner))] text-sm font-medium",
     "transition duration-fast ease-out",
-    "active:scale-[0.96]",
     "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
     "disabled:pointer-events-none disabled:opacity-50",
     "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -19,6 +18,9 @@ export const buttonVariants = tv({
       outline:
         "border border-border bg-transparent shadow-xs hover:bg-accent hover:text-accent-foreground",
       ghost: "hover:bg-accent hover:text-accent-foreground",
+      // A ghost that steps back: muted at rest, full ink under the pointer. For the secondary
+      // icon actions of a row or a card (remove, edit, more).
+      subtle: "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
       overlay:
         "border border-white/15 bg-black/45 text-white shadow-xs hover:bg-black/65 hover:text-white focus-visible:ring-white focus-visible:ring-offset-transparent",
       destructive:
@@ -28,11 +30,11 @@ export const buttonVariants = tv({
       link: "text-primary underline-offset-4 hover:underline",
     },
     size: {
-      xs: "h-7 gap-1 px-2 text-xs has-[>svg]:px-1.5 has-[>[data-slot=button-label]_svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3.5",
-      sm: "h-8 gap-1.5 px-3 has-[>svg]:px-2.5 has-[>[data-slot=button-label]_svg]:px-2.5",
-      md: "h-9 px-4 py-2 has-[>svg]:px-3 has-[>[data-slot=button-label]_svg]:px-3",
-      lg: "h-10 px-5 has-[>svg]:px-4 has-[>[data-slot=button-label]_svg]:px-4",
-      xl: "h-11 px-6 text-base has-[>svg]:px-5 has-[>[data-slot=button-label]_svg]:px-5 [&_svg:not([class*='size-'])]:size-5",
+      xs: "h-7 [--button-corner:calc(var(--radius)*0.625)] in-[form:not([data-slot=popover-content]_*)]:rounded-[var(--button-corner)] gap-1 px-2 text-xs has-[>svg]:px-1.5 has-[>[data-slot=button-label]_svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3.5",
+      sm: "h-8 [--button-corner:var(--radius-md)] in-[form:not([data-slot=popover-content]_*)]:rounded-[var(--button-corner)] gap-1.5 px-3 has-[>svg]:px-2.5 has-[>[data-slot=button-label]_svg]:px-2.5",
+      md: "h-9 [--button-corner:calc(var(--radius)*0.875)] in-[form:not([data-slot=popover-content]_*)]:rounded-[var(--button-corner)] px-4 py-2 has-[>svg]:px-3 has-[>[data-slot=button-label]_svg]:px-3",
+      lg: "h-10 [--button-corner:var(--radius-lg)] in-[form:not([data-slot=popover-content]_*)]:rounded-[var(--button-corner)] px-5 has-[>svg]:px-4 has-[>[data-slot=button-label]_svg]:px-4",
+      xl: "h-11 [--button-corner:calc(var(--radius)*1.125)] in-[form:not([data-slot=popover-content]_*)]:rounded-[var(--button-corner)] px-6 text-base has-[>svg]:px-5 has-[>[data-slot=button-label]_svg]:px-5 [&_svg:not([class*='size-'])]:size-5",
     },
     iconOnly: {
       true: "",

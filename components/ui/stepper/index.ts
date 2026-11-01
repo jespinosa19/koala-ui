@@ -6,8 +6,12 @@ export {
   StepperTitle,
   StepperDescription,
   StepperSeparator,
+  StepperPanels,
+  StepperPanel,
   stepperVariants,
   type StepperProps,
   type StepperItemProps,
   type StepperTriggerProps,
+  type StepperPanelsProps,
+  type StepperPanelProps,
 } from "./stepper"

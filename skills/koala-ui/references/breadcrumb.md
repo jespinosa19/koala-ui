@@ -146,7 +146,7 @@ Use `BreadcrumbEllipsis` inside a `BreadcrumbItem` to indicate hidden ancestors 
 Make the collapsed segment interactive: drop a [DropdownMenu](https://www.koalaui.com/docs/components/dropdown-menu.md) into the `BreadcrumbItem` so the ellipsis opens a menu of the hidden ancestors - full keyboard navigation and focus management come from the underlying Radix primitive. The dots sit in a container that reveals its surface on hover and while open, so the collapsed crumb reads as a tappable control, with a 40px tap target.
 
 ```tsx
-import { DotsThree } from "@phosphor-icons/react"
+import { DotsThree } from "koala-icons"
 import {
   DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem,
 } from "@/components/ui/dropdown-menu"
@@ -154,7 +154,7 @@ import {
 <BreadcrumbItem>
   <DropdownMenu>
     <DropdownMenuTrigger aria-label="Show more pages" className="...ellipsis + hit area">
-      <DotsThree weight="bold" className="size-4" />
+      <DotsThree className="size-4" />
     </DropdownMenuTrigger>
     <DropdownMenuContent align="start">
       <DropdownMenuItem asChild>
@@ -312,4 +312,4 @@ Use `BreadcrumbEllipsis` as a static indicator that ancestors are hidden when th
 - Components and helpers: `Breadcrumb`, `BreadcrumbList`, `BreadcrumbItem`, `BreadcrumbLink`, `BreadcrumbPage`, `BreadcrumbSeparator`, `BreadcrumbEllipsis`
 - Types: `BreadcrumbLinkProps`
 - Koala lib helpers it uses: `hit-area`, `utils`
-- npm packages: `@phosphor-icons/react`, `radix-ui`
+- npm packages: `koala-icons`, `radix-ui`

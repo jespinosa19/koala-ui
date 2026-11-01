@@ -182,19 +182,21 @@ A right-side panel is the desktop home for an edit form; it keeps the underlying
     <DrawerTitle>Edit profile</DrawerTitle>
     <DrawerDescription>Update your details.</DrawerDescription>
   </DrawerHeader>
-  <DrawerBody>
-    <div className="grid gap-4">
-      <div className="grid gap-1.5">
-        <InputLabel htmlFor="name">Full name</InputLabel>
-        <InputRoot><InputField ref={nameRef} id="name" /></InputRoot>
+  <form className="contents" onSubmit={(e) => e.preventDefault()}>
+    <DrawerBody>
+      <div className="grid gap-4">
+        <div className="grid gap-1.5">
+          <InputLabel htmlFor="name">Full name</InputLabel>
+          <InputRoot><InputField ref={nameRef} id="name" /></InputRoot>
+        </div>
+        {/* … */}
       </div>
-      {/* … */}
-    </div>
-  </DrawerBody>
-  <DrawerFooter>
-    <DrawerClose asChild><Button variant="ghost">Cancel</Button></DrawerClose>
-    <DrawerClose asChild><Button>Save changes</Button></DrawerClose>
-  </DrawerFooter>
+    </DrawerBody>
+    <DrawerFooter>
+      <DrawerClose asChild><Button type="button" variant="ghost">Cancel</Button></DrawerClose>
+      <DrawerClose asChild><Button type="submit">Save changes</Button></DrawerClose>
+    </DrawerFooter>
+  </form>
 </DrawerContent>
 ```
 
@@ -240,6 +242,23 @@ Drawers are `compact` unless a `DensityProvider` or `density="comfortable"` open
 <DrawerContent side="right" density="comfortable">…</DrawerContent>
 ```
 
+## Inside a container
+
+An app shell that is not the whole window (a device frame, a preview pane, an embedded widget) wants the panel to slide from *its* edge. Pass the element as `container`: the drawer portals into it and the scrim and panel switch from `fixed` to `absolute`. Focus trap and dismissal work as usual. Widen a side panel past `xl` with a `max-w-*` class.
+
+```tsx
+const [frame, setFrame] = React.useState<HTMLDivElement | null>(null)
+
+<div ref={setFrame} className="relative h-80 overflow-hidden rounded-xl border">
+  <Drawer>
+    <DrawerTrigger asChild>
+      <Button>Open record</Button>
+    </DrawerTrigger>
+    <DrawerContent container={frame} className="max-w-[70%]">…</DrawerContent>
+  </Drawer>
+</div>
+```
+
 ## API reference
 
 ### Drawer
@@ -278,6 +297,7 @@ The panel, Radix `Dialog.Content` portalled to the body with its own scrim; forw
 | showHandle | boolean | true | Show the grab handle on `top` and `bottom` sheets. |
 | showClose | boolean | true | Render the built-in top-right close button. |
 | closeLabel | string | "Close" | Accessible label of the built-in close button. |
+| container | HTMLElement \| null | - | Portal into this element instead of the body. Scrim and panel become `absolute`, so they cover only the container and the panel slides from its edge. Give the container `relative` and `overflow-hidden`. |
 | onOpenAutoFocus | (event: Event) => void | - | Called as focus moves in on open; `preventDefault()` and focus your first field instead. |
 | onCloseAutoFocus | (event: Event) => void | - | Called as focus returns to the trigger on close. |
 | onEscapeKeyDown | (event: KeyboardEvent) => void | - | Called on Escape; `preventDefault()` keeps the drawer open. |
@@ -404,4 +424,4 @@ Wrap your pages in `DrawerNav` with a `defaultView`, give each page a `DrawerVie
 - Components and helpers: `Drawer`, `DrawerTrigger`, `DrawerClose`, `DrawerContent`, `DrawerHeader`, `DrawerBody`, `DrawerFooter`, `DrawerTitle`, `DrawerDescription`, `DrawerNav`, `DrawerView`, `DrawerNavTrigger`, `DrawerNavBack`, `useDrawerNav`, `drawerVariants`
 - Types: `DrawerSide`, `DrawerContentProps`, `DrawerNavProps`, `DrawerViewProps`, `DrawerNavTriggerProps`, `DrawerNavBackProps`
 - Koala lib helpers it uses: `create-context`, `density`, `focus-return`, `hit-area`, `tv`, `utils`
-- npm packages: `@phosphor-icons/react`, `radix-ui`
+- npm packages: `koala-icons`, `radix-ui`

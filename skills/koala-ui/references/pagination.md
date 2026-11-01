@@ -239,4 +239,4 @@ Yes. The `density` prop (or a surrounding DensityProvider) lands the whole toolb
 - Types: `PaginationProps`, `PaginationRootProps`, `PaginationInfoProps`, `PaginationNavButtonProps`, `PaginationControlsProps`, `PaginationGoToProps`, `PaginationRowsPerPageProps`
 - Koala components it installs with it: `button`, `input`, `select`
 - Koala lib helpers it uses: `create-context`, `density`, `tv`
-- npm packages: `@phosphor-icons/react`
+- npm packages: `koala-icons`

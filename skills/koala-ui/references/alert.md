@@ -116,7 +116,7 @@ Five semantic variants. Each keeps a neutral surface (`border-border` on `bg-bac
 
 ## With icon
 
-`AlertIcon` auto-selects the matching Phosphor icon for the current variant when no children are given. Pass children to use a custom icon instead.
+`AlertIcon` auto-selects the matching Koala icon for the current variant when no children are given. Pass children to use a custom icon instead.
 
 ```tsx
 {/* Auto icon from variant */}
@@ -256,7 +256,7 @@ Use Alert for inline, persistent messages that stay in the page flow: validation
 
 ### What does the variant prop change beyond the color?
 
-variant sets the semantic tone (`default`, `info`, `success`, `warning`, `destructive`) which drives both the icon color and, when you render an empty `AlertIcon`, the auto-selected Phosphor icon. The color comes from one token per role so all five variants re-theme across the four Koala themes.
+variant sets the semantic tone (`default`, `info`, `success`, `warning`, `destructive`) which drives both the icon color and, when you render an empty `AlertIcon`, the auto-selected Koala icon. The color comes from one token per role so all five variants re-theme across the four Koala themes.
 
 ### How does AlertIcon pick its icon?
 
@@ -281,4 +281,4 @@ Yes. The root renders with `role="alert"`, so assistive tech announces the conte
 - Components and helpers: `Alert`, `AlertIcon`, `AlertContent`, `AlertTitle`, `AlertDescription`, `AlertActions`, `alertVariants`
 - Types: `AlertProps`
 - Koala lib helpers it uses: `create-context`, `density`, `tv`
-- npm packages: `@phosphor-icons/react`
+- npm packages: `koala-icons`

@@ -86,6 +86,8 @@ import {
   StepperTitle,
   StepperDescription,
   StepperSeparator,
+  StepperPanels,
+  StepperPanel,
 } from "@/components/ui/stepper"
 
 <Stepper>
@@ -98,6 +100,10 @@ import {
     <StepperSeparator />
   </StepperItem>
 </Stepper>
+
+<StepperPanels value={step}>
+  <StepperPanel step={1} />
+</StepperPanels>
 ```
 
 ## Orientation
@@ -176,7 +182,7 @@ Set `loading` on the active step to swap its number for a spinner while it valid
 
 ## In a dialog
 
-The headline use case. Reach for `DialogStepper` (from `@/components/ui/dialog`). It places the stepper full-bleed with a divider beneath and inherits the dialog's density. Drive its `value` from the dialog's own step state and swap the body per step; future steps are `disabled` so the user can't skip ahead.
+The headline use case. Reach for `DialogStepper` (from `@/components/ui/dialog`). It places the stepper full-bleed with a divider beneath and inherits the dialog's density. Put the step bodies in `StepperPanels` with the same `value`: the dialog grows or shrinks to each step and the body slides in from the side you moved. Cancel turns into Back after the first step, the last step names its action, and a final panel confirms the result before the dialog closes.
 
 ```tsx
 const [step, setStep] = React.useState(1)
@@ -185,19 +191,32 @@ const [step, setStep] = React.useState(1)
   <DialogHeader>…</DialogHeader>
 
   <DialogStepper value={step} onValueChange={setStep}>
-    {WIZARD.map((s, i) => (
-      <StepperItem key={s.title} step={i + 1} disabled={i + 1 > step}>
+    {WIZARD.map((title, i) => (
+      <StepperItem key={title} step={i + 1} disabled={i + 1 > step}>
         <StepperTrigger>
           <StepperIndicator />
-          <StepperTitle>{s.title}</StepperTitle>
+          <StepperTitle>{title}</StepperTitle>
         </StepperTrigger>
         {i < WIZARD.length - 1 && <StepperSeparator />}
       </StepperItem>
     ))}
   </DialogStepper>
 
-  {/* swap the body on `step`; Back/Next move setStep */}
-  <DialogFooter className="sm:justify-between">…</DialogFooter>
+  <form className="contents" onSubmit={next}>
+    <StepperPanels value={step}>
+      <StepperPanel step={1}>…</StepperPanel>
+      <StepperPanel step={2}>…</StepperPanel>
+      <StepperPanel step={3}>…</StepperPanel>
+      <StepperPanel step={4}>Workspace ready</StepperPanel>
+    </StepperPanels>
+
+    <DialogFooter className="sm:justify-between">
+      <Button type="button" variant="ghost" swapKey={step === 1 ? "cancel" : "back"}>
+        {step === 1 ? "Cancel" : "Back"}
+      </Button>
+      <Button type="submit" swapKey={label}>{label}</Button>
+    </DialogFooter>
+  </form>
 </DialogContent>
 ```
 
@@ -248,11 +267,11 @@ The clickable region that selects its step; omit it for a read-only progress ind
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | asChild | boolean | false | Renders onto the child element via Radix `Slot` instead of a `<button>`. |
-| static | boolean | false | Turns off the scale-on-press. |
+| static | boolean | false | Kept for compatibility; controls no longer scale on press. |
 
 ### StepperIndicator
 
-The numbered circle: the step number (or `children` as a custom resting glyph), a check once completed, a spinner while loading. Forwards all native `<span>` props.
+The numbered circle: the step number (or `children` as a custom resting glyph), a spinner while loading. When the step completes the glyph morphs into a check (both share one cell and trade scale, opacity and blur) instead of being swapped, and morphs back if you return to it. Forwards all native `<span>` props.
 
 ### StepperTitle
 
@@ -264,7 +283,23 @@ A muted secondary line under the title. Forwards all native `<span>` props.
 
 ### StepperSeparator
 
-The connector to the next step, placed last in every item but the last; its fill grows when the step completes. Hidden from assistive tech. Forwards all native `<div>` props.
+The connector to the next step, placed last in every item but the last; its fill grows when the step completes (and drains when you step back) on the same settle curve as `StepperPanels`, so the line and the body arrive together. Hidden from assistive tech. Forwards all native `<div>` props.
+
+### StepperPanels
+
+The viewport for the step bodies, a sibling of the Stepper. Built on the shared `useMorphBox` (see Morphing), it tweens its height to the incoming step and slides the new body in from the side you travelled on the same duration and curve, so resize and slide read as one move (a short fade under reduced motion). When the step change drops focus, it lands on the new step's first control. Forwards all native `<div>` props.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| value | number | - | The step on show. Pass the same value as the Stepper; comparing it with the last one gives the slide direction. |
+
+### StepperPanel
+
+One step's body, rendered only while its `step` matches the panels' `value`. Keep field values in your own state so Back returns them filled. Forwards all native `<div>` props.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| step | number | - | The 1-based step this body belongs to. |
 
 ## FAQ
 
@@ -286,18 +321,22 @@ Only for navigable steppers. `StepperTrigger` is the clickable region that selec
 
 ### What is the difference between the outline and solid variant?
 
-`outline` (the default) is a quiet ringed circle with a brand halo on the active step. `solid` fills every state with a flat tone for the bolder Calendly-style rail used in larger multi-step wizards.
+`outline` (the default) is a quiet ringed circle with a soft ink halo on the active step. `solid` fills every state with a flat tone for the bolder Calendly-style rail used in larger multi-step wizards.
 
 ### How do I put a stepper in a dialog?
 
-Reach for `DialogStepper` from `@/components/ui/dialog`. It places the stepper full-bleed with a divider beneath and inherits the dialog's density, so you only drive its `value` from the dialog's own step state.
+Reach for `DialogStepper` from `@/components/ui/dialog`. It places the stepper full-bleed with a divider beneath and inherits the dialog's density, so you only drive its `value` from the dialog's own step state. Wrap the step bodies in `StepperPanels` with the same `value` so the dialog's height follows each step instead of jumping.
+
+### Why do my fields come back empty when I go Back?
+
+A `StepperPanel` unmounts when its step is not on show, so uncontrolled inputs lose what was typed. Keep the values in state above the panels, as the dialog example does, and Back returns them filled.
 
 ## Exports and dependencies
 
 `npx koalaui-cli@latest add stepper` writes `components/ui/stepper/`. Import from `@/components/ui/stepper`:
 
-- Components and helpers: `Stepper`, `StepperItem`, `StepperTrigger`, `StepperIndicator`, `StepperTitle`, `StepperDescription`, `StepperSeparator`, `stepperVariants`
-- Types: `StepperProps`, `StepperItemProps`, `StepperTriggerProps`
+- Components and helpers: `Stepper`, `StepperItem`, `StepperTrigger`, `StepperIndicator`, `StepperTitle`, `StepperDescription`, `StepperSeparator`, `StepperPanels`, `StepperPanel`, `stepperVariants`
+- Types: `StepperProps`, `StepperItemProps`, `StepperTriggerProps`, `StepperPanelsProps`, `StepperPanelProps`
 - Koala components it installs with it: `spinner`
-- Koala lib helpers it uses: `create-context`, `density`, `hit-area`, `tv`, `utils`
-- npm packages: `@phosphor-icons/react`, `radix-ui`
+- Koala lib helpers it uses: `create-context`, `density`, `hit-area`, `morph`, `motion`, `tv`, `utils`
+- npm packages: `koala-icons`, `radix-ui`

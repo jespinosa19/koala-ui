@@ -11,6 +11,7 @@ export {
   DialogTitle,
   DialogDescription,
   dialogVariants,
+  useDialogStack,
   type DialogContentProps,
   type DialogFooterProps,
   type DialogStepperProps,

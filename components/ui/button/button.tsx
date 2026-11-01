@@ -85,7 +85,7 @@ export function Button({
       {isLoading ? (
         <>
           <Spinner aria-hidden className="absolute inset-0 m-auto" />
-          <span data-slot="button-label" className="inline-flex items-center [gap:inherit] invisible">
+          <span data-slot="button-label" className="inline-flex items-center [gap:inherit] opacity-0">
             {children}
           </span>
         </>

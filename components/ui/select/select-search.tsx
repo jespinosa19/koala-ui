@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Popover as PopoverPrimitive } from "radix-ui"
-import { CaretDown, Check, MagnifyingGlass } from "@phosphor-icons/react"
+import { CaretDown, Check, MagnifyingGlass } from "koala-icons"
 
 import { cn } from "@/lib/utils"
 import { type VariantProps } from "@/lib/tv"

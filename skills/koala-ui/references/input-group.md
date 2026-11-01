@@ -76,10 +76,10 @@ A prominent *text* action - Subscribe, Invite, Search - does not belong inside t
 
 ## Pairing with an action
 
-Do not fuse a big text button into the field. Drop the group (or a plain `InputRoot`) and the `Button` into one flex row (`items-stretch gap-2`) at the same size: the field flexes, the button caps the row from *outside*, and the heights line up on their own. It reads as a real button, not a segment.
+Do not fuse a big text button into the field. Drop the group (or a plain `InputRoot`) and the `Button` into one flex row (`items-stretch gap-2`) at the same size: the field flexes, the button caps the row from *outside*, and the heights line up on their own. It reads as a real button, not a segment. Make that row the `<form>` so the button takes the field's corner.
 
 ```tsx
-<div className="flex items-stretch gap-2">
+<form className="flex items-stretch gap-2" onSubmit={(e) => e.preventDefault()}>
   <InputRoot className="flex-1">
     <InputPrefix>
       <Envelope />
@@ -87,7 +87,7 @@ Do not fuse a big text button into the field. Drop the group (or a plain `InputR
     <InputField type="email" placeholder="Enter your email address" aria-label="Email address" />
   </InputRoot>
   <Button>Subscribe</Button>
-</div>
+</form>
 ```
 
 ## With a Select
@@ -95,7 +95,7 @@ Do not fuse a big text button into the field. Drop the group (or a plain `InputR
 Drop a real `Select` in as a segment and it melts into the shell - its own border, ring, and background are stripped while its menu, keyboard nav, and ARIA stay intact. The field flexes to fill the row. The `Invite` action, being a text button, stays detached beside the group - same rule as the newsletter, one step richer.
 
 ```tsx
-<div className="flex items-stretch gap-2">
+<form className="flex items-stretch gap-2" onSubmit={(e) => e.preventDefault()}>
   <InputGroup className="flex-1">
     <Select defaultValue="member">
       <SelectTrigger aria-label="Role">
@@ -112,7 +112,7 @@ Drop a real `Select` in as a segment and it melts into the shell - its own borde
     </InputRoot>
   </InputGroup>
   <Button>Invite</Button>
-</div>
+</form>
 ```
 
 ## Text affixes
@@ -138,7 +138,7 @@ Drop a real `Select` in as a segment and it melts into the shell - its own borde
 
 ## Icon-only actions can melt in
 
-The one action that *may* live inside the shell is a small *icon-only* button - copy, clear, a submit arrow. With no label to crowd the field, it sits flush as a fused segment: it keeps its fill and hover but drops its own radius, ring, and press-scale. Use `iconOnly` and give it an `aria-label`.
+The one action that *may* live inside the shell is a small *icon-only* button - copy, clear, a submit arrow. With no label to crowd the field, it sits flush as a fused segment: it keeps its fill and hover but drops its own radius and ring. Use `iconOnly` and give it an `aria-label`.
 
 ```tsx
 <InputGroup>
@@ -157,13 +157,13 @@ The one action that *may* live inside the shell is a small *icon-only* button - 
 The `size` prop sets the shell height (`sm` 32, `md` 36, `lg` 40px) and the affix scale, and imposes it on the inner controls. Give the detached Button the matching size so every part lines up.
 
 ```tsx
-<div className="flex items-stretch gap-2">
+<form className="flex items-stretch gap-2" onSubmit={(e) => e.preventDefault()}>
   <InputGroup size="sm" className="flex-1">
     <Select defaultValue="member">{/* ... */}</Select>
     <InputRoot size="sm">{/* ... */}</InputRoot>
   </InputGroup>
   <Button size="sm">Invite</Button>
-</div>
+</form>
 
 {/* size="md" ... size="lg" ... */}
 ```
@@ -224,7 +224,7 @@ A prominent text action - Subscribe, Invite, Search - reads better as its own bu
 
 ### So an icon-only button CAN go inside?
 
-Yes. With no label to crowd the field, a small icon-only Button sits flush as a fused segment - it keeps its fill and hover but drops its radius, ring, and press-scale. That is the one button that belongs inside the shell. Anything with a text label stays detached beside the group.
+Yes. With no label to crowd the field, a small icon-only Button sits flush as a fused segment - it keeps its fill and hover but drops its radius and ring. That is the one button that belongs inside the shell. Anything with a text label stays detached beside the group.
 
 ### How does it join controls without the borders doubling up?
 

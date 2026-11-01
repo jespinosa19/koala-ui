@@ -394,7 +394,7 @@ A Radix Slider with its track, range and one thumb per value, all rendered for y
 | shape | "round" \| "square" | "round" | `square` squares the rail and gives the thumb a fader-cap look. |
 | tooltip | boolean | false | Shows a value bubble above each thumb on hover, focus and drag. |
 | formatValue | (value: number) => React.ReactNode | - | Formats the tooltip value. Defaults to the raw number. |
-| static | boolean | false | Turns off the thumb's scale-on-press. |
+| static | boolean | false | Kept for compatibility; controls no longer scale on press. |
 
 | Data attribute | Description |
 | --- | --- |

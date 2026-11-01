@@ -1,6 +1,7 @@
 export {
   InputRoot,
   InputField,
+  InputFloatingField,
   InputLabel,
   InputHint,
   InputPrefix,
@@ -11,6 +12,7 @@ export {
   inputVariants,
   type InputRootProps,
   type InputFieldProps,
+  type InputFloatingFieldProps,
   type InputLabelProps,
   type InputHintProps,
   type InputPrefixProps,

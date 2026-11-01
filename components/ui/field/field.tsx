@@ -17,7 +17,7 @@ import {
   type ValidationMode,
   type ValidationResult,
 } from "@/lib/form-context"
-import { labelVariants } from "@/components/ui/label"
+import { LabelInfoIcon, LabelInfoText, labelVariants } from "@/components/ui/label"
 
 const fieldVariants = tv({
   base: [
@@ -179,6 +179,7 @@ function Field({
   const id = React.useId()
   const labelId = React.useId()
   const hintId = React.useId()
+  const infoId = React.useId()
   const autoErrorId = React.useId()
   const rootRef = React.useRef<HTMLDivElement>(null)
 
@@ -191,6 +192,12 @@ function Field({
   const registerHint = React.useCallback(() => {
     setHasHint(true)
     return () => setHasHint(false)
+  }, [])
+
+  const [hasInfo, setHasInfo] = React.useState(false)
+  const registerInfo = React.useCallback(() => {
+    setHasInfo(true)
+    return () => setHasInfo(false)
   }, [])
 
   const [hasLabel, setHasLabel] = React.useState(false)
@@ -419,7 +426,9 @@ function Field({
 
   const autoError = hasError === undefined && errorParts === 0 && computedInvalid && messages.length > 0
   const errorIds = autoError ? [autoErrorId] : shownErrorIds
-  const describedBy = errorIds.length ? errorIds.join(" ") : hasHint ? hintId : undefined
+  // The label's `info` describes the control alongside the hint or the errors, never instead of them.
+  const describedBy =
+    [...(errorIds.length ? errorIds : hasHint ? [hintId] : []), ...(hasInfo ? [infoId] : [])].join(" ") || undefined
 
   const context = React.useMemo(
     () => ({
@@ -430,11 +439,13 @@ function Field({
       hintId,
       describedBy,
       registerHint,
+      infoId,
+      registerInfo,
       hasError: invalid,
       disabled,
       required,
     }),
-    [id, labelId, labelledBy, registerLabel, hintId, describedBy, registerHint, invalid, disabled, required],
+    [id, labelId, labelledBy, registerLabel, hintId, describedBy, registerHint, infoId, registerInfo, invalid, disabled, required],
   )
 
   const errorContext = React.useMemo<FieldErrorContextValue>(
@@ -550,17 +561,23 @@ function FieldGroup({
   ...props
 }: FieldGroupProps) {
   const hintId = React.useId()
+  const infoId = React.useId()
 
   const [hasHint, setHasHint] = React.useState(false)
   const registerHint = React.useCallback(() => {
     setHasHint(true)
     return () => setHasHint(false)
   }, [])
-  const describedBy = hasHint ? hintId : undefined
+  const [hasInfo, setHasInfo] = React.useState(false)
+  const registerInfo = React.useCallback(() => {
+    setHasInfo(true)
+    return () => setHasInfo(false)
+  }, [])
+  const describedBy = [...(hasHint ? [hintId] : []), ...(hasInfo ? [infoId] : [])].join(" ") || undefined
 
   const context = React.useMemo(
-    () => ({ hintId, describedBy, registerHint, hasError, disabled, required }),
-    [hintId, describedBy, registerHint, hasError, disabled, required],
+    () => ({ hintId, describedBy, registerHint, infoId, registerInfo, hasError, disabled, required }),
+    [hintId, describedBy, registerHint, infoId, registerInfo, hasError, disabled, required],
   )
 
   return (
@@ -582,25 +599,32 @@ function FieldGroup({
 
 export interface FieldGroupLabelProps extends React.ComponentPropsWithoutRef<"legend"> {
   required?: boolean
+  /** Help that would otherwise sit in a hint, behind an info icon. See `FieldLabel`'s `info`. */
+  info?: React.ReactNode
 }
 
-function FieldGroupLabel({ className, children, required, ...props }: FieldGroupLabelProps) {
+function FieldGroupLabel({ className, children, required, info, ...props }: FieldGroupLabelProps) {
   const group = useFieldGroupContext()
   const resolvedRequired = required ?? group?.required ?? false
   const { root, requiredMark } = labelVariants({ disabled: group?.disabled ?? false })
+  const hasInfo = info != null && info !== false
 
   return (
-    <legend data-slot="field-group-label" className={root({ className })} {...props}>
-      {children}
-      {resolvedRequired ? (
-        <>
-          <span aria-hidden="true" className={requiredMark()}>
-            *
-          </span>
-          <span className="sr-only">(required)</span>
-        </>
-      ) : null}
-    </legend>
+    <>
+      <legend data-slot="field-group-label" className={root({ className })} {...props}>
+        {children}
+        {resolvedRequired ? (
+          <>
+            <span aria-hidden="true" className={requiredMark()}>
+              *
+            </span>
+            <span className="sr-only">(required)</span>
+          </>
+        ) : null}
+        {hasInfo ? <LabelInfoIcon info={info} /> : null}
+      </legend>
+      {hasInfo ? <LabelInfoText owner={group}>{info}</LabelInfoText> : null}
+    </>
   )
 }
 

@@ -6,6 +6,8 @@ import { duration as motionDuration } from "@/lib/motion"
 
 export type ToastVariant = "default" | "success" | "warning" | "destructive" | "info" | "loading"
 
+export type ToastAppearance = "card" | "minimal"
+
 export const TOAST_DURATION = 5000
 
 export const ANCHORED_TOAST_DURATION = 1500
@@ -18,6 +20,9 @@ export interface ToastOptions {
   duration?: number
   action?: { label: string; onClick: () => void }
   anchor?: HTMLElement | null
+  appearance?: ToastAppearance
+  countdown?: boolean
+  progress?: number
 }
 
 export interface ToastAnchorRect {
@@ -120,7 +125,7 @@ export function startDismiss(id: string): void {
       removals.delete(id)
       _state = _state.filter((t) => t.id !== id)
       emit()
-    }, motionDuration.base),
+    }, motionDuration.slow),
   )
 }
 

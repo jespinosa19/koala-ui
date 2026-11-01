@@ -157,7 +157,7 @@ Three sizes scale padding, text, and the minimum height: `sm`, `md` (the default
 
 ## Resize
 
-The `resize` prop on `TextareaRoot` controls the drag handle: `vertical` (default), `none`, `horizontal`, or `both`. The handle stays clipped to the field’s rounded corner.
+The `resize` prop on `TextareaRoot` controls the drag handle: `vertical` (default), `none`, `horizontal`, or `both`. The handle sits in the corner of the bordered box, level with the counter, inside the rounded edge.
 
 ```tsx
 <TextareaRoot resize="none">
@@ -210,7 +210,7 @@ The bordered surface; shares size, error and disabled state with every part thro
 | --- | --- | --- | --- |
 | size | "sm" \| "md" \| "lg" | "md" | Padding, text and minimum height. Unset, it follows a surrounding `Form`, then the ambient density (compact resolves to `sm`). |
 | density | "comfortable" \| "compact" | - | Picks the default `size` (compact to `sm`, comfortable to `md`); an explicit `size` wins. |
-| resize | "none" \| "vertical" \| "horizontal" \| "both" | "vertical" | The native drag handle. `autoResize` on the field forces `none`. |
+| resize | "none" \| "vertical" \| "horizontal" \| "both" | "vertical" | The corner drag handle and the axis it resizes. `autoResize` on the field hides it. |
 | hasError | boolean | false | Destructive border and focus ring, and `aria-invalid` on the field. Inherited from a surrounding `Field` when omitted. |
 | disabled | boolean | false | Dims the root and disables the field. Inherited from a surrounding `Field` when omitted. |
 
@@ -304,3 +304,4 @@ On a touch screen, every size switches from 14px to 16px text, because iOS zooms
 - Types: `TextareaRootProps`, `TextareaFieldProps`, `TextareaFooterProps`, `TextareaCountProps`, `TextareaLabelProps`, `TextareaHintProps`
 - Koala components it installs with it: `label`
 - Koala lib helpers it uses: `create-context`, `density`, `field-context`, `tv`
+- npm packages: `koala-icons`

@@ -5,7 +5,7 @@ import { Toast as ToastPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 import { duration, easing } from "@/lib/motion"
-import { dismissAnchoredToasts, useToastStore } from "./use-toast"
+import { type ToastAppearance, dismissAnchoredToasts, useToastStore } from "./use-toast"
 import { AnchoredToast, ToastItem } from "./toast"
 
 const MAX_COLLAPSED_VISIBLE = 3
@@ -25,15 +25,30 @@ const ANCHOR_LISTENER = { capture: true, passive: true } as const
 type ViewportProps = React.ComponentProps<typeof ToastPrimitive.Viewport>
 type ProviderProps = React.ComponentProps<typeof ToastPrimitive.Provider>
 
+function usePageHidden(): boolean {
+  return React.useSyncExternalStore(
+    (cb) => {
+      document.addEventListener("visibilitychange", cb)
+      return () => document.removeEventListener("visibilitychange", cb)
+    },
+    () => document.visibilityState === "hidden",
+    () => false,
+  )
+}
+
 export interface ToasterProps
   extends Omit<ViewportProps, "children" | "asChild">,
     Pick<ProviderProps, "swipeDirection" | "swipeThreshold"> {
   className?: string
+  appearance?: ToastAppearance
+  countdown?: boolean
 }
 
 export function Toaster({
   className,
   style,
+  appearance = "card",
+  countdown = false,
   swipeDirection = "right",
   swipeThreshold,
   onMouseEnter,
@@ -45,11 +60,13 @@ export function Toaster({
 }: ToasterProps = {}) {
   const toasts = useToastStore()
   const stacked = React.useMemo(() => toasts.filter((t) => !t.anchorRect), [toasts])
+  const live = React.useMemo(() => stacked.filter((t) => t.open), [stacked])
   const anchored = React.useMemo(() => toasts.filter((t) => t.anchorRect), [toasts])
   const hasOpenAnchored = anchored.some((t) => t.open)
   const [expanded, setExpanded] = React.useState(false)
   const [heights, setHeights] = React.useState<Record<string, number>>({})
   const collapseTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+  const pageHidden = usePageHidden()
 
   const handleExpand = React.useCallback(() => {
     if (collapseTimer.current) {
@@ -65,6 +82,12 @@ export function Toaster({
 
   React.useEffect(() => () => {
     if (collapseTimer.current) clearTimeout(collapseTimer.current)
+  }, [])
+
+  React.useEffect(() => {
+    const collapse = () => setExpanded(false)
+    window.addEventListener("blur", collapse)
+    return () => window.removeEventListener("blur", collapse)
   }, [])
 
   React.useEffect(() => {
@@ -114,7 +137,7 @@ export function Toaster({
 
     let y = 0
     for (let i = 0; i < index; i++) {
-      y += (heights[stacked[i]?.id] ?? FALLBACK_H) + EXPANDED_GAP
+      y += (heights[live[i]?.id] ?? FALLBACK_H) + EXPANDED_GAP
     }
     return {
       transform: `translateY(-${y}px) scale(1)`,
@@ -124,17 +147,17 @@ export function Toaster({
   }
 
   const viewportHeight = React.useMemo(() => {
-    if (stacked.length === 0) return 0
+    if (live.length === 0) return 0
     if (!expanded) {
-      const frontH  = heights[stacked[0]?.id] ?? FALLBACK_H
-      const peeking = Math.min(stacked.length - 1, MAX_COLLAPSED_VISIBLE - 1)
+      const frontH  = heights[live[0]?.id] ?? FALLBACK_H
+      const peeking = Math.min(live.length - 1, MAX_COLLAPSED_VISIBLE - 1)
       return frontH + peeking * COLLAPSED_OFFSET
     }
-    return stacked.reduce(
+    return live.reduce(
       (sum, t, i) => sum + (heights[t.id] ?? FALLBACK_H) + (i > 0 ? EXPANDED_GAP : 0),
       0,
     )
-  }, [stacked, heights, expanded])
+  }, [live, heights, expanded])
 
   const announced = anchored.find((t) => t.open)?.title
 
@@ -142,11 +165,14 @@ export function Toaster({
     <>
       {stacked.length > 0 && (
         <ToastPrimitive.Provider swipeDirection={swipeDirection} swipeThreshold={swipeThreshold}>
-          {stacked.map((t, index) => (
+          {stacked.map((t) => (
             <ToastItem
               key={`${t.id}:${t.epoch}`}
               toast={t}
-              stackStyle={getStackStyle(index)}
+              appearance={t.appearance ?? appearance}
+              countdown={t.countdown ?? countdown}
+              stackStyle={t.open ? getStackStyle(live.indexOf(t)) : { ...getStackStyle(0), zIndex: 0 }}
+              paused={expanded || pageHidden}
               onHeightChange={handleHeightChange}
               onExpand={handleExpand}
               onCollapse={handleCollapse}

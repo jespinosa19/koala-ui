@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Dialog as DialogPrimitive } from "radix-ui"
-import { X } from "@phosphor-icons/react"
+import { X } from "koala-icons"
 
 import { DensityProvider, useDensity } from "@/lib/density"
 import { cn } from "@/lib/utils"
@@ -15,15 +15,13 @@ export const dialogVariants = tv({
   slots: {
     overlay: [
       "fixed inset-0 z-50 bg-black/50",
-      "[[data-slot=dialog-overlay][data-state=open]~&]:bg-black/25",
+      "data-stacked:bg-black/25",
       "data-[state=open]:animate-in data-[state=open]:fade-in-0",
       "data-[state=closed]:animate-out data-[state=closed]:fade-out-0",
       "duration-base ease-out",
     ],
     positioner: [
       "fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4",
-      "[&:has(~[data-slot=dialog-overlay][data-state=open])]:[--dialog-nested:1]",
-      "[&:has(~[data-slot=dialog-overlay][data-state=open]~[data-slot=dialog-overlay][data-state=open])]:[--dialog-nested:2]",
     ],
     content: [
       "relative grid w-full rounded-xl border border-border-soft bg-popover text-popover-foreground shadow-lg",
@@ -37,18 +35,18 @@ export const dialogVariants = tv({
       "has-[[data-slot=dialog-body]]:flex has-[[data-slot=dialog-body]]:flex-col has-[[data-slot=dialog-body]]:max-h-[calc(100dvh-2rem)]",
     ],
     close: [
-      "absolute top-4 right-4 inline-flex cursor-pointer items-center justify-center rounded-md",
+      "absolute inline-flex cursor-pointer items-center justify-center rounded-md",
       hitBoxPositioned,
       "text-muted-foreground transition-colors duration-fast ease-out",
-      "hover:bg-accent hover:text-foreground active:scale-[0.96]",
+      "hover:bg-accent hover:text-foreground",
       "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
       "disabled:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
     ],
-    header: "flex flex-col text-left",
+    header: "flex flex-col text-left [&:has(+[data-slot=dialog-footer])]:mb-0",
     stepper: "",
     body: "min-h-0 flex-1 overflow-y-auto scroll-fade scroll-py-10",
     footer: "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
-    title: "text-base leading-none font-semibold tracking-tight",
+    title: "text-base font-semibold tracking-tight text-balance",
     description: "text-sm text-pretty text-muted-foreground",
     icon: "text-muted-foreground [&_svg]:shrink-0",
   },
@@ -61,8 +59,8 @@ export const dialogVariants = tv({
       media: { content: "aspect-video max-w-[min(96vw,calc(92dvh*16/9))] overflow-hidden border-0 bg-black" },
     },
     density: {
-      comfortable: { content: "gap-4 p-5", header: "gap-1.5", stepper: "-mx-5 px-5 pb-4", body: "-mx-5 px-5", footer: "mt-4", close: "size-7", icon: "[&_svg]:size-6" },
-      compact: { content: "gap-3 p-4", header: "gap-1", stepper: "-mx-4 px-4 pb-3", body: "-mx-4 px-4", footer: "mt-2", close: "size-6", icon: "[&_svg]:size-5" },
+      comfortable: { content: "gap-4 p-5", header: "mb-2 gap-1", title: "leading-6", stepper: "-mx-5 px-5 pb-4", body: "-mx-5 px-5", footer: "mt-4", close: "top-4.5 right-3.5 size-7", icon: "-mb-2 [&_svg]:size-6" },
+      compact: { content: "gap-3 p-4", header: "mb-2 gap-0.5", title: "leading-5", stepper: "-mx-4 px-4 pb-3", body: "-mx-4 px-4", footer: "mt-2", close: "top-3.5 right-3 size-6", icon: "-mb-1 [&_svg]:size-5" },
     },
     bordered: {
       true: {},
@@ -84,12 +82,12 @@ export const dialogVariants = tv({
     {
       bordered: true,
       density: "comfortable",
-      class: { footer: "mt-0 -mx-5 -mb-5 border-t border-border px-5 pt-3 pb-3" },
+      class: { footer: "mt-1 -mx-5 -mb-5 border-t border-border px-5 py-4" },
     },
     {
       bordered: true,
       density: "compact",
-      class: { footer: "mt-0 -mx-4 -mb-4 border-t border-border px-4 pt-3 pb-3" },
+      class: { footer: "mt-1 -mx-4 -mb-4 border-t border-border px-4 py-3" },
     },
     {
       size: "media",
@@ -121,6 +119,58 @@ export const dialogVariants = tv({
   },
 })
 
+type DialogStackEntry = { overlay: HTMLElement | null; positioner: HTMLElement | null }
+const dialogStack = new Set<DialogStackEntry>()
+
+function restackDialogs() {
+  const open: HTMLElement[] = []
+  for (const { overlay } of dialogStack) {
+    if (overlay?.isConnected && overlay.getAttribute("data-state") === "open") open.push(overlay)
+  }
+  const follows = (a: Node, b: Node) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0
+  for (const { overlay, positioner } of dialogStack) {
+    if (overlay) overlay.toggleAttribute("data-stacked", open.some((o) => o !== overlay && follows(o, overlay)))
+    if (positioner) {
+      const above = open.filter((o) => follows(positioner, o)).length
+      if (above > 0) positioner.style.setProperty("--dialog-nested", String(Math.min(above, 2)))
+      else positioner.style.removeProperty("--dialog-nested")
+    }
+  }
+}
+
+export function useDialogStack() {
+  const entryRef = React.useRef<DialogStackEntry | null>(null)
+  const attach = React.useCallback((part: keyof DialogStackEntry, node: HTMLElement) => {
+    const entry = (entryRef.current ??= { overlay: null, positioner: null })
+    entry[part] = node
+    dialogStack.add(entry)
+    restackDialogs()
+    return () => {
+      if (entry[part] === node) entry[part] = null
+      if (!entry.overlay && !entry.positioner) dialogStack.delete(entry)
+      restackDialogs()
+    }
+  }, [])
+  const overlayRef = React.useCallback(
+    (node: HTMLElement | null) => {
+      if (!node) return
+      const detach = attach("overlay", node)
+      const observer = new MutationObserver(restackDialogs)
+      observer.observe(node, { attributes: true, attributeFilter: ["data-state"] })
+      return () => {
+        observer.disconnect()
+        detach()
+      }
+    },
+    [attach],
+  )
+  const positionerRef = React.useCallback(
+    (node: HTMLElement | null) => (node ? attach("positioner", node) : undefined),
+    [attach],
+  )
+  return { overlayRef, positionerRef }
+}
+
 export const Dialog = DialogPrimitive.Root
 
 export const DialogTrigger = DialogPrimitive.Trigger
@@ -150,11 +200,12 @@ export function DialogContent({
   const focusReturn = useFocusReturn({ onCloseAutoFocus, onPointerDownOutside })
   const resolvedDensity = useDensity(density)
   const slots = dialogVariants({ size, density: resolvedDensity, mobile })
+  const { overlayRef, positionerRef } = useDialogStack()
 
   return (
     <DialogPrimitive.Portal>
-      <DialogPrimitive.Overlay data-slot="dialog-overlay" className={slots.overlay()} />
-      <div data-slot="dialog-positioner" className={slots.positioner()}>
+      <DialogPrimitive.Overlay ref={overlayRef} data-slot="dialog-overlay" className={slots.overlay()} />
+      <div ref={positionerRef} data-slot="dialog-positioner" className={slots.positioner()}>
         <DialogPrimitive.Content
           data-slot="dialog-content"
           className={slots.content({ className })}

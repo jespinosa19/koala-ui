@@ -1,6 +1,6 @@
 ---
 name: koala-ui
-description: Build React UI with Koala UI, the owned-source design system on Tailwind CSS v4, Radix UI and tailwind-variants. Use when writing, editing or reviewing components, pages, forms, dashboards or marketing sections in a project that uses Koala UI (a koala.json at the root, components under components/ui), when installing or updating Koala components with the koalaui CLI, or whenever the user asks for Koala by name.
+description: Build React UI with Koala UI, the owned-source design system on Tailwind CSS v4, Radix UI and tailwind-variants. Use when writing, editing or reviewing components, pages, forms, dashboards or marketing sections in a project that uses Koala UI (a koala.json at the root, components under components/ui), when installing or updating Koala components with the koalaui CLI, when migrating an existing project with its own components, CSS or UI kit to Koala, or whenever the user asks for Koala by name.
 ---
 
 # Koala UI
@@ -49,6 +49,21 @@ npx koalaui-cli@latest skill                 # refresh this skill
   `update` leaves a file the project edited alone unless `--force` is passed. Ask before forcing:
   it discards those edits.
 
+## Migrating an existing project
+
+When the user asks to move a project with its own components, CSS or UI kit to Koala, read
+[references/migrate.md](references/migrate.md) and follow it from the audit on.
+
+- Write the plan to `koala-migration.md` at the project root and stop there until the user approves
+  it. If that file already exists, read it and resume from the first unticked surface.
+- Change markup and styles only. Handlers, validation, routes, data fetching, analytics, test ids
+  and copy stay exactly as they were.
+- One surface per commit, running the project's checks after each. Do not commit unless the user
+  asked for commits; otherwise stop after each surface for review.
+- A project coming from shadcn/ui or AI Elements also reads its own guide:
+  `https://www.koalaui.com/docs/migrating-from-shadcn.md` or
+  `https://www.koalaui.com/docs/migrating-from-ai-elements.md`.
+
 ## Free and Pro
 
 The foundation components (the ones indexed under Components below), the lib helpers and the
@@ -82,8 +97,8 @@ project like any other; read its source there.
   The others are `neutral`, `secondary`, `outline`, `ghost`, `destructive`, `destructiveGhost`
   and `link`. Sizes: `sm` 32px, `md` 36px (the default), `lg` 40px, and `xl` 44px for marketing
   calls to action. Buttons are text-first: add an icon only when it clarifies the action.
-- **Icons** are Phosphor (`@phosphor-icons/react`, or `@phosphor-icons/react/ssr` in a Server
-  Component) at `weight="bold"`; `fill` is for selected and status glyphs only.
+- **Icons** are Koala Icons (`koala-icons`), safe in Server and Client Components alike; one
+  outline weight, and `weight="fill"` is for selected and status glyphs only.
 - **Interactive elements** get `cursor-pointer`, a visible `focus-visible` state, and a hit area
   of at least 40px: use `hitX`, `hitBox` or `hitY` from `@/lib/hit-area`.
 - **Numbers that change** (counters, prices, timers) get `tabular-nums`.
@@ -154,6 +169,7 @@ Colors are semantic roles backed by CSS variables, so one class is right in ever
 - [Button Group](references/button-group.md): A set of related buttons arranged as a visual unit. Supports attached (fused pill) and detached (spaced) layouts, with shared variant, size, and density propagated via context.
 - [Card](references/card.md): A surface that groups related content. The reference multi-part component: one tv recipe with slots, shared variants flowing to every part through React Context.
 - [Checkbox](references/checkbox.md): A control for a binary or tri-state choice, built on Radix Checkbox. Supports the indeterminate state a “select all” needs. It's the same control the DataTable uses for row selection.
+- [Code Snippet](references/code-snippet.md): A polished code block: rounded surface, optional window chrome, copy-on-hover, line numbers and token-driven highlighting. A small, dependency-free tokenizer covers TS/TSX, JSON, shell and CSS; plug in Shiki for every other language, in your theme's colors.
 - [Collapsible](references/collapsible.md): One region that opens under its trigger: show more, advanced settings, the log behind an error. No chrome of its own, a height tween on the system's motion tokens, and a mark that turns rather than swaps.
 - [Combobox](references/combobox.md): A text field that filters a list as you type. The field is Koala's Input and the list is Select's panel, so it sits beside both without a seam. Autocomplete is the free-text sibling.
 - [Context Menu](references/context-menu.md): The actions menu that opens where you right-click. Built on Radix ContextMenu for keyboard navigation and a11y; it shares its surface and density with Dropdown Menu, but anchors to the cursor.
@@ -167,13 +183,14 @@ Colors are semantic roles backed by CSS variables, so one class is right in ever
 - [Input Group](references/input-group.md): Joins several controls, a field, a Select, a static affix, a small icon-only action, into one seamless segmented shell. The group owns the border and focus ring; each segment goes chromeless and melts in.
 - [Kbd](references/kbd.md): A keyboard key indicator for documenting shortcuts. Renders a native <kbd>; the default variant is a flat gray chip (no border, no shadow) that re-themes everywhere. Compose combos by placing several side by side.
 - [Label](references/label.md): The one label and helper-text recipe behind every form control in Koala. Input, Field and OTP Input all compose Label and Hint, and inside a Field they auto-wire their own ids, htmlFor and aria.
-- [Link](references/link.md): The text link, in both house treatments. default and muted are the standalone UI link for chrome, warming to the brand accent on hover; prose is the hyperlink embedded in running copy, underlined at rest.
+- [Link](references/link.md): The text link, in both house treatments. default and muted are the standalone UI link for chrome, shifting tone on hover; prose is the hyperlink embedded in running copy, underlined at rest.
 - [Menubar](references/menubar.md): The File, Edit, View row of a desktop-style app. One tab stop, arrow keys across the menus, and once one is open the next opens on hover. The menus are Dropdown Menu's panels, so both read as one object.
 - [Native Select](references/native-select.md): The browser's own select, dressed as Koala's Select trigger. The list that opens is the operating system's: the wheel on iOS, the sheet on Android. Closed, it is indistinguishable from a Select of the same size.
 - [Number Field](references/number-field.md): A numeric input with steppers, a scrub-to-change label, keyboard stepping and Intl formatting. It is an Input underneath, so it sizes, focuses and joins an InputGroup like any other field.
 - [Pagination](references/pagination.md): A toolbar for navigating a paged dataset: current page and total, prev/next, a go-to-page field and a rows-per-page select. Each addon is toggled by a show* boolean, from a bare bar to a full footer.
 - [Popover](references/popover.md): A general-purpose floating surface over Radix Popover: focus management, dismiss and collision-aware positioning. Hosts forms, pickers and info cards, with an exposed --surface so nested controls blend in.
 - [Progress](references/progress.md): A bar that reports how far along something is. Built on Radix Progress, so the value is announced to assistive tech for free. The label and readout are droppable parts, a chrome variant strips the track, and a duration makes it a self-running countdown.
+- [Prose](references/prose.md): The reading type. Wrap a document, CMS rich text, rendered Markdown or plain JSX, and its bare headings, lists, quotes, code and tables are typeset on Koala's tokens, with one size prop.
 - [Radio Group](references/radio-group.md): A set of mutually exclusive options where exactly one can be selected, built on Radix RadioGroup. Sizes line up pixel-for-pixel with Checkbox, so radios and checkboxes sit flush in the same form.
 - [Scroll Area](references/scroll-area.md): A scrolling region with Koala's own scrollbar: an ink pill that overlays the content, shows while you are over it, fades rather than blinks, and looks the same on every OS and theme. The scrolling itself stays native.
 - [Select](references/select.md): A dropdown for picking one value from a list. Built on Radix Select for keyboard navigation, type-ahead and a11y, with interruptible enter and exit. Its sibling SelectSearch adds a search field.
@@ -187,7 +204,7 @@ Colors are semantic roles backed by CSS variables, so one class is right in ever
 - [Textarea](references/textarea.md): A multi-line text field built from slots and Context: pairs with a label and hint, grows to fit its content, and carries an optional character counter in its footer. Each part is a named export.
 - [Toast](references/toast.md): Transient status messages at the bottom of the screen. Toasts stack with a compressed fan when several are queued, hover to expand, follow a promise from loading to its result, and update in place.
 - [Toggle](references/toggle.md): One control that stays pressed: bookmark, pin, mute, unread only. The single-item sibling of Toggle Group, sharing its paint and its heights, with a pressed glyph that fills in instead of blinking.
-- [Toggle Group](references/toggle-group.md): A set of pressable pills that hold a selection, built on Radix ToggleGroup. Use single for a one-of-N choice or multiple for independent toggles. A chosen pill carries the brand outline.
+- [Toggle Group](references/toggle-group.md): A set of pressable buttons that hold a selection, built on Radix ToggleGroup. Use single for a one-of-N choice or multiple for independent toggles. A chosen item carries the ink outline.
 - [Tooltip](references/tooltip.md): A small hint shown on hover or focus. Positioning, hover-intent and a11y come from Tippy.js in headless mode - Koala owns the bubble's markup, styled with our tokens. The one component built on a non-Radix primitive.
 <!-- components:end -->
 
@@ -201,6 +218,7 @@ tell the user the component is Pro instead of rebuilding it.
 - AI Panel (`ai-panel`)
 - Animated Number (`animated-number`)
 - Announcement (`announcement`)
+- Attachments (`attachments`)
 - Auth Form (`auth-form`)
 - Badge Group (`badge-group`)
 - Banner (`banner`)
@@ -212,7 +230,6 @@ tell the user the component is Pro instead of rebuilding it.
 - Checklist (`checklist`)
 - Chip (`chip`)
 - Citation (`citation`)
-- Code Snippet (`code-snippet`)
 - Color Picker (`color-picker`)
 - Command (`command`)
 - Compare Slider (`compare-slider`)
@@ -245,6 +262,7 @@ tell the user the component is Pro instead of rebuilding it.
 - Heatmap (`heatmap`)
 - Hero (`hero`)
 - Hold Button (`hold-button`)
+- Ink Tray (`ink-tray`)
 - Island (`island`)
 - Job Card (`job-card`)
 - Layout (`layout`)
@@ -252,6 +270,7 @@ tell the user the component is Pro instead of rebuilding it.
 - List (`list`)
 - Load More (`load-more`)
 - Map (`map`)
+- Markdown (`markdown`)
 - Meter (`meter`)
 - Model Selector (`model-selector`)
 - Multi Select (`multi-select`)
@@ -270,7 +289,6 @@ tell the user the component is Pro instead of rebuilding it.
 - Pricing Comparison (`pricing-comparison`)
 - Promo Card (`promo-card`)
 - Prompt Input (`prompt-input`)
-- Prose (`prose`)
 - Push To Talk (`push-to-talk`)
 - Qr Code (`qr-code`)
 - Ranking (`ranking`)
@@ -290,6 +308,7 @@ tell the user the component is Pro instead of rebuilding it.
 - Survey (`survey`)
 - Swatch Grid (`swatch-grid`)
 - Tab Strip (`tab-strip`)
+- Table (`table`)
 - Table of Contents (`table-of-contents`)
 - Tablet Frame (`tablet-frame`)
 - Team Member (`team-member`)

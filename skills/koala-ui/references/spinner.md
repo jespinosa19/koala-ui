@@ -42,7 +42,7 @@ With no `size`, the spinner carries no size class, so the component holding it d
 <Button size="lg" loading>Save</Button>
 <Badge variant="secondary"><Spinner aria-hidden /> Syncing</Badge>
 <InputRoot className="max-w-64">
-  <InputPrefix><MagnifyingGlass weight="bold" /></InputPrefix>
+  <InputPrefix><MagnifyingGlass /></InputPrefix>
   <InputField placeholder="Search components" aria-label="Search components" />
   <InputSuffix><Spinner aria-hidden /></InputSuffix>
 </InputRoot>
@@ -86,7 +86,7 @@ On its own the spinner is a `status` named “Loading”; give it a precise name
 
 ### Spinner
 
-The loading glyph: a Phosphor `CircleNotch` at bold weight, turning. Forwards all Phosphor icon props except `size` and `weight` (SVG attributes included), and accepts `className`, merged last.
+The loading glyph: a Koala `CircleNotch`, turning. Forwards all icon props except `size` and `weight` (SVG attributes included), and accepts `className`, merged last.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -119,4 +119,3 @@ The ring stops turning (`motion-reduce:animate-none`) and stays visible. A still
 - Components and helpers: `Spinner`, `spinnerVariants`
 - Types: `SpinnerProps`
 - Koala lib helpers it uses: `tv`
-- npm packages: `@phosphor-icons/react`

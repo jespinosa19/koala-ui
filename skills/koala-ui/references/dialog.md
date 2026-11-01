@@ -16,7 +16,7 @@ Every pattern below is its own block: a live preview in a device frame you can r
     <DialogHeader>
       <DialogTitle>Edit profile</DialogTitle>
       <DialogDescription>
-        Make changes to your profile here. Click save when you're done.
+        Visible to everyone in your workspace.
       </DialogDescription>
     </DialogHeader>
     <DialogFooter>
@@ -48,7 +48,7 @@ import {
   Dialog, DialogTrigger, DialogContent, DialogIcon, DialogHeader,
   DialogFooter, DialogTitle, DialogDescription, DialogClose,
 } from "@/components/ui/dialog"
-import { UserCircle } from "@phosphor-icons/react"
+import { UserCircle } from "koala-icons"
 import { Button } from "@/components/ui/button"
 
 export function Example() {
@@ -62,7 +62,7 @@ export function Example() {
         <DialogHeader>
           <DialogTitle>Edit profile</DialogTitle>
           <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
+            Visible to everyone in your workspace.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -117,7 +117,7 @@ A destructive confirmation: no header close button (`showClose={false}`) forces 
     <DialogHeader>
       <DialogTitle>Delete account?</DialogTitle>
       <DialogDescription>
-        This permanently deletes your account and all data. This cannot be undone.
+        All your data goes with it. This can't be undone.
       </DialogDescription>
     </DialogHeader>
     <DialogFooter>
@@ -163,31 +163,33 @@ function InviteDialog() {
         <DialogHeader>
           <DialogTitle>Invite team member</DialogTitle>
           <DialogDescription>
-            Enter the details below. An invitation will be sent by email.
+            They'll get an invite by email.
           </DialogDescription>
         </DialogHeader>
-        <FormSection>
-          <Field hasError={!!nameError}>
-            <FieldLabel>Full name</FieldLabel>
-            <InputRoot>
-              <InputField ref={nameRef} value={name} onChange={(e) => setName(e.target.value)} />
-            </InputRoot>
-            {nameError && <FieldHint>{nameError}</FieldHint>}
-          </Field>
-          <Field hasError={!!emailError}>
-            <FieldLabel>Email address</FieldLabel>
-            <InputRoot>
-              <InputField type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
-            </InputRoot>
-            {emailError && <FieldHint>{emailError}</FieldHint>}
-          </Field>
-        </FormSection>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="ghost">Cancel</Button>
-          </DialogClose>
-          <Button onClick={handleSubmit}>Send invite</Button>
-        </DialogFooter>
+        <form className="contents" onSubmit={(e) => { e.preventDefault(); handleSubmit() }}>
+          <FormSection>
+            <Field hasError={!!nameError}>
+              <FieldLabel>Full name</FieldLabel>
+              <InputRoot>
+                <InputField ref={nameRef} value={name} onChange={(e) => setName(e.target.value)} />
+              </InputRoot>
+              {nameError && <FieldHint>{nameError}</FieldHint>}
+            </Field>
+            <Field hasError={!!emailError}>
+              <FieldLabel>Email address</FieldLabel>
+              <InputRoot>
+                <InputField type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              </InputRoot>
+              {emailError && <FieldHint>{emailError}</FieldHint>}
+            </Field>
+          </FormSection>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="ghost">Cancel</Button>
+            </DialogClose>
+            <Button type="submit">Send invite</Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   )
@@ -203,7 +205,7 @@ Dialogs are `compact` unless a `DensityProvider` or `density="comfortable"` open
   <DialogIcon><Rows /></DialogIcon>
   <DialogHeader>
     <DialogTitle>Compact dialog</DialogTitle>
-    <DialogDescription>Tighter padding and a 1rem title for dense application UI.</DialogDescription>
+    <DialogDescription>Tighter padding for dense app UI.</DialogDescription>
   </DialogHeader>
   <DialogFooter>
     <DialogClose asChild><Button>Got it</Button></DialogClose>
@@ -220,7 +222,7 @@ For tall content (terms, changelogs, long forms) put the middle in a `DialogBody
   <DialogIcon><FileText /></DialogIcon>
   <DialogHeader>
     <DialogTitle>Terms of service</DialogTitle>
-    <DialogDescription>Please read the full terms before accepting.</DialogDescription>
+    <DialogDescription>Updated October 2026.</DialogDescription>
   </DialogHeader>
   {/* Only the body scrolls; the header and footer stay pinned */}
   <DialogBody tabIndex={0} className="text-sm text-muted-foreground">
@@ -247,7 +249,7 @@ Below the `sm` breakpoint a dialog docks to the bottom edge as a sheet: within t
 
 ## Nested dialogs
 
-Open a dialog from inside another and the one underneath steps back: it scales to 90% and lifts slightly, and a lighter second scrim keeps the page from going black. It is plain CSS on the real component, so there is nothing to wire, and closing the top dialog brings the other forward in step with its exit. It tracks two levels, which is also the most a flow should ask for.
+Open a dialog from inside another and the one underneath steps back: it scales to 90% and lifts slightly, and a lighter second scrim keeps the page from going black. The component tracks the open dialogs itself, so there is nothing to wire, and closing the top dialog brings the other forward in step with its exit. It tracks two levels, which is also the most a flow should ask for.
 
 ```tsx
 <Dialog>
@@ -287,26 +289,26 @@ A leading `DialogIcon` above composed [Input](https://www.koalaui.com/docs/compo
   <DialogIcon><LinkSimple /></DialogIcon>
   <DialogHeader>
     <DialogTitle>Share incident</DialogTitle>
-    <DialogDescription>Choose who you want to share the incident with.</DialogDescription>
+    <DialogDescription>Anyone with the link can view it.</DialogDescription>
   </DialogHeader>
   <FormSection>
     <Field required>
-      <FieldLabel>Copy the link directly</FieldLabel>
+      <FieldLabel>Link</FieldLabel>
       <InputRoot>
         <InputField readOnly value="lspcad.flab/incident21414" />
         <InputSuffixButton aria-label="Copy link"><Copy /></InputSuffixButton>
       </InputRoot>
     </Field>
     <Field required>
-      <FieldLabel>Send the link via invitation</FieldLabel>
+      <FieldLabel>Invite by email</FieldLabel>
       {/* Stack on mobile so the button never overflows a narrow dialog; row from sm */}
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+      <form className="flex flex-col gap-2 sm:flex-row sm:items-center" onSubmit={(e) => e.preventDefault()}>
         <InputRoot className="min-w-0 sm:flex-1">
           <InputPrefix><EnvelopeSimple /></InputPrefix>
-          <InputField type="email" placeholder="Enter your email address" />
+          <InputField type="email" placeholder="name@company.com" />
         </InputRoot>
         <Button className="w-full sm:w-auto">Send invite</Button>
-      </div>
+      </form>
     </Field>
   </FormSection>
 </DialogContent>
@@ -322,13 +324,13 @@ const [rating, setRating] = React.useState("")
 <DialogContent size="sm">
   <DialogIcon><Star /></DialogIcon>
   <DialogHeader>
-    <DialogTitle>Help us improve!</DialogTitle>
-    <DialogDescription>Share your experience with us so we can make it better.</DialogDescription>
+    <DialogTitle>Send feedback</DialogTitle>
+    <DialogDescription>We read every message.</DialogDescription>
   </DialogHeader>
 
   <div className="grid gap-4">
     <FieldGroup required>
-      <FieldGroupLabel>Rate your experience</FieldGroupLabel>
+      <FieldGroupLabel>Rating</FieldGroupLabel>
       <ToggleGroup type="single" size="sm" value={rating} onValueChange={setRating} className="w-full">
         {["1", "2", "3", "4", "5"].map((n) => (
           <ToggleGroupItem key={n} value={n} aria-label={`${n} out of 5`} className="flex-1">{n}</ToggleGroupItem>
@@ -336,9 +338,9 @@ const [rating, setRating] = React.useState("")
       </ToggleGroup>
     </FieldGroup>
     <div className="grid gap-2">
-      <TextareaLabel htmlFor="feedback-message">Your message</TextareaLabel>
+      <TextareaLabel htmlFor="feedback-message">Message</TextareaLabel>
       <TextareaRoot>
-        <TextareaField id="feedback-message" placeholder="Write your message here..." rows={4} maxLength={500} showCount />
+        <TextareaField id="feedback-message" placeholder="What could be better?" rows={4} maxLength={500} showCount />
       </TextareaRoot>
     </div>
   </div>
@@ -363,9 +365,9 @@ const [code, setCode] = React.useState("")
 <DialogContent size="sm" onOpenAutoFocus={(e) => e.preventDefault()}>
   <DialogIcon><ShieldCheck /></DialogIcon>
   <DialogHeader>
-    <DialogTitle>Enable two-factor authentication</DialogTitle>
+    <DialogTitle>Set up two-factor authentication</DialogTitle>
     <DialogDescription>
-      Scan the QR code with your authentication app, then enter the 6-digit code to verify and activate 2FA.
+      Scan it with your authenticator app.
     </DialogDescription>
   </DialogHeader>
 
@@ -375,7 +377,7 @@ const [code, setCode] = React.useState("")
       size={176} margin={2} className="rounded-md p-3 shadow-xs" />
   </div>
 
-  <OTPInput label="Introduce code" required size="sm" length={6} autoFocus value={code} onChange={setCode} />
+  <OTPInput label="Code" required size="sm" length={6} autoFocus value={code} onChange={setCode} />
 
   <DialogFooter className="sm:items-center sm:justify-between">
     {/* help link on the left */}
@@ -395,20 +397,20 @@ A single choice rendered as cards rather than bare dots: wrap each option in a `
 const [theme, setTheme] = React.useState("light")
 
 const THEMES = [
-  { value: "light", title: "Light theme", hint: "For a clean and minimal look.", icon: Sun },
-  { value: "dark", title: "Dark theme", hint: "Perfect for working in low-light conditions.", icon: Moon },
-  { value: "system", title: "System", hint: "Automatically adapts to your device's settings.", icon: Desktop },
+  { value: "light", title: "Light", hint: "Bright and clear.", icon: Sun },
+  { value: "dark", title: "Dark", hint: "Easy on the eyes at night.", icon: Moon },
+  { value: "system", title: "System", hint: "Follows your device.", icon: Desktop },
 ]
 
 <DialogContent size="sm">
   <DialogIcon><Palette /></DialogIcon>
   <DialogHeader>
-    <DialogTitle>Change theme</DialogTitle>
-    <DialogDescription>Choose your preferred theme to customize your experience.</DialogDescription>
+    <DialogTitle>Appearance</DialogTitle>
+    <DialogDescription>Applies to this device only.</DialogDescription>
   </DialogHeader>
 
   <FieldGroup required>
-    <FieldGroupLabel>Choose your theme</FieldGroupLabel>
+    <FieldGroupLabel>Theme</FieldGroupLabel>
     <RadioGroup value={theme} onValueChange={setTheme}>
       {THEMES.map(({ value, title, hint, icon: Icon }) => (
         <RadioCard key={value} value={value} icon={<Icon />}>
@@ -437,11 +439,11 @@ A leading `DialogIcon`, a hero media band, and a split footer: a helper on the l
 <DialogContent>
   <DialogIcon><Megaphone /></DialogIcon>
   <DialogHeader>
-    <DialogTitle>Mobile Version Now Available!</DialogTitle>
-    <DialogDescription>Access your dashboard anytime, anywhere.</DialogDescription>
+    <DialogTitle>Koala is on mobile</DialogTitle>
+    <DialogDescription>Your dashboard, wherever you are.</DialogDescription>
   </DialogHeader>
 
-  {/* hero media + body copy */}
+  {/* hero media */}
   <div className="flex aspect-[16/10] flex-col items-center justify-center gap-3 rounded-lg bg-gradient-to-br from-accent to-muted text-muted-foreground">
     <DeviceMobile className="size-12" />
     <span className="text-sm font-medium">Dashboard on mobile</span>
@@ -456,8 +458,8 @@ A leading `DialogIcon`, a hero media band, and a split footer: a helper on the l
       <Info className="size-4" /> Need some help?
     </span>
     <div className="flex flex-col-reverse gap-2 sm:flex-row">
-      <Button variant="ghost">Cancel</Button>
-      <Button>Create</Button>
+      <Button variant="ghost">Not now</Button>
+      <Button>Get the app</Button>
     </div>
   </DialogFooter>
 </DialogContent>
@@ -465,48 +467,52 @@ A leading `DialogIcon`, a hero media band, and a split footer: a helper on the l
 
 ## Multi-step (wizard)
 
-For create flows that span several screens, put a vertical [Stepper](https://www.koalaui.com/docs/components/stepper.md) in a left rail and swap the active step's form on the right. The Stepper owns no state: drive its `value` from your own step state. Wrap the body in a `Stagger` keyed by step so each screen cascades in, and give it a `min-h` so the dialog holds its height between steps.
+For create flows that span several screens, keep one title and place a `DialogStepper` (a full-bleed horizontal [Stepper](https://www.koalaui.com/docs/components/stepper.md)) right under the header: it names the steps, so each step's body holds only its fields. Drive its `value` from your own step state and put the bodies in `StepperPanels` with the same value: the dialog settles to each step's height while the body slides in from the side you moved, and a finished step's number turns into a check. In the footer, Cancel rolls to Back and one primary button rolls Continue to the final action, so neither control moves between steps.
 
 ```tsx
+const STEPS = ["Details", "Members", "Review"]
 const [step, setStep] = React.useState(1)
+const isLast = step === STEPS.length
 
-<DialogContent size="lg" density="compact">
+<DialogContent size="md" density="compact">
   <DialogHeader>
     <DialogTitle>Create project</DialogTitle>
-    <DialogDescription>Set up your workspace in a few steps.</DialogDescription>
+    <DialogDescription>Three short steps. Everything stays editable later.</DialogDescription>
   </DialogHeader>
 
-  <div className="grid grid-cols-[auto_1fr] items-start gap-4 sm:gap-8">
-    {/* Left rail: vertical stepper with solid, brand-filled indicators and no connectors. */}
-    <Stepper value={step} onValueChange={setStep} orientation="vertical"
-      variant="solid" density="comfortable" className="pr-2">
-      {STEPS.map((s, i) => (
-        <StepperItem key={s.title} step={i + 1} disabled={i + 1 > step}
-          className="[&:not(:last-child)]:min-h-[2.75rem]">
-          <StepperTrigger className="items-center">
-            <StepperIndicator />
-            <StepperTitle className="font-semibold">{s.title}</StepperTitle>
-          </StepperTrigger>
-        </StepperItem>
-      ))}
-    </Stepper>
+  {/* Full-bleed, horizontal: the step labels name each screen, so the bodies need no heading. */}
+  <DialogStepper value={step} onValueChange={setStep}>
+    {STEPS.map((title, i) => (
+      <StepperItem key={title} step={i + 1} disabled={i + 1 > step} loading={submitting && i + 1 === step}>
+        <StepperTrigger>
+          <StepperIndicator />
+          <StepperTitle>{title}</StepperTitle>
+        </StepperTrigger>
+        {i < STEPS.length - 1 && <StepperSeparator />}
+      </StepperItem>
+    ))}
+  </DialogStepper>
 
-    {/* key={step} replays the entrance per step; min-h sets the dialog's height. */}
-    <Stagger key={step} className="grid min-h-[18rem] content-start gap-3">
-      {step === 1 && <ProjectFields />}
-      {step === 2 && <InviteFields />}
-      {step === 3 && <ReviewSummary />}
-    </Stagger>
-  </div>
+  {/* A real form, so Enter in a field presses Continue */}
+  <form className="contents" onSubmit={(e) => { e.preventDefault(); isLast ? create() : setStep((s) => s + 1) }}>
+    {/* Height settles to each step; the body slides in from the side you moved. */}
+    <StepperPanels value={step}>
+      <StepperPanel step={1} className="grid gap-4"><ProjectFields /></StepperPanel>
+      <StepperPanel step={2} className="grid gap-4"><InviteField /></StepperPanel>
+      <StepperPanel step={3}><ReviewSummary /></StepperPanel>
+    </StepperPanels>
 
-  <DialogFooter className="sm:justify-between">
-    <Button variant="ghost" disabled={step === 1} onClick={() => setStep((s) => s - 1)}>
-      Back
-    </Button>
-    {step === STEPS.length
-      ? <Button onClick={create} loading={submitting}>Create project</Button>
-      : <Button onClick={() => setStep((s) => s + 1)}>Next</Button>}
-  </DialogFooter>
+    <DialogFooter className="flex-row">
+      {/* Same two slots on every step: labels roll, nothing moves. */}
+      <Button type="button" variant="ghost" swapKey={step === 1 ? "cancel" : "back"}
+        onClick={() => (step === 1 ? close() : setStep((s) => s - 1))}>
+        {step === 1 ? "Cancel" : "Back"}
+      </Button>
+      <Button type="submit" loading={submitting} swapKey={isLast ? "create" : "next"}>
+        {isLast ? "Create project" : "Continue"}
+      </Button>
+    </DialogFooter>
+  </form>
 </DialogContent>
 ```
 
@@ -516,10 +522,10 @@ An in-app upsell: a two-column dialog pairing edge-to-edge cover art with a bene
 
 ```tsx
 const BENEFITS = [
-  { icon: LockKey, title: "Internal comments", description: "Separate internal team discussion from external stakeholder comments in shares." },
-  { icon: FolderLock, title: "Restricted projects", description: "Create projects that are only accessible to you and the specific people you invite." },
-  { icon: UsersThree, title: "Up to 15 members", description: "Add more people to your account for maximum collaboration on every project." },
-  { icon: Cloud, title: "3 TB storage", description: "Even more room to store your media and assets, all within your workspace." },
+  { icon: LockKey, title: "Internal comments", description: "Keep team talk apart from client threads." },
+  { icon: FolderLock, title: "Restricted projects", description: "Visible only to the people you invite." },
+  { icon: UsersThree, title: "Up to 15 members", description: "Bring the whole team in." },
+  { icon: Cloud, title: "3 TB storage", description: "Room for every file and asset." },
 ]
 
 <DialogContent size="xl" className="gap-0 overflow-hidden p-0 sm:grid-cols-2">
@@ -536,7 +542,7 @@ const BENEFITS = [
       <DialogTitle className="text-xl leading-snug">
         Upgrade to <span className="text-brand">Team</span>
       </DialogTitle>
-      <DialogDescription>Everything your team needs to collaborate, with room to grow.</DialogDescription>
+      <DialogDescription>Everything your team needs, with room to grow.</DialogDescription>
     </DialogHeader>
 
     {/* Minimal divided list: a Divider between each feature */}
@@ -545,9 +551,9 @@ const BENEFITS = [
         <React.Fragment key={title}>
           {i > 0 && <Divider />}
           <div role="listitem" className="flex gap-3.5">
-            <Icon weight="bold" aria-hidden className="mt-0.5 size-5 shrink-0 text-brand" />
+            <Icon aria-hidden className="mt-0.5 size-5 shrink-0 text-brand" />
             <div className="flex flex-col gap-1">
-              <p className="text-sm font-semibold leading-none text-foreground">{title}</p>
+              <p className="text-sm font-semibold text-foreground">{title}</p>
               <p className="text-sm text-pretty text-muted-foreground">{description}</p>
             </div>
           </div>
@@ -625,11 +631,13 @@ function attemptClose() {
     onInteractOutside={(e) => { e.preventDefault(); attemptClose() }}
     onEscapeKeyDown={(e) => { e.preventDefault(); attemptClose() }}
   >
-    {/* form fields */}
-    <DialogFooter>
-      <Button variant="ghost" onClick={attemptClose}>Cancel</Button>
-      <Button onClick={save}>Publish</Button>
-    </DialogFooter>
+    <form className="contents" onSubmit={(e) => { e.preventDefault(); save() }}>
+      {/* form fields */}
+      <DialogFooter>
+        <Button type="button" variant="ghost" onClick={attemptClose}>Cancel</Button>
+        <Button type="submit">Publish</Button>
+      </DialogFooter>
+    </form>
   </DialogContent>
 </Dialog>
 
@@ -639,7 +647,7 @@ function attemptClose() {
     <DialogHeader>
       <DialogTitle>Discard changes?</DialogTitle>
       <DialogDescription>
-        You have unsaved content. Closing now will permanently lose your changes.
+        Your edits will be lost.
       </DialogDescription>
     </DialogHeader>
     <DialogFooter>
@@ -679,7 +687,7 @@ const [open, setOpen] = React.useState(false)
     <DialogHeader>
       <DialogTitle>Schedule message</DialogTitle>
       <DialogDescription>
-        Close this and the caret is back in the message, right where you left it.
+        Pick when it goes out.
       </DialogDescription>
     </DialogHeader>
     <DialogFooter>
@@ -735,11 +743,12 @@ The modal, Radix `Dialog.Content` portalled to the body with its own scrim and a
 | Data attribute | Description |
 | --- | --- |
 | data-state | `"open"` or `"closed"`, on the content and on the scrim. |
+| data-stacked | On the scrim, while another dialog is open beneath it: the lighter second wash. |
 
 | CSS variable | Description |
 | --- | --- |
 | --surface | Set to `var(--popover)`, read by nested Inputs and Selects. |
-| --dialog-nested | Set by the wrapper to `1` or `2` when dialogs open on top, which scales this one back and nudges it up. |
+| --dialog-nested | Set on the wrapper to `1` or `2` while dialogs are open on top, which scales this one back and nudges it up. |
 
 ### DialogIcon
 
@@ -825,8 +834,8 @@ By default those dismissals are uncontrolled, so wire a controlled open and onOp
 
 `npx koalaui-cli@latest add dialog` writes `components/ui/dialog/`. Import from `@/components/ui/dialog`:
 
-- Components and helpers: `Dialog`, `DialogTrigger`, `DialogClose`, `DialogContent`, `DialogIcon`, `DialogHeader`, `DialogStepper`, `DialogBody`, `DialogFooter`, `DialogTitle`, `DialogDescription`, `dialogVariants`
+- Components and helpers: `Dialog`, `DialogTrigger`, `DialogClose`, `DialogContent`, `DialogIcon`, `DialogHeader`, `DialogStepper`, `DialogBody`, `DialogFooter`, `DialogTitle`, `DialogDescription`, `dialogVariants`, `useDialogStack`
 - Types: `DialogContentProps`, `DialogFooterProps`, `DialogStepperProps`
 - Koala components it installs with it: `stepper`
 - Koala lib helpers it uses: `density`, `focus-return`, `hit-area`, `tv`, `utils`
-- npm packages: `@phosphor-icons/react`, `radix-ui`
+- npm packages: `koala-icons`, `radix-ui`

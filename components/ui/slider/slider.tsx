@@ -26,7 +26,7 @@ export const sliderVariants = tv({
     thumb: [
       "group/thumb relative block shrink-0 rounded-full border-2 bg-background shadow-sm",
       "cursor-grab active:cursor-grabbing",
-      "transition-[transform,box-shadow,border-color] duration-fast ease-out active:scale-[0.96]",
+      "transition-[transform,box-shadow,border-color] duration-fast ease-out",
       "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
       "data-[disabled]:cursor-not-allowed",
       hitBox,

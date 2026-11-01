@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Dialog as DialogPrimitive, Slot } from "radix-ui"
-import { X, CaretLeft } from "@phosphor-icons/react"
+import { X, CaretLeft } from "koala-icons"
 
 import { DensityProvider, useDensity, type Density } from "@/lib/density"
 import { cn } from "@/lib/utils"
@@ -35,7 +35,7 @@ export const drawerVariants = tv({
     close: [
       "absolute top-4 right-4 z-10 inline-flex cursor-pointer items-center justify-center rounded-md",
       "text-muted-foreground transition-colors duration-fast ease-out",
-      "hover:bg-accent hover:text-foreground active:scale-[0.96]",
+      "hover:bg-accent hover:text-foreground",
       "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
       "disabled:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
       hitBoxPositioned,
@@ -50,7 +50,7 @@ export const drawerVariants = tv({
     navBack: [
       "inline-flex shrink-0 cursor-pointer items-center justify-center rounded-md",
       "text-muted-foreground transition-colors duration-fast ease-out",
-      "hover:bg-accent hover:text-foreground active:scale-[0.96]",
+      "hover:bg-accent hover:text-foreground",
       "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
       "[&_svg]:size-4 [&_svg]:shrink-0",
       hitBox,
@@ -82,6 +82,11 @@ export const drawerVariants = tv({
       md: {},
       lg: {},
       xl: {},
+    },
+    // Inside a `container`: positioned against it instead of the viewport.
+    contained: {
+      true: { overlay: "absolute", content: "absolute" },
+      false: {},
     },
   },
   compoundVariants: [
@@ -217,6 +222,7 @@ export interface DrawerContentProps
   closeLabel?: string
   showHandle?: boolean
   swipeToClose?: boolean
+  container?: HTMLElement | null
 }
 
 export function DrawerContent({
@@ -229,6 +235,7 @@ export function DrawerContent({
   closeLabel = "Close",
   showHandle = true,
   swipeToClose = true,
+  container,
   style,
   onCloseAutoFocus,
   onPointerDownOutside,
@@ -237,7 +244,7 @@ export function DrawerContent({
   const focusReturn = useFocusReturn({ onCloseAutoFocus, onPointerDownOutside })
   const resolvedSide = side ?? "right"
   const resolvedDensity = useDensity(density)
-  const slots = drawerVariants({ side: resolvedSide, size, density: resolvedDensity })
+  const slots = drawerVariants({ side: resolvedSide, size, density: resolvedDensity, contained: !!container })
 
   const swipe = useDrawerSwipe(resolvedSide, swipeToClose)
   const isSheet = resolvedSide === "top" || resolvedSide === "bottom"
@@ -254,7 +261,7 @@ export function DrawerContent({
   }
 
   return (
-    <DialogPrimitive.Portal>
+    <DialogPrimitive.Portal container={container}>
       <DialogPrimitive.Overlay className={slots.overlay()} />
       <DialogPrimitive.Content
         data-slot="drawer-content"

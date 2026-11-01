@@ -235,6 +235,210 @@
   transform: none;
 }
 
+/* ─── Tactile ─────────────────────────────────────────────────────────────────
+ * Controls you could pick up. Every field, key and thumb is an object with two things: a soft
+ * stroke (a hairline of ink, never a dark rule) and a soft shadow under it. Nothing else - no
+ * gradients, no lit bevels, no engraved wells. Corners are rounded but not pills, so a field reads
+ * as a key cap rather than a capsule, and in the dark themes a field fills one shade lighter than
+ * what it sits on, so it rises instead of being punched in.
+ *
+ * The stroke is drawn by whatever the control already has: its border where it has one (fields,
+ * Select, outline Button, Checkbox), a 1px ring where it has none (filled Buttons, thumbs, the
+ * active tab). That is why there are two tokens, `--tactile-object` (ring + lift) and
+ * `--tactile-lift` (lift alone, for bordered controls): a ring on a bordered control draws 2px.
+ *
+ * Designed in dark (ConceptProvider applies that once); the lift is restated for the dark themes.
+ * ──────────────────────────────────────────────────────────────────────────── */
+
+:root[data-concept="tactile"],
+[data-concept="tactile"] {
+  /* Machined, not soft: 8px on a 40px field and on the menu that drops from it, 6px on the rows
+     inside, the corner of a precision instrument rather than a hardware settings panel. The pills
+     unpill for the same reason. */
+  --radius: 0.5rem;
+  --radius-pill-factor: 1;
+
+  /* The stroke: a hairline of ink, one notch quieter than the house `--input`, because the shadow
+     shares the job of drawing the edge. Borders read it through `--input`, rings through the token. */
+  --tactile-stroke: color-mix(in oklab, var(--foreground) 10%, transparent);
+  --input: var(--tactile-stroke);
+
+  /* How far a field's fill moves toward the ink to rise off its ground: 0 on light grounds, where a
+     field is already the lightest thing on the page. */
+  --tactile-fill: 0%;
+
+  /* The shadow: a 1px contact and a short, soft fall. */
+  --tactile-drop: oklch(0 0 0 / 0.08);
+  --tactile-lift: 0 1px 2px 0 var(--tactile-drop), 0 2px 6px -2px var(--tactile-drop);
+  --tactile-object: 0 0 0 1px var(--tactile-stroke), var(--tactile-lift);
+  /* A track, a tray or a pressed control: the stroke stays, the lift goes. */
+  --tactile-flat: inset 0 0 0 1px var(--tactile-stroke);
+  /* A field sits lower than a key: on a light ground the key's lift made it look like a button, so
+     a field only breathes a wide, faint shadow. The dark themes give it the full lift back, since
+     there the shadow barely shows and the fill does the rising. */
+  --tactile-field-lift: 0 1px 3px 0 oklch(0 0 0 / 0.04);
+
+  /* Every `shadow-xs` control in the library (Select trigger, Checkbox, filled and outline Buttons)
+     already asks for a lift, so they all turn tactile from this one token. The larger steps keep the
+     theme's own values, so a popover or dialog stays a floating sheet rather than a slab. */
+  --shadow-xs: var(--tactile-lift);
+}
+
+:root[data-concept="tactile"]:is(.dark, .moonlight),
+[data-concept="tactile"]:is(.dark, .moonlight),
+[data-concept="tactile"] :is(.dark, .moonlight) {
+  --tactile-stroke: color-mix(in oklab, var(--foreground) 9%, transparent);
+  --tactile-fill: 6%;
+  --tactile-drop: oklch(0 0 0 / 0.35);
+  --tactile-field-lift: var(--tactile-lift);
+}
+
+/* ─── Tactile · personality (unlayered, see the header) ──────────────────────── */
+
+/*
+ * Fields rise: they fill `--tactile-fill` toward the ink from whatever ground they sit on (so it
+ * holds inside a card, a muted band or a popover) and take the lift. The shadow steps aside while a
+ * field is focused so the brand ring owns the box-shadow (one box-shadow per state).
+ * Overrules: `bg-[var(--surface,var(--background))]`, and adds a shadow where the recipe has none.
+ */
+[data-concept="tactile"] :is([data-slot="input-root"], [data-slot="textarea-root"], [data-slot="select-trigger"], [data-slot="native-select-field"]) {
+  background-color: color-mix(in oklab, var(--surface, var(--background)), var(--foreground) var(--tactile-fill));
+}
+[data-concept="tactile"] :is([data-slot="input-root"], [data-slot="textarea-root"]):not(:focus-within, [data-disabled]) {
+  box-shadow: var(--tactile-field-lift);
+}
+[data-concept="tactile"] [data-slot="native-select-field"]:not(:focus, :disabled),
+[data-concept="tactile"] [data-slot="select-trigger"]:not(:focus-visible, :disabled, [aria-disabled="true"], [aria-invalid="true"], [data-state="open"], :active),
+[data-concept="tactile"] [data-slot="otp-input-cell"] > input:not(:focus, :disabled, [aria-invalid="true"]) {
+  box-shadow: var(--tactile-field-lift);
+}
+/* A borderless `inline` field is text until it is touched; it keeps no fill and no lift at rest. */
+[data-concept="tactile"] :is([data-slot="input-root"], [data-slot="textarea-root"]).border-transparent:not(:focus-within) {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+/*
+ * The meta label above a field reads as the caption on a panel: regular weight, meta ink, so the
+ * value inside the raised field is the brightest thing in the pair.
+ * Overrules: `text-sm font-medium` (Label).
+ */
+[data-concept="tactile"] [data-slot="label"] {
+  font-weight: 400;
+  color: var(--muted-foreground);
+}
+
+/*
+ * Keys. Every filled Button variant carries `shadow-xs` (ghost, subtle, destructiveGhost and link
+ * don't, and stay flat), so the lift already arrives through the token; what a borderless key is
+ * missing is its stroke, so it takes the ring. Bordered keys (outline, overlay) keep their border
+ * as the stroke and only the token's lift.
+ * Overrules: `shadow-xs` on borderless filled Buttons.
+ * Coupling: reads Tailwind classes of components/ui/button/button-variants.ts (no data-variant on
+ * the DOM); renaming `shadow-xs` or `border` there silently drops the stroke.
+ */
+[data-concept="tactile"] [data-slot="button"][class~="shadow-xs"]:not([class~="border"], :focus-visible, :disabled, [aria-disabled="true"]) {
+  box-shadow: var(--tactile-object);
+}
+
+/*
+ * An outline key is a key, so it gets a body: transparent, it read as a drawn border. It takes the
+ * field fill (the ground, moved `--tactile-fill` toward the ink) and hands the colour back to the
+ * recipe on hover and press.
+ * Overrules: `bg-transparent` on the outline variant, at rest.
+ */
+[data-concept="tactile"] [data-slot="button"][class~="shadow-xs"][class~="bg-transparent"]:not(:hover, :active, [data-state="open"], :disabled, [aria-disabled="true"]) {
+  background-color: color-mix(in oklab, var(--surface, var(--background)), var(--foreground) var(--tactile-fill));
+}
+
+/*
+ * Pressed: a key under the finger, or a trigger whose menu is open, loses its lift and keeps its
+ * stroke, so it reads as set down rather than moved (no scale, no translate).
+ * Overrules: the lift above and the recipe's `shadow-xs` while active.
+ */
+[data-concept="tactile"] [data-slot="button"][class~="shadow-xs"]:is(:active, [data-state="open"]):not([class~="border"], :focus-visible, :disabled, [aria-disabled="true"]) {
+  box-shadow: var(--tactile-flat);
+}
+[data-concept="tactile"] :is([data-slot="button"][class~="shadow-xs"][class~="border"], [data-slot="select-trigger"]):is(:active, [data-state="open"]):not(:focus-visible, :disabled, [aria-disabled="true"], [aria-invalid="true"]) {
+  box-shadow: none;
+}
+
+/*
+ * Tracks and trays are flat: a stroke, no lift, so what rides in them is the only thing that rises.
+ * The accent fill still carries on/off (a checked switch keeps `bg-primary`).
+ * Overrules: the flat `bg-input` switch track and `bg-muted` tab list (no stroke), and the shadow the
+ * segmented ToggleGroup draws on its tray.
+ */
+[data-concept="tactile"] [data-slot="switch"]:not(:focus-visible),
+[data-concept="tactile"] [data-slot="slider-track"],
+[data-concept="tactile"] [data-slot="tabs-list"]:has(> [data-slot="tabs-indicator"].bg-background),
+[data-concept="tactile"] [data-slot="toggle-group"][data-thumb] {
+  box-shadow: var(--tactile-flat);
+}
+
+/*
+ * Thumbs: the switch knob, the slider handle, the active tab and segment, the active TabStrip tab.
+ * Each is the object of its control, so each gets the stroke and the lift.
+ * Overrules: `shadow-sm` (and `ring-1 ring-border`, also a box-shadow) on each of them.
+ * Coupling: `.bg-background` is the tabs recipe's pill/segmented indicator (line, folder and chip
+ * keep theirs flat, and the vertical pill's is `bg-muted`); the variant is not on the DOM.
+ */
+[data-concept="tactile"] [data-slot="switch-thumb"],
+[data-concept="tactile"] [data-slot="switch-indicator"] > span,
+[data-concept="tactile"] [data-slot="slider-thumb"]:not(:focus-visible),
+[data-concept="tactile"] [data-slot="tabs-indicator"].bg-background,
+[data-concept="tactile"] [data-slot="toggle-group-indicator"] > span,
+[data-concept="tactile"] [data-slot="toggle-group"][data-thumb="off"] [data-slot="toggle-group-item"][data-state="on"]:not(:focus-visible),
+[data-concept="tactile"] [data-slot="tab-strip-item"][data-active="true"]:not([data-dragging], :focus-visible) {
+  box-shadow: var(--tactile-object);
+}
+/* On a dark ground `bg-background` is darker than the groove the handle rides in, so it read as a
+ * hole; it fills one step toward the ink instead, the way a field rises.
+ * Overrules: `bg-background` on Slider.Thumb. */
+:root[data-concept="tactile"]:is(.dark, .moonlight) [data-slot="slider-thumb"],
+[data-concept="tactile"] :is(.dark, .moonlight) [data-slot="slider-thumb"] {
+  background-color: color-mix(in oklab, var(--background), var(--foreground) 14%);
+}
+
+/*
+ * A pressed Toggle, and the on items of a plain ToggleGroup, are set down: the stroke on top of
+ * their on-colour, no lift.
+ * Overrules: the flat `data-[state=on]` fill, and the plain group's `ring-2` on the on item.
+ */
+[data-concept="tactile"] [data-slot="toggle"][data-state="on"]:not(:focus-visible),
+[data-concept="tactile"] [data-slot="toggle-group"]:not([data-thumb]) [data-slot="toggle-group-item"][data-state="on"]:not(:focus-visible) {
+  box-shadow: var(--tactile-flat);
+}
+
+/* Disabled controls lose their lift: a dead control must not look pressable. */
+[data-concept="tactile"] :is([data-slot="button"], [data-slot="select-trigger"], [data-slot="native-select-field"], [data-slot="checkbox"]):is(:disabled, [aria-disabled="true"]),
+[data-concept="tactile"] :is([data-slot="input-root"], [data-slot="textarea-root"])[data-disabled],
+[data-concept="tactile"] :is([data-slot="switch"], [data-slot="slider"])[data-disabled] :is([data-slot="switch-thumb"], [data-slot="slider-thumb"]) {
+  box-shadow: none;
+}
+
+/* Only the properties that move are transitioned. Overrules: `transition` (all) in the Button base. */
+[data-concept="tactile"] :is([data-slot="button"], [data-slot="select-trigger"], [data-slot="native-select-field"], [data-slot="input-root"], [data-slot="textarea-root"]) {
+  transition-property: box-shadow, background-color, color, border-color;
+}
+
+/* Forced colors drop shadows, so keys, trays and thumbs fall back to real borders. */
+@media (forced-colors: active) {
+  [data-concept="tactile"] :is([data-slot="button"][class~="shadow-xs"], [data-slot="switch"], [data-slot="slider-track"], [data-slot="tabs-list"], [data-slot="toggle-group"][data-thumb]) {
+    border: 1px solid ButtonText;
+  }
+  [data-concept="tactile"] :is([data-slot="switch-thumb"], [data-slot="slider-thumb"], [data-slot="tabs-indicator"].bg-background, [data-slot="toggle-group-indicator"] > span, [data-slot="tab-strip-item"][data-active="true"]) {
+    border: 1px solid Highlight;
+  }
+}
+
+/* Reduced motion: every tactile transition above is instant. */
+@media (prefers-reduced-motion: reduce) {
+  [data-concept="tactile"] :is([data-slot="button"], [data-slot="input-root"], [data-slot="textarea-root"], [data-slot="select-trigger"], [data-slot="native-select-field"], [data-slot="slider-thumb"]) {
+    transition-duration: 0s;
+  }
+}
+
 /* Moonlight is a dark context too, so `dark:` utilities apply under it as well. The nearest theme
    class wins: an element inside a `.light` / `.cream` scope that itself sits inside a dark one (a
    page pinned light while the visitor's theme is dark) is NOT a dark context, so `dark:` stays off
@@ -280,17 +484,44 @@
   --color-warning-strong: var(--warning-strong);
   --color-info-strong: var(--info-strong);
   --color-destructive-strong: var(--destructive-strong);
-  /* Hyperlink color: the one role for inline text links (text-link / decoration-link). It DERIVES
-     from --brand, so links carry the active accent, but it stays its own role because it is tuned
-     for TEXT where --brand is tuned for fills: on light it is darkened to hold AA as body copy, on
-     the dark themes the accent already passes and is used straight. Distinct from --info (a status
-     hue). Per-theme below. */
+  /* Hyperlink color: the one role for inline text links (text-link / decoration-link). The text
+     color, not the accent (the accent is for buttons and focus rings only); the underline marks
+     the link. Distinct from --info (a status hue). Per-theme below. */
   --color-link: var(--link);
   /* Categorical hues: for labels, tags, and category badges. */
   --color-purple: var(--purple);
   --color-pink: var(--pink);
   --color-teal: var(--teal);
   --color-orange: var(--orange);
+  /* Chart roles (see "Chart: data palette" below): a validated categorical order (chart-1…8),
+     a one-hue sequential ramp (seq-1…7, low → high magnitude), a diverging ramp (div-1…7, div-4
+     is the neutral midpoint) and a status set reserved for state, never reused as "series 4". */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+  --color-chart-7: var(--chart-7);
+  --color-chart-8: var(--chart-8);
+  --color-chart-seq-1: var(--chart-seq-1);
+  --color-chart-seq-2: var(--chart-seq-2);
+  --color-chart-seq-3: var(--chart-seq-3);
+  --color-chart-seq-4: var(--chart-seq-4);
+  --color-chart-seq-5: var(--chart-seq-5);
+  --color-chart-seq-6: var(--chart-seq-6);
+  --color-chart-seq-7: var(--chart-seq-7);
+  --color-chart-div-1: var(--chart-div-1);
+  --color-chart-div-2: var(--chart-div-2);
+  --color-chart-div-3: var(--chart-div-3);
+  --color-chart-div-4: var(--chart-div-4);
+  --color-chart-div-5: var(--chart-div-5);
+  --color-chart-div-6: var(--chart-div-6);
+  --color-chart-div-7: var(--chart-div-7);
+  --color-chart-good: var(--chart-good);
+  --color-chart-warning: var(--chart-warning);
+  --color-chart-serious: var(--chart-serious);
+  --color-chart-critical: var(--chart-critical);
   /* Rating fills: a vivid decorative gold for stars and a love-red for hearts. These stay
      brighter/more saturated than the --warning status hue so the two never read as the same
      gold; a star/heart glyph is a saturated fill, not text, so it reads clearly on any
@@ -396,6 +627,7 @@
   --ease-in-out: var(--ease-in-out);
   --ease-drawer: var(--ease-drawer);
   --ease-spring: var(--ease-spring);
+  --ease-lift: var(--ease-lift);
   --ease-sine: var(--ease-sine);
   --transition-duration-fast: var(--duration-fast);
   --transition-duration-base: var(--duration-base);
@@ -469,8 +701,8 @@
    * Disclosure: the height tween of every Radix disclosure panel (Accordion, Collapsible, the
    * Sidebar's collapsible groups and nested lists, Tree branches, Plan steps, Chat reasoning).
    * Radix measures the panel into --radix-collapsible-content-height (Accordion content carries it
-   * too), so one pair serves both. The clip rides IN the keyframes: the panel is overflow-hidden
-   * only while its height tweens, so at rest it paints its children's focus rings, edge rings and
+   * too), so one pair serves both. The clip rides IN the keyframes: the panel clips only while its
+   * height tweens, and then with a 3px margin, so at rest it paints its children's focus rings, edge rings and
    * shadows instead of shaving them flush with its box. Never put overflow-hidden on the panel
    * itself; give a block panel `flow-root` so the clip-free rest state still contains margins.
    */
@@ -554,6 +786,8 @@
    *  - chart-bar   each ChartBar column grows up from the 0-anchored baseline; the left→right
    *                cascade comes from a per-index animation-delay at the call site (like stagger-in),
    *                not the keyframe.
+   *  - chart-bar-x the same grow turned sideways, for ChartBarsHorizontal rows: each row scales out
+   *                from the zero line (transform-origin set at the call site), staggered top→bottom.
    *
    * Bars use `both` fill so a not-yet-started (delayed) column holds its `from` state instead of
    * flashing the final frame; honored by reduced-motion at the call site (motion-reduce:animate-none),
@@ -562,6 +796,7 @@
   --animate-chart-draw: chart-draw var(--duration-slow) var(--ease-out) both;
   --animate-chart-area: chart-area var(--duration-slow) var(--ease-out) both;
   --animate-chart-bar: chart-bar var(--duration-base) var(--ease-out) both;
+  --animate-chart-bar-x: chart-bar-x var(--duration-base) var(--ease-out) both;
 
   /*
    * Map pin pulses: the live halo of a MapPin symbol (`pulse`). A disc of the pin's colour scaled up
@@ -724,6 +959,12 @@
    */
   --animate-toast-pop-a: toast-pop var(--duration-base) var(--ease-spring);
   --animate-toast-pop-b: toast-pop-alt var(--duration-base) var(--ease-spring);
+
+  /*
+   * Toast countdown: the hairline along a toast's bottom edge drains across exactly its `duration`
+   * (`--toast-duration`, set inline) and pauses with the toast through `animation-play-state`.
+   */
+  --animate-toast-countdown: toast-countdown var(--toast-duration, 5000ms) linear both;
 
   /*
    * Hero cursors: the "multiplayer" cursors that wander a Hero's side gutters (HeroCursor). Three
@@ -1003,16 +1244,24 @@
   }
 }
 
-/* Disclosure: overflow is discrete, so it holds `hidden` for the whole tween and drops back to the
-   panel's own (visible) value the moment the animation ends. */
+/* Disclosure: overflow is discrete, so it holds the clip for the whole tween and drops back to the
+   panel's own (visible) value the moment the animation ends. `clip` with a 3px clip margin (the
+   width of `brand-ring`, the widest ring in the system) keeps a flush child's edge ring, hairline
+   and focus ring painted on the top and sides WHILE the panel moves, where `hidden` shaved them
+   until the tween ended. Chromium honours the margin only when both axes clip. `hidden` stays
+   first as the fallback for engines without `clip`; one without the margin clips flush, as before. */
 @keyframes disclosure-open {
   from {
     height: 0;
     overflow: hidden;
+    overflow: clip;
+    overflow-clip-margin: 3px;
   }
   to {
     height: var(--radix-collapsible-content-height);
     overflow: hidden;
+    overflow: clip;
+    overflow-clip-margin: 3px;
   }
 }
 
@@ -1020,10 +1269,14 @@
   from {
     height: var(--radix-collapsible-content-height);
     overflow: hidden;
+    overflow: clip;
+    overflow-clip-margin: 3px;
   }
   to {
     height: 0;
     overflow: hidden;
+    overflow: clip;
+    overflow-clip-margin: 3px;
   }
 }
 
@@ -1275,6 +1528,15 @@
   }
 }
 
+@keyframes chart-bar-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
 /* Map pin pulses: the pin's colour grows out of it and fades. See --animate-map-pin-*. */
 @keyframes map-pin-ping {
   0% {
@@ -1306,13 +1568,13 @@
  * mirrors each mark's underline. The component flips data-settled to ride the same transition.
  */
 [data-slot="suggestion-applied"] [data-cell="new"] {
-  background-color: color-mix(in oklab, var(--suggestion-tint, var(--brand)) 20%, transparent);
+  background-color: color-mix(in oklab, var(--suggestion-tint, var(--foreground)) 20%, transparent);
 }
 [data-slot="suggestion-applied"][data-settled="true"] [data-cell="new"] {
   background-color: transparent;
 }
 [data-slot="suggestion-applied"][data-variant="default"] {
-  --suggestion-tint: var(--brand);
+  --suggestion-tint: var(--foreground);
 }
 [data-slot="suggestion-applied"][data-variant="grammar"] {
   --suggestion-tint: var(--destructive);
@@ -1524,6 +1786,14 @@
   }
   to {
     scale: 1;
+  }
+}
+@keyframes toast-countdown {
+  from {
+    scale: 1 1;
+  }
+  to {
+    scale: 0 1;
   }
 }
 @keyframes toast-pop-alt {
@@ -1746,6 +2016,10 @@
   /* Soft spring overshoot for "settle into place" enters (e.g. the gallery/lightbox hover pill):
    * the value passes a touch beyond its target then settles, reading as a small bounce. */
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  /* Lift: a physical object being picked up or selected (a tool rising, a chip lifting). A gentle
+   * ~10% overshoot gives it weight without the bounce of --ease-spring. Never for symbols or for
+   * containers changing shape. */
+  --ease-lift: cubic-bezier(0.175, 0.885, 0.32, 1.1);
   /* Sine: the symmetric, zero-velocity-at-both-ends curve (easeInOutSine). Reach for it when a
    * value *oscillates* through a multi-stop keyframe rather than travelling A→B once: applied per
    * segment it makes each swing leave one extreme and arrive at the next with no velocity, which is
@@ -1810,12 +2084,9 @@
   --warning-strong: color-mix(in oklch, var(--warning), black 42%);
   --info-strong: color-mix(in oklch, var(--info), black 30%);
   --destructive-strong: color-mix(in oklch, var(--destructive), black 22%);
-  /* Hyperlink color: the accent, darkened for text. The raw accent is tuned as a FILL and only
-     reaches 3.6:1 as text on white, under the 4.5:1 AA floor. A 15% mix keeps the default orange
-     plainly orange (#c8350f, 5.30:1) and clears AA for seven of the eight accent presets; amber is
-     the exception at 4.06:1 (it needs the 20%+ pull of --brand-strong below). Switching accent
-     stays a single --brand write. Same trick as the -strong roles above. */
-  --link: color-mix(in oklch, var(--brand), black 15%);
+  /* Hyperlink color: the text color. The accent only colors buttons and focus rings, so a link
+     reads as a link by its underline, not by a hue. */
+  --link: var(--foreground);
   --purple: oklch(0.52 0.22 310);
   --pink: oklch(0.54 0.21 350);
   --teal: oklch(0.5 0.15 192);
@@ -1961,9 +2232,7 @@
   --warning-strong: var(--warning);
   --info-strong: var(--info);
   --destructive-strong: var(--destructive);
-  /* On dark the accent needs no help: it clears AA as text (5.49:1) on --background, so a link is
-     exactly the brand color. */
-  --link: var(--brand);
+  --link: var(--foreground);
   --purple: oklch(0.78 0.16 310);
   --pink: oklch(0.8 0.17 350);
   --teal: oklch(0.78 0.13 192);
@@ -1992,8 +2261,14 @@
 /*
  * Moonlight: Koala's blue-tinted dark theme. PLACEHOLDER values approximating the public
  * site; replace with exact Figma "Moonlight" variable export. Hue ≈ 265 (blue).
+ *
+ * `.moonlight .dark`: the docked chrome (Layout sidebar/topbar/rail, StatusBar) pins `.dark` so
+ * it stays black under the LIGHT themes. Under moonlight that pin re-declared the neutral dark
+ * tokens and the chrome's hover/active fills (--accent), borders and greys turned grey-black on
+ * a blue page. Under a dark theme the pin must keep the page's own palette.
  */
-.moonlight {
+.moonlight,
+.moonlight .dark {
   --background: oklch(0.15 0.022 265);
   /* The docked frame is the ground in a dark theme (see `--canvas` under :root). */
   --canvas: var(--background);
@@ -2020,9 +2295,7 @@
   --warning-strong: var(--warning);
   --info-strong: var(--info);
   --destructive-strong: var(--destructive);
-  /* As in dark: the accent reads bright enough as text on the blue-tinted base, so it is used
-     straight and the underline carries the rest of the affordance. */
-  --link: var(--brand);
+  --link: var(--foreground);
   --purple: oklch(0.78 0.17 308);
   --pink: oklch(0.8 0.18 348);
   --teal: oklch(0.78 0.14 190);
@@ -2048,6 +2321,85 @@
   --shadow-xl: 0 20px 25px -5px oklch(0.1 0.04 265 / 0.55), 0 8px 10px -6px oklch(0.1 0.04 265 / 0.35);
 }
 
+/* ─── Chart: data palette ────────────────────────────────────────────────────────
+ * Validated with the dataviz six-checks validator against each theme's card surface. The order
+ * leads with blue → green (the house pairing for two-series examples), then pink, orange, sky,
+ * purple, amber, teal. Every prefix (n = 3, 5, 8) passes lightness band, chroma floor,
+ * normal-vision floor, 3:1 contrast and adjacent CVD ΔE ≥ 8 (dark purple ↔ sky sits right at
+ * 8.0). Green carries the same chroma as its neighbours so blue + green read as equals; a muted
+ * green looked olive beside the blue on dark grounds. Order is fixed and never cycled:
+ * a 9th series folds into "Other". All-pairs separation holds for the first THREE slots only, so
+ * scatter/bubble charts cap at three groups. Cream inherits the light values, moonlight shares
+ * the dark ones.
+ *
+ * Sequential: one hue, light → dark on light grounds and flipped on dark ones (seq-1 always sits
+ * nearest the surface = lowest magnitude). An ORDINAL reading (stacked tiers) starts at seq-3 in
+ * light and seq-2 in dark so the faintest step still clears 2:1.
+ * Diverging: blue pole ↔ red pole with a hueless midpoint (div-4). Status: good / warning /
+ * serious / critical. Warning and serious sit under 3:1 on light grounds by design, so they
+ * always ship with an icon + label, never colour alone.
+ */
+:root,
+.light {
+  --chart-1: oklch(0.58 0.22 260); /* blue */
+  --chart-2: oklch(0.57 0.17 150); /* green */
+  --chart-3: oklch(0.52 0.205 352); /* pink */
+  --chart-4: oklch(0.67 0.185 45); /* orange */
+  --chart-5: oklch(0.64 0.135 237); /* sky */
+  --chart-6: oklch(0.52 0.22 305); /* purple */
+  --chart-7: oklch(0.67 0.135 75); /* amber */
+  --chart-8: oklch(0.625 0.11 175); /* teal */
+  --chart-seq-1: oklch(0.93 0.032 260);
+  --chart-seq-2: oklch(0.84 0.077 260);
+  --chart-seq-3: oklch(0.75 0.124 260);
+  --chart-seq-4: oklch(0.66 0.175 260);
+  --chart-seq-5: oklch(0.57 0.2 260);
+  --chart-seq-6: oklch(0.48 0.189 260);
+  --chart-seq-7: oklch(0.39 0.154 260);
+  --chart-div-1: oklch(0.45 0.178 260);
+  --chart-div-2: oklch(0.61 0.2 260);
+  --chart-div-3: oklch(0.77 0.113 260);
+  --chart-div-4: oklch(0.93 0 0);
+  --chart-div-5: oklch(0.77 0.131 27);
+  --chart-div-6: oklch(0.61 0.2 27);
+  --chart-div-7: oklch(0.45 0.177 27);
+  --chart-good: oklch(0.64 0.18 148);
+  --chart-warning: oklch(0.8 0.16 78);
+  --chart-serious: oklch(0.78 0.13 42);
+  --chart-critical: var(--destructive);
+}
+
+.dark,
+.moonlight,
+.moonlight .dark {
+  --chart-1: oklch(0.56 0.22 260);
+  --chart-2: oklch(0.64 0.17 152);
+  --chart-3: oklch(0.56 0.22 352);
+  --chart-4: oklch(0.65 0.18 45);
+  --chart-5: oklch(0.56 0.115 237);
+  --chart-6: oklch(0.56 0.22 305);
+  --chart-7: oklch(0.65 0.13 80);
+  --chart-8: oklch(0.605 0.11 175);
+  --chart-seq-1: oklch(0.33 0.13 260);
+  --chart-seq-2: oklch(0.42 0.166 260);
+  --chart-seq-3: oklch(0.5 0.197 260);
+  --chart-seq-4: oklch(0.58 0.2 260);
+  --chart-seq-5: oklch(0.66 0.175 260);
+  --chart-seq-6: oklch(0.74 0.13 260);
+  --chart-seq-7: oklch(0.82 0.087 260);
+  --chart-div-1: oklch(0.79 0.103 260);
+  --chart-div-2: oklch(0.64 0.187 260);
+  --chart-div-3: oklch(0.49 0.193 260);
+  --chart-div-4: oklch(0.33 0 0);
+  --chart-div-5: oklch(0.49 0.193 27);
+  --chart-div-6: oklch(0.64 0.2 27);
+  --chart-div-7: oklch(0.79 0.117 27);
+  --chart-good: var(--success);
+  --chart-warning: var(--warning);
+  --chart-serious: oklch(0.78 0.145 55);
+  --chart-critical: var(--destructive);
+}
+
 /* ─── Map: the basemap's palette ─────────────────────────────────────────────────
  * The Map component paints its vector basemap from these roles (components/ui/map/map-style.ts
  * reads them off the map element and re-reads them when the theme changes). Every role mixes the
@@ -2069,6 +2421,24 @@
  * tinted ones (water, parks) stay in oklch, which keeps the hue of `--info` and `--success` vivid.
  * ──────────────────────────────────────────────────────────────────────────── */
 @layer base {
+  /* Button shape follows the domain. Application UI (the default) gives a labelled button the
+     field corner of its size; a marketing surface sets --button-radius to the pill. The nearest
+     scope wins, so an app screen shown inside a landing page (a Layout) resets it. */
+  :where(
+      [data-domain="marketing"],
+      [data-slot="section"],
+      [data-slot="hero"],
+      [data-slot="navbar"],
+      [data-slot="footer"],
+      [data-slot="banner"],
+      [data-slot="gallery"]
+    ) {
+    --button-radius: var(--radius-pill);
+  }
+  :where([data-domain="application"], [data-slot="layout"]) {
+    --button-radius: initial;
+  }
+
   [data-slot="map"] {
     --map-land: color-mix(in oklab, var(--foreground) 4%, var(--background));
     --map-landuse: color-mix(in oklab, var(--foreground) 6%, var(--background));
@@ -2185,13 +2555,26 @@
 [data-accent="lime"] {
   --brand: oklch(0.648 0.2 131.684); /* lime-600, #65A30D: the light themes */
   --brand-foreground: oklch(0.274 0.072 132.109); /* lime-950 */
-  --link: color-mix(in oklch, var(--brand), black 25%);
 }
-/* The dark themes, on the page and on any nested dark band. */
+/* The dark themes: on the page, on any nested dark band, and on a swatch that sets its own
+   accent inside a dark page. */
 [data-accent="lime"]:is(.dark, .moonlight),
-[data-accent="lime"] :is(.dark, .moonlight) {
+[data-accent="lime"] :is(.dark, .moonlight),
+:is(.dark, .moonlight) [data-accent="lime"] {
   --brand: oklch(0.841 0.238 128.85); /* lime-400, #A3E635 */
-  --link: var(--brand);
+}
+/* White is the monochrome accent, so it also follows the theme: near-white on the dark themes,
+ * where it carries a near-black ink, and near-black on the light ones, where white would vanish
+ * into the page. */
+[data-accent="white"] {
+  --brand: oklch(0.205 0 0); /* neutral-900: the light themes */
+  --brand-foreground: oklch(0.985 0 0);
+}
+[data-accent="white"]:is(.dark, .moonlight),
+[data-accent="white"] :is(.dark, .moonlight),
+:is(.dark, .moonlight) [data-accent="white"] {
+  --brand: oklch(0.97 0 0); /* neutral-100 */
+  --brand-foreground: oklch(0.205 0 0);
 }
 
 /* ─── Ring: the canonical accent halo ─────────────────────────────────────────
@@ -2235,10 +2618,10 @@
 }
 @utility autofill-tint {
   &:has(:autofill) {
-    background-color: color-mix(in oklab, var(--brand) 6%, var(--surface, var(--background)));
+    background-color: color-mix(in oklab, var(--foreground) 6%, var(--surface, var(--background)));
   }
   &:has(:-webkit-autofill) {
-    background-color: color-mix(in oklab, var(--brand) 6%, var(--surface, var(--background)));
+    background-color: color-mix(in oklab, var(--foreground) 6%, var(--surface, var(--background)));
   }
 }
 

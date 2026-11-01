@@ -80,7 +80,7 @@ export const progressVariants = tv({
   defaultVariants: {
     variant: "default",
     size: "sm",
-    tone: "brand",
+    tone: "foreground",
     transition: "smooth",
     orientation: "horizontal",
   },

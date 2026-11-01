@@ -40,7 +40,7 @@ export function Example() {
 
 ## States
 
-Off rests on the `input` fill; on slides the thumb across a `brand` (accent) track. The thumb carries a shadow so it reads on both states in every theme.
+Off rests on the `input` fill; on slides the thumb across a `primary` (ink) track. The thumb carries a shadow so it reads on both states in every theme.
 
 ```tsx
 <Switch checked={false} />
@@ -91,7 +91,7 @@ The control, Radix `Switch.Root` rendering a `<button>` with its thumb inside. F
 | required | boolean | false | Marks the hidden form input as required. |
 | name | string | - | Name of the hidden input submitted with a form. |
 | value | string | "on" | Value submitted with a form when on. |
-| static | boolean | false | Turns off the scale-on-press, where motion would distract. |
+| static | boolean | false | Kept for compatibility; controls no longer scale on press. |
 
 | Data attribute | Description |
 | --- | --- |
@@ -130,7 +130,7 @@ It deliberately renders only the control, so wrap it in a `<label htmlFor>` matc
 
 ### What does the static prop do?
 
-It neutralizes the tactile scale-on-press animation (the `active:scale-[0.96]`) for places where that motion would distract. The visual track and thumb are unchanged.
+Nothing visible: it is kept for compatibility, since controls no longer scale on press. The track and thumb look and behave the same either way.
 
 ### The track is only 20px tall. Is the tap target really that small?
 

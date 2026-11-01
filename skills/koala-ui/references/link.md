@@ -2,7 +2,7 @@
 
 # Link
 
-The text link, in both house treatments. default and muted are the standalone UI link for chrome, warming to the brand accent on hover; prose is the hyperlink embedded in running copy, underlined at rest.
+The text link, in both house treatments. default and muted are the standalone UI link for chrome, shifting tone on hover; prose is the hyperlink embedded in running copy, underlined at rest.
 
 ```tsx
 <Link href="#">hello@koalaui.com</Link>
@@ -39,7 +39,7 @@ export function Example() {
 
 ## Variants
 
-`default` rests at `text-foreground` (full-strength, reads as a real label); `muted` starts quiet for a value in a directory or a footer link. Both lift to the brand accent on hover. `prose` is the third treatment, for a link inside a sentence: it sets *no* rest color, so it inherits the copy around it, and only its underline marks it until hover turns both text and underline the accent.
+`default` rests at `text-foreground` (full-strength, reads as a real label); `muted` starts quiet for a value in a directory or a footer link. On hover default dims a step and muted lifts to full ink. `prose` is the third treatment, for a link inside a sentence: it sets *no* rest color, so it inherits the copy around it, and only its underline marks it until hover turns both text and underline full ink.
 
 ```tsx
 <Link href="#" variant="default">Full-strength link</Link>
@@ -83,7 +83,7 @@ The color shift carries the affordance in context, so the link is not underlined
 
 ## With an icon
 
-Drop a trailing glyph (a directional arrow for an outbound or routing link) beside the label. It reads as a hover affordance, so it stays hidden at rest and slides and fades in when the link is hovered or keyboard-focused, warming to brand with the text. The motion is a plain CSS transition (interruptible), and it collapses to an instant reveal under `prefers-reduced-motion`.
+Drop a trailing glyph (a directional arrow for an outbound or routing link) beside the label. It reads as a hover affordance, so it stays hidden at rest and slides and fades in when the link is hovered or keyboard-focused, shifting tone with the text. The motion is a plain CSS transition (interruptible), and it collapses to an instant reveal under `prefers-reduced-motion`.
 
 ```tsx
 <Link href="#">View the docs <ArrowUpRight /></Link>
@@ -122,11 +122,11 @@ A text link. Renders a native `<a>` and forwards all its props. Accepts `classNa
 
 ### Which variant do I use?
 
-Ask where the link sits. Outside running prose (a contact row, a directory card, a footer column, a meta row) use default, or muted when it should start quiet: both rest at a solid color and warm to brand on hover. Inside a sentence, use prose. Never hand-roll the classes: this component is the only place the treatment is defined.
+Ask where the link sits. Outside running prose (a contact row, a directory card, a footer column, a meta row) use default, or muted when it should start quiet: both rest at a solid color and shift tone on hover. Inside a sentence, use prose. Never hand-roll the classes: this component is the only place the treatment is defined.
 
 ### Why doesn't prose set a text color?
 
-Because the paragraph already did. A hyperlink in running copy should read as part of its sentence, so prose inherits: text-muted-foreground inside a muted <p>, text-foreground inside a Pricing feature row. Only the hover state is colored, which is what makes that color mean something. Pass a text-* through className on the rare row that needs to override the copy around it.
+Because the paragraph already did. A hyperlink in running copy should read as part of its sentence, so prose inherits: text-muted-foreground inside a muted <p>, text-foreground inside a Pricing feature row. Only the hover state recolors it, to full ink with a matching underline. Pass a text-* through className on the rare row that needs to override the copy around it.
 
 ### Why isn't it underlined by default?
 
@@ -136,9 +136,9 @@ That applies to default and muted only. Outside prose, these links sit in a labe
 
 Set asChild and pass a single next/link child. The Link renders its styles onto that element via Radix Slot instead of emitting its own <a>, so the navigation stays client-side.
 
-### Does it re-theme and re-accent?
+### Does it re-theme?
 
-Yes. The rest color is text-foreground (or text-muted-foreground, or inherited under prose) and the hover is the brand accent, all semantic tokens, so it reads correctly in light, dark, cream, and moonlight and re-tints with the active accent. prose hovers to --link, which derives from --brand and so carries the accent too. It stays a separate role because it is tuned for text: on light it is darkened to clear the 4.5:1 AA floor the raw accent misses at 3.6:1, while the dark themes use the accent straight.
+Yes. The rest color is text-foreground (or text-muted-foreground, or inherited under prose) and the hover is a foreground shade, all semantic tokens, so it reads correctly in light, dark, cream, and moonlight. It does not follow the accent, which is for buttons and focus rings only. prose hovers to --link, the text color, so the underline marks the link rather than a hue.
 
 ## Exports and dependencies
 

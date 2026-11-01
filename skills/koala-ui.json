@@ -2,7 +2,7 @@
   "$comment": "Written by `npm run skill`. The files `koalaui skill` installs, relative to this skill's folder.",
   "name": "koala-ui",
   "path": "skills/koala-ui",
-  "hash": "87fa07b9ef95b43d",
+  "hash": "51281d8684955811",
   "files": [
     "SKILL.md",
     "references/accordion.md",
@@ -16,6 +16,7 @@
     "references/button-group.md",
     "references/card.md",
     "references/checkbox.md",
+    "references/code-snippet.md",
     "references/collapsible.md",
     "references/combobox.md",
     "references/context-menu.md",
@@ -36,6 +37,7 @@
     "references/pagination.md",
     "references/popover.md",
     "references/progress.md",
+    "references/prose.md",
     "references/radio-group.md",
     "references/scroll-area.md",
     "references/select.md",
@@ -50,6 +52,7 @@
     "references/toast.md",
     "references/toggle.md",
     "references/toggle-group.md",
-    "references/tooltip.md"
+    "references/tooltip.md",
+    "references/migrate.md"
   ]
 }

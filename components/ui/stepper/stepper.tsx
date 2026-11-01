@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Slot } from "radix-ui"
-import { Check } from "@phosphor-icons/react"
+import { Check } from "koala-icons"
 
 import { createContext } from "@/lib/create-context"
 import { Spinner } from "@/components/ui/spinner"
@@ -10,6 +10,8 @@ import { useDensity } from "@/lib/density"
 import { cn } from "@/lib/utils"
 import { tv, type VariantProps } from "@/lib/tv"
 import { hitBox } from "@/lib/hit-area"
+import { duration, easing, prefersReducedMotion } from "@/lib/motion"
+import { useMorphBox } from "@/lib/morph"
 
 export const stepperVariants = tv({
   slots: {
@@ -17,7 +19,7 @@ export const stepperVariants = tv({
     item: "group/step relative flex",
     trigger: [
       "group/trigger inline-flex outline-none cursor-pointer",
-      "transition-transform duration-fast ease-out active:scale-[0.96]",
+      "transition-transform duration-fast ease-out",
       "disabled:pointer-events-none disabled:cursor-not-allowed",
     ],
     indicator: [
@@ -31,11 +33,31 @@ export const stepperVariants = tv({
       hitBox,
       "[&_svg]:shrink-0",
     ],
+    // The resting glyph and the check share one cell and trade places by morphing (scale, opacity
+    // and blur keyed off the item's state), so completing a step transforms the indicator instead
+    // of swapping its contents. Symbols: ease-out, no overshoot.
+    number: [
+      "tabular-nums transition-[opacity,scale,filter] duration-fast ease-out",
+      "group-data-[state=completed]/step:scale-[0.25] group-data-[state=completed]/step:opacity-0 group-data-[state=completed]/step:blur-[4px]",
+    ],
+    check: [
+      "absolute inset-0 m-auto scale-[0.25] opacity-0 blur-[4px] transition-[opacity,scale,filter] duration-fast ease-out",
+      "group-data-[state=completed]/step:scale-100 group-data-[state=completed]/step:opacity-100 group-data-[state=completed]/step:blur-[0px]",
+    ],
     title:
       "font-medium text-muted-foreground transition-colors duration-fast ease-out group-data-[state=active]/step:text-foreground group-data-[state=completed]/step:text-foreground",
     description: "text-pretty text-muted-foreground",
     separator: "absolute overflow-hidden bg-border",
-    separatorFill: "block size-full bg-primary transition-transform duration-base ease-out",
+    // The connector fills on the same settle curve and duration as StepperPanels' height tween,
+    // so in a wizard the progress line and the resizing body arrive as one move.
+    separatorFill:
+      "block size-full bg-primary transition-transform duration-slow ease-drawer motion-reduce:transition-none",
+    panels: [
+      "relative overflow-hidden supports-[overflow:clip]:overflow-clip [overflow-clip-margin:3px]",
+      "data-[ready]:transition-[height] data-[ready]:duration-slow data-[ready]:ease-drawer",
+      "motion-reduce:transition-none",
+    ],
+    panel: "outline-none",
   },
   variants: {
     variant: {
@@ -230,10 +252,13 @@ export function StepperIndicator({
     <span data-slot="stepper-indicator" className={slots.indicator({ className })} {...props}>
       {loading ? (
         <Spinner aria-hidden />
-      ) : state === "completed" ? (
-        <Check weight="bold" aria-hidden className="animate-in zoom-in-50 fade-in duration-base ease-out" />
       ) : (
-        <span className="tabular-nums">{children ?? step}</span>
+        <>
+          <span className={slots.number()} aria-hidden={state === "completed" || undefined}>
+            {children ?? step}
+          </span>
+          <Check weight="bold" aria-hidden className={slots.check()} />
+        </>
       )}
     </span>
   )
@@ -266,5 +291,96 @@ export function StepperSeparator({ className, ...props }: React.ComponentProps<"
     >
       <span className={slots.separatorFill()} />
     </div>
+  )
+}
+
+const [StepperPanelsProvider, useStepperPanelsContext] = createContext<{ value: number }>(
+  "StepperPanels",
+)
+
+export interface StepperPanelsProps extends React.ComponentProps<"div"> {
+  value: number
+}
+
+export function StepperPanels({ className, value, children, ...props }: StepperPanelsProps) {
+  const slots = stepperVariants()
+  // The shared morph-box hook measures the viewport; the outer box tweens to its height (the
+  // container settles on ease-drawer, see the `panels` slot) while the body slides in.
+  const morph = useMorphBox<HTMLDivElement>("height")
+  const viewportRef = React.useRef<HTMLDivElement | null>(null)
+  const { ref: morphRef } = morph
+  const setViewport = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      viewportRef.current = node
+      return morphRef(node)
+    },
+    [morphRef],
+  )
+
+  const shown = React.useRef(value)
+  React.useLayoutEffect(() => {
+    const previous = shown.current
+    if (previous === value) return
+    shown.current = value
+    const viewport = viewportRef.current
+    if (!viewport) return
+
+    const lostFocus = !document.activeElement || document.activeElement === document.body
+    if (lostFocus) {
+      const target =
+        viewport.querySelector<HTMLElement>("[autofocus], input, select, textarea, button, [href], [tabindex]:not([tabindex='-1'])") ??
+        viewport.querySelector<HTMLElement>("[data-slot=stepper-panel]")
+      target?.focus({ preventScroll: true })
+    }
+
+    if (typeof viewport.animate !== "function") return
+    if (prefersReducedMotion()) {
+      viewport.animate([{ opacity: 0 }, { opacity: 1 }], { duration: duration.fast, easing: "linear" })
+      return
+    }
+    const rtl = getComputedStyle(viewport).direction === "rtl"
+    const offset = (value > previous ? 16 : -16) * (rtl ? -1 : 1)
+    // Same duration and curve as the height tween, so the slide and the resize read as one move.
+    viewport.animate(
+      [
+        { opacity: 0, transform: `translateX(${offset}px)` },
+        { opacity: 1, transform: "none" },
+      ],
+      { duration: duration.slow, easing: easing.drawer },
+    )
+  }, [value])
+
+  return (
+    <StepperPanelsProvider value={value}>
+      <div
+        data-slot="stepper-panels"
+        data-ready={morph.ready ? "" : undefined}
+        style={morph.style}
+        className={slots.panels({ className })}
+        {...props}
+      >
+        <div ref={setViewport} className={morph.viewportClassName}>
+          {children}
+        </div>
+      </div>
+    </StepperPanelsProvider>
+  )
+}
+
+export interface StepperPanelProps extends React.ComponentProps<"div"> {
+  step: number
+}
+
+export function StepperPanel({ className, step, ...props }: StepperPanelProps) {
+  const { value } = useStepperPanelsContext("StepperPanel")
+  if (value !== step) return null
+  const slots = stepperVariants()
+  return (
+    <div
+      data-slot="stepper-panel"
+      tabIndex={-1}
+      className={slots.panel({ className })}
+      {...props}
+    />
   )
 }

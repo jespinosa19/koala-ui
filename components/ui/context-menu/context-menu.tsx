@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { ContextMenu as ContextMenuPrimitive } from "radix-ui"
-import { CaretRight, Check } from "@phosphor-icons/react"
+import { CaretRight, Check } from "koala-icons"
 
 import { tv, type VariantProps } from "@/lib/tv"
 import { cn } from "@/lib/utils"
@@ -56,7 +56,7 @@ export const contextMenuVariants = tv({
       "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95",
       "duration-base ease-out",
     ],
-    itemIndicator: "absolute right-2 flex size-4 items-center justify-center text-brand",
+    itemIndicator: "absolute right-2 flex size-4 items-center justify-center text-foreground",
     label: "font-medium text-muted-foreground",
     separator: "-mx-1.75 h-px bg-border",
     subCaret: "ml-auto size-4 text-muted-foreground",

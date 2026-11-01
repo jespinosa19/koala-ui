@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Tabs as TabsPrimitive } from "radix-ui"
-import { CheckCircle } from "@phosphor-icons/react"
+import { CheckCircle } from "koala-icons"
 
 import { createContext } from "@/lib/create-context"
 import { useDensity } from "@/lib/density"
@@ -77,7 +77,7 @@ export const tabsVariants = tv({
       },
       line: {
         list: "gap-1 border-b border-border pb-2.5",
-        indicator: "rounded-full bg-brand",
+        indicator: "rounded-full bg-primary",
       },
       chip: {
         list: "gap-2 py-1",

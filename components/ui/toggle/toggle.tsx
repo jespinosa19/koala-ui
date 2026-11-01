@@ -7,9 +7,9 @@ import { tv, type VariantProps } from "@/lib/tv"
 import { hitBox, hitCoarse, hitY } from "@/lib/hit-area"
 
 export const toggleItemBase = [
-  "relative inline-flex shrink-0 cursor-pointer select-none items-center justify-center gap-1.5 whitespace-nowrap rounded-pill border border-input bg-[var(--surface,var(--background))] font-medium text-muted-foreground",
+  "relative inline-flex shrink-0 cursor-pointer select-none items-center justify-center gap-1.5 whitespace-nowrap rounded-[var(--button-radius,var(--button-corner))] border border-input bg-[var(--surface,var(--background))] font-medium text-muted-foreground",
   "data-[state=off]:hover:bg-accent data-[state=off]:hover:text-accent-foreground",
-  "data-[state=on]:border-brand data-[state=on]:font-semibold data-[state=on]:text-foreground data-[state=on]:ring-2 data-[state=on]:ring-brand/10",
+  "data-[state=on]:border-primary data-[state=on]:text-foreground data-[state=on]:ring-2 data-[state=on]:ring-primary/10",
   "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
   "disabled:pointer-events-none disabled:opacity-50",
   "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -47,18 +47,18 @@ export const toggleVariants = tv({
       },
     },
     size: {
-      sm: { root: "h-8 px-2.5 text-sm" },
-      md: { root: `h-10 px-3.5 text-sm ${hitCoarse}` },
+      sm: { root: "h-8 [--button-corner:var(--radius-md)] px-3 text-sm has-[>svg]:px-2.5 has-[>[data-slot=toggle-icon]]:px-2.5" },
+      md: { root: `h-9 [--button-corner:calc(var(--radius)*0.875)] px-4 text-sm has-[>svg]:px-3 has-[>[data-slot=toggle-icon]]:px-3 ${hitCoarse}` },
     },
     iconOnly: {
-      true: { root: "px-0" },
+      true: { root: "px-0 has-[>svg]:px-0 has-[>[data-slot=toggle-icon]]:px-0" },
       false: {},
     },
   },
   compoundVariants: [
     { size: "sm", iconOnly: false, className: { root: hitY } },
     { size: "sm", iconOnly: true, className: { root: `w-8 ${hitBox}` } },
-    { size: "md", iconOnly: true, className: { root: "w-10 [&_svg:not([class*='size-'])]:size-5" } },
+    { size: "md", iconOnly: true, className: { root: "w-9" } },
   ],
   defaultVariants: { variant: "outline", size: "md", iconOnly: false },
 })

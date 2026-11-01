@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { CaretUp, CaretDown, Minus, Plus } from "@phosphor-icons/react"
+import { CaretUp, CaretDown, Minus, Plus } from "koala-icons"
 
 import { tv } from "@/lib/tv"
 import { useControlSize } from "@/lib/density"
@@ -39,7 +39,7 @@ const numberStepperVariants = tv({
       stacked: { rail: "flex-col" },
       inline: {},
     },
-    static: { true: { button: "active:scale-100" }, false: { button: "active:scale-[0.96]" } },
+    static: { true: { button: "active:scale-100" }, false: { button: "" } },
   },
   compoundVariants: [
     { size: "sm", edge: "right", class: { rail: "-mr-2.5" } },

@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Select as SelectPrimitive } from "radix-ui"
-import { CaretDown, Check } from "@phosphor-icons/react"
+import { CaretDown, Check } from "koala-icons"
 
 import { tv, type VariantProps } from "@/lib/tv"
 import { cn } from "@/lib/utils"
@@ -13,12 +13,11 @@ import { Tooltip, type TooltipProps } from "@/components/ui/tooltip"
 export const selectVariants = tv({
   slots: {
     trigger: [
-      "group flex w-full cursor-pointer items-center justify-between gap-2 rounded-pill border border-input",
+      "group flex w-full cursor-pointer items-center justify-between gap-2 border border-input",
       "bg-[var(--surface,var(--background))] px-3.5 text-sm pointer-coarse:text-base font-medium text-left text-foreground shadow-xs",
       "transition-[border-color,box-shadow,scale] duration-fast ease-out",
       "hover:border-ring/50",
       "outline-none focus-visible:border-brand focus-visible:brand-ring",
-      "active:scale-[0.99]",
       "disabled:cursor-not-allowed disabled:opacity-50",
       "aria-[invalid=true]:border-destructive aria-[invalid=true]:focus-visible:destructive-ring aria-[invalid=true]:data-[state=open]:destructive-ring",
       "data-[placeholder]:font-normal data-[placeholder]:text-muted-foreground",
@@ -50,10 +49,10 @@ export const selectVariants = tv({
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       "[&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
       "[&>span:last-child]:flex [&>span:last-child]:min-w-0 [&>span:last-child]:items-center [&>span:last-child]:gap-2",
-      "[&>span:last-child_svg]:text-muted-foreground",
+      "[&>[data-slot=select-item-text]_svg]:text-muted-foreground [&>[data-slot=combobox-item-text]_svg]:text-muted-foreground",
     ],
     itemText: "flex min-w-0 items-center gap-2",
-    itemIndicator: "absolute right-2 flex size-4 items-center justify-center text-brand",
+    itemIndicator: "absolute right-2 flex size-4 items-center justify-center text-foreground",
     label: "px-2 font-medium text-muted-foreground",
     separator: "-mx-0.75 h-px bg-border",
     scrollButton: "absolute inset-x-0 z-10 flex h-7 cursor-pointer items-center justify-center text-muted-foreground",
@@ -69,9 +68,9 @@ export const selectVariants = tv({
   },
   variants: {
     size: {
-      sm: { trigger: "h-8 px-3" },
-      md: { trigger: "h-9" },
-      lg: { trigger: "h-10 px-4 text-sm pointer-coarse:text-base" },
+      sm: { trigger: "h-8 rounded-md px-3" },
+      md: { trigger: "h-9 rounded-[calc(var(--radius)*0.875)]" },
+      lg: { trigger: "h-10 rounded-lg px-4 text-sm pointer-coarse:text-base" },
     },
     panel: {
       floating: { trigger: "data-[state=open]:border-brand data-[state=open]:brand-ring" },
@@ -211,7 +210,7 @@ export function SelectItem({
           <Check weight="bold" className="size-4" />
         </SelectPrimitive.ItemIndicator>
       </span>
-      <SelectPrimitive.ItemText className={slots.itemText()}>
+      <SelectPrimitive.ItemText data-slot="select-item-text" className={slots.itemText()}>
         {children}
       </SelectPrimitive.ItemText>
     </SelectPrimitive.Item>

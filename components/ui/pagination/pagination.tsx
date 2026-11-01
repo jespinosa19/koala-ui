@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { CaretLeft, CaretRight } from "@phosphor-icons/react"
+import { CaretLeft, CaretRight } from "koala-icons"
 
 import { createContext } from "@/lib/create-context"
 import { useDensity, type Density } from "@/lib/density"
@@ -160,6 +160,7 @@ export function PaginationPrevButton({
   const { setPage, page, disabled, control } = usePaginationContext("PaginationPrevButton")
   return (
     <Button
+      type="button"
       data-slot="pagination-prev"
       variant="outline"
       size={control.button}
@@ -184,6 +185,7 @@ export function PaginationNextButton({
     usePaginationContext("PaginationNextButton")
   return (
     <Button
+      type="button"
       data-slot="pagination-next"
       variant="outline"
       size={control.button}

@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { Notches } from "koala-icons"
 import { tv, type VariantProps } from "@/lib/tv"
 import { createContext } from "@/lib/create-context"
 import { useControlSize, type Density } from "@/lib/density"
@@ -9,14 +10,14 @@ import { useFieldContext } from "@/lib/field-context"
 const textareaVariants = tv({
   slots: {
     root: [
-      "flex flex-col w-full overflow-hidden",
-      "rounded-xl border border-input bg-[var(--surface,var(--background))]",
+      "group/textarea relative flex flex-col w-full overflow-hidden",
+      "rounded-lg border border-input bg-[var(--surface,var(--background))]",
       "transition-[border-color,box-shadow] duration-fast ease-out",
       "focus-within:outline-none focus-within:border-brand focus-within:brand-ring",
       "autofill-tint",
     ],
     field: [
-      "w-full bg-transparent outline-none",
+      "w-full resize-none bg-transparent outline-none",
       "text-foreground placeholder:text-muted-foreground",
       "disabled:cursor-not-allowed",
       "autofill-clear",
@@ -26,6 +27,12 @@ const textareaVariants = tv({
       "text-muted-foreground",
     ],
     count: "shrink-0 whitespace-nowrap tabular-nums select-none",
+    grip: [
+      "absolute right-1.5 bottom-1.5 z-10 flex size-4 items-center justify-center touch-none",
+      "text-muted-foreground/70 transition-colors duration-fast ease-out hover:text-foreground",
+      "before:absolute before:-inset-2 before:content-['']",
+      "group-has-[[data-auto-resize]]/textarea:hidden",
+    ],
   },
   variants: {
     size: {
@@ -46,10 +53,10 @@ const textareaVariants = tv({
       },
     },
     resize: {
-      none: { field: "resize-none" },
-      vertical: { field: "resize-y" },
-      horizontal: { field: "resize-x" },
-      both: { field: "resize" },
+      none: { grip: "hidden" },
+      vertical: { grip: "cursor-ns-resize", footer: "pe-7" },
+      horizontal: { grip: "cursor-ew-resize", footer: "pe-7" },
+      both: { grip: "cursor-nwse-resize", footer: "pe-7" },
     },
     hasError: {
       true: {
@@ -104,6 +111,7 @@ function TextareaRoot({
   children,
   ...props
 }: TextareaRootProps) {
+  const rootRef = React.useRef<HTMLDivElement | null>(null)
   const field = useFieldContext()
   const resolvedError = hasError ?? field?.hasError ?? false
   const resolvedDisabled = disabled ?? field?.disabled ?? false
@@ -123,6 +131,7 @@ function TextareaRoot({
       slots={slots}
     >
       <div
+        ref={rootRef}
         data-slot="textarea-root"
         data-disabled={resolvedDisabled || undefined}
         data-error={resolvedError || undefined}
@@ -130,8 +139,66 @@ function TextareaRoot({
         {...props}
       >
         {children}
+        {resize !== "none" && (
+          <TextareaGrip rootRef={rootRef} resize={resize} className={slots.grip()} />
+        )}
       </div>
     </TextareaProvider>
+  )
+}
+
+function TextareaGrip({
+  rootRef,
+  resize,
+  className,
+}: {
+  rootRef: React.RefObject<HTMLDivElement | null>
+  resize: Exclude<Resize, "none">
+  className: string
+}) {
+  const onPointerDown = (event: React.PointerEvent<HTMLSpanElement>) => {
+    const root = rootRef.current
+    const field = root?.querySelector<HTMLTextAreaElement>(
+      '[data-slot="textarea-field"]',
+    )
+    if (!root || !field || event.button !== 0) return
+    event.preventDefault()
+    const grip = event.currentTarget
+    grip.setPointerCapture(event.pointerId)
+    const startX = event.clientX
+    const startY = event.clientY
+    const startHeight = field.offsetHeight
+    const startWidth = root.offsetWidth
+    const minHeight = parseFloat(getComputedStyle(field).minHeight) || 0
+
+    const onMove = (move: PointerEvent) => {
+      if (!move.buttons) return onUp()
+      if (resize !== "horizontal") {
+        field.style.height = `${Math.max(minHeight, startHeight + move.clientY - startY)}px`
+      }
+      if (resize !== "vertical") {
+        root.style.width = `${Math.max(160, startWidth + move.clientX - startX)}px`
+      }
+    }
+    const onUp = () => {
+      grip.removeEventListener("pointermove", onMove)
+      grip.removeEventListener("pointerup", onUp)
+      grip.removeEventListener("pointercancel", onUp)
+    }
+    grip.addEventListener("pointermove", onMove)
+    grip.addEventListener("pointerup", onUp)
+    grip.addEventListener("pointercancel", onUp)
+  }
+
+  return (
+    <span
+      aria-hidden
+      data-slot="textarea-grip"
+      className={className}
+      onPointerDown={onPointerDown}
+    >
+      <Notches className="size-3.5" />
+    </span>
   )
 }
 
@@ -207,6 +274,7 @@ function TextareaField({
   const textarea = (
     <textarea
       data-slot="textarea-field"
+      data-auto-resize={autoResize || undefined}
       ref={setRefs}
       id={id ?? field?.id}
       value={value}

@@ -21,11 +21,10 @@ export const toggleGroupVariants = tv({
     thumbSurface: [
       "block size-full rounded-[inherit] bg-background shadow-sm ring-1 ring-border dark:bg-foreground/10",
       "transition-[scale] duration-fast ease-out motion-reduce:transition-none",
-      "group-has-[[data-state=on]:active]/toggle-group:scale-[0.96]",
     ],
     item: [
       ...toggleItemBase,
-      "transition duration-fast ease-out active:scale-[0.96]",
+      "transition duration-fast ease-out",
     ],
   },
   variants: {
@@ -36,7 +35,7 @@ export const toggleGroupVariants = tv({
         item: [
           "z-10 border-transparent bg-transparent",
           "data-[state=off]:hover:bg-transparent data-[state=off]:hover:text-foreground",
-          "data-[state=on]:border-transparent data-[state=on]:font-medium data-[state=on]:text-foreground",
+          "data-[state=on]:border-transparent data-[state=on]:text-foreground",
           "data-[state=on]:ring-0 data-[state=on]:ring-border",
           "group-data-[thumb=off]/toggle-group:data-[state=on]:bg-background",
           "dark:group-data-[thumb=off]/toggle-group:data-[state=on]:bg-foreground/10",
@@ -53,8 +52,8 @@ export const toggleGroupVariants = tv({
       },
     },
     size: {
-      sm: { item: `h-8 px-2.5 text-sm ${hitX}` },
-      md: { item: "h-10 px-3.5 text-sm" },
+      sm: { root: "[--button-corner:var(--radius-md)]", item: `h-8 px-3 text-sm has-[>svg]:px-2.5 ${hitX}` },
+      md: { root: "[--button-corner:calc(var(--radius)*0.875)]", item: "h-9 px-4 text-sm has-[>svg]:px-3" },
     },
     iconOnly: {
       true: {},
@@ -62,10 +61,19 @@ export const toggleGroupVariants = tv({
     },
   },
   compoundVariants: [
-    { size: "sm", iconOnly: true, className: { item: "w-8 px-0" } },
-    { size: "md", iconOnly: true, className: { item: "w-10 px-0 [&_svg:not([class*='size-'])]:size-5" } },
-    { variant: "segmented", size: "sm", className: { root: "rounded-pill p-0.5", item: "rounded-pill", thumb: "rounded-pill" } },
-    { variant: "segmented", size: "md", className: { root: "rounded-pill p-1", item: "rounded-pill", thumb: "rounded-pill" } },
+    { size: "sm", iconOnly: true, className: { item: "w-8 px-0 has-[>svg]:px-0" } },
+    { size: "md", iconOnly: true, className: { item: "w-9 px-0 has-[>svg]:px-0" } },
+    {
+      variant: "segmented",
+      className: {
+        root: "rounded-[calc(var(--button-radius,var(--button-corner))+0.125rem)] p-0.5",
+        thumb: "rounded-[var(--button-radius,var(--button-corner))]",
+      },
+    },
+    { variant: "segmented", size: "sm", className: { item: "h-7 px-2.5 has-[>svg]:px-2" } },
+    { variant: "segmented", size: "md", className: { item: "h-8 px-3 has-[>svg]:px-2.5" } },
+    { variant: "segmented", size: "sm", iconOnly: true, className: { item: "w-7 px-0 has-[>svg]:px-0" } },
+    { variant: "segmented", size: "md", iconOnly: true, className: { item: "w-8 px-0 has-[>svg]:px-0" } },
   ],
   defaultVariants: {
     variant: "outline",

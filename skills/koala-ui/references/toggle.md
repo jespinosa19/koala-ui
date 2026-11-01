@@ -6,13 +6,13 @@ One control that stays pressed: bookmark, pin, mute, unread only. The single-ite
 
 ```tsx
 <Toggle defaultPressed>
-  <EnvelopeSimple weight="bold" /> Unread only
+  <EnvelopeSimple /> Unread only
 </Toggle>
 <Toggle variant="ghost" iconOnly aria-label="Bookmark" defaultPressed>
-  <ToggleIcon off={<BookmarkSimple weight="bold" />} on={<BookmarkSimple weight="fill" />} />
+  <ToggleIcon off={<BookmarkSimple />} on={<BookmarkSimple weight="fill" />} />
 </Toggle>
 <Toggle variant="ghost" iconOnly aria-label="Pin">
-  <ToggleIcon off={<PushPin weight="bold" />} on={<PushPin weight="fill" />} />
+  <ToggleIcon off={<PushPin />} on={<PushPin weight="fill" />} />
 </Toggle>
 ```
 
@@ -50,14 +50,14 @@ import { Toggle, ToggleIcon } from "@/components/ui/toggle"
 
 ## Variants
 
-`outline` (the default) is the Toggle Group pill: a framed control whose pressed state is the brand border and a soft halo, with no fill. `ghost` is bare at rest and takes the accent chip once pressed, the Toolbar's pressed look, for icon toggles in a row of other controls. Each is shown off, then on.
+`outline` (the default) is the Toggle Group pill: a framed control whose pressed state is an ink border and a soft halo, with no fill. `ghost` is bare at rest and takes the accent chip once pressed, the Toolbar's pressed look, for icon toggles in a row of other controls. Each is shown off, then on.
 
 ```tsx
-<Toggle><GridFour weight="bold" /> Show grid</Toggle>
-<Toggle defaultPressed><GridFour weight="bold" /> Show grid</Toggle>
+<Toggle><GridFour /> Show grid</Toggle>
+<Toggle defaultPressed><GridFour /> Show grid</Toggle>
 
-<Toggle variant="ghost" iconOnly aria-label="Italic"><TextItalic weight="bold" /></Toggle>
-<Toggle variant="ghost" iconOnly aria-label="Bold" defaultPressed><TextB weight="bold" /></Toggle>
+<Toggle variant="ghost" iconOnly aria-label="Italic"><TextItalic /></Toggle>
+<Toggle variant="ghost" iconOnly aria-label="Bold" defaultPressed><TextB /></Toggle>
 ```
 
 ## Sizes
@@ -65,10 +65,10 @@ import { Toggle, ToggleIcon } from "@/components/ui/toggle"
 The Toggle Group scale: `sm` is 32px and `md` (the default) is 40px, so a lone toggle lines up with a group beside it. `iconOnly` squares the control around one glyph and steps the glyph up to 20px at `md`. The 32px control grows its target to 40px (44px on touch) without growing the visual.
 
 ```tsx
-<Toggle size="sm" defaultPressed><PushPin weight="bold" /> Pin</Toggle>
-<Toggle size="sm" iconOnly aria-label="Pin" defaultPressed><PushPin weight="bold" /></Toggle>
-<Toggle size="md" defaultPressed><PushPin weight="bold" /> Pin</Toggle>
-<Toggle size="md" iconOnly aria-label="Pin" defaultPressed><PushPin weight="bold" /></Toggle>
+<Toggle size="sm" defaultPressed><PushPin /> Pin</Toggle>
+<Toggle size="sm" iconOnly aria-label="Pin" defaultPressed><PushPin /></Toggle>
+<Toggle size="md" defaultPressed><PushPin /> Pin</Toggle>
+<Toggle size="md" iconOnly aria-label="Pin" defaultPressed><PushPin /></Toggle>
 ```
 
 ## Pressed glyph
@@ -77,16 +77,16 @@ The Toggle Group scale: `sm` is 32px and `md` (the default) is 40px, so a lone t
 
 ```tsx
 <Toggle variant="ghost" iconOnly aria-label="Bookmark" defaultPressed>
-  <ToggleIcon off={<BookmarkSimple weight="bold" />} on={<BookmarkSimple weight="fill" />} />
+  <ToggleIcon off={<BookmarkSimple />} on={<BookmarkSimple weight="fill" />} />
 </Toggle>
 <Toggle variant="ghost" iconOnly aria-label="Like">
-  <ToggleIcon off={<Heart weight="bold" />} on={<Heart weight="fill" className="text-destructive" />} />
+  <ToggleIcon off={<Heart />} on={<Heart weight="fill" className="text-destructive" />} />
 </Toggle>
 <Toggle variant="ghost" iconOnly aria-label="Star">
-  <ToggleIcon off={<Star weight="bold" />} on={<Star weight="fill" className="text-warning" />} />
+  <ToggleIcon off={<Star />} on={<Star weight="fill" className="text-warning" />} />
 </Toggle>
 <Toggle variant="ghost" iconOnly aria-label="Mute">
-  <ToggleIcon off={<Microphone weight="bold" />} on={<MicrophoneSlash weight="bold" />} />
+  <ToggleIcon off={<Microphone />} on={<MicrophoneSlash />} />
 </Toggle>
 ```
 
@@ -98,12 +98,12 @@ An icon-only toggle is named by its `aria-label`: the glyph is not a name. Show 
 <TooltipGroup>
   <Tooltip content={<>Bold <Kbd size="sm">⌘B</Kbd></>}>
     <Toggle variant="ghost" size="sm" iconOnly aria-label="Bold" defaultPressed>
-      <TextB weight="bold" />
+      <TextB />
     </Toggle>
   </Tooltip>
   <Tooltip content={<>Italic <Kbd size="sm">⌘I</Kbd></>}>
     <Toggle variant="ghost" size="sm" iconOnly aria-label="Italic">
-      <TextItalic weight="bold" />
+      <TextItalic />
     </Toggle>
   </Tooltip>
 </TooltipGroup>
@@ -117,7 +117,7 @@ Hold the state yourself with `pressed` and `onPressedChange`. Here it filters th
 const [unreadOnly, setUnreadOnly] = useState(false)
 
 <Toggle size="sm" pressed={unreadOnly} onPressedChange={setUnreadOnly}>
-  <EnvelopeSimple weight="bold" /> Unread only
+  <EnvelopeSimple /> Unread only
 </Toggle>
 ```
 
@@ -126,8 +126,8 @@ const [unreadOnly, setUnreadOnly] = useState(false)
 `disabled` dims the control in either state and takes it out of the pointer's way, so a locked setting still shows which way it is set.
 
 ```tsx
-<Toggle disabled><GridFour weight="bold" /> Show grid</Toggle>
-<Toggle disabled defaultPressed><GridFour weight="bold" /> Show grid</Toggle>
+<Toggle disabled><GridFour /> Show grid</Toggle>
+<Toggle disabled defaultPressed><GridFour /> Show grid</Toggle>
 ```
 
 ## API reference
@@ -138,9 +138,9 @@ A `<button>` that stays pressed, with `aria-pressed`. Forwards all Radix Toggle 
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| variant | "outline" \| "ghost" | "outline" | `outline` is the Toggle Group pill (brand border and halo when pressed); `ghost` is bare and fills with the accent chip. |
-| size | "sm" \| "md" | "md" | 32px or 40px tall; `sm` grows its hit target to 40px without growing the visual. |
-| iconOnly | boolean | false | Squares the control around one glyph (20px at `md`). Name it with `aria-label`. |
+| variant | "outline" \| "ghost" | "outline" | `outline` is the Toggle Group pill (ink border and halo when pressed); `ghost` is bare and fills with the accent chip. |
+| size | "sm" \| "md" | "md" | 32px or 36px tall, the Button scale; `sm` grows its hit target to 40px without growing the visual. |
+| iconOnly | boolean | false | Squares the control around one 16px glyph. Name it with `aria-label`. |
 | pressed | boolean | - | The controlled pressed state. |
 | defaultPressed | boolean | false | The initial pressed state when uncontrolled. |
 | onPressedChange | (pressed: boolean) => void | - | Called when the pressed state changes. |

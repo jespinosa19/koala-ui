@@ -13,9 +13,9 @@ export const switchVariants = tv({
       "peer inline-flex shrink-0 cursor-pointer items-center rounded-full p-0.5",
       "h-5 w-9",
       hitX,
-      "transition-colors duration-fast ease-out active:scale-[0.96]",
+      "transition-colors duration-fast ease-out",
       "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-      "bg-input data-[state=checked]:bg-brand",
+      "bg-input data-[state=checked]:bg-primary",
       "disabled:cursor-not-allowed disabled:opacity-50",
     ],
     thumb: [

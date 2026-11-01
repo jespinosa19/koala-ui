@@ -31,7 +31,7 @@ export const popoverVariants = tv({
     close: [
       "absolute top-3 right-3 inline-flex size-7 items-center justify-center rounded-md",
       "text-muted-foreground cursor-pointer transition-[background-color,color,scale] duration-fast ease-out",
-      "hover:bg-accent hover:text-foreground active:scale-[0.96]",
+      "hover:bg-accent hover:text-foreground",
       "outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-popover",
       "[&_svg]:size-4 [&_svg]:shrink-0",
     ],
