@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Toggle as TogglePrimitive } from "radix-ui"
 
+import { useButtonSize } from "@/lib/density"
 import { tv, type VariantProps } from "@/lib/tv"
 import { hitBox, hitCoarse, hitY } from "@/lib/hit-area"
 
@@ -49,6 +50,8 @@ export const toggleVariants = tv({
     size: {
       sm: { root: "h-8 [--button-corner:var(--radius-md)] px-3 text-sm has-[>svg]:px-2.5 has-[>[data-slot=toggle-icon]]:px-2.5" },
       md: { root: `h-9 [--button-corner:calc(var(--radius)*0.875)] px-4 text-sm has-[>svg]:px-3 has-[>[data-slot=toggle-icon]]:px-3 ${hitCoarse}` },
+      lg: { root: `h-10 [--button-corner:var(--radius-lg)] px-5 text-sm has-[>svg]:px-4 has-[>[data-slot=toggle-icon]]:px-4 ${hitCoarse}` },
+      xl: { root: "h-11 [--button-corner:calc(var(--radius)*1.125)] px-6 text-base has-[>svg]:px-5 has-[>[data-slot=toggle-icon]]:px-5 [&_svg:not([class*='size-'])]:size-5" },
     },
     iconOnly: {
       true: { root: "px-0 has-[>svg]:px-0 has-[>[data-slot=toggle-icon]]:px-0" },
@@ -59,6 +62,8 @@ export const toggleVariants = tv({
     { size: "sm", iconOnly: false, className: { root: hitY } },
     { size: "sm", iconOnly: true, className: { root: `w-8 ${hitBox}` } },
     { size: "md", iconOnly: true, className: { root: "w-9" } },
+    { size: "lg", iconOnly: true, className: { root: "w-10" } },
+    { size: "xl", iconOnly: true, className: { root: "w-11" } },
   ],
   defaultVariants: { variant: "outline", size: "md", iconOnly: false },
 })
@@ -68,7 +73,8 @@ export interface ToggleProps
     VariantProps<typeof toggleVariants> {}
 
 export function Toggle({ className, variant, size, iconOnly, ...props }: ToggleProps) {
-  const { root } = toggleVariants({ variant, size, iconOnly })
+  const resolved = useButtonSize(size)
+  const { root } = toggleVariants({ variant, size: resolved === "xs" ? "sm" : resolved, iconOnly })
   return <TogglePrimitive.Root data-slot="toggle" className={root({ className })} {...props} />
 }
 

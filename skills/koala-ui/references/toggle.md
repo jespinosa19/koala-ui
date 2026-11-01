@@ -62,13 +62,16 @@ import { Toggle, ToggleIcon } from "@/components/ui/toggle"
 
 ## Sizes
 
-The Toggle Group scale: `sm` is 32px and `md` (the default) is 40px, so a lone toggle lines up with a group beside it. `iconOnly` squares the control around one glyph and steps the glyph up to 20px at `md`. The 32px control grows its target to 40px (44px on touch) without growing the visual.
+The Button scale: `sm` is 32px, `md` (the default) 36px, `lg` 40px and `xl` 44px, so a lone toggle lines up with the buttons and groups beside it. `iconOnly` squares the control around one glyph. The 32px control grows its target to 40px (44px on touch) without growing the visual. On a touch screen, wrap the screen in `<ControlSizeProvider size="xl">` and every toggle inside follows.
 
 ```tsx
 <Toggle size="sm" defaultPressed><PushPin /> Pin</Toggle>
 <Toggle size="sm" iconOnly aria-label="Pin" defaultPressed><PushPin /></Toggle>
 <Toggle size="md" defaultPressed><PushPin /> Pin</Toggle>
 <Toggle size="md" iconOnly aria-label="Pin" defaultPressed><PushPin /></Toggle>
+<Toggle size="lg" defaultPressed><PushPin /> Pin</Toggle>
+<Toggle size="xl" defaultPressed><PushPin /> Pin</Toggle>
+<Toggle size="xl" iconOnly aria-label="Pin" defaultPressed><PushPin /></Toggle>
 ```
 
 ## Pressed glyph
@@ -139,7 +142,7 @@ A `<button>` that stays pressed, with `aria-pressed`. Forwards all Radix Toggle 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | variant | "outline" \| "ghost" | "outline" | `outline` is the Toggle Group pill (ink border and halo when pressed); `ghost` is bare and fills with the accent chip. |
-| size | "sm" \| "md" | "md" | 32px or 36px tall, the Button scale; `sm` grows its hit target to 40px without growing the visual. |
+| size | "sm" \| "md" \| "lg" \| "xl" | "md" | 32, 36, 40 or 44px tall, the Button scale; `sm` grows its hit target to 40px without growing the visual. Without a prop it follows `ControlSizeProvider`. |
 | iconOnly | boolean | false | Squares the control around one 16px glyph. Name it with `aria-label`. |
 | pressed | boolean | - | The controlled pressed state. |
 | defaultPressed | boolean | false | The initial pressed state when uncontrolled. |
@@ -189,5 +192,5 @@ Yes. Under `prefers-reduced-motion` the two glyphs swap without the transition.
 
 - Components and helpers: `Toggle`, `ToggleIcon`, `toggleVariants`, `toggleItemBase`
 - Types: `ToggleProps`, `ToggleIconProps`
-- Koala lib helpers it uses: `hit-area`, `tv`
+- Koala lib helpers it uses: `density`, `hit-area`, `tv`
 - npm packages: `radix-ui`
