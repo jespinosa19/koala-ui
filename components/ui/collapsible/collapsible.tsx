@@ -4,6 +4,7 @@ import * as React from "react"
 import { Collapsible as CollapsiblePrimitive } from "radix-ui"
 import { CaretDown, CaretRight, Plus } from "koala-icons"
 
+import "@/lib/disclosure"
 import { createContext } from "@/lib/create-context"
 import { hitX } from "@/lib/hit-area"
 import { cn } from "@/lib/utils"

@@ -1,6 +1,9 @@
 /* Koala UI tokens, installed by `koalaui init`. Import it right after
    `@import "tailwindcss";` in your global stylesheet. `koalaui update` keeps it current. */
 @import "tw-animate-css";
+/* Saved design settings, written by the configurator at /lab/configurador (lib/design-config.ts).
+   Imported before concepts so a concept still wins its ties. */
+
 /* Concepts: the personality axis (`data-concept`). Kept in its own file so this one stays the token
    layer; see the header of app/concepts.css for how a concept is written and why part of it is
    deliberately unlayered. */
@@ -266,6 +269,8 @@
   /* How far a field's fill moves toward the ink to rise off its ground: 0 on light grounds, where a
      field is already the lightest thing on the page. */
   --tactile-fill: 0%;
+  /* How far a bordered dialog footer moves toward the ink: the tray the actions rest on. */
+  --tactile-footer-fill: 0%;
 
   /* The shadow: a 1px contact and a short, soft fall. */
   --tactile-drop: oklch(0 0 0 / 0.08);
@@ -289,6 +294,7 @@
 [data-concept="tactile"] :is(.dark, .moonlight) {
   --tactile-stroke: color-mix(in oklab, var(--foreground) 9%, transparent);
   --tactile-fill: 6%;
+  --tactile-footer-fill: 4%;
   --tactile-drop: oklch(0 0 0 / 0.35);
   --tactile-field-lift: var(--tactile-lift);
 }
@@ -340,6 +346,13 @@
 [data-concept="tactile"] [data-slot="button"][class~="shadow-xs"]:not([class~="border"], :focus-visible, :disabled, [aria-disabled="true"]) {
   box-shadow: var(--tactile-object);
 }
+/* On a dark ground `bg-background` is darker than the groove the handle rides in, so it read as a
+ * hole; it fills one step toward the ink instead, the way a field rises.
+ * Overrules: `bg-background` on Slider.Thumb. */
+:root[data-concept="tactile"]:is(.dark, .moonlight) [data-slot="slider-thumb"],
+[data-concept="tactile"] :is(.dark, .moonlight) [data-slot="slider-thumb"] {
+  background-color: color-mix(in oklab, var(--background), var(--foreground) 14%);
+}
 
 /*
  * An outline key is a key, so it gets a body: transparent, it read as a drawn border. It takes the
@@ -367,11 +380,11 @@
  * Tracks and trays are flat: a stroke, no lift, so what rides in them is the only thing that rises.
  * The accent fill still carries on/off (a checked switch keeps `bg-primary`).
  * Overrules: the flat `bg-input` switch track and `bg-muted` tab list (no stroke), and the shadow the
- * segmented ToggleGroup draws on its tray.
+ * segmented ToggleGroup draws on its tray. A `bg-transparent` tab list is no tray, so it keeps no stroke.
  */
 [data-concept="tactile"] [data-slot="switch"]:not(:focus-visible),
 [data-concept="tactile"] [data-slot="slider-track"],
-[data-concept="tactile"] [data-slot="tabs-list"]:has(> [data-slot="tabs-indicator"].bg-background),
+[data-concept="tactile"] [data-slot="tabs-list"]:not(.bg-transparent):has(> [data-slot="tabs-indicator"].bg-background),
 [data-concept="tactile"] [data-slot="toggle-group"][data-thumb] {
   box-shadow: var(--tactile-flat);
 }
@@ -399,7 +412,6 @@
 [data-concept="tactile"] :is(.dark, .moonlight) [data-slot="slider-thumb"] {
   background-color: color-mix(in oklab, var(--background), var(--foreground) 14%);
 }
-
 /*
  * A pressed Toggle, and the on items of a plain ToggleGroup, are set down: the stroke on top of
  * their on-colour, no lift.
@@ -420,6 +432,36 @@
 /* Only the properties that move are transitioned. Overrules: `transition` (all) in the Button base. */
 [data-concept="tactile"] :is([data-slot="button"], [data-slot="select-trigger"], [data-slot="native-select-field"], [data-slot="input-root"], [data-slot="textarea-root"]) {
   transition-property: box-shadow, background-color, color, border-color;
+}
+
+/*
+ * A bordered dialog footer is the tray the actions rest on: in the dark themes it fills a step
+ * toward the ink, so it reads a shade brighter than the sheet above its hairline. It repaints
+ * `--surface` so a control inside sits on the tray, and rounds its bottom corners inside the
+ * sheet's 1px border.
+ * Overrules: the transparent footer of `DialogFooter bordered`.
+ */
+[data-concept="tactile"] [data-slot="dialog-footer"].border-t {
+  --surface: color-mix(in oklab, var(--popover), var(--foreground) var(--tactile-footer-fill));
+  background-color: var(--surface);
+  border-bottom-left-radius: calc(var(--radius-xl) - 1px);
+  border-bottom-right-radius: calc(var(--radius-xl) - 1px);
+}
+
+/*
+ * In the dark themes every dialog footer is that tray, bordered or not: a plain footer bleeds to
+ * the sheet's edges and takes the hairline, reading the sheet's inset from `--dialog-inset`.
+ * Overrules: the unbordered `DialogFooter`, which sits inside the sheet's padding.
+ */
+:is(.dark, .moonlight)[data-concept="tactile"] [data-slot="dialog-footer"],
+[data-concept="tactile"] :is(.dark, .moonlight) [data-slot="dialog-footer"] {
+  --surface: color-mix(in oklab, var(--popover), var(--foreground) var(--tactile-footer-fill));
+  margin: calc(var(--spacing) * 1) calc(var(--dialog-inset) * -1) calc(var(--dialog-inset) * -1);
+  padding: calc(var(--dialog-inset) - var(--spacing)) var(--dialog-inset);
+  border-top: 1px solid var(--border);
+  background-color: var(--surface);
+  border-bottom-left-radius: calc(var(--radius-xl) - 1px);
+  border-bottom-right-radius: calc(var(--radius-xl) - 1px);
 }
 
 /* Forced colors drop shadows, so keys, trays and thumbs fall back to real borders. */
@@ -650,6 +692,7 @@
    * calmer cadence, hence 1.6s, defined here in the token layer rather than a component.
    */
   --animate-shimmer: shimmer 1.6s var(--ease-in-out) infinite;
+
 
   /*
    * Ink sweep: the band that passes through a live line of text (see the `ink-sweep` utility).
@@ -988,6 +1031,32 @@
   --animate-cursor-drift: cursor-drift var(--cursor-duration, 16s) var(--ease-sine) var(--cursor-delay, 0s) infinite;
   --animate-cursor-click: cursor-click var(--cursor-duration, 16s) var(--ease-out) var(--cursor-delay, 0s) infinite;
   --animate-cursor-ping: cursor-ping var(--cursor-duration, 16s) var(--ease-out) var(--cursor-delay, 0s) infinite;
+}
+
+/*
+ * Recipe-level knobs: emitted as real variables (plain @theme, not inline) so a scope or the saved
+ * design settings (app/design-config.css) can retune them.
+ *  - --spacing-control-*      the control height ladder, `h-control-sm|md|lg|xl` (see the
+ *                             form-control height model in lib/density.tsx).
+ *  - --default-border-width   what a bare `border` draws. Tailwind inlines it at build time, so it
+ *                             points at `--hairline` (:root, below), the variable that retunes;
+ *                             a hairline is 0.5px.
+ *  - --font-figure, --font-weight-numeral, --tracking-figure   the voice of a headline number
+ *                             (Stat value): `font-figure font-numeral tracking-figure`.
+ */
+@theme {
+  --spacing-control-sm: 2rem;
+  --spacing-control-md: 2.25rem;
+  --spacing-control-lg: 2.5rem;
+  --spacing-control-xl: 2.75rem;
+  --default-border-width: var(--hairline);
+  --font-figure: var(--font-heading);
+  --font-weight-numeral: 600;
+  --tracking-figure: -0.025em;
+}
+
+:root {
+  --hairline: 1px;
 }
 
 /* The LCD faults (see --animate-lcd-*). Discrete stops: the flicker dips and recovers within a

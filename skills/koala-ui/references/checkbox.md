@@ -4,6 +4,8 @@
 
 A control for a binary or tri-state choice, built on Radix Checkbox. Supports the indeterminate state a “select all” needs. It's the same control the DataTable uses for row selection.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <label htmlFor="terms" className="flex items-center gap-2.5">
   <Checkbox id="terms" defaultChecked />

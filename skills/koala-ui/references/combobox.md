@@ -4,6 +4,8 @@
 
 A text field that filters a list as you type. The field is Koala's Input and the list is Select's panel, so it sits beside both without a seam. Autocomplete is the free-text sibling.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 const FRAMEWORKS = [
   { value: "astro", label: "Astro" },

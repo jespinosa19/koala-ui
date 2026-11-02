@@ -22,7 +22,7 @@ export const drawerVariants = tv({
       "duration-base ease-out",
     ],
     content: [
-      "fixed z-50 flex flex-col bg-popover text-popover-foreground shadow-lg",
+      "fixed z-50 flex flex-col bg-popover text-popover-foreground",
       "[--surface:var(--popover)] border-border-soft",
       "outline-none",
       "data-[state=open]:animate-in data-[state=closed]:animate-out",

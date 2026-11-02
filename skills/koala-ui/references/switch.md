@@ -4,6 +4,8 @@
 
 A toggle for an instant, self-applying boolean, built on Radix Switch. Use it for settings that take effect immediately (notifications, airplane mode); reach for a Checkbox when the choice is submitted with a form.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <label htmlFor="airplane" className="flex items-center gap-2.5">
   <Switch id="airplane" defaultChecked />

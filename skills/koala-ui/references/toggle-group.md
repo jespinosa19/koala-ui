@@ -4,6 +4,8 @@
 
 A set of pressable buttons that hold a selection, built on Radix ToggleGroup. Use single for a one-of-N choice or multiple for independent toggles. A chosen item carries the ink outline.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <ToggleGroup type="single" defaultValue="yes" aria-label="Was this useful?">
   <ToggleGroupItem value="yes">

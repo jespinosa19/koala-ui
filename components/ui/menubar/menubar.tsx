@@ -8,6 +8,7 @@ import { tv, type VariantProps } from "@/lib/tv"
 import { cn } from "@/lib/utils"
 import { useDensity } from "@/lib/density"
 import { hitY } from "@/lib/hit-area"
+import { usePhoneSubmenuOffset } from "@/lib/phone-submenu"
 import { dropdownMenuVariants } from "@/components/ui/dropdown-menu"
 import { Kbd } from "@/components/ui/kbd"
 import { SwitchIndicator } from "@/components/ui/switch"
@@ -75,7 +76,12 @@ export function MenubarContent({
         alignOffset={alignOffset}
         sideOffset={sideOffset}
         collisionPadding={collisionPadding}
-        className={slots.content({ className })}
+        className={slots.content({
+          className: [
+            "max-w-(--radix-menubar-content-available-width) max-h-(--radix-menubar-content-available-height)",
+            className,
+          ],
+        })}
         {...props}
       />
     </MenubarPrimitive.Portal>
@@ -222,10 +228,13 @@ export function MenubarSubContent({
   ...props
 }: React.ComponentProps<typeof MenubarPrimitive.SubContent> & Pick<VariantProps<typeof dropdownMenuVariants>, "density">) {
   const slots = dropdownMenuVariants({ density: useDensity(density) })
+  const sideOffset = usePhoneSubmenuOffset()
   return (
     <MenubarPrimitive.Portal>
       <MenubarPrimitive.SubContent
         data-slot="menubar-sub-content"
+        collisionPadding={8}
+        sideOffset={sideOffset}
         className={slots.subContent({ className })}
         {...props}
       />

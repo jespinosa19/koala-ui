@@ -7,49 +7,50 @@ import { CaretRight, Check } from "koala-icons"
 import { tv, type VariantProps } from "@/lib/tv"
 import { cn } from "@/lib/utils"
 import { DensityProvider, useDensity } from "@/lib/density"
+import { usePhoneSubmenuOffset } from "@/lib/phone-submenu"
 import { Kbd } from "@/components/ui/kbd"
 import { SwitchIndicator } from "@/components/ui/switch"
 
 export const contextMenuVariants = tv({
   slots: {
     content: [
-      "z-50 min-w-[8rem] overflow-hidden rounded-xl bg-popover ring-1 ring-inset ring-border [--surface:var(--popover)]",
+      "z-50 min-w-[8rem] overflow-hidden rounded-lg bg-popover ring-1 ring-inset ring-border [--surface:var(--popover)]",
       "text-popover-foreground shadow-lg",
-      "max-w-(--radix-context-menu-content-available-width)",
+      "max-w-(--radix-context-menu-content-available-width) max-h-(--radix-context-menu-content-available-height) overflow-y-auto overscroll-contain",
       "origin-(--radix-popper-transform-origin)",
       "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
       "duration-base ease-out",
     ],
     item: [
-      "relative flex cursor-pointer select-none items-center gap-2 text-sm font-medium outline-none",
+      "relative flex cursor-pointer select-none items-center gap-2 text-sm font-normal outline-none",
       "transition-colors duration-fast ease-out",
       "focus:bg-accent focus:text-accent-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
     ],
     checkboxItem: [
-      "relative flex cursor-pointer select-none items-center gap-2 text-sm font-medium outline-none",
+      "relative flex cursor-pointer select-none items-center gap-2 text-sm font-normal outline-none",
       "transition-colors duration-fast ease-out",
       "focus:bg-accent focus:text-accent-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
     ],
     radioItem: [
-      "relative flex cursor-pointer select-none items-center gap-2 text-sm font-medium outline-none",
+      "relative flex cursor-pointer select-none items-center gap-2 text-sm font-normal outline-none",
       "transition-colors duration-fast ease-out",
       "focus:bg-accent focus:text-accent-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
     ],
     subTrigger: [
-      "group flex cursor-pointer select-none items-center gap-2 text-sm font-medium outline-none",
+      "group flex cursor-pointer select-none items-center gap-2 text-sm font-normal outline-none",
       "transition-colors duration-fast ease-out",
       "focus:bg-accent focus:text-accent-foreground",
       "data-[state=open]:bg-accent data-[state=open]:text-accent-foreground",
       "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
     ],
     subContent: [
-      "z-50 min-w-[8rem] overflow-hidden rounded-xl bg-popover ring-1 ring-inset ring-border [--surface:var(--popover)]",
+      "z-50 min-w-[8rem] overflow-hidden rounded-lg bg-popover ring-1 ring-inset ring-border [--surface:var(--popover)]",
       "text-popover-foreground shadow-lg",
       "origin-(--radix-popper-transform-origin)",
       "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
@@ -64,22 +65,22 @@ export const contextMenuVariants = tv({
   variants: {
     density: {
       comfortable: {
-        content: "p-2",
-        item: "px-2 py-2 rounded-md",
-        checkboxItem: "px-2 pr-8 py-2 rounded-md",
-        radioItem: "px-2 pr-8 py-2 rounded-md",
-        subTrigger: "px-2 py-2 rounded-md",
-        subContent: "p-2",
+        content: "p-1",
+        item: "px-2 min-h-control-md py-1.5 rounded-md",
+        checkboxItem: "px-2 pr-8 min-h-control-md py-1.5 rounded-md",
+        radioItem: "px-2 pr-8 min-h-control-md py-1.5 rounded-md",
+        subTrigger: "px-2 min-h-control-md py-1.5 rounded-md",
+        subContent: "p-1",
         label: "px-2 py-1.5 text-xs",
         separator: "my-1.5",
       },
       compact: {
-        content: "p-2",
-        item: "px-2 py-1.5 rounded-md",
-        checkboxItem: "px-2 pr-8 py-1.5 rounded-md",
-        radioItem: "px-2 pr-8 py-1.5 rounded-md",
-        subTrigger: "px-2 py-1.5 rounded-md",
-        subContent: "p-2",
+        content: "p-1",
+        item: "px-2 min-h-control-sm py-1 rounded-md",
+        checkboxItem: "px-2 pr-8 min-h-control-sm py-1 rounded-md",
+        radioItem: "px-2 pr-8 min-h-control-sm py-1 rounded-md",
+        subTrigger: "px-2 min-h-control-sm py-1 rounded-md",
+        subContent: "p-1",
         label: "px-2 py-1 text-xs",
         separator: "my-1",
       },
@@ -318,9 +319,12 @@ export function ContextMenuSubContent({
   ...props
 }: ContextMenuSubContentProps) {
   const slots = contextMenuVariants({ density: useDensity(density) })
+  const sideOffset = usePhoneSubmenuOffset()
   return (
     <ContextMenuPrimitive.SubContent
       data-slot="context-menu-sub-content"
+      collisionPadding={8}
+      sideOffset={sideOffset}
       className={slots.subContent({ className })}
       {...props}
     >

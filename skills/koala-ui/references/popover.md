@@ -4,6 +4,8 @@
 
 A general-purpose floating surface over Radix Popover: focus management, dismiss and collision-aware positioning. Hosts forms, pickers and info cards, with an exposed --surface so nested controls blend in.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <Popover>
   <PopoverTrigger asChild>

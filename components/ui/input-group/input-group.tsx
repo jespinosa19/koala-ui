@@ -38,15 +38,15 @@ export const inputGroupVariants = tv({
   variants: {
     size: {
       sm: {
-        root: "h-8 rounded-md text-sm",
+        root: "h-control-sm rounded-md text-sm",
         addon: "gap-1 px-2.5 text-xs [&_svg:not([class*='size-'])]:size-[15px]",
       },
       md: {
-        root: "h-9 rounded-[calc(var(--radius)*0.875)] text-sm",
+        root: "h-control-md rounded-[calc(var(--radius)*0.875)] text-sm",
         addon: "gap-1.5 px-3 text-sm",
       },
       lg: {
-        root: "h-10 rounded-lg text-sm pointer-coarse:text-base",
+        root: "h-control-lg rounded-lg text-sm pointer-coarse:text-base",
         addon: "gap-1.5 px-3.5 text-sm [&_svg:not([class*='size-'])]:size-[18px]",
       },
     },

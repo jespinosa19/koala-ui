@@ -37,8 +37,8 @@ const numberStepperVariants = tv({
       left: { rail: "border-r" },
     },
     layout: {
-      stacked: { rail: "flex-col" },
-      inline: {},
+      stacked: { rail: "flex-col pointer-coarse:w-20 pointer-coarse:flex-row-reverse" },
+      inline: { rail: "pointer-coarse:w-10" },
     },
     static: { true: { button: "active:scale-100" }, false: { button: "" } },
   },

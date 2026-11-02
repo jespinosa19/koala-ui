@@ -4,6 +4,8 @@
 
 A numeric input with steppers, a scrub-to-change label, keyboard stepping and Intl formatting. It is an Input underneath, so it sizes, focuses and joins an InputGroup like any other field.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <Field>
   <NumberField defaultValue={1250} min={0} step={50}

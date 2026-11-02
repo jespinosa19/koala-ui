@@ -4,6 +4,8 @@
 
 The File, Edit, View row of a desktop-style app. One tab stop, arrow keys across the menus, and once one is open the next opens on hover. The menus are Dropdown Menu's panels, so both read as one object.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <Menubar>
   <MenubarMenu>
@@ -378,5 +380,5 @@ No, `MenubarShortcut` only shows the keys. Bind them where your app handles keyb
 - Components and helpers: `Menubar`, `MenubarMenu`, `MenubarTrigger`, `MenubarContent`, `MenubarItem`, `MenubarCheckboxItem`, `MenubarRadioGroup`, `MenubarRadioItem`, `MenubarLabel`, `MenubarSeparator`, `MenubarShortcut`, `MenubarGroup`, `MenubarSub`, `MenubarSubTrigger`, `MenubarSubContent`, `MenubarPortal`, `menubarVariants`
 - Types: `MenubarProps`, `MenubarContentProps`, `MenubarItemProps`, `MenubarCheckboxItemProps`, `MenubarRadioItemProps`, `MenubarLabelProps`, `MenubarSubTriggerProps`
 - Koala components it installs with it: `dropdown-menu`, `kbd`, `switch`
-- Koala lib helpers it uses: `density`, `hit-area`, `tv`, `utils`
+- Koala lib helpers it uses: `density`, `hit-area`, `phone-submenu`, `tv`, `utils`
 - npm packages: `koala-icons`, `radix-ui`

@@ -4,6 +4,8 @@
 
 A multi-line text field built from slots and Context: pairs with a label and hint, grows to fit its content, and carries an optional character counter in its footer. Each part is a named export.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <div className="flex flex-col gap-1.5">
   <TextareaLabel htmlFor="message">Message</TextareaLabel>

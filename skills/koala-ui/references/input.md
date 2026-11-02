@@ -4,6 +4,8 @@
 
 A compound text field with a label, optional hint, prefix icons, suffix icons, prefix labels, and interactive suffix buttons. Built with slots and Context - each part is a named export.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <div className="flex flex-col gap-1.5">
   <InputLabel htmlFor="search">Search</InputLabel>
@@ -480,5 +482,5 @@ The frame takes a 6% brand tint over whatever surface it sits on, and the text k
 - Components and helpers: `InputRoot`, `InputField`, `InputFloatingField`, `InputLabel`, `InputHint`, `InputPrefix`, `InputSuffix`, `InputPrefixLabel`, `InputSuffixButton`, `PasswordInput`, `inputVariants`, `NumberInput`, `PhoneInput`, `CountrySelect`, `COUNTRIES`, `COUNTRY_BY_ISO2`
 - Types: `InputRootProps`, `InputFieldProps`, `InputFloatingFieldProps`, `InputLabelProps`, `InputHintProps`, `InputPrefixProps`, `InputSuffixProps`, `InputPrefixLabelProps`, `InputSuffixButtonProps`, `PasswordInputProps`, `NumberInputProps`, `PhoneInputProps`, `PhoneChangePayload`, `CountrySelectProps`, `Country`
 - Koala components it installs with it: `label`
-- Koala lib helpers it uses: `create-context`, `density`, `field-context`, `labels`, `tv`, `utils`
+- Koala lib helpers it uses: `create-context`, `density`, `field-context`, `hit-area`, `labels`, `tv`, `utils`
 - npm packages: `country-flag-icons`, `koala-icons`, `radix-ui`

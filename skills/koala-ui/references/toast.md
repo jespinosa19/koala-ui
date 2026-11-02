@@ -4,6 +4,8 @@
 
 Transient status messages at the bottom of the screen. Toasts stack with a compressed fan when several are queued, hover to expand, follow a promise from loading to its result, and update in place.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 import { toast } from "@/components/ui/toast"
 

@@ -29,9 +29,9 @@ export const nativeSelectVariants = tv({
   },
   variants: {
     size: {
-      sm: { field: "h-8 rounded-md pl-3 pr-8", icon: "right-2.75" },
-      md: { field: "h-9 rounded-[calc(var(--radius)*0.875)] pr-9", icon: "right-3.25" },
-      lg: { field: "h-10 rounded-lg pl-4 pr-10", icon: "right-3.75" },
+      sm: { field: "h-control-sm rounded-md pl-3 pr-8", icon: "right-2.75" },
+      md: { field: "h-control-md rounded-[calc(var(--radius)*0.875)] pr-9", icon: "right-3.25" },
+      lg: { field: "h-control-lg rounded-lg pl-4 pr-10", icon: "right-3.75" },
     },
   },
   defaultVariants: { size: "md" },

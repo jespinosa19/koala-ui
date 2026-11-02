@@ -4,6 +4,8 @@
 
 A progress indicator for sequential flows: onboarding, checkout and multi-step dialogs. Each step derives its state from a single active value, and the connecting line fills as you advance.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 const [step, setStep] = React.useState(1)
 
@@ -139,6 +141,33 @@ Orientation is set on the root. `horizontal` lays steps in a row with a flexible
 </Stepper>
 ```
 
+## Bars
+
+`variant="bars"` draws each step as a progress bar with its label underneath, the way a long run reports its phases. Done and current steps fill in ink, the current label is the brightest, and the next bar fills on the same curve as the panels. No separators are needed. It sits well above a dialog title.
+
+```tsx
+<Stepper variant="bars" defaultValue={2} className="w-full max-w-md">
+  <StepperItem step={1}>
+    <StepperTrigger>
+      <StepperIndicator />
+      <StepperTitle>Details</StepperTitle>
+    </StepperTrigger>
+  </StepperItem>
+  <StepperItem step={2}>
+    <StepperTrigger>
+      <StepperIndicator />
+      <StepperTitle>Members</StepperTitle>
+    </StepperTrigger>
+  </StepperItem>
+  <StepperItem step={3}>
+    <StepperTrigger>
+      <StepperIndicator />
+      <StepperTitle>Review</StepperTitle>
+    </StepperTrigger>
+  </StepperItem>
+</Stepper>
+```
+
 ## With descriptions
 
 Pair each `StepperTitle` with a `StepperDescription` in a vertical stack. Vertical orientation gives the supporting copy room to breathe.
@@ -231,7 +260,7 @@ The root: holds the active step and renders a `<div role="group">`. Forwards all
 | value | number | - | The active step (1-based), controlled. Pair with `onValueChange`. |
 | defaultValue | number | 1 | The initial active step (1-based), uncontrolled. |
 | onValueChange | (step: number) => void | - | Fires when a `StepperTrigger` selects its step. |
-| variant | "outline" \| "solid" | "outline" | `outline` is a ringed circle with a halo on the active step; `solid` fills every state flat. |
+| variant | "outline" \| "solid" \| "bars" | "outline" | `outline` is a ringed circle with a halo on the active step; `solid` fills every state flat; `bars` draws each step as a progress bar over its label, horizontal only. |
 | orientation | "horizontal" \| "vertical" | "horizontal" | A row with the label under each circle, or a column with the label beside it. |
 | density | "comfortable" \| "compact" | - | Indicator size (28 or 24px) and text tier. Inherits the nearest `DensityProvider` when omitted. |
 

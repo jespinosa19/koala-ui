@@ -4,6 +4,8 @@
 
 A dropdown for picking one value from a list. Built on Radix Select for keyboard navigation, type-ahead and a11y, with interruptible enter and exit. Its sibling SelectSearch adds a search field.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 import { Pizza, Hamburger, Fish, Egg, Coffee } from "koala-icons"
 <Select>
@@ -573,5 +575,5 @@ Koala's convention is a leading Koala icon per option: wrap the icon and label i
 - Components and helpers: `Select`, `SelectGroup`, `SelectValue`, `SelectTrigger`, `SelectContent`, `SelectItem`, `SelectLabel`, `SelectSeparator`, `selectVariants`, `SelectSearch`, `SelectSearchTrigger`, `SelectSearchValue`, `SelectSearchContent`, `SelectSearchInput`, `SelectSearchList`, `SelectSearchItem`, `SelectSearchGroup`, `SelectSearchLabel`, `SelectSearchSeparator`, `SelectSearchEmpty`
 - Types: `SelectTriggerProps`, `SelectContentProps`, `SelectItemProps`, `SelectSearchProps`, `SelectSearchTriggerProps`, `SelectSearchValueProps`, `SelectSearchContentProps`, `SelectSearchInputProps`, `SelectSearchListProps`, `SelectSearchItemProps`, `SelectSearchFilter`
 - Koala components it installs with it: `input`, `tooltip`
-- Koala lib helpers it uses: `create-context`, `density`, `field-context`, `tv`, `utils`
+- Koala lib helpers it uses: `create-context`, `density`, `field-context`, `hit-area`, `tv`, `utils`
 - npm packages: `koala-icons`, `radix-ui`

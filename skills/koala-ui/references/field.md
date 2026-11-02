@@ -4,6 +4,8 @@
 
 The wrapper that turns any control into a labelled form field. Field generates the id, htmlFor and aria-describedby wiring for you and cascades error and disabled state to the control inside.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <Field>
   <FieldLabel>Email</FieldLabel>

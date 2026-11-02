@@ -242,6 +242,7 @@ export function PhoneInput({
             data-slot="phone-input-popover"
             align="start"
             sideOffset={8}
+            collisionPadding={8}
             className={slots.content()}
             onOpenAutoFocus={(e) => {
               e.preventDefault()

@@ -13,15 +13,15 @@ import { hitY } from "@/lib/hit-area"
 
 export const tabsVariants = tv({
   slots: {
-    root: "flex flex-col gap-2 data-[orientation=vertical]:flex-row data-[orientation=vertical]:gap-8",
+    root: "flex flex-col gap-2 data-[orientation=vertical]:gap-3 sm:data-[orientation=vertical]:flex-row sm:data-[orientation=vertical]:gap-8",
     list: [
       "relative inline-flex max-w-full self-start items-center overflow-x-auto overflow-y-hidden scroll-fade-x",
-      "data-[orientation=vertical]:flex-col data-[orientation=vertical]:items-stretch",
-      "data-[orientation=vertical]:overflow-visible data-[orientation=vertical]:[mask-image:none]",
+      "sm:data-[orientation=vertical]:flex-col sm:data-[orientation=vertical]:items-stretch",
+      "sm:data-[orientation=vertical]:overflow-visible sm:data-[orientation=vertical]:[mask-image:none]",
     ],
     trigger: [
       "group/tabs-trigger relative z-10 inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 whitespace-nowrap",
-      "data-[orientation=vertical]:justify-start data-[orientation=vertical]:whitespace-normal data-[orientation=vertical]:text-left",
+      "data-[orientation=vertical]:justify-start sm:data-[orientation=vertical]:whitespace-normal data-[orientation=vertical]:text-left",
       "h-7 px-2.5 text-sm",
       "font-medium tracking-tight text-muted-foreground hover:text-foreground",
       "transition-colors duration-fast ease-out",
@@ -39,6 +39,9 @@ export const tabsVariants = tv({
     panels: "[&>[data-slot=tabs-content]]:ring-inset [&>[data-slot=tabs-content]]:ring-offset-0",
     indicator: "pointer-events-none absolute left-0 top-0 z-0",
     triggerIcon: "inline-grid shrink-0 place-items-center",
+    label: "inline-flex",
+    labelInner: "",
+    labelText: "",
     triggerIconIdle: [
       "col-start-1 row-start-1 flex transition-[opacity,scale,filter] duration-base ease-out motion-reduce:transition-none",
       "group-data-[state=active]/tabs-trigger:scale-25 group-data-[state=active]/tabs-trigger:opacity-0 group-data-[state=active]/tabs-trigger:blur-xs",
@@ -60,7 +63,7 @@ export const tabsVariants = tv({
         ],
       },
       segmented: {
-        list: "inline-grid grid-flow-col auto-cols-fr gap-0 bg-muted dark:bg-foreground/6 data-[orientation=vertical]:grid-flow-row",
+        list: "inline-grid grid-flow-col auto-cols-[minmax(max-content,1fr)] gap-0 bg-muted dark:bg-foreground/6 data-[orientation=vertical]:grid-flow-row",
         trigger: [
           "h-7 px-3",
           "after:absolute after:inset-y-1.5 after:left-0 after:w-px after:bg-border after:content-['']",
@@ -94,6 +97,27 @@ export const tabsVariants = tv({
       comfortable: {},
       compact: {},
     },
+    collapse: {
+      true: {
+        trigger: [
+          "gap-0 rounded-sm after:hidden",
+          "transition-[background-color,box-shadow,color] duration-base ease-out",
+          "data-[state=active]:bg-background data-[state=active]:shadow-sm data-[state=active]:ring-1 data-[state=active]:ring-border",
+          "dark:data-[state=active]:bg-foreground/10",
+        ],
+        list: "inline-flex",
+        indicator: "hidden",
+        label: [
+          "grid grid-cols-[1fr] opacity-100",
+          "transition-[grid-template-columns,opacity] duration-base ease-drawer",
+          "group-data-[state=inactive]/tabs-trigger:grid-cols-[0fr] group-data-[state=inactive]/tabs-trigger:opacity-0",
+          "motion-reduce:transition-[opacity] motion-reduce:duration-fast motion-reduce:ease-linear",
+        ],
+        labelInner: "min-w-0 overflow-hidden",
+        labelText: "block ps-1.5",
+      },
+      false: {},
+    },
   },
   compoundVariants: [
     { variant: "pill", density: "comfortable", className: { list: "rounded-pill p-1", trigger: "rounded-pill", indicator: "rounded-pill" } },
@@ -120,8 +144,8 @@ export const tabsVariants = tv({
       variant: "pill",
       className: {
         list: "data-[orientation=vertical]:gap-0.5 data-[orientation=vertical]:rounded-none data-[orientation=vertical]:bg-transparent data-[orientation=vertical]:p-0 dark:data-[orientation=vertical]:bg-transparent",
-        trigger: "data-[orientation=vertical]:h-auto data-[orientation=vertical]:rounded-lg data-[orientation=vertical]:px-3 data-[orientation=vertical]:py-2.5",
-        indicator: "[[data-orientation=vertical]_&]:rounded-lg",
+        trigger: "data-[orientation=vertical]:h-auto data-[orientation=vertical]:min-h-control-sm data-[orientation=vertical]:rounded-md data-[orientation=vertical]:px-2.5 data-[orientation=vertical]:py-1.5",
+        indicator: "[[data-orientation=vertical]_&]:rounded-md",
       },
     },
   ],
@@ -198,9 +222,9 @@ export interface TabsProps
   extends React.ComponentProps<typeof TabsPrimitive.Root>,
     VariantProps<typeof tabsVariants> {}
 
-export function Tabs({ className, variant: variantProp, density, orientation, ...props }: TabsProps) {
+export function Tabs({ className, variant: variantProp, density, collapse, orientation, ...props }: TabsProps) {
   const variant = variantProp ?? (orientation === "vertical" ? "pill" : "segmented")
-  const slots = tabsVariants({ variant, density: useDensity(density) })
+  const slots = tabsVariants({ variant, density: useDensity(density), collapse })
   return (
     <TabsProvider slots={slots} variant={variant}>
       <TabsPrimitive.Root
@@ -277,6 +301,17 @@ export function TabsTriggerIcon({
       </span>
       <span data-slot="tabs-trigger-icon-active" className={slots.triggerIconActive()}>
         {activeIcon}
+      </span>
+    </span>
+  )
+}
+
+export function TabsTriggerLabel({ className, children, ...props }: React.ComponentProps<"span">) {
+  const { slots } = useTabsContext("TabsTriggerLabel")
+  return (
+    <span data-slot="tabs-trigger-label" className={slots.label({ className })} {...props}>
+      <span className={slots.labelInner()}>
+        <span className={slots.labelText()}>{children}</span>
       </span>
     </span>
   )

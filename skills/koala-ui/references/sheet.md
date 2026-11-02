@@ -4,6 +4,8 @@
 
 A panel that stays open over a full-bleed canvas like a map: a floating card on a wide container, a bottom sheet with three detents on a narrow one. Unlike Drawer, it never blocks the page.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <div className="relative h-[30rem]">
   {/* your map, board or canvas */}
