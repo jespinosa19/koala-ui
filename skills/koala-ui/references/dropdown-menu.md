@@ -4,6 +4,8 @@
 
 A contextual menu that opens on trigger. Built on Radix DropdownMenu for keyboard navigation, focus management, and a11y; animated with interruptible enter/exit transitions.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <DropdownMenu>
   <DropdownMenuTrigger asChild>
@@ -480,7 +482,7 @@ The menu surface, Radix `DropdownMenu.Content` portalled to the body (or to the 
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| submenu | "nested" \| "navigation" | "nested" | How every `DropdownMenuSub` opens: a flyout beside its row, or a layer that replaces the rows in place behind a Back row. |
+| submenu | "nested" \| "navigation" | "nested", "navigation" on phones | How every `DropdownMenuSub` opens: a flyout beside its row, or a layer that replaces the rows in place behind a Back row. |
 | side | "top" \| "right" \| "bottom" \| "left" | "bottom" | Preferred side of the trigger; the menu flips when there is no room. |
 | align | "start" \| "center" \| "end" | "center" | Alignment against the trigger. |
 | sideOffset | number | 6 | Gap in pixels between the trigger and the menu. |

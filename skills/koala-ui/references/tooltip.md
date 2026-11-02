@@ -4,6 +4,8 @@
 
 A small hint shown on hover or focus. Positioning, hover-intent and a11y come from Tippy.js in headless mode - Koala owns the bubble's markup, styled with our tokens. The one component built on a non-Radix primitive.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <Button iconOnly aria-label="Save changes">
   <FloppyDisk />

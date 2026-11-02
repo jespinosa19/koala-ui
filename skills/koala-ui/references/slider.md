@@ -4,6 +4,8 @@
 
 Pick a value or a range by dragging along a track. Built on Radix Slider: thumbs auto-render from the value array, with an optional live bubble and full keyboard support. SliderInput pairs a rail with a number.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <Slider
   defaultValue={[60]}
@@ -12,6 +14,14 @@ Pick a value or a range by dragging along a track. Built on Radix Slider: thumbs
   formatValue={(v) => `${v}%`}
   aria-label="Brightness"
 />
+
+<Field>
+  <FieldLabel>Opacity</FieldLabel>
+  <SliderInput defaultValue={80}>
+    <SliderInputValue suffix="%" />
+    <SliderInputTrack />
+  </SliderInput>
+</Field>
 ```
 
 ## Installation
@@ -70,7 +80,7 @@ Three sizes scale the track thickness and thumb diameter together: `sm`, `md` (d
 
 ## Variants
 
-The `variant` tints the range, thumb border, and tooltip as one. `default` uses the form-control primary; `brand` picks up the active accent; and the status fills carry domain meaning.
+The `variant` tints the range and the thumb border as one. `default` uses the form-control primary; `brand` picks up the active accent; and the status fills carry domain meaning.
 
 ```tsx
 <Slider variant="default" defaultValue={[55]} />
@@ -96,10 +106,39 @@ Pass two values and you get a two-thumb range, no extra component. Each thumb dr
 
 ## Steps
 
-`step` snaps the thumb to discrete stops. Pair it with `min`/`max` and your own labels for a scaled control.
+`step` snaps the thumb to discrete stops. Pair it with `min`/`max` and `marks` for a labelled scale.
 
 ```tsx
-<Slider defaultValue={[3]} min={0} max={5} step={1} tooltip aria-label="Rating" />
+<Slider
+  defaultValue={[3]}
+  min={0}
+  max={5}
+  step={1}
+  tooltip
+  marks={[0, 1, 2, 3, 4, 5].map((value) => ({ value, label: value }))}
+  aria-label="Rating"
+/>
+```
+
+## Marks
+
+`marks` draws stops on the track and labels the ones that carry one. While dragging, the thumb is pulled onto a mark when it passes close, so the round numbers are easy to hit; the arrow keys move freely. To see where values actually fall, use [Histogram Slider](https://www.koalaui.com/docs/components/histogram-slider.md).
+
+```tsx
+<Slider
+  defaultValue={[50]}
+  variant="brand"
+  tooltip
+  formatValue={(v) => `${v}%`}
+  marks={[
+    { value: 0, label: "0%" },
+    { value: 25, label: "25%" },
+    { value: 50, label: "50%" },
+    { value: 75, label: "75%" },
+    { value: 100, label: "100%" },
+  ]}
+  aria-label="Discount"
+/>
 ```
 
 ## Vertical
@@ -390,9 +429,10 @@ A Radix Slider with its track, range and one thumb per value, all rendered for y
 | min | number | 0 | The lowest value. |
 | max | number | 100 | The highest value. |
 | size | "sm" \| "md" \| "lg" | "md" | Track thickness and thumb size (a 16, 20 or 24px thumb). |
-| variant | "default" \| "brand" \| "success" \| "warning" \| "destructive" | "default" | Tints the range, the thumb border and the tooltip together. The focus ring stays brand. |
+| variant | "default" \| "brand" \| "success" \| "warning" \| "destructive" | "default" | Tints the range and the thumb border. The value bubble stays neutral, and the focus ring stays brand. |
 | shape | "round" \| "square" | "round" | `square` squares the rail and gives the thumb a fader-cap look. |
-| tooltip | boolean | false | Shows a value bubble above each thumb on hover, focus and drag. |
+| tooltip | boolean | false | Shows a value bubble above each thumb on hover, keyboard focus and drag. It stays inside the track at both ends. |
+| marks | Array<number \| { value: number; label?: React.ReactNode }> | - | Stops drawn on the track, with optional labels below it. A dragged thumb is pulled onto a mark within 1.5% of the scale; the keyboard is never pulled. |
 | formatValue | (value: number) => React.ReactNode | - | Formats the tooltip value. Defaults to the raw number. |
 | static | boolean | false | Kept for compatibility; controls no longer scale on press. |
 
@@ -400,6 +440,9 @@ A Radix Slider with its track, range and one thumb per value, all rendered for y
 | --- | --- |
 | data-orientation | `horizontal` or `vertical`, on the root, track, range and thumbs. A vertical slider needs a height (`h-48` by default). |
 | data-disabled | Present on the root, track, range and thumbs when disabled. |
+| data-dragging | On the root while a pointer holds the slider. |
+| data-gliding | On the root while the thumb travels to a clicked point of the track. |
+| data-filled | On each `slider-mark` and `slider-mark-label` inside the range. |
 
 ### SliderInput
 
@@ -512,5 +555,6 @@ Radix Slider provides full arrow-key support and ARIA, so always pass an `aria-l
 
 - Components and helpers: `Slider`, `sliderVariants`, `SliderInput`, `SliderInputValue`, `SliderInputTrack`, `SliderInputLabel`, `sliderInputVariants`
 - Types: `SliderProps`, `SliderInputProps`, `SliderInputValueProps`, `SliderInputTrackProps`, `SliderInputLabelProps`
-- Koala lib helpers it uses: `create-context`, `density`, `field-context`, `hit-area`, `tv`, `utils`
+- Koala components it installs with it: `progress`
+- Koala lib helpers it uses: `create-context`, `density`, `field-context`, `hit-area`, `motion`, `tv`, `utils`
 - npm packages: `radix-ui`

@@ -4,6 +4,8 @@
 
 A panel that slides in from any edge of the screen. Built on Radix Dialog for focus trap, scroll lock and a11y; tuned for mobile with full-bleed side panels, a bottom-sheet grab handle, and swipe-to-dismiss.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <Drawer>
   <DrawerTrigger asChild>

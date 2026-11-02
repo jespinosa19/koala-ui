@@ -26,7 +26,7 @@
       "utils",
       "tv"
     ],
-    "hash": "da7614ba2449f559"
+    "hash": "f53c344cbc4e04f6"
   },
   "items": [
     {
@@ -43,13 +43,14 @@
       "libDependencies": [
         "create-context",
         "density",
+        "disclosure",
         "tv"
       ],
       "files": [
         "components/ui/accordion/accordion.tsx",
         "components/ui/accordion/index.ts"
       ],
-      "hash": "431923a41d265d6f"
+      "hash": "44f2199af3340a39"
     },
     {
       "name": "activity-feed",
@@ -92,6 +93,7 @@
       "libDependencies": [
         "create-context",
         "density",
+        "motion",
         "tv",
         "utils"
       ],
@@ -99,7 +101,7 @@
         "components/ui/agent-monitor/agent-monitor.tsx",
         "components/ui/agent-monitor/index.ts"
       ],
-      "hash": "481cce5ca6cfe9b3"
+      "hash": "c81512990d6afb80"
     },
     {
       "name": "ai-panel",
@@ -123,7 +125,7 @@
         "components/ui/ai-panel/ai-panel.tsx",
         "components/ui/ai-panel/index.ts"
       ],
-      "hash": "e74c865653403ba7"
+      "hash": "539d72f5ab6c3d97"
     },
     {
       "name": "alert",
@@ -199,7 +201,68 @@
         "components/ui/announcement/announcement.tsx",
         "components/ui/announcement/index.ts"
       ],
-      "hash": "5617d3e6f2bc32c9"
+      "hash": "b8e146d7818a02d8"
+    },
+    {
+      "name": "approval",
+      "type": "component",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Approval",
+      "dependencies": {
+        "koala-icons": "^0.1.1"
+      },
+      "registryDependencies": [
+        "badge",
+        "button",
+        "code-snippet",
+        "description-list",
+        "textarea",
+        "toggle-group"
+      ],
+      "libDependencies": [
+        "create-context",
+        "density",
+        "motion",
+        "tv",
+        "utils"
+      ],
+      "files": [
+        "components/ui/approval/approval.tsx",
+        "components/ui/approval/index.ts"
+      ],
+      "hash": "f75776768ff2164a"
+    },
+    {
+      "name": "artifact",
+      "type": "component",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Artifact",
+      "dependencies": {
+        "koala-icons": "^0.1.1"
+      },
+      "registryDependencies": [
+        "badge",
+        "button",
+        "code-snippet",
+        "dropdown-menu",
+        "empty-state",
+        "skeleton",
+        "spinner",
+        "tabs"
+      ],
+      "libDependencies": [
+        "create-context",
+        "density",
+        "tv",
+        "utils"
+      ],
+      "files": [
+        "components/ui/artifact/artifact.tsx",
+        "components/ui/artifact/index.ts"
+      ],
+      "hash": "27d192815d2c4a1b"
     },
     {
       "name": "attachments",
@@ -223,7 +286,7 @@
         "components/ui/attachments/attachments.tsx",
         "components/ui/attachments/index.ts"
       ],
-      "hash": "bc39eaff574d0139"
+      "hash": "8473000477f11454"
     },
     {
       "name": "auth-community",
@@ -451,7 +514,7 @@
         "components/ui/badge/color.ts",
         "components/ui/badge/index.ts"
       ],
-      "hash": "d0c2d5487ac122e9"
+      "hash": "5028e27576faa908"
     },
     {
       "name": "badge-group",
@@ -465,13 +528,15 @@
         "tooltip"
       ],
       "libDependencies": [
-        "tv"
+        "hit-area",
+        "tv",
+        "utils"
       ],
       "files": [
         "components/ui/badge-group/badge-group.tsx",
         "components/ui/badge-group/index.ts"
       ],
-      "hash": "12de5dee189b5c88"
+      "hash": "0beb9f40f671b35f"
     },
     {
       "name": "banner",
@@ -909,7 +974,7 @@
         "components/ui/button/social-logos.tsx",
         "components/ui/button/split-button.tsx"
       ],
-      "hash": "14673b567d73422b"
+      "hash": "40b2e43cd7a890e0"
     },
     {
       "name": "button-group",
@@ -954,7 +1019,7 @@
         "components/ui/card/card.tsx",
         "components/ui/card/index.ts"
       ],
-      "hash": "f4b0fc55ae1346fa"
+      "hash": "c3894a70a653688d"
     },
     {
       "name": "careers-section-1",
@@ -1246,7 +1311,7 @@
         "components/ui/carousel/carousel.tsx",
         "components/ui/carousel/index.ts"
       ],
-      "hash": "2003dd4e9a85487f"
+      "hash": "ca79e0d67054197c"
     },
     {
       "name": "changelog-section-1",
@@ -1444,6 +1509,37 @@
       "hash": "71b5047cfd8e6adc"
     },
     {
+      "name": "changes",
+      "type": "component",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Changes",
+      "dependencies": {
+        "koala-icons": "^0.1.1",
+        "radix-ui": "^1.5.0"
+      },
+      "registryDependencies": [
+        "animated-number",
+        "badge",
+        "button",
+        "code-snippet",
+        "file-icon",
+        "kbd",
+        "spinner"
+      ],
+      "libDependencies": [
+        "create-context",
+        "density",
+        "disclosure",
+        "tv"
+      ],
+      "files": [
+        "components/ui/changes/changes.tsx",
+        "components/ui/changes/index.ts"
+      ],
+      "hash": "66292094d0cf9a49"
+    },
+    {
       "name": "channel-chat",
       "type": "component",
       "tier": "pro",
@@ -1484,6 +1580,7 @@
       },
       "registryDependencies": [
         "popover",
+        "progress",
         "skeleton",
         "tooltip"
       ],
@@ -1504,7 +1601,7 @@
         "components/ui/chart/radial-meter.tsx",
         "components/ui/chart/tracker.tsx"
       ],
-      "hash": "230f5ccbd0b9237c"
+      "hash": "225020e507210398"
     },
     {
       "name": "chat",
@@ -1519,10 +1616,13 @@
       "registryDependencies": [
         "animated-label",
         "avatar",
-        "button"
+        "button",
+        "chip",
+        "textarea"
       ],
       "libDependencies": [
         "create-context",
+        "disclosure",
         "markdown-host",
         "motion",
         "scroll-fade",
@@ -1533,7 +1633,7 @@
         "components/ui/chat/chat.tsx",
         "components/ui/chat/index.ts"
       ],
-      "hash": "0f8b54a373dce3a6"
+      "hash": "471cd9c409e86ecc"
     },
     {
       "name": "chat-messenger",
@@ -1728,6 +1828,30 @@
       "hash": "1c6a584e80c8d0c4"
     },
     {
+      "name": "checkpoint",
+      "type": "component",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Checkpoint",
+      "dependencies": {
+        "koala-icons": "^0.1.1"
+      },
+      "registryDependencies": [
+        "button",
+        "popover"
+      ],
+      "libDependencies": [
+        "create-context",
+        "tv",
+        "utils"
+      ],
+      "files": [
+        "components/ui/checkpoint/checkpoint.tsx",
+        "components/ui/checkpoint/index.ts"
+      ],
+      "hash": "4f738217bd600536"
+    },
+    {
       "name": "chip",
       "type": "component",
       "tier": "pro",
@@ -1770,7 +1894,7 @@
         "components/ui/citation/citation.tsx",
         "components/ui/citation/index.ts"
       ],
-      "hash": "6421a863719c8c56"
+      "hash": "81600eefe4770a3f"
     },
     {
       "name": "code-highlighter",
@@ -1823,6 +1947,7 @@
       "registryDependencies": [],
       "libDependencies": [
         "create-context",
+        "disclosure",
         "hit-area",
         "tv",
         "utils"
@@ -1831,7 +1956,7 @@
         "components/ui/collapsible/collapsible.tsx",
         "components/ui/collapsible/index.ts"
       ],
-      "hash": "7b56487e857186b7"
+      "hash": "69da02115640c8bf"
     },
     {
       "name": "color-picker",
@@ -1852,6 +1977,7 @@
       "libDependencies": [
         "create-context",
         "density",
+        "hit-area",
         "tv",
         "utils"
       ],
@@ -1870,7 +1996,7 @@
         "components/ui/color-picker/rails.tsx",
         "components/ui/color-picker/swatches.tsx"
       ],
-      "hash": "184fa2e818f755ea"
+      "hash": "a786d2882a1ab037"
     },
     {
       "name": "combobox",
@@ -1923,7 +2049,7 @@
         "components/ui/command/command.tsx",
         "components/ui/command/index.ts"
       ],
-      "hash": "9c38f5ca46c89e0d"
+      "hash": "6da33fecc776157f"
     },
     {
       "name": "compare-slider",
@@ -2078,6 +2204,7 @@
       ],
       "libDependencies": [
         "density",
+        "phone-submenu",
         "tv",
         "utils"
       ],
@@ -2085,7 +2212,7 @@
         "components/ui/context-menu/context-menu.tsx",
         "components/ui/context-menu/index.ts"
       ],
-      "hash": "18facf1c11b2af10"
+      "hash": "12b1526632e2fedb"
     },
     {
       "name": "context-meter",
@@ -2134,7 +2261,7 @@
         "components/ui/cookie-consent/cookie-consent.tsx",
         "components/ui/cookie-consent/index.ts"
       ],
-      "hash": "1eeb2454beaf8c10"
+      "hash": "5df6941ecc15377d"
     },
     {
       "name": "course-craft",
@@ -2269,7 +2396,6 @@
         "empty-state",
         "flag",
         "layout",
-        "link",
         "placeholder-logos",
         "sidebar",
         "stat",
@@ -2286,7 +2412,7 @@
         "components/pages/crm-profile/crm-profile.tsx",
         "components/pages/crm-profile/index.ts"
       ],
-      "hash": "f7a0b3237a2f21a9"
+      "hash": "3abd409d51e85487"
     },
     {
       "name": "cta-section-1",
@@ -2933,7 +3059,7 @@
         "components/pages/dashboard-analytics/dashboard-analytics.tsx",
         "components/pages/dashboard-analytics/index.ts"
       ],
-      "hash": "a6f5afeb37fb88a1"
+      "hash": "d9ee3d90533da446"
     },
     {
       "name": "dashboard-appointments",
@@ -2978,7 +3104,7 @@
         "components/pages/dashboard-appointments/dashboard-appointments.tsx",
         "components/pages/dashboard-appointments/index.ts"
       ],
-      "hash": "fb78d9ef4d96ec33"
+      "hash": "0f67fcdaedca3303"
     },
     {
       "name": "dashboard-cameras",
@@ -3067,7 +3193,7 @@
         "components/pages/dashboard-company/dashboard-company.tsx",
         "components/pages/dashboard-company/index.ts"
       ],
-      "hash": "3b813b80da6ceaba"
+      "hash": "f63e27a86b50763c"
     },
     {
       "name": "dashboard-employees",
@@ -3098,7 +3224,7 @@
         "components/pages/dashboard-employees/dashboard-employees.tsx",
         "components/pages/dashboard-employees/index.ts"
       ],
-      "hash": "0814968454cc8a32"
+      "hash": "81aa404c2905fb7c"
     },
     {
       "name": "dashboard-finance",
@@ -3134,7 +3260,7 @@
         "components/pages/dashboard-finance/dashboard-finance.tsx",
         "components/pages/dashboard-finance/index.ts"
       ],
-      "hash": "fd82819c3be22fe8"
+      "hash": "6fc376fc7d553cd7"
     },
     {
       "name": "dashboard-forecast",
@@ -3174,7 +3300,7 @@
         "components/pages/dashboard-forecast/dashboard-forecast.tsx",
         "components/pages/dashboard-forecast/index.ts"
       ],
-      "hash": "4e41732f1664ebed"
+      "hash": "5cd3588cd7e2029c"
     },
     {
       "name": "dashboard-fuel",
@@ -3213,7 +3339,7 @@
         "components/pages/dashboard-fuel/dashboard-fuel.tsx",
         "components/pages/dashboard-fuel/index.ts"
       ],
-      "hash": "cfbf214047fe9377"
+      "hash": "0aaf2434afe6e25a"
     },
     {
       "name": "dashboard-legal",
@@ -3294,7 +3420,7 @@
         "components/pages/dashboard-metrics/dashboard-metrics.tsx",
         "components/pages/dashboard-metrics/index.ts"
       ],
-      "hash": "35a1747cf9a3dc76"
+      "hash": "584dea04206ecc7f"
     },
     {
       "name": "dashboard-overview",
@@ -3328,7 +3454,7 @@
         "components/pages/dashboard-overview/dashboard-overview.tsx",
         "components/pages/dashboard-overview/index.ts"
       ],
-      "hash": "e7f0df69d1516dda"
+      "hash": "13eb8db1ada72eb0"
     },
     {
       "name": "dashboard-performance",
@@ -3370,7 +3496,7 @@
         "components/pages/dashboard-performance/dashboard-performance.tsx",
         "components/pages/dashboard-performance/index.ts"
       ],
-      "hash": "e716eeb615eda993"
+      "hash": "b4dade686ebd7c07"
     },
     {
       "name": "dashboard-reports",
@@ -3406,7 +3532,7 @@
         "components/pages/dashboard-reports/dashboard-reports.tsx",
         "components/pages/dashboard-reports/index.ts"
       ],
-      "hash": "82dad5158224553a"
+      "hash": "6c89723e5373d5b7"
     },
     {
       "name": "dashboard-sales",
@@ -3444,7 +3570,7 @@
         "components/pages/dashboard-sales/dashboard-sales.tsx",
         "components/pages/dashboard-sales/index.ts"
       ],
-      "hash": "5038a9eb42974908"
+      "hash": "67eec77a869cbc60"
     },
     {
       "name": "dashboard-team",
@@ -3535,7 +3661,7 @@
         "components/ui/data-table/data-table.tsx",
         "components/ui/data-table/index.ts"
       ],
-      "hash": "ab2527723465c2fd"
+      "hash": "9bd3f0c7db117bdf"
     },
     {
       "name": "date-picker",
@@ -3553,6 +3679,7 @@
       "libDependencies": [
         "density",
         "field-context",
+        "hit-area",
         "tv",
         "utils"
       ],
@@ -3560,7 +3687,7 @@
         "components/ui/date-picker/date-picker.tsx",
         "components/ui/date-picker/index.ts"
       ],
-      "hash": "7f51be6278917b13"
+      "hash": "feede18aac08189d"
     },
     {
       "name": "density",
@@ -3595,7 +3722,35 @@
         "components/ui/description-list/description-list.tsx",
         "components/ui/description-list/index.ts"
       ],
-      "hash": "183fdebc8d98b7e5"
+      "hash": "05fc465f914854ff"
+    },
+    {
+      "name": "design-config",
+      "type": "lib",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "design-config",
+      "dependencies": {},
+      "registryDependencies": [],
+      "libDependencies": [],
+      "files": [
+        "lib/design-config.ts"
+      ],
+      "hash": "349e8dfbf953d5cc"
+    },
+    {
+      "name": "design-config.json",
+      "type": "lib",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "design-config.json",
+      "dependencies": {},
+      "registryDependencies": [],
+      "libDependencies": [],
+      "files": [
+        "lib/design-config.json"
+      ],
+      "hash": "d0e1464b9e0d41f2"
     },
     {
       "name": "dialog",
@@ -3622,7 +3777,23 @@
         "components/ui/dialog/dialog.tsx",
         "components/ui/dialog/index.ts"
       ],
-      "hash": "8d6db5c5ea8518ad"
+      "hash": "91f32636499ee7c7"
+    },
+    {
+      "name": "disclosure",
+      "type": "lib",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "disclosure",
+      "dependencies": {},
+      "registryDependencies": [],
+      "libDependencies": [
+        "motion"
+      ],
+      "files": [
+        "lib/disclosure.ts"
+      ],
+      "hash": "0b5c82f2e0448bc8"
     },
     {
       "name": "dispatch",
@@ -3855,7 +4026,7 @@
         "components/ui/dock/dock.tsx",
         "components/ui/dock/index.ts"
       ],
-      "hash": "351980562a0ca87c"
+      "hash": "2625713174f930d5"
     },
     {
       "name": "dot",
@@ -3914,7 +4085,7 @@
         "components/ui/drawer/drawer.tsx",
         "components/ui/drawer/index.ts"
       ],
-      "hash": "4665af7f8f0ffde9"
+      "hash": "8e16820ed9b82872"
     },
     {
       "name": "dropdown-menu",
@@ -3940,7 +4111,7 @@
         "components/ui/dropdown-menu/dropdown-menu.tsx",
         "components/ui/dropdown-menu/index.ts"
       ],
-      "hash": "b873a9ac4bde820c"
+      "hash": "6c237a17de445f33"
     },
     {
       "name": "elevate-b2b",
@@ -4016,7 +4187,7 @@
         "components/ui/emoji-picker/emoji-picker.tsx",
         "components/ui/emoji-picker/index.ts"
       ],
-      "hash": "f9fb7e785c5f5f38"
+      "hash": "b99f88e1acfa6eb3"
     },
     {
       "name": "empty-state",
@@ -4060,7 +4231,7 @@
         "components/ui/event-calendar/event-calendar.tsx",
         "components/ui/event-calendar/index.ts"
       ],
-      "hash": "955de16aa223e2a4"
+      "hash": "4c1328edba5e7882"
     },
     {
       "name": "expandable-search",
@@ -4209,7 +4380,7 @@
         "components/sections/faq-section-2/faq-section-2.tsx",
         "components/sections/faq-section-2/index.ts"
       ],
-      "hash": "7f7c5a6f69231886"
+      "hash": "2145ef2e72fa1571"
     },
     {
       "name": "faq-section-3",
@@ -4441,7 +4612,7 @@
         "components/sections/feature-section-1/index.ts",
         "components/sections/feature-section-1/tiles.tsx"
       ],
-      "hash": "d3bab452dc91da16"
+      "hash": "b815c05529c9127d"
     },
     {
       "name": "feature-section-10",
@@ -4512,7 +4683,6 @@
         "bento",
         "breadcrumb",
         "button",
-        "button-group",
         "card",
         "chart",
         "code-snippet",
@@ -4524,6 +4694,7 @@
         "tabs"
       ],
       "libDependencies": [
+        "density",
         "fit-box",
         "in-view",
         "koala-mark",
@@ -4531,15 +4702,19 @@
         "utils"
       ],
       "files": [
+        "components/sections/feature-section-12/customize-shot.tsx",
+        "components/sections/feature-section-12/docs-shot.tsx",
         "components/sections/feature-section-12/feature-section-12.tsx",
         "components/sections/feature-section-12/index.ts",
         "components/sections/feature-section-12/measured-stat.tsx",
+        "components/sections/feature-section-12/motion.ts",
+        "components/sections/feature-section-12/reveal.tsx",
         "components/sections/feature-section-12/screens.tsx",
-        "components/sections/feature-section-12/theme-switch.tsx",
+        "components/sections/feature-section-12/theme-strips.tsx",
         "components/sections/feature-section-12/themes.ts",
         "components/sections/feature-section-12/variable-fan.tsx"
       ],
-      "hash": "f682666207fc6bce"
+      "hash": "14877eb8cb401a61"
     },
     {
       "name": "feature-section-13",
@@ -4611,7 +4786,7 @@
         "components/sections/feature-section-15/feature-section-15.tsx",
         "components/sections/feature-section-15/index.ts"
       ],
-      "hash": "4e75c273e8315180"
+      "hash": "0d12641e0ea566c0"
     },
     {
       "name": "feature-section-16",
@@ -4658,7 +4833,7 @@
         "components/sections/feature-section-17/feature-section-17.tsx",
         "components/sections/feature-section-17/index.ts"
       ],
-      "hash": "392c3c2ffce6d856"
+      "hash": "276b4b709248c5a2"
     },
     {
       "name": "feature-section-18",
@@ -4725,7 +4900,7 @@
         "components/sections/feature-section-2/index.ts",
         "components/sections/feature-section-2/video-dialog.tsx"
       ],
-      "hash": "7eb06133b3194458"
+      "hash": "c248e89be3fb8978"
     },
     {
       "name": "feature-section-20",
@@ -4958,6 +5133,7 @@
       },
       "registryDependencies": [
         "badge",
+        "card",
         "section",
         "section-header"
       ],
@@ -4969,7 +5145,7 @@
         "components/sections/feature-section-5/feature-section-5.tsx",
         "components/sections/feature-section-5/index.ts"
       ],
-      "hash": "8ba25f3e5c7736c2"
+      "hash": "d8b5a7869d0263ef"
     },
     {
       "name": "feature-section-6",
@@ -5095,7 +5271,7 @@
         "components/sections/feature-section-9/index.ts",
         "components/sections/feature-section-9/screens.tsx"
       ],
-      "hash": "17f6046b8ac12d2b"
+      "hash": "331c519302e53687"
     },
     {
       "name": "feedback-form",
@@ -5123,7 +5299,7 @@
         "components/ui/feedback-form/feedback-form.tsx",
         "components/ui/feedback-form/index.ts"
       ],
-      "hash": "b5e3c1b162a4f06f"
+      "hash": "10bcb032e7dcf63d"
     },
     {
       "name": "field",
@@ -5201,7 +5377,7 @@
         "components/ui/file-card/file-card.tsx",
         "components/ui/file-card/index.ts"
       ],
-      "hash": "bc34fdcd2e090289"
+      "hash": "f43870e0b35b4071"
     },
     {
       "name": "file-icon",
@@ -5257,7 +5433,7 @@
         "components/ui/file-preview/index.ts",
         "components/ui/file-preview/shared.ts"
       ],
-      "hash": "0cc06e34e6390f0f"
+      "hash": "ffee7452b3f948ed"
     },
     {
       "name": "file-upload",
@@ -5339,7 +5515,7 @@
         "components/ui/floating-window/floating-window.tsx",
         "components/ui/floating-window/index.ts"
       ],
-      "hash": "8b28e1be385e287a"
+      "hash": "f02144f48f910ad2"
     },
     {
       "name": "focus-return",
@@ -5375,7 +5551,7 @@
         "components/ui/footer/footer.tsx",
         "components/ui/footer/index.ts"
       ],
-      "hash": "4a0903a872234cdd"
+      "hash": "ce466e40759e7950"
     },
     {
       "name": "footer-section-1",
@@ -5412,7 +5588,7 @@
         "components/sections/footer-section-2/footer-section-2.tsx",
         "components/sections/footer-section-2/index.ts"
       ],
-      "hash": "4f1b916f8ce659b3"
+      "hash": "cb8e0f102e21abf1"
     },
     {
       "name": "footer-section-3",
@@ -5454,7 +5630,7 @@
         "components/sections/footer-section-4/footer-section-4.tsx",
         "components/sections/footer-section-4/index.ts"
       ],
-      "hash": "e490012dc40565a7"
+      "hash": "b116790dc3b7336f"
     },
     {
       "name": "footer-section-5",
@@ -5475,7 +5651,7 @@
         "components/sections/footer-section-5/footer-section-5.tsx",
         "components/sections/footer-section-5/index.ts"
       ],
-      "hash": "fc65d3415f99b9f9"
+      "hash": "18c5e84962b2334c"
     },
     {
       "name": "form",
@@ -5498,7 +5674,7 @@
         "components/ui/form/form.tsx",
         "components/ui/form/index.ts"
       ],
-      "hash": "21415959bf9867a8"
+      "hash": "8955b87f96875fcb"
     },
     {
       "name": "form-context",
@@ -5528,6 +5704,7 @@
       "libDependencies": [
         "create-context",
         "density",
+        "disclosure",
         "tv"
       ],
       "files": [
@@ -5535,7 +5712,7 @@
         "components/ui/gallery/gallery.tsx",
         "components/ui/gallery/index.ts"
       ],
-      "hash": "08957393173612c2"
+      "hash": "2aaec746824f8a87"
     },
     {
       "name": "gallery-section-1",
@@ -5720,7 +5897,7 @@
         "components/sections/gallery-section-8/gallery-section-8.tsx",
         "components/sections/gallery-section-8/index.ts"
       ],
-      "hash": "c4d7c84e92459e9b"
+      "hash": "4f12ec97ab5378db"
     },
     {
       "name": "gallery-section-9",
@@ -5802,7 +5979,7 @@
         "components/ui/handheld-device/handheld-device.tsx",
         "components/ui/handheld-device/index.ts"
       ],
-      "hash": "527f590ef1e588c5"
+      "hash": "b897aaec625cd746"
     },
     {
       "name": "header-section-1",
@@ -6561,6 +6738,25 @@
       "hash": "6089b24d7aa34686"
     },
     {
+      "name": "histogram-slider",
+      "type": "component",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Histogram Slider",
+      "dependencies": {},
+      "registryDependencies": [
+        "slider"
+      ],
+      "libDependencies": [
+        "tv"
+      ],
+      "files": [
+        "components/ui/histogram-slider/histogram-slider.tsx",
+        "components/ui/histogram-slider/index.ts"
+      ],
+      "hash": "56d538057d468d19"
+    },
+    {
       "name": "hit-area",
       "type": "lib",
       "tier": "free",
@@ -6607,14 +6803,16 @@
         "popover"
       ],
       "libDependencies": [
+        "create-context",
         "density",
-        "tv"
+        "tv",
+        "utils"
       ],
       "files": [
         "components/ui/hover-card/hover-card.tsx",
         "components/ui/hover-card/index.ts"
       ],
-      "hash": "8b823e9f911eee4c"
+      "hash": "80594c8426edcf73"
     },
     {
       "name": "in-view",
@@ -6674,6 +6872,7 @@
         "create-context",
         "density",
         "field-context",
+        "hit-area",
         "labels",
         "tv",
         "utils"
@@ -6686,7 +6885,7 @@
         "components/ui/input/number-input.tsx",
         "components/ui/input/phone-input.tsx"
       ],
-      "hash": "fe2e6c75cd9e93ab"
+      "hash": "ef4e729358defed4"
     },
     {
       "name": "input-group",
@@ -6706,7 +6905,7 @@
         "components/ui/input-group/index.ts",
         "components/ui/input-group/input-group.tsx"
       ],
-      "hash": "e512c443f4343c55"
+      "hash": "6c13238a8a1e05e4"
     },
     {
       "name": "island",
@@ -6882,7 +7081,8 @@
         "button",
         "drawer",
         "navbar",
-        "sidebar"
+        "sidebar",
+        "tooltip"
       ],
       "libDependencies": [
         "create-context",
@@ -6894,7 +7094,7 @@
         "components/ui/layout/index.ts",
         "components/ui/layout/layout.tsx"
       ],
-      "hash": "d548d90deda57f8b"
+      "hash": "3287cc69a6b83b48"
     },
     {
       "name": "legal-section-1",
@@ -6955,7 +7155,7 @@
         "components/ui/lightbox/index.ts",
         "components/ui/lightbox/lightbox.tsx"
       ],
-      "hash": "3199ebf6839642e9"
+      "hash": "12b2f1d4ba3c60d5"
     },
     {
       "name": "link",
@@ -7165,6 +7365,7 @@
       "libDependencies": [
         "density",
         "hit-area",
+        "phone-submenu",
         "tv",
         "utils"
       ],
@@ -7172,7 +7373,7 @@
         "components/ui/menubar/index.ts",
         "components/ui/menubar/menubar.tsx"
       ],
-      "hash": "45b2eb8d14d997e8"
+      "hash": "5bad1f0e717e4675"
     },
     {
       "name": "meter",
@@ -7266,6 +7467,7 @@
       "libDependencies": [
         "create-context",
         "density",
+        "hit-area",
         "tv",
         "utils"
       ],
@@ -7273,7 +7475,7 @@
         "components/ui/multi-select/index.ts",
         "components/ui/multi-select/multi-select.tsx"
       ],
-      "hash": "7fce05a09c1cfaac"
+      "hash": "238efc0c1e6f09ba"
     },
     {
       "name": "native-select",
@@ -7294,7 +7496,7 @@
         "components/ui/native-select/index.ts",
         "components/ui/native-select/native-select.tsx"
       ],
-      "hash": "92bd2ae06be15195"
+      "hash": "a614287c0820afd5"
     },
     {
       "name": "navbar",
@@ -7321,7 +7523,7 @@
         "components/ui/navbar/index.ts",
         "components/ui/navbar/navbar.tsx"
       ],
-      "hash": "4808dc0c705f6e77"
+      "hash": "5bb3182a12f31c89"
     },
     {
       "name": "navbar-section-1",
@@ -7413,7 +7615,7 @@
         "components/sections/navbar-section-4/index.ts",
         "components/sections/navbar-section-4/navbar-section-4.tsx"
       ],
-      "hash": "b00e7b9051b57205"
+      "hash": "32c139b8c5b4e155"
     },
     {
       "name": "navbar-section-5",
@@ -7437,7 +7639,7 @@
         "components/sections/navbar-section-5/index.ts",
         "components/sections/navbar-section-5/navbar-section-5.tsx"
       ],
-      "hash": "7e0551261d587ea0"
+      "hash": "31775f433f1e2b02"
     },
     {
       "name": "navbar-section-6",
@@ -7462,7 +7664,7 @@
         "components/sections/navbar-section-6/index.ts",
         "components/sections/navbar-section-6/navbar-section-6.tsx"
       ],
-      "hash": "94f4b48ae490e0d7"
+      "hash": "0068436a49d91a47"
     },
     {
       "name": "navigation-menu",
@@ -7484,7 +7686,7 @@
         "components/ui/navigation-menu/index.ts",
         "components/ui/navigation-menu/navigation-menu.tsx"
       ],
-      "hash": "5da9ae61c423a3fc"
+      "hash": "1cd4bd746fba3afd"
     },
     {
       "name": "newsletter-form",
@@ -7749,6 +7951,20 @@
       "hash": "b49831361343fa7f"
     },
     {
+      "name": "phone-submenu",
+      "type": "lib",
+      "tier": "free",
+      "repo": "jespinosa19/koala-ui",
+      "title": "phone-submenu",
+      "dependencies": {},
+      "registryDependencies": [],
+      "libDependencies": [],
+      "files": [
+        "lib/phone-submenu.ts"
+      ],
+      "hash": "c7c6f939e458c490"
+    },
+    {
       "name": "pipeline-b2b",
       "type": "template",
       "tier": "pro",
@@ -7840,6 +8056,7 @@
       "libDependencies": [
         "create-context",
         "density",
+        "disclosure",
         "hit-area",
         "tv",
         "utils"
@@ -7848,7 +8065,7 @@
         "components/ui/plan/index.ts",
         "components/ui/plan/plan.tsx"
       ],
-      "hash": "13cf250259d4ac54"
+      "hash": "cd3f6aec983c41ee"
     },
     {
       "name": "popover",
@@ -7868,7 +8085,7 @@
         "components/ui/popover/index.ts",
         "components/ui/popover/popover.tsx"
       ],
-      "hash": "56dff093b19cc1d4"
+      "hash": "fffdb78b7bf6bd92"
     },
     {
       "name": "portfolio-section-1",
@@ -8305,7 +8522,7 @@
         "components/ui/promo-card/index.ts",
         "components/ui/promo-card/promo-card.tsx"
       ],
-      "hash": "a27be020b21fb58a"
+      "hash": "b730c75ad0c1bd5d"
     },
     {
       "name": "prompt-input",
@@ -8334,7 +8551,7 @@
         "components/ui/prompt-input/index.ts",
         "components/ui/prompt-input/prompt-input.tsx"
       ],
-      "hash": "222fb5974be4c5fe"
+      "hash": "f053b8d73db59539"
     },
     {
       "name": "prose",
@@ -8392,6 +8609,36 @@
         "components/ui/qr-code/qr-encoder.ts"
       ],
       "hash": "1c5635831ae3db07"
+    },
+    {
+      "name": "question",
+      "type": "component",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Question",
+      "dependencies": {
+        "koala-icons": "^0.1.1",
+        "radix-ui": "^1.5.0"
+      },
+      "registryDependencies": [
+        "animated-number",
+        "badge",
+        "button",
+        "checkbox",
+        "input",
+        "kbd"
+      ],
+      "libDependencies": [
+        "create-context",
+        "density",
+        "tv",
+        "utils"
+      ],
+      "files": [
+        "components/ui/question/index.ts",
+        "components/ui/question/question.tsx"
+      ],
+      "hash": "75389409491ee791"
     },
     {
       "name": "radio-group",
@@ -8478,6 +8725,39 @@
       "hash": "cf9c02d5bd1345ec"
     },
     {
+      "name": "research",
+      "type": "component",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Research",
+      "dependencies": {
+        "koala-icons": "^0.1.1",
+        "radix-ui": "^1.5.0"
+      },
+      "registryDependencies": [
+        "animated-number",
+        "badge",
+        "plan",
+        "popover",
+        "progress",
+        "spinner"
+      ],
+      "libDependencies": [
+        "create-context",
+        "density",
+        "disclosure",
+        "hit-area",
+        "motion",
+        "tv",
+        "utils"
+      ],
+      "files": [
+        "components/ui/research/index.ts",
+        "components/ui/research/research.tsx"
+      ],
+      "hash": "02fb5fd752997b18"
+    },
+    {
       "name": "resizable",
       "type": "component",
       "tier": "pro",
@@ -8495,7 +8775,7 @@
         "components/ui/resizable/index.ts",
         "components/ui/resizable/resizable.tsx"
       ],
-      "hash": "a706bf1665a98fef"
+      "hash": "eef1ef6958f342ac"
     },
     {
       "name": "rich-text-editor",
@@ -8531,7 +8811,7 @@
         "components/ui/rich-text-editor/index.ts",
         "components/ui/rich-text-editor/rich-text-editor.tsx"
       ],
-      "hash": "d154f3db600a6ce7"
+      "hash": "183d0c642f6cfb08"
     },
     {
       "name": "scroll-area",
@@ -8606,7 +8886,7 @@
         "components/ui/section-header/index.ts",
         "components/ui/section-header/section-header.tsx"
       ],
-      "hash": "460ddd8d10f3037e"
+      "hash": "47bcd102964d47b1"
     },
     {
       "name": "select",
@@ -8626,6 +8906,7 @@
         "create-context",
         "density",
         "field-context",
+        "hit-area",
         "tv",
         "utils"
       ],
@@ -8634,7 +8915,7 @@
         "components/ui/select/select-search.tsx",
         "components/ui/select/select.tsx"
       ],
-      "hash": "9c6e1f1bf6e837a0"
+      "hash": "98ba7864aa1d76e2"
     },
     {
       "name": "settings-form",
@@ -8755,6 +9036,7 @@
       "libDependencies": [
         "create-context",
         "density",
+        "disclosure",
         "motion",
         "tv"
       ],
@@ -8766,7 +9048,7 @@
         "components/ui/sidebar/sidebar-tree.tsx",
         "components/ui/sidebar/sidebar.tsx"
       ],
-      "hash": "5995598f4a1c03d7"
+      "hash": "d1f5cb2baf234a44"
     },
     {
       "name": "signature",
@@ -8837,12 +9119,15 @@
       "dependencies": {
         "radix-ui": "^1.5.0"
       },
-      "registryDependencies": [],
+      "registryDependencies": [
+        "progress"
+      ],
       "libDependencies": [
         "create-context",
         "density",
         "field-context",
         "hit-area",
+        "motion",
         "tv",
         "utils"
       ],
@@ -8851,7 +9136,7 @@
         "components/ui/slider/slider-input.tsx",
         "components/ui/slider/slider.tsx"
       ],
-      "hash": "05073c9c5c25911b"
+      "hash": "53f8f12cf2671034"
     },
     {
       "name": "social-proof-section-1",
@@ -9021,7 +9306,7 @@
         "components/ui/stat/index.ts",
         "components/ui/stat/stat.tsx"
       ],
-      "hash": "2f1a3a2edbee70ab"
+      "hash": "6d68826a27257d99"
     },
     {
       "name": "stats-section-1",
@@ -9504,7 +9789,7 @@
         "components/ui/stepper/index.ts",
         "components/ui/stepper/stepper.tsx"
       ],
-      "hash": "4a68a82b2487d573"
+      "hash": "cdeee750dc7f818b"
     },
     {
       "name": "suggestions",
@@ -9526,7 +9811,7 @@
         "components/ui/suggestions/index.ts",
         "components/ui/suggestions/suggestions.tsx"
       ],
-      "hash": "dffe6b4943736185"
+      "hash": "10f221544fba1ec8"
     },
     {
       "name": "survey",
@@ -9640,7 +9925,7 @@
         "components/ui/table/index.ts",
         "components/ui/table/table.tsx"
       ],
-      "hash": "cf59099fc82221ad"
+      "hash": "de0bdec33d0fc796"
     },
     {
       "name": "table-of-contents",
@@ -9661,7 +9946,7 @@
         "components/ui/table-of-contents/index.ts",
         "components/ui/table-of-contents/table-of-contents.tsx"
       ],
-      "hash": "6fbf29217cfe65c1"
+      "hash": "d1800989f4ca4094"
     },
     {
       "name": "tablet-frame",
@@ -9679,7 +9964,7 @@
         "components/ui/tablet-frame/index.ts",
         "components/ui/tablet-frame/tablet-frame.tsx"
       ],
-      "hash": "90f536bc17aa82e9"
+      "hash": "b50102cb6cc07305"
     },
     {
       "name": "tabs",
@@ -9704,7 +9989,7 @@
         "components/ui/tabs/index.ts",
         "components/ui/tabs/tabs.tsx"
       ],
-      "hash": "022469041b136a92"
+      "hash": "0143655cae8793e1"
     },
     {
       "name": "tasks-board",
@@ -10011,7 +10296,7 @@
         "components/ui/terminal/index.ts",
         "components/ui/terminal/terminal.tsx"
       ],
-      "hash": "3384e042c6e87280"
+      "hash": "10c66ed012a97167"
     },
     {
       "name": "testimonials",
@@ -10196,7 +10481,7 @@
         "components/ui/toast/toaster.tsx",
         "components/ui/toast/use-toast.ts"
       ],
-      "hash": "5da5a5bf417a38a2"
+      "hash": "703cf68f7dc94183"
     },
     {
       "name": "toggle",
@@ -10217,7 +10502,7 @@
         "components/ui/toggle/index.ts",
         "components/ui/toggle/toggle.tsx"
       ],
-      "hash": "c3284d38cf8d7223"
+      "hash": "9453597ed73b1779"
     },
     {
       "name": "toggle-group",
@@ -10243,7 +10528,7 @@
         "components/ui/toggle-group/index.ts",
         "components/ui/toggle-group/toggle-group.tsx"
       ],
-      "hash": "35727198d0f9f5df"
+      "hash": "1afd035893ae4bab"
     },
     {
       "name": "tool",
@@ -10263,6 +10548,7 @@
       "libDependencies": [
         "create-context",
         "density",
+        "disclosure",
         "hit-area",
         "tv",
         "utils"
@@ -10271,7 +10557,7 @@
         "components/ui/tool/index.ts",
         "components/ui/tool/tool.tsx"
       ],
-      "hash": "7bdc789bd901d8f3"
+      "hash": "78488c61fd415e30"
     },
     {
       "name": "toolbar",
@@ -10300,7 +10586,7 @@
         "components/ui/toolbar/toolbar-overflow.tsx",
         "components/ui/toolbar/toolbar.tsx"
       ],
-      "hash": "b93c9a2977078ed3"
+      "hash": "e7f64b3a9619ffa2"
     },
     {
       "name": "tooltip",
@@ -10334,13 +10620,14 @@
       "registryDependencies": [],
       "libDependencies": [
         "create-context",
+        "disclosure",
         "tv"
       ],
       "files": [
         "components/ui/tree/index.ts",
         "components/ui/tree/tree.tsx"
       ],
-      "hash": "114005859e6c55a1"
+      "hash": "8e1c1263c96d7beb"
     },
     {
       "name": "tv",
@@ -10445,7 +10732,7 @@
       "files": [
         "lib/utils.ts"
       ],
-      "hash": "8057692d853ed87d"
+      "hash": "4aed363c9ddc6a7b"
     },
     {
       "name": "video-player",
@@ -10469,7 +10756,7 @@
         "components/ui/video-player/index.ts",
         "components/ui/video-player/video-player.tsx"
       ],
-      "hash": "c1df28399a643035"
+      "hash": "033ad4fcea942799"
     },
     {
       "name": "vital-360",
@@ -10558,7 +10845,7 @@
         "components/ui/voice-roster/index.ts",
         "components/ui/voice-roster/voice-roster.tsx"
       ],
-      "hash": "29b1e90685fd325e"
+      "hash": "e265878377272ae2"
     },
     {
       "name": "waitlist-form",

@@ -4,6 +4,8 @@
 
 A preview that opens while the pointer rests on a link: the profile behind a mention, the page behind a link, the commit behind a hash. Popover's surface, grown out of the link it previews.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <HoverCard>
   <HoverCardTrigger asChild>
@@ -147,7 +149,7 @@ The card waits `openDelay` (700ms) before it opens, so a pointer passing over a 
 
 ## Accessibility
 
-A hover card is for sighted pointer users. It opens when the trigger has focus, but the card never takes focus and it never opens on touch, so everything in it must also be reachable where the link goes. Make the trigger a real link to that place, and never put the only way to do something inside the card. When the content has to be operated, use a Popover, which opens on a click and moves focus into itself.
+A hover card is for sighted pointer users. It opens when the trigger has focus, but the card never takes focus and on touch it only opens on a long press, so everything in it must also be reachable where the link goes. Make the trigger a real link to that place, and never put the only way to do something inside the card. When the content has to be operated, use a Popover, which opens on a click and moves focus into itself.
 
 ## API reference
 
@@ -225,11 +227,11 @@ A Tooltip names a control in a few words and never takes the pointer. A Hover Ca
 
 ### Can the card hold links and buttons?
 
-Links, yes: the pointer can move into the card and follow one. Keep buttons to shortcuts for things that also exist on the linked page, since keyboard and touch users never see the card.
+Links, yes: the pointer can move into the card and follow one. Keep buttons to shortcuts for things that also exist on the linked page, since a keyboard or touch user may never open the card.
 
 ### Why doesn't it open on my phone?
 
-There is no hover on touch, and a tap has to follow the link. That is why the trigger must be a real link that goes where the card was previewing.
+There is no hover on touch, and a tap has to follow the link, so a long press opens the card instead and a tap outside closes it. Few people find a long press, which is why the trigger must still be a real link that goes where the card was previewing.
 
 ### Why is the trigger an anchor?
 
@@ -246,5 +248,5 @@ It is built on Popover's recipe, extended rather than copied, so a change to the
 - Components and helpers: `HoverCard`, `HoverCardTrigger`, `HoverCardContent`, `HoverCardTitle`, `HoverCardDescription`, `HoverCardMedia`, `HoverCardFooter`, `hoverCardVariants`
 - Types: `HoverCardContentProps`
 - Koala components it installs with it: `popover`
-- Koala lib helpers it uses: `density`, `tv`
+- Koala lib helpers it uses: `create-context`, `density`, `tv`, `utils`
 - npm packages: `radix-ui`

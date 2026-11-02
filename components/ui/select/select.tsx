@@ -5,6 +5,7 @@ import { Select as SelectPrimitive } from "radix-ui"
 import { CaretDown, Check } from "koala-icons"
 
 import { tv, type VariantProps } from "@/lib/tv"
+import { hitCoarse, hitY } from "@/lib/hit-area"
 import { cn } from "@/lib/utils"
 import { useDensity, useControlSize } from "@/lib/density"
 import { useFieldContext } from "@/lib/field-context"
@@ -14,7 +15,7 @@ export const selectVariants = tv({
   slots: {
     trigger: [
       "group flex w-full cursor-pointer items-center justify-between gap-2 border border-input",
-      "bg-[var(--surface,var(--background))] px-3.5 text-sm pointer-coarse:text-base font-medium text-left text-foreground shadow-xs",
+      "bg-[var(--surface,var(--background))] px-3.5 text-sm pointer-coarse:text-base font-normal text-left text-foreground shadow-xs",
       "transition-[border-color,box-shadow,scale] duration-fast ease-out",
       "hover:border-ring/50",
       "outline-none focus-visible:border-brand focus-visible:brand-ring",
@@ -42,7 +43,7 @@ export const selectVariants = tv({
     ],
     item: [
       "relative flex w-full cursor-pointer select-none items-center gap-2 pl-2 pr-7",
-      "text-sm font-medium outline-none",
+      "text-sm font-normal outline-none",
       "transition-colors duration-fast ease-out",
       "focus:bg-accent focus:text-accent-foreground",
       "data-[active=true]:bg-accent data-[active=true]:text-accent-foreground",
@@ -68,9 +69,9 @@ export const selectVariants = tv({
   },
   variants: {
     size: {
-      sm: { trigger: "h-8 rounded-md px-3" },
-      md: { trigger: "h-9 rounded-[calc(var(--radius)*0.875)]" },
-      lg: { trigger: "h-10 rounded-lg px-4 text-sm pointer-coarse:text-base" },
+      sm: { trigger: `h-control-sm rounded-md px-3 ${hitY}` },
+      md: { trigger: `h-control-md rounded-[calc(var(--radius)*0.875)] ${hitCoarse}` },
+      lg: { trigger: `h-control-lg rounded-lg px-4 text-sm pointer-coarse:text-base ${hitCoarse}` },
     },
     panel: {
       floating: { trigger: "data-[state=open]:border-brand data-[state=open]:brand-ring" },
@@ -78,12 +79,12 @@ export const selectVariants = tv({
     },
     density: {
       comfortable: {
-        item: "py-2 rounded-md",
+        item: "min-h-control-md py-1.5 rounded-md",
         label: "py-1.5 text-xs",
         separator: "my-1.5",
       },
       compact: {
-        item: "py-1.5 rounded-md",
+        item: "min-h-control-sm py-1 rounded-md",
         label: "py-1 text-xs",
         separator: "my-1",
       },

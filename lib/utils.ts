@@ -26,9 +26,12 @@ export const twMergeConfig = {
   extend: {
     theme: {
       ease: ["drawer", "spring", "lift", "sine"],
+      spacing: ["control-sm", "control-md", "control-lg", "control-xl"],
+      "font-weight": ["numeral"],
+      tracking: ["figure"],
     },
     classGroups: {
-      "font-family": [{ font: ["heading", isArbitraryFontFamily] }],
+      "font-family": [{ font: ["heading", "figure", isArbitraryFontFamily] }],
       rounded: [{ rounded: ["pill"] }],
       "transition-duration": [{ duration: ["fast", "base", "slow"] }],
       "koala-animation-fill-mode": [{ "fill-mode": ["none", "forwards", "backwards", "both"] }],

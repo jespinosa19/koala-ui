@@ -69,6 +69,25 @@ export const stepperVariants = tv({
           "group-data-[state=completed]/step:border-transparent",
         ],
       },
+      bars: {
+        root: "gap-1.5",
+        trigger: "w-full",
+        indicator: [
+          "h-1 w-full overflow-hidden rounded-full border-0 ring-0",
+          "bg-[color-mix(in_oklab,var(--foreground)_6%,transparent)] [&>*]:hidden",
+          "after:absolute after:inset-0 after:origin-left after:scale-x-0 after:rounded-full after:bg-foreground after:content-['']",
+          "after:transition-transform after:duration-slow after:ease-drawer motion-reduce:after:transition-none",
+          "group-data-[state=active]/step:border-0 group-data-[state=active]/step:ring-0 group-data-[state=active]/step:after:scale-x-100",
+          "group-data-[state=completed]/step:border-0 group-data-[state=completed]/step:bg-[color-mix(in_oklab,var(--foreground)_6%,transparent)] group-data-[state=completed]/step:after:scale-x-100",
+          "group-data-[loading]/step:after:animate-pulse",
+          "group-focus-visible/trigger:outline-offset-4",
+        ],
+        title: [
+          "truncate text-muted-foreground/60",
+          "group-data-[state=completed]/step:text-muted-foreground",
+        ],
+        separator: "hidden",
+      },
     },
     orientation: {
       horizontal: {
@@ -103,6 +122,13 @@ export const stepperVariants = tv({
       },
     },
   },
+  compoundVariants: [
+    {
+      variant: "bars",
+      orientation: "horizontal",
+      class: { item: "items-stretch", trigger: "items-stretch text-left" },
+    },
+  ],
   defaultVariants: {
     variant: "outline",
     orientation: "horizontal",

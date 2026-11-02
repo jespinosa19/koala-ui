@@ -25,7 +25,7 @@ export const dialogVariants = tv({
       "fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4",
     ],
     content: [
-      "relative grid w-full rounded-xl border border-border-soft bg-popover text-popover-foreground shadow-lg",
+      "relative grid w-full rounded-xl border border-border-soft bg-popover text-popover-foreground",
       "[--surface:var(--popover)]",
       "outline-none",
       "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
@@ -60,8 +60,8 @@ export const dialogVariants = tv({
       media: { content: "aspect-video max-w-[min(96vw,calc(92dvh*16/9))] overflow-hidden border-0 bg-black" },
     },
     density: {
-      comfortable: { content: "gap-4 p-5", header: "mb-2 gap-1", title: "leading-6", stepper: "-mx-5 px-5 pb-4", body: "-mx-5 px-5", footer: "mt-4", close: "top-4.5 right-3.5 size-7", icon: "-mb-2 [&_svg]:size-6" },
-      compact: { content: "gap-3 p-4", header: "mb-2 gap-0.5", title: "leading-5", stepper: "-mx-4 px-4 pb-3", body: "-mx-4 px-4", footer: "mt-2", close: "top-3.5 right-3 size-6", icon: "-mb-1 [&_svg]:size-5" },
+      comfortable: { content: "gap-4 p-5 [--dialog-inset:--spacing(5)]", header: "mb-2 gap-1", title: "leading-6", stepper: "-mx-5 px-5 pb-4", body: "-mx-5 px-5", footer: "mt-4", close: "top-4.5 right-3.5 size-7", icon: "-mb-2 [&_svg]:size-6" },
+      compact: { content: "gap-3 p-4 [--dialog-inset:--spacing(4)]", header: "mb-2 gap-0.5", title: "leading-5", stepper: "-mx-4 px-4 pb-3", body: "-mx-4 px-4", footer: "mt-2", close: "top-3.5 right-3 size-6", icon: "-mb-1 [&_svg]:size-5" },
     },
     bordered: {
       true: {},
@@ -71,7 +71,7 @@ export const dialogVariants = tv({
       sheet: {
         positioner: "max-sm:items-end max-sm:p-0",
         content: [
-          "max-sm:max-w-none max-sm:max-h-[92dvh] max-sm:rounded-b-none max-sm:border-x-0 max-sm:border-b-0",
+          "max-sm:max-w-none max-sm:max-h-[92dvh] max-sm:overflow-y-auto max-sm:overscroll-contain max-sm:rounded-b-none max-sm:border-x-0 max-sm:border-b-0",
           "max-sm:data-[state=open]:slide-in-from-bottom max-sm:data-[state=closed]:slide-out-to-bottom",
           "max-sm:data-[state=open]:zoom-in-100 max-sm:data-[state=closed]:zoom-out-100 max-sm:ease-drawer",
         ],
@@ -244,7 +244,8 @@ export interface DialogStepperProps extends StepperProps {
 
 export function DialogStepper({
   className,
-  bordered = true,
+  variant,
+  bordered = variant !== "bars",
   density,
   orientation = "horizontal",
   ...props
@@ -254,9 +255,16 @@ export function DialogStepper({
   return (
     <Stepper
       data-slot="dialog-stepper"
+      variant={variant}
       orientation={orientation}
       density={resolvedDensity}
-      className={slots.stepper({ className: cn(bordered && "border-b border-border", className) })}
+      className={slots.stepper({
+        className: cn(
+          bordered && "border-b border-border",
+          variant === "bars" && (resolvedDensity === "compact" ? "mx-0 px-0 pr-7 pb-2" : "mx-0 px-0 pr-8 pb-3"),
+          className,
+        ),
+      })}
       {...props}
     />
   )

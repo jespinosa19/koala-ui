@@ -5,6 +5,7 @@ import { Popover } from "radix-ui"
 import { CaretDown, Check, MagnifyingGlass } from "koala-icons"
 
 import { tv, type VariantProps } from "@/lib/tv"
+import { hitCoarse, hitY } from "@/lib/hit-area"
 import { cn } from "@/lib/utils"
 import { useControlSize, type Density } from "@/lib/density"
 import { useFieldContext } from "@/lib/field-context"
@@ -74,9 +75,9 @@ const countrySelectVariants = tv({
   },
   variants: {
     size: {
-      sm: { trigger: "h-8 rounded-md px-2.5 text-sm pointer-coarse:text-base" },
-      md: { trigger: "h-9 rounded-[calc(var(--radius)*0.875)] px-3 text-sm pointer-coarse:text-base" },
-      lg: { trigger: "h-10 rounded-lg px-3.5 text-sm pointer-coarse:text-base" },
+      sm: { trigger: `h-control-sm rounded-md px-2.5 text-sm pointer-coarse:text-base ${hitY}` },
+      md: { trigger: `h-control-md rounded-[calc(var(--radius)*0.875)] px-3 text-sm pointer-coarse:text-base ${hitCoarse}` },
+      lg: { trigger: `h-control-lg rounded-lg px-3.5 text-sm pointer-coarse:text-base ${hitCoarse}` },
     },
   },
   defaultVariants: { size: "md" },
@@ -225,6 +226,7 @@ export function CountrySelect({
           data-slot="country-select-content"
           align="start"
           sideOffset={6}
+          collisionPadding={8}
           className={slots.content()}
           onOpenAutoFocus={(e) => {
             e.preventDefault()

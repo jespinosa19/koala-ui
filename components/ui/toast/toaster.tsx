@@ -208,7 +208,7 @@ export function Toaster({
               transition: expanded ? undefined : VIEWPORT_COLLAPSE,
             }}
             className={cn(
-              "fixed bottom-4 left-1/2 -translate-x-1/2 z-[100]",
+              "fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-1/2 -translate-x-1/2 z-[100]",
               "w-[380px] max-w-[calc(100vw-2rem)]",
               "m-0 list-none p-0 outline-none",
               className,

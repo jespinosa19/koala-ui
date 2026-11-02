@@ -4,6 +4,8 @@
 
 A set of related buttons arranged as a visual unit. Supports attached (fused pill) and detached (spaced) layouts, with shared variant, size, and density propagated via context.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <ButtonGroup>
   <ButtonGroupItem>Day</ButtonGroupItem>

@@ -4,6 +4,7 @@ import * as React from "react"
 import { Accordion as AccordionPrimitive } from "radix-ui"
 import { CaretDown, Plus } from "koala-icons"
 
+import "@/lib/disclosure"
 import { createContext } from "@/lib/create-context"
 import { useDensity } from "@/lib/density"
 import { tv, type VariantProps } from "@/lib/tv"

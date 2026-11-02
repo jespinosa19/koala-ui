@@ -4,6 +4,8 @@
 
 A set of mutually exclusive options where exactly one can be selected, built on Radix RadioGroup. Sizes line up pixel-for-pixel with Checkbox, so radios and checkboxes sit flush in the same form.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <RadioGroup defaultValue="Pro" className="w-56">
   {["Starter", "Pro", "Enterprise"].map((plan) => (

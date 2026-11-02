@@ -4,6 +4,8 @@
 
 One region that opens under its trigger: show more, advanced settings, the log behind an error. No chrome of its own, a height tween on the system's motion tokens, and a mark that turns rather than swaps.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 const [open, setOpen] = useState(false)
 
@@ -242,5 +244,5 @@ No. A closed region is removed once its exit animation ends, so it leaves the ta
 
 - Components and helpers: `Collapsible`, `CollapsibleTrigger`, `CollapsibleIcon`, `CollapsibleContent`, `collapsibleVariants`
 - Types: `CollapsibleProps`, `CollapsibleIconProps`
-- Koala lib helpers it uses: `create-context`, `hit-area`, `tv`, `utils`
+- Koala lib helpers it uses: `create-context`, `disclosure`, `hit-area`, `tv`, `utils`
 - npm packages: `koala-icons`, `radix-ui`

@@ -14,7 +14,8 @@ import { SwitchIndicator } from "@/components/ui/switch"
 export const dropdownMenuVariants = tv({
   slots: {
     content: [
-      "z-50 min-w-[8rem] overflow-hidden rounded-lg bg-popover ring-1 ring-inset ring-border [--surface:var(--popover)]",
+      "z-50 min-w-[8rem] overflow-x-hidden overflow-y-auto overscroll-contain rounded-lg bg-popover ring-1 ring-inset ring-border [--surface:var(--popover)]",
+      "max-w-(--radix-dropdown-menu-content-available-width) max-h-(--radix-dropdown-menu-content-available-height)",
       "text-popover-foreground shadow-lg",
       "transition-[opacity,translate] duration-base ease-out motion-reduce:transition-none",
       "starting:opacity-0",
@@ -25,7 +26,7 @@ export const dropdownMenuVariants = tv({
       "data-[side=left]:data-[state=closed]:translate-x-2 data-[side=right]:data-[state=closed]:-translate-x-2",
     ],
     item: [
-      "relative flex cursor-pointer select-none items-center gap-2 text-sm font-medium outline-none",
+      "relative flex cursor-pointer select-none items-center gap-2 text-sm font-normal outline-none",
       "transition-colors duration-fast ease-out",
       "focus:bg-accent focus:text-accent-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
@@ -35,21 +36,21 @@ export const dropdownMenuVariants = tv({
     itemText: "flex min-w-0 flex-col gap-0.5",
     itemDescription: "text-sm font-normal text-pretty text-muted-foreground",
     checkboxItem: [
-      "relative flex cursor-pointer select-none items-center gap-2 text-sm font-medium outline-none",
+      "relative flex cursor-pointer select-none items-center gap-2 text-sm font-normal outline-none",
       "transition-colors duration-fast ease-out",
       "focus:bg-accent focus:text-accent-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
     ],
     radioItem: [
-      "relative flex cursor-pointer select-none items-center gap-2 text-sm font-medium outline-none",
+      "relative flex cursor-pointer select-none items-center gap-2 text-sm font-normal outline-none",
       "transition-colors duration-fast ease-out",
       "focus:bg-accent focus:text-accent-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
     ],
     subTrigger: [
-      "group flex cursor-pointer select-none items-center gap-2 text-sm font-medium outline-none",
+      "group flex cursor-pointer select-none items-center gap-2 text-sm font-normal outline-none",
       "transition-colors duration-fast ease-out",
       "focus:bg-accent focus:text-accent-foreground",
       "data-[state=open]:bg-accent data-[state=open]:text-accent-foreground",
@@ -78,20 +79,20 @@ export const dropdownMenuVariants = tv({
     density: {
       comfortable: {
         content: "p-1",
-        item: "px-2 py-2 rounded-md",
-        checkboxItem: "px-2 pr-8 py-2 rounded-md",
-        radioItem: "px-2 pr-8 py-2 rounded-md",
-        subTrigger: "px-2 py-2 rounded-md",
+        item: "px-2 min-h-control-md py-1.5 rounded-md",
+        checkboxItem: "px-2 pr-8 min-h-control-md py-1.5 rounded-md",
+        radioItem: "px-2 pr-8 min-h-control-md py-1.5 rounded-md",
+        subTrigger: "px-2 min-h-control-md py-1.5 rounded-md",
         subContent: "p-1",
         label: "px-2 py-1.5 text-xs",
         separator: "my-1.5",
       },
       compact: {
         content: "p-1",
-        item: "px-2 py-1.5 rounded-md",
-        checkboxItem: "px-2 pr-8 py-1.5 rounded-md",
-        radioItem: "px-2 pr-8 py-1.5 rounded-md",
-        subTrigger: "px-2 py-1.5 rounded-md",
+        item: "px-2 min-h-control-sm py-1 rounded-md",
+        checkboxItem: "px-2 pr-8 min-h-control-sm py-1 rounded-md",
+        radioItem: "px-2 pr-8 min-h-control-sm py-1 rounded-md",
+        subTrigger: "px-2 min-h-control-sm py-1 rounded-md",
         subContent: "p-1",
         label: "px-2 py-1 text-xs",
         separator: "my-1",
@@ -150,12 +151,22 @@ export interface DropdownMenuContentProps
   submenu?: "nested" | "navigation"
 }
 
+const PHONE_QUERY = "(max-width: 30rem)"
+const subscribePhone = (onChange: () => void) => {
+  const query = window.matchMedia?.(PHONE_QUERY)
+  query?.addEventListener("change", onChange)
+  return () => query?.removeEventListener("change", onChange)
+}
+const isPhone = () => window.matchMedia?.(PHONE_QUERY).matches ?? false
+const notPhone = () => false
+
 export function DropdownMenuContent({
   className,
   sideOffset = 6,
+  collisionPadding = 8,
   density,
   container,
-  submenu = "nested",
+  submenu: submenuProp,
   children,
   onKeyDown,
   onPointerDown,
@@ -166,6 +177,8 @@ export function DropdownMenuContent({
   ...props
 }: DropdownMenuContentProps) {
   const slots = dropdownMenuVariants({ density: useDensity(density) })
+  const phone = React.useSyncExternalStore(subscribePhone, isPhone, notPhone)
+  const submenu = submenuProp ?? (phone ? "navigation" : "nested")
   const contentRef = React.useRef<HTMLDivElement | null>(null)
   const setContentRef = React.useCallback(
     (node: HTMLDivElement | null) => {
@@ -195,6 +208,7 @@ export function DropdownMenuContent({
         data-submenu={submenu}
         ref={setContentRef}
         sideOffset={sideOffset}
+        collisionPadding={collisionPadding}
         className={slots.content({ className })}
         onPointerDownOutside={(event) => {
           onPointerDownOutside?.(event)
@@ -593,6 +607,7 @@ export function DropdownMenuSubContent({
   return (
     <DropdownMenuPrimitive.SubContent
       data-slot="dropdown-menu-sub-content"
+      collisionPadding={8}
       className={slots.subContent({ className })}
       {...props}
     >

@@ -19,7 +19,7 @@ export const cardVariants = tv({
     action:
       "col-start-2 row-span-2 row-start-1 self-start justify-self-end @max-sm/card-header:row-auto @max-sm/card-header:mt-2 @max-sm/card-header:justify-self-start",
     content: "",
-    footer: "flex items-center",
+    footer: "flex flex-wrap items-center",
     media: [
       "relative mx-2 aspect-video overflow-hidden rounded-md bg-muted",
       "[&>img]:size-full [&>img]:object-cover [&>video]:size-full [&>video]:object-cover",
@@ -36,7 +36,7 @@ export const cardVariants = tv({
       compact: {
         root: "gap-4 py-4",
         header: "px-4",
-        content: "px-4",
+        content: "px-4 [--card-inset:calc(var(--spacing)*4)]",
         footer: "px-4",
         title: "text-base",
         media: "first:-mt-2 last:-mb-2",
@@ -44,7 +44,7 @@ export const cardVariants = tv({
       comfortable: {
         root: "gap-6 py-6",
         header: "px-6",
-        content: "px-6",
+        content: "px-6 [--card-inset:calc(var(--spacing)*6)]",
         footer: "px-6",
         title: "text-lg",
         media: "first:-mt-4 last:-mb-4",

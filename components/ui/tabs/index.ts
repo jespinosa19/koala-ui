@@ -3,6 +3,7 @@ export {
   TabsList,
   TabsTrigger,
   TabsTriggerIcon,
+  TabsTriggerLabel,
   TabsContent,
   TabsPanels,
   tabsVariants,

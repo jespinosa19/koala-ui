@@ -4,6 +4,8 @@
 
 A stack of disclosure rows built on Radix Accordion: keyboard nav, ARIA, and single or multiple expansion. The variant axis spans a flush minimal list, contained cards, a pill list that hugs its own text, and a board grid.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <Accordion type="single" collapsible defaultValue="what">
   <AccordionItem value="what">
@@ -261,5 +263,5 @@ The open/close tween relies on Radix's `--radix-accordion-content-height` variab
 
 - Components and helpers: `Accordion`, `AccordionItem`, `AccordionTrigger`, `AccordionContent`, `accordionVariants`
 - Types: `AccordionProps`
-- Koala lib helpers it uses: `create-context`, `density`, `tv`
+- Koala lib helpers it uses: `create-context`, `density`, `disclosure`, `tv`
 - npm packages: `koala-icons`, `radix-ui`

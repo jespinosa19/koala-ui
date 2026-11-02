@@ -4,6 +4,8 @@
 
 Joins several controls, a field, a Select, a static affix, a small icon-only action, into one seamless segmented shell. The group owns the border and focus ring; each segment goes chromeless and melts in.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <InputGroup>
   <InputGroupAddon>$</InputGroupAddon>

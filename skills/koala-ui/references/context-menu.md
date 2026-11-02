@@ -4,6 +4,8 @@
 
 The actions menu that opens where you right-click. Built on Radix ContextMenu for keyboard navigation and a11y; it shares its surface and density with Dropdown Menu, but anchors to the cursor.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <ContextMenu>
   <ContextMenuTrigger asChild>
@@ -545,5 +547,5 @@ Rows are `compact` (32px) by default. For 36px rows, set `density="comfortable"`
 - Components and helpers: `ContextMenu`, `ContextMenuTrigger`, `ContextMenuGroup`, `ContextMenuRadioGroup`, `ContextMenuSub`, `ContextMenuPortal`, `ContextMenuContent`, `ContextMenuItem`, `ContextMenuCheckboxItem`, `ContextMenuRadioItem`, `ContextMenuLabel`, `ContextMenuSeparator`, `ContextMenuShortcut`, `ContextMenuSubTrigger`, `ContextMenuSubContent`, `contextMenuVariants`
 - Types: `ContextMenuContentProps`, `ContextMenuItemProps`, `ContextMenuCheckboxItemProps`, `ContextMenuRadioItemProps`, `ContextMenuLabelProps`, `ContextMenuSubTriggerProps`, `ContextMenuSubContentProps`
 - Koala components it installs with it: `kbd`, `switch`
-- Koala lib helpers it uses: `density`, `tv`, `utils`
+- Koala lib helpers it uses: `density`, `phone-submenu`, `tv`, `utils`
 - npm packages: `koala-icons`, `radix-ui`

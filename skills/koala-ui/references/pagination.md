@@ -4,6 +4,8 @@
 
 A toolbar for navigating a paged dataset: current page and total, prev/next, a go-to-page field and a rows-per-page select. Each addon is toggled by a show* boolean, from a bare bar to a full footer.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 function Example() {
   const [page, setPage] = useState(1)

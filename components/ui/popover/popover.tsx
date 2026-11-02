@@ -554,7 +554,13 @@ export function PopoverContent<Payload = unknown>({
         align={align}
         sideOffset={sideOffset}
         collisionPadding={collisionPadding}
-        className={slots.content({ className: ["origin-(--radix-popover-content-transform-origin)", className] })}
+        className={slots.content({
+          className: [
+            "max-w-(--radix-popover-content-available-width) origin-(--radix-popover-content-transform-origin)",
+            !showArrow && "max-h-(--radix-popover-content-available-height) overflow-y-auto overscroll-contain",
+            className,
+          ],
+        })}
         {...props}
         {...managed}
       >

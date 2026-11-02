@@ -4,6 +4,8 @@
 
 Switch between related panels. Built on Radix Tabs for behavior and a11y, styled with one tv slots recipe. The active state is a single indicator measured in JS and slid with transform.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <Tabs defaultValue="overview">
   <TabsList>
@@ -160,6 +162,20 @@ import { House, Pulse as ActivityIcon, GearSix as Gear } from "koala-icons"
 </Tabs>
 ```
 
+## Icon until selected
+
+With `collapse`, a tab at rest shows only its icon and the selected one opens its label beside it. Wrap the text in `TabsTriggerLabel`: the outgoing label closes while the incoming one opens on the same clock, so the chip seems to travel, and a click mid-way turns it around from where it is. The folded label stays in the button, so its name is still read out.
+
+```tsx
+import { Code, Eye } from "koala-icons"
+<Tabs defaultValue="preview" collapse>
+  <TabsList>
+    <TabsTrigger value="preview"><Eye /><TabsTriggerLabel>Preview</TabsTriggerLabel></TabsTrigger>
+    <TabsTrigger value="code"><Code /><TabsTriggerLabel>Code</TabsTriggerLabel></TabsTrigger>
+  </TabsList>
+</Tabs>
+```
+
 ## Selected icon
 
 `TabsTriggerIcon` lets the glyph mark the selection: the tab's own icon at rest, a filled check once it is the chosen one. Both stay mounted and cross-fade (opacity, scale and blur) on the trigger's state, so a quick switch back reverses mid-way instead of restarting. The check is the label's ink, not brand. Pass `activeIcon` for another mark. It suits a filter rail, where the selected chip says what the grid below is showing.
@@ -214,7 +230,7 @@ When the tabs are wider than their container, the list scrolls horizontally in a
 
 ## Vertical
 
-Pass `orientation="vertical"` and the rail stands beside its panel instead of above it: the reading-pane layout, for a docs sidebar or a FAQ whose answers should not move the page. It is forwarded straight to Radix, so the arrow keys become up and down and the ARIA follows; Radix stamps `data-orientation` on the root, the list and every trigger, so the whole layout is one set of variants with no second prop to keep in sync. A vertical rail is a nav rather than a segmented control, so the trough stands down and the indicator becomes the selected row's own fill; rows grow to a 40px reading row and their labels wrap rather than forcing the rail wider. The sliding indicator needs nothing: it already tracks the active trigger's box, whichever way the list runs.
+Pass `orientation="vertical"` and the rail stands beside its panel instead of above it: the reading-pane layout, for a docs sidebar or a FAQ whose answers should not move the page. It is forwarded straight to Radix, so the arrow keys become up and down and the ARIA follows; Radix stamps `data-orientation` on the root, the list and every trigger, so the whole layout is one set of variants with no second prop to keep in sync. A vertical rail is a nav rather than a segmented control, so the trough stands down and the indicator becomes the selected row's own fill; rows take the 32px height of a menu row and their labels wrap rather than forcing the rail wider. The sliding indicator needs nothing: it already tracks the active trigger's box, whichever way the list runs.
 
 ```tsx
 <Tabs orientation="vertical" defaultValue="overview" className="items-start">
@@ -261,6 +277,7 @@ The root, Radix `Tabs.Root`; shares the variant and density with every part. For
 | onValueChange | (value: string) => void | - | Called when the selected tab changes. |
 | variant | "segmented" \| "pill" \| "folder" \| "line" \| "chip" | "segmented" (vertical: "pill") | iOS-style padded segmented control with equal-width segments, pill trough, filled tab over a sliding bar, bare sliding underline, or separate outlined chips with no indicator. |
 | density | "comfortable" \| "compact" | "compact" | Tightens the pill trough and the concentric radii; the label size stays. Falls back to the nearest `DensityProvider`. |
+| collapse | boolean | false | Tabs at rest show only their icon; the selected one opens its `TabsTriggerLabel` beside it. The chip is painted on the trigger, and segments take their own width. |
 | orientation | "horizontal" \| "vertical" | "horizontal" | `vertical` stands the rail beside the panel, with up and down arrow keys. |
 | activationMode | "automatic" \| "manual" | "automatic" | Whether a tab is selected on focus or only on click and Enter. |
 | dir | "ltr" \| "rtl" | - | Reading direction for arrow-key navigation. |
@@ -305,6 +322,10 @@ A glyph that marks the selection: the tab's icon at rest, cross-fading to a chec
 | --- | --- | --- | --- |
 | icon* | React.ReactNode | - | The tab's own glyph, shown while it is not selected. |
 | activeIcon | React.ReactNode | <CheckCircle weight="fill" /> | The glyph once the tab is selected. |
+
+### TabsTriggerLabel
+
+The trigger's text, for `collapse`: it folds to nothing while the tab is at rest and opens beside the icon once selected, staying in the button so the tab keeps its name. Outside `collapse` it is a plain span. Forwards all native `<span>` props.
 
 ### TabsPanels
 
@@ -366,7 +387,7 @@ Drop a Koala icon as a child of `TabsTrigger` alongside the label. The recipe al
 
 `npx koalaui-cli@latest add tabs` writes `components/ui/tabs/`. Import from `@/components/ui/tabs`:
 
-- Components and helpers: `Tabs`, `TabsList`, `TabsTrigger`, `TabsTriggerIcon`, `TabsContent`, `TabsPanels`, `tabsVariants`
+- Components and helpers: `Tabs`, `TabsList`, `TabsTrigger`, `TabsTriggerIcon`, `TabsTriggerLabel`, `TabsContent`, `TabsPanels`, `tabsVariants`
 - Types: `TabsProps`, `TabsTriggerProps`, `TabsTriggerIconProps`
 - Koala lib helpers it uses: `create-context`, `density`, `hit-area`, `morph`, `tv`, `utils`
 - npm packages: `koala-icons`, `radix-ui`

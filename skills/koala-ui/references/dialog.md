@@ -4,6 +4,8 @@
 
 A modal window over the page. Built on Radix Dialog for focus trap, scroll lock, and a11y; styled with one tv slots recipe and animated with interruptible enter/exit.
 
+Try it yourself. This one is live, and its code is right below.
+
 Every pattern below is its own block: a live preview in a device frame you can resize (mobile / tablet / desktop, or drag the handle) plus its code. Dialogs cap at `md` (30rem) by default, the width nearly every dialog should use. Drag any frame narrow to watch the card shrink to fit.
 
 ```tsx
@@ -467,7 +469,7 @@ A leading `DialogIcon`, a hero media band, and a split footer: a helper on the l
 
 ## Multi-step (wizard)
 
-For create flows that span several screens, keep one title and place a `DialogStepper` (a full-bleed horizontal [Stepper](https://www.koalaui.com/docs/components/stepper.md)) right under the header: it names the steps, so each step's body holds only its fields. Drive its `value` from your own step state and put the bodies in `StepperPanels` with the same value: the dialog settles to each step's height while the body slides in from the side you moved, and a finished step's number turns into a check. In the footer, Cancel rolls to Back and one primary button rolls Continue to the final action, so neither control moves between steps.
+For create flows that span several screens, keep one title and place a `DialogStepper` with `variant="bars"` (a [Stepper](https://www.koalaui.com/docs/components/stepper.md) drawn as progress bars) above it: it names the steps, so each step's body holds only its fields. Drive its `value` from your own step state and put the bodies in `StepperPanels` with the same value: the dialog settles to each step's height while the body slides in from the side you moved, and the next bar fills on the same curve. In the footer, Cancel rolls to Back and one primary button rolls Continue to the final action, so neither control moves between steps.
 
 ```tsx
 const STEPS = ["Details", "Members", "Review"]
@@ -475,23 +477,22 @@ const [step, setStep] = React.useState(1)
 const isLast = step === STEPS.length
 
 <DialogContent size="md" density="compact">
-  <DialogHeader>
-    <DialogTitle>Create project</DialogTitle>
-    <DialogDescription>Three short steps. Everything stays editable later.</DialogDescription>
-  </DialogHeader>
-
-  {/* Full-bleed, horizontal: the step labels name each screen, so the bodies need no heading. */}
-  <DialogStepper value={step} onValueChange={setStep}>
+  {/* Progress bars above the title: the step labels name each screen, so the bodies need no heading. */}
+  <DialogStepper variant="bars" value={step} onValueChange={setStep}>
     {STEPS.map((title, i) => (
       <StepperItem key={title} step={i + 1} disabled={i + 1 > step} loading={submitting && i + 1 === step}>
         <StepperTrigger>
           <StepperIndicator />
           <StepperTitle>{title}</StepperTitle>
         </StepperTrigger>
-        {i < STEPS.length - 1 && <StepperSeparator />}
       </StepperItem>
     ))}
   </DialogStepper>
+
+  <DialogHeader>
+    <DialogTitle>Create project</DialogTitle>
+    <DialogDescription>Three short steps. Everything stays editable later.</DialogDescription>
+  </DialogHeader>
 
   {/* A real form, so Enter in a field presses Continue */}
   <form className="contents" onSubmit={(e) => { e.preventDefault(); isLast ? create() : setStep((s) => s + 1) }}>
@@ -768,11 +769,11 @@ Muted supporting copy, Radix `Dialog.Description` (a `<p>`), announced after the
 
 ### DialogStepper
 
-A full-bleed `Stepper` for wizard dialogs, placed right after the header; it inherits the dialog's density and takes every `Stepper` prop (`value`, `defaultValue`, `onValueChange`, `variant`).
+A `Stepper` for wizard dialogs. With `variant="bars"` it sits above the title as a row of progress bars and leaves room for the close button; the other variants go full-bleed right after the header. It inherits the dialog's density and takes every `Stepper` prop (`value`, `defaultValue`, `onValueChange`, `variant`).
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| bordered | boolean | true | Full-bleed divider beneath the stepper. |
+| bordered | boolean | true, false for bars | Full-bleed divider beneath the stepper. |
 | orientation | "horizontal" \| "vertical" | "horizontal" | Layout of the steps. |
 | density | "comfortable" \| "compact" | "compact" | Falls back to the dialog's density. |
 

@@ -4,6 +4,8 @@
 
 One control that stays pressed: bookmark, pin, mute, unread only. The single-item sibling of Toggle Group, sharing its paint and its heights, with a pressed glyph that fills in instead of blinking.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <Toggle defaultPressed>
   <EnvelopeSimple /> Unread only
