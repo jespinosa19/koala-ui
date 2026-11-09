@@ -1,0 +1,49 @@
+name: Bug report
+description: Something in a free component, the tokens or the CLI does not work as it should.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time. The smallest example that shows the bug is the most useful part of a report.
+        Security issues go to info.koalaui@gmail.com, not here.
+  - type: input
+    id: component
+    attributes:
+      label: Component or command
+      placeholder: "select, dialog, koalaui-cli add ..."
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what you expected
+      placeholder: "The menu closes when I scroll the page. I expected it to stay open."
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: The smallest code that shows it
+      description: The component with the props you passed, or a StackBlitz or CodeSandbox link.
+      render: tsx
+    validations:
+      required: true
+  - type: dropdown
+    id: theme
+    attributes:
+      label: Theme
+      multiple: true
+      options: [light, cream, dark, moonlight]
+  - type: input
+    id: env
+    attributes:
+      label: Browser, OS and koalaui-cli version
+      placeholder: "Safari 18, macOS 15, koalaui-cli 0.9.0"
+    validations:
+      required: true
+  - type: textarea
+    id: media
+    attributes:
+      label: Screenshot or recording
+      description: For anything visual or about motion. Drag the file in.

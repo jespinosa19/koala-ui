@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Documentation
+    url: https://www.koalaui.com/docs
+    about: Live examples, every variant and the API of each component.
+  - name: Koala UI Pro support
+    url: https://www.koalaui.com/pro
+    about: Pro components are not in this repository. License holders get support by email.
