@@ -38,8 +38,8 @@ license is the only thing that grants access. [See the plans](https://www.koalau
 
 ## License
 
-Koala UI is commercial software, not open source. The free tier is free to use in any number of
-projects, yours and your clients', commercial or not. You may not resell it or build a competing
-component library, UI kit or template from it. See [LICENSE](./LICENSE).
+Everything in this repository is [MIT](./LICENSE): the free components, the helpers, the tokens
+and the `koalaui` CLI. Use it, change it and ship it in anything, commercial or not.
 
-The `koalaui` CLI in [packages/koalaui](./packages/koalaui) is MIT.
+Koala UI Pro is a commercial license and its source is not in this repository. See the
+[License Agreement](https://www.koalaui.com/legal/license).
