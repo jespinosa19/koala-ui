@@ -58,8 +58,9 @@ export const buttonVariants = tv({
     { tone: "onInverse", variant: "outline", className: "border-background/25 bg-transparent text-background hover:bg-background/10 hover:text-background" },
     { tone: "onInverse", variant: "ghost", className: "text-background hover:bg-background/20 hover:text-background" },
     { size: "xs", iconOnly: true, className: `w-7 gap-0 rounded-[calc(var(--radius)*0.625)] px-0 has-[>svg]:px-0 has-[>[data-slot=button-label]_svg]:px-0 ${hitBox}` },
-    { size: "sm", iconOnly: true, className: `w-control-sm gap-0 rounded-md px-0 has-[>svg]:px-0 has-[>[data-slot=button-label]_svg]:px-0 ${hitBox}` },
-    { size: "md", iconOnly: true, className: "w-control-md gap-0 rounded-[calc(var(--radius)*0.875)] px-0 has-[>svg]:px-0 has-[>[data-slot=button-label]_svg]:px-0" },
+    // With no label the glyph carries the whole meaning, so sm and md icon-only buttons draw it at 20px.
+    { size: "sm", iconOnly: true, className: `w-control-sm gap-0 rounded-md px-0 has-[>svg]:px-0 has-[>[data-slot=button-label]_svg]:px-0 [&_svg:not([class*='size-'])]:size-5 ${hitBox}` },
+    { size: "md", iconOnly: true, className: "w-control-md gap-0 rounded-[calc(var(--radius)*0.875)] px-0 has-[>svg]:px-0 has-[>[data-slot=button-label]_svg]:px-0 [&_svg:not([class*='size-'])]:size-5" },
     { size: "lg", iconOnly: true, className: "w-control-lg gap-0 rounded-lg px-0 has-[>svg]:px-0 has-[>[data-slot=button-label]_svg]:px-0" },
     { size: "xl", iconOnly: true, className: "w-control-xl gap-0 rounded-[calc(var(--radius)*1.125)] px-0 has-[>svg]:px-0 has-[>[data-slot=button-label]_svg]:px-0" },
 

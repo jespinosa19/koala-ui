@@ -159,7 +159,7 @@ export function BadgeReveal({ show, className, children, ...props }: BadgeReveal
       inert={!show || undefined}
       className={cn(
         "inline-grid transition-[grid-template-columns,opacity,filter,margin] duration-base ease-out motion-reduce:transition-none",
-        show ? "grid-cols-[1fr] opacity-100 blur-none" : "-me-2 grid-cols-[0fr] opacity-0 blur-xs",
+        show ? "grid-cols-[1fr] opacity-100 blur-none" : "me-[calc(var(--reveal-gap,calc(var(--spacing)*2))*-1)] grid-cols-[0fr] opacity-0 blur-xs",
         className,
       )}
       {...props}

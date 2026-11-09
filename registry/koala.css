@@ -325,7 +325,11 @@
 [data-concept="tactile"] :is([data-slot="select-trigger"], [data-slot="native-select-field"]):focus-visible:not([aria-invalid="true"]) {
   border-color: var(--tactile-focus);
 }
-[data-concept="tactile"] :focus-visible:not([aria-invalid="true"]) {
+/* Surfaces Radix focuses on open (menu, popover, dialog, listbox) wear their ring as the resting
+   hairline, not a focus ring: recolouring it lit the menu edge to 35% until an item took focus. */
+[data-concept="tactile"] :focus-visible:not([aria-invalid="true"], [role="menu"], [role="dialog"], [role="alertdialog"], [role="listbox"]),
+/* Agent Tree focuses the row (`li`) and rings the card inside it, so the card sets its own colour. */
+[data-concept="tactile"] li:focus-visible > [data-slot="agent-tree-node-card"] {
   --tw-ring-color: var(--tactile-focus);
 }
 
@@ -888,6 +892,14 @@
    * as drift, never as a loader. Call sites pair it with `motion-reduce:animate-none`.
    */
   --animate-dash-flow: dash-flow var(--dash-flow-duration, 6s) linear infinite;
+
+  /*
+   * Agent edge flow (AgentTree): a light runs the whole route from the parent to a working agent,
+   * a streak of short dashes with a fading tail, then rests off the end; the head flashes as it
+   * arrives (same cadence, so the two stay in step). Paired with motion-safe at the call site.
+   */
+  --animate-agent-edge-flow: agent-edge-flow 2.2s var(--ease-in-out) infinite;
+  --animate-agent-edge-flash: agent-edge-flash 2.2s var(--ease-in-out) infinite;
 
   /*
    * Logo swap (social-proof walls): the rotating "trusted by" logos cross-fade with a vertical roll.
@@ -1458,6 +1470,42 @@
 @keyframes presence-hold {
   to {
     visibility: visible;
+  }
+}
+
+/* Agent edge flow: each dash of the streak travels the route (--agent-tree-route, in px) in the
+ * first 65%, at its own --agent-tree-shift and --agent-tree-glow, then rests off the end. */
+@keyframes agent-edge-flow {
+  from {
+    stroke-dashoffset: calc(3rem - var(--agent-tree-shift));
+    opacity: 0;
+  }
+  8% {
+    opacity: var(--agent-tree-glow);
+  }
+  65% {
+    stroke-dashoffset: calc(var(--agent-tree-route) * -1 - var(--agent-tree-shift));
+    opacity: var(--agent-tree-glow);
+  }
+  66%,
+  to {
+    stroke-dashoffset: calc(var(--agent-tree-route) * -1 - var(--agent-tree-shift));
+    opacity: 0;
+  }
+}
+
+/* Agent edge flash: the head lights as the dash reaches it, then fades. */
+@keyframes agent-edge-flash {
+  0%,
+  56% {
+    opacity: 0;
+  }
+  66% {
+    opacity: 1;
+  }
+  90%,
+  to {
+    opacity: 0;
   }
 }
 
@@ -4001,13 +4049,14 @@
 
 /* The Command palette's separator gets the same guarantee, keyed on its own structure.
  * Filtering collapses an empty group to `display:none` (a class, invisible to `:has`), so we
- * test the real signal instead: a group that still owns a `command-item`. The separator shows
+ * test the real signal instead: a group that still owns a visible `command-item` (filtered rows
+ * stay mounted with `hidden`). The separator shows
  * only when a row-bearing group survives on the side that would otherwise strand it: this is
  * what stops a separator floating beside a collapsed group or over the empty state. */
 [data-slot="command-separator"]:first-child,
 [data-slot="command-separator"]:last-child,
-[data-slot="command-group"]:not(:has([data-slot="command-item"])) + [data-slot="command-separator"],
-[data-slot="command-separator"]:not(:has(~ [data-slot="command-group"]:has([data-slot="command-item"]))) {
+[data-slot="command-group"]:not(:has([data-slot="command-item"]:not([hidden]))) + [data-slot="command-separator"],
+[data-slot="command-separator"]:not(:has(~ [data-slot="command-group"]:has([data-slot="command-item"]:not([hidden])))) {
   display: none;
 }
 

@@ -10,6 +10,7 @@ import { DensityProvider, useDensity } from "@/lib/density"
 import { duration, easing, prefersReducedMotion } from "@/lib/motion"
 import { Kbd } from "@/components/ui/kbd"
 import { SwitchIndicator } from "@/components/ui/switch"
+import { Tooltip, type TooltipProps } from "@/components/ui/tooltip"
 
 export const dropdownMenuVariants = tv({
   slots: {
@@ -31,7 +32,7 @@ export const dropdownMenuVariants = tv({
       "focus:bg-accent focus:text-accent-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
-      "has-[[data-slot=dropdown-menu-item-description]]:items-start has-[[data-slot=dropdown-menu-item-description]]:py-2.5",
+      "has-[[data-slot=dropdown-menu-item-description]]:items-start has-[[data-slot=dropdown-menu-item-description]]:py-2.5 has-[[data-slot=dropdown-menu-item-description]]:font-medium dark:has-[[data-slot=dropdown-menu-item-description]]:font-normal",
     ],
     itemText: "flex min-w-0 flex-col gap-0.5",
     itemDescription: "text-sm font-normal text-pretty text-muted-foreground",
@@ -337,9 +338,25 @@ export function DropdownMenuSub(props: DropdownMenuSubProps) {
   return <MenuSubContext.Provider value={sub}>{props.children}</MenuSubContext.Provider>
 }
 
+export interface DropdownMenuItemHintProps {
+  /** A hint beside the row on hover and keyboard focus, for terse labels that need their trade-off. */
+  tooltip?: React.ReactNode
+  tooltipPlacement?: TooltipProps["placement"]
+}
+
+function withHint(item: React.ReactElement, tooltip: React.ReactNode, placement: TooltipProps["placement"] = "right") {
+  if (!tooltip) return item
+  return (
+    <Tooltip auto content={tooltip} placement={placement} offset={[0, 8]}>
+      {item}
+    </Tooltip>
+  )
+}
+
 export interface DropdownMenuItemProps
   extends React.ComponentProps<typeof DropdownMenuPrimitive.Item>,
-    Omit<VariantProps<typeof dropdownMenuVariants>, "indicator"> {
+    Omit<VariantProps<typeof dropdownMenuVariants>, "indicator">,
+    DropdownMenuItemHintProps {
   inset?: boolean
 }
 
@@ -348,17 +365,21 @@ export function DropdownMenuItem({
   inset,
   density,
   variant,
+  tooltip,
+  tooltipPlacement,
   ...props
 }: DropdownMenuItemProps) {
   const slots = dropdownMenuVariants({ density: useDensity(density), variant })
   if (useOffLayer()) return null
-  return (
+  return withHint(
     <DropdownMenuPrimitive.Item
       data-slot="dropdown-menu-item"
       data-inset={inset || undefined}
       className={slots.item({ className: cn(inset && "pl-9", className) })}
       {...props}
-    />
+    />,
+    tooltip,
+    tooltipPlacement,
   )
 }
 
@@ -380,7 +401,8 @@ export function DropdownMenuItemDescription({ className, ...props }: React.Compo
 
 export interface DropdownMenuCheckboxItemProps
   extends React.ComponentProps<typeof DropdownMenuPrimitive.CheckboxItem>,
-    Omit<VariantProps<typeof dropdownMenuVariants>, "variant" | "indicator"> {
+    Omit<VariantProps<typeof dropdownMenuVariants>, "variant" | "indicator">,
+    DropdownMenuItemHintProps {
   variant?: "check" | "switch"
   closeOnSelect?: boolean
 }
@@ -393,11 +415,13 @@ export function DropdownMenuCheckboxItem({
   variant = "check",
   closeOnSelect = variant !== "switch",
   onSelect,
+  tooltip,
+  tooltipPlacement,
   ...props
 }: DropdownMenuCheckboxItemProps) {
   const slots = dropdownMenuVariants({ density: useDensity(density), indicator: variant })
   if (useOffLayer()) return null
-  return (
+  return withHint(
     <DropdownMenuPrimitive.CheckboxItem
       data-slot="dropdown-menu-checkbox-item"
       className={slots.checkboxItem({ className })}
@@ -423,23 +447,28 @@ export function DropdownMenuCheckboxItem({
           {children}
         </>
       )}
-    </DropdownMenuPrimitive.CheckboxItem>
+    </DropdownMenuPrimitive.CheckboxItem>,
+    tooltip,
+    tooltipPlacement,
   )
 }
 
 export interface DropdownMenuRadioItemProps
   extends React.ComponentProps<typeof DropdownMenuPrimitive.RadioItem>,
-    DropdownMenuDensityProps {}
+    DropdownMenuDensityProps,
+    DropdownMenuItemHintProps {}
 
 export function DropdownMenuRadioItem({
   className,
   children,
   density,
+  tooltip,
+  tooltipPlacement,
   ...props
 }: DropdownMenuRadioItemProps) {
   const slots = dropdownMenuVariants({ density: useDensity(density) })
   if (useOffLayer()) return null
-  return (
+  return withHint(
     <DropdownMenuPrimitive.RadioItem
       data-slot="dropdown-menu-radio-item"
       className={slots.radioItem({ className })}
@@ -451,7 +480,9 @@ export function DropdownMenuRadioItem({
         </DropdownMenuPrimitive.ItemIndicator>
       </span>
       {children}
-    </DropdownMenuPrimitive.RadioItem>
+    </DropdownMenuPrimitive.RadioItem>,
+    tooltip,
+    tooltipPlacement,
   )
 }
 

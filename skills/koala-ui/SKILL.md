@@ -256,6 +256,7 @@ tell the user the component is Pro instead of rebuilding it.
 - Contact Form (`contact-form`)
 - Context Meter (`context-meter`)
 - Cookie Consent (`cookie-consent`)
+- Data Grid (`data-grid`)
 - Data Table (`data-table`)
 - Date Picker (`date-picker`)
 - Description List (`description-list`)

@@ -26,7 +26,7 @@
       "utils",
       "tv"
     ],
-    "hash": "a190f5a000bf6cf3"
+    "hash": "103ec71659c09c9f"
   },
   "items": [
     {
@@ -205,7 +205,6 @@
         "agent-status",
         "animated-label",
         "animated-number",
-        "collapsible",
         "dot"
       ],
       "libDependencies": [
@@ -220,7 +219,7 @@
         "components/ui/agent-task-board/agent-task-board.tsx",
         "components/ui/agent-task-board/index.ts"
       ],
-      "hash": "259b5657794dc1c2"
+      "hash": "2b1672d454e5ab72"
     },
     {
       "name": "agent-timeline",
@@ -262,7 +261,8 @@
         "animated-label",
         "animated-number",
         "badge",
-        "dot"
+        "dot",
+        "spinner"
       ],
       "libDependencies": [
         "agent",
@@ -277,7 +277,7 @@
         "components/ui/agent-tree/agent-tree.tsx",
         "components/ui/agent-tree/index.ts"
       ],
-      "hash": "f0d536b6323d7153"
+      "hash": "bfdafd41ec3f361b"
     },
     {
       "name": "ai-panel",
@@ -293,6 +293,7 @@
       ],
       "libDependencies": [
         "create-context",
+        "hit-area",
         "scroll-fade",
         "tv",
         "utils"
@@ -301,7 +302,7 @@
         "components/ui/ai-panel/ai-panel.tsx",
         "components/ui/ai-panel/index.ts"
       ],
-      "hash": "3c7ba972491bccc0"
+      "hash": "25ef5f6653e687ea"
     },
     {
       "name": "alert",
@@ -691,7 +692,7 @@
         "components/ui/badge/color.ts",
         "components/ui/badge/index.ts"
       ],
-      "hash": "ed2a1ea4dbf96bb9"
+      "hash": "76f8e1a72bf03405"
     },
     {
       "name": "badge-group",
@@ -713,7 +714,7 @@
         "components/ui/badge-group/badge-group.tsx",
         "components/ui/badge-group/index.ts"
       ],
-      "hash": "0beb9f40f671b35f"
+      "hash": "b982474051977955"
     },
     {
       "name": "banner",
@@ -1153,7 +1154,7 @@
         "components/ui/button/social-logos.tsx",
         "components/ui/button/split-button.tsx"
       ],
-      "hash": "efc454fe049c3c27"
+      "hash": "0b764f6b90939b08"
     },
     {
       "name": "button-group",
@@ -1814,7 +1815,7 @@
         "components/ui/chat/chat.tsx",
         "components/ui/chat/index.ts"
       ],
-      "hash": "ec763db98c926ed4"
+      "hash": "713bc89e90080a0a"
     },
     {
       "name": "chat-messenger",
@@ -2232,7 +2233,7 @@
         "components/ui/command/command.tsx",
         "components/ui/command/index.ts"
       ],
-      "hash": "ea82508b75165e2f"
+      "hash": "7fa3c2e689b0dc16"
     },
     {
       "name": "compare-slider",
@@ -3799,6 +3800,34 @@
       "hash": "00e9f89b3fef1a5d"
     },
     {
+      "name": "data-grid",
+      "type": "component",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Data Grid",
+      "dependencies": {
+        "koala-icons": "^0.1.1"
+      },
+      "registryDependencies": [
+        "badge",
+        "checkbox",
+        "date-picker",
+        "popover",
+        "select"
+      ],
+      "libDependencies": [
+        "create-context",
+        "density",
+        "tv"
+      ],
+      "files": [
+        "components/ui/data-grid/data-grid-clipboard.ts",
+        "components/ui/data-grid/data-grid.tsx",
+        "components/ui/data-grid/index.ts"
+      ],
+      "hash": "b27cd7dee6772a29"
+    },
+    {
       "name": "data-table",
       "type": "component",
       "tier": "pro",
@@ -4362,7 +4391,8 @@
       },
       "registryDependencies": [
         "kbd",
-        "switch"
+        "switch",
+        "tooltip"
       ],
       "libDependencies": [
         "density",
@@ -4374,7 +4404,7 @@
         "components/ui/dropdown-menu/dropdown-menu.tsx",
         "components/ui/dropdown-menu/index.ts"
       ],
-      "hash": "b879347ba5342f26"
+      "hash": "388afe6da1bd26dc"
     },
     {
       "name": "elevate-b2b",
@@ -4454,7 +4484,7 @@
         "components/ui/email-draft/email-draft.tsx",
         "components/ui/email-draft/index.ts"
       ],
-      "hash": "8106c8cfcb32f35a"
+      "hash": "1e994ee2e6aa60d8"
     },
     {
       "name": "emoji-picker",
@@ -7444,7 +7474,7 @@
         "components/sections/integrations-section-1/index.ts",
         "components/sections/integrations-section-1/integrations-section-1.tsx"
       ],
-      "hash": "b3b23f2fc1f99138"
+      "hash": "2a348bdc451741c1"
     },
     {
       "name": "island",
@@ -8007,7 +8037,7 @@
         "components/ui/model-selector/index.ts",
         "components/ui/model-selector/model-selector.tsx"
       ],
-      "hash": "8f0326caa24e87ec"
+      "hash": "dd7ec9467e944840"
     },
     {
       "name": "modifier-picker",
@@ -9406,7 +9436,7 @@
         "components/ui/prompt-input/index.ts",
         "components/ui/prompt-input/prompt-input.tsx"
       ],
-      "hash": "7b81e39a1644a48b"
+      "hash": "bf3ddbe7432be6f1"
     },
     {
       "name": "prose",

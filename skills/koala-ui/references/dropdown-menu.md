@@ -521,6 +521,8 @@ A row, Radix `DropdownMenu.Item` (a `<div role="menuitem">`); forwards all its p
 | disabled | boolean | false | Dims the row and skips it in keyboard navigation. |
 | textValue | string | - | Text used for typeahead when the row's content is not plain text. |
 | asChild | boolean | false | Merge onto your own element, e.g. a `next/link`, keeping the row's styling and keys. |
+| tooltip | ReactNode | - | A hint beside the row on hover and keyboard focus, for a terse label that needs its trade-off. |
+| tooltipPlacement | TooltipPlacement | "right" | Where the hint opens. |
 | density | "comfortable" \| "compact" | "compact" | Row height, 36px or 32px. Falls back to the menu's `density`, then the nearest `DensityProvider`. |
 
 | Data attribute | Description |
@@ -548,6 +550,8 @@ A toggle row, Radix `DropdownMenu.CheckboxItem` (`role="menuitemcheckbox"`); for
 | variant | "check" \| "switch" | "check" | An ink check on the right, or a mini Switch on the same line for a setting that applies at once. |
 | closeOnSelect | boolean | true | Close the menu on toggle. Defaults to `false` when `variant="switch"`. |
 | disabled | boolean | false | Dims the row and skips it in keyboard navigation. |
+| tooltip | ReactNode | - | A hint beside the row on hover and keyboard focus, for a terse label that needs its trade-off. |
+| tooltipPlacement | TooltipPlacement | "right" | Where the hint opens. |
 | density | "comfortable" \| "compact" | "compact" | Row height, 36px or 32px. Falls back to the menu's `density`, then the nearest `DensityProvider`. |
 
 | Data attribute | Description |
@@ -573,6 +577,8 @@ One choice in a `DropdownMenuRadioGroup`, Radix `DropdownMenu.RadioItem`; shows 
 | --- | --- | --- | --- |
 | value* | string | - | The value this row selects. |
 | disabled | boolean | false | Dims the row and skips it in keyboard navigation. |
+| tooltip | ReactNode | - | A hint beside the row on hover and keyboard focus, for a terse label that needs its trade-off. |
+| tooltipPlacement | TooltipPlacement | "right" | Where the hint opens. |
 | density | "comfortable" \| "compact" | "compact" | Row height, 36px or 32px. Falls back to the menu's `density`, then the nearest `DensityProvider`. |
 
 | Data attribute | Description |
@@ -583,7 +589,7 @@ One choice in a `DropdownMenuRadioGroup`, Radix `DropdownMenu.RadioItem`; shows 
 
 ### DropdownMenuLabel
 
-A muted caption over a run of rows, Radix `DropdownMenu.Label`; not focusable. Forwards all native `<div>` props.
+A muted caption over a run of rows, Radix `DropdownMenu.Label`; not focusable. Use it only when the menu has two or more sections: a menu with one group (just the modes) has no label, the trigger already names it. Forwards all native `<div>` props.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -707,6 +713,6 @@ Fly out (the default, `submenu="nested"`) when the menu is shallow and has room 
 
 - Components and helpers: `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuGroup`, `DropdownMenuRadioGroup`, `DropdownMenuSub`, `DropdownMenuPortal`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuItemText`, `DropdownMenuItemDescription`, `DropdownMenuCheckboxItem`, `DropdownMenuRadioItem`, `DropdownMenuLabel`, `DropdownMenuSeparator`, `DropdownMenuShortcut`, `DropdownMenuSubTrigger`, `DropdownMenuSubContent`, `dropdownMenuVariants`
 - Types: `DropdownMenuContentProps`, `DropdownMenuItemProps`, `DropdownMenuCheckboxItemProps`, `DropdownMenuRadioItemProps`, `DropdownMenuLabelProps`, `DropdownMenuSubProps`, `DropdownMenuSubTriggerProps`, `DropdownMenuSubContentProps`
-- Koala components it installs with it: `kbd`, `switch`
+- Koala components it installs with it: `kbd`, `switch`, `tooltip`
 - Koala lib helpers it uses: `density`, `motion`, `tv`, `utils`
 - npm packages: `koala-icons`, `radix-ui`
