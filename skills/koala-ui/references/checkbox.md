@@ -130,7 +130,7 @@ const [value, setValue] = useState(["design"])
   <label className="flex items-center gap-2.5">
     <Checkbox parent /> Select all teams
   </label>
-  <label className="flex items-center gap-2.5 pl-7.5">
+  <label className="flex items-center gap-2.5 pl-6.5">
     <Checkbox value="engineering" /> Engineering
   </label>
   {/* design, marketing */}
@@ -150,13 +150,13 @@ const USERS = ["users.view", "users.invite", "users.remove"]
   defaultValue={["dashboard", "users.view"]}
 >
   <label><Checkbox parent /> All permissions</label>
-  <div className="flex flex-col gap-3 pl-7.5">
+  <div className="flex flex-col gap-3 pl-6.5">
     <label><Checkbox value="dashboard" /> View dashboard</label>
     <label><Checkbox value="reports" /> Export reports</label>
     {/* No value of its own: it shares the outer list. */}
     <CheckboxGroup aria-label="Manage users" allValues={USERS}>
       <label><Checkbox parent /> Manage users</label>
-      <div className="flex flex-col gap-3 pl-7.5">
+      <div className="flex flex-col gap-3 pl-6.5">
         <label><Checkbox value="users.view" /> View members</label>
         <label><Checkbox value="users.invite" /> Invite members</label>
         <label><Checkbox value="users.remove" /> Remove members</label>

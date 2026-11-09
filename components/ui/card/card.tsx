@@ -29,8 +29,8 @@ export const cardVariants = tv({
   variants: {
     variant: {
       default: { root: "shadow-xs ring-1 ring-edge" },
-      outline: { root: "shadow-none ring-1 ring-border" },
-      elevated: { root: "bg-card shadow-lg [--surface:var(--card)]" },
+      outline: { root: "shadow-none ring-1 ring-edge" },
+      elevated: { root: "bg-card shadow-lg ring-1 ring-edge [--surface:var(--card)]" },
     },
     density: {
       compact: {

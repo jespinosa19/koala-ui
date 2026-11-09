@@ -37,9 +37,9 @@ export function Example() {
 With no `size`, the spinner carries no size class, so the component holding it decides: 16px in a Button or an input, 14px in a Badge, the same box every other icon in that slot gets. Outside any host it is `1em`, so it scales with the text beside it.
 
 ```tsx
-<Button size="sm" loading>Save</Button>
+<Button size="xs" loading>Save</Button>
 <Button loading>Save</Button>
-<Button size="lg" loading>Save</Button>
+<Button size="md" loading>Save</Button>
 <Badge variant="secondary"><Spinner aria-hidden /> Syncing</Badge>
 <InputRoot className="max-w-64">
   <InputPrefix><MagnifyingGlass /></InputPrefix>

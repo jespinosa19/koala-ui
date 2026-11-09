@@ -10,6 +10,8 @@ import { createContext } from "@/lib/create-context"
 import { tv, type VariantProps } from "@/lib/tv"
 import { hitBox, hitBoxPositioned } from "@/lib/hit-area"
 import { useFocusReturn } from "@/lib/focus-return"
+import { FLICK_VELOCITY, createVelocityTracker, rubberband } from "@/lib/gesture"
+import { duration, prefersReducedMotion } from "@/lib/motion"
 
 export type DrawerSide = "top" | "right" | "bottom" | "left"
 
@@ -17,16 +19,19 @@ export const drawerVariants = tv({
   slots: {
     overlay: [
       "fixed inset-0 z-50 bg-black/50",
-      "data-[state=open]:animate-in data-[state=open]:fade-in-0",
-      "data-[state=closed]:animate-out data-[state=closed]:fade-out-0",
-      "duration-base ease-out",
+      "transition-opacity duration-base ease-drawer motion-reduce:duration-fast",
+      "starting:opacity-0",
+      "data-[state=closed]:pointer-events-none data-[state=closed]:animate-presence-hold data-[state=closed]:opacity-0",
+      "data-[swipe=dragging]:transition-none data-[swipe=release]:duration-fast",
     ],
     content: [
       "fixed z-50 flex flex-col bg-popover text-popover-foreground",
       "[--surface:var(--popover)] border-border-soft",
       "outline-none",
-      "data-[state=open]:animate-in data-[state=closed]:animate-out",
-      "duration-base ease-drawer",
+      "transition-[translate,opacity] duration-base ease-drawer motion-reduce:duration-fast",
+      "data-[state=closed]:pointer-events-none data-[state=closed]:animate-presence-hold",
+      "motion-reduce:starting:opacity-0 motion-reduce:data-[state=closed]:opacity-0",
+      "data-[swipe=dragging]:transition-none data-[swipe=release]:duration-fast",
     ],
     handle: [
       "mx-auto h-1.5 w-12 shrink-0 cursor-grab rounded-full bg-border transition-colors duration-fast ease-out active:cursor-grabbing hover:bg-muted-foreground/40",
@@ -41,7 +46,7 @@ export const drawerVariants = tv({
       hitBoxPositioned,
     ],
     header: "flex flex-col",
-    body: "min-h-0 flex-1 overflow-y-auto",
+    body: "min-h-0 flex-1 overflow-y-auto overscroll-contain",
     footer: "mt-auto flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
     title: "leading-none font-semibold tracking-tight text-pretty",
     description: "text-sm text-pretty text-muted-foreground",
@@ -59,18 +64,18 @@ export const drawerVariants = tv({
   variants: {
     side: {
       top: {
-        content: "inset-x-0 top-0 w-full rounded-b-xl border-b data-[state=open]:slide-in-from-top data-[state=closed]:slide-out-to-top",
+        content: "inset-x-0 top-0 w-full rounded-b-xl border-b motion-safe:starting:-translate-y-full motion-safe:data-[state=closed]:-translate-y-full",
         handle: "order-last mb-1",
       },
       right: {
-        content: "inset-y-0 right-0 h-full w-full rounded-l-xl border-l data-[state=open]:slide-in-from-right data-[state=closed]:slide-out-to-right",
+        content: "inset-y-0 right-0 h-full w-full rounded-l-xl border-l motion-safe:starting:translate-x-full motion-safe:data-[state=closed]:translate-x-full",
       },
       bottom: {
-        content: "inset-x-0 bottom-0 w-full rounded-t-xl border-t pb-[env(safe-area-inset-bottom)] data-[state=open]:slide-in-from-bottom data-[state=closed]:slide-out-to-bottom",
+        content: "inset-x-0 bottom-0 w-full rounded-t-xl border-t pb-[env(safe-area-inset-bottom)] motion-safe:starting:translate-y-full motion-safe:data-[state=closed]:translate-y-full",
         handle: "mt-1",
       },
       left: {
-        content: "inset-y-0 left-0 h-full w-full rounded-r-xl border-r data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left",
+        content: "inset-y-0 left-0 h-full w-full rounded-r-xl border-r motion-safe:starting:-translate-x-full motion-safe:data-[state=closed]:-translate-x-full",
       },
     },
     density: {
@@ -83,7 +88,6 @@ export const drawerVariants = tv({
       lg: {},
       xl: {},
     },
-    // Inside a `container`: positioned against it instead of the viewport.
     contained: {
       true: { overlay: "absolute", content: "absolute" },
       false: {},
@@ -108,10 +112,17 @@ export const drawerVariants = tv({
 
 type DrawerSlots = ReturnType<typeof drawerVariants>
 
+interface DrawerSwipe {
+  regionProps: SwipeRegionProps
+  regionClassName: string
+  bodyProps: SwipeRegionProps
+  bodyClassName: string
+}
+
 interface DrawerContextValue {
   slots: DrawerSlots
   side: DrawerSide
-  swipe: { regionProps: SwipeRegionProps; regionClassName: string } | null
+  swipe: DrawerSwipe | null
 }
 
 const [DrawerProvider, useDrawerContext] = createContext<DrawerContextValue>("Drawer")
@@ -129,90 +140,210 @@ const SWIPE_AXIS: Record<DrawerSide, { axis: "x" | "y"; sign: 1 | -1 }> = {
   left: { axis: "x", sign: -1 },
 }
 const SWIPE_SLOP = 6
+const DISMISS_FRACTION = 0.4
+const RUBBERBAND = 0.55
+const NO_DRAG =
+  '[data-no-drag], input, textarea, select, [contenteditable=""], [contenteditable="true"]'
 
 type SwipeRegionProps = Pick<
   React.ComponentProps<"div">,
   "onPointerDown" | "onPointerMove" | "onPointerUp" | "onPointerCancel"
 >
 
-function useDrawerSwipe(side: DrawerSide, enabled: boolean) {
-  const [offset, setOffset] = React.useState(0)
-  const [dragging, setDragging] = React.useState(false)
+function atCloseEdge(el: HTMLElement, sign: 1 | -1) {
+  if (sign === 1) return el.scrollTop <= 0
+  return el.scrollTop >= el.scrollHeight - el.clientHeight - 1
+}
 
-  const armed = React.useRef(false)
-  const active = React.useRef(false)
-  const start = React.useRef({ x: 0, y: 0 })
-  const last = React.useRef({ pos: 0, time: 0, velocity: 0 })
-  const contentEl = React.useRef<HTMLElement | null>(null)
+function syncBodyTouchAction(el: HTMLElement, side: DrawerSide) {
+  const { axis, sign } = SWIPE_AXIS[side]
+  if (axis === "x") return
+  el.style.touchAction = atCloseEdge(el, sign) ? (sign === 1 ? "pan-x pan-down" : "pan-x pan-up") : ""
+}
+
+function hasTextSelection() {
+  const selection = typeof window === "undefined" ? null : window.getSelection()
+  return !!selection && !selection.isCollapsed && selection.toString().length > 0
+}
+
+function unrubberband(offset: number, dimension: number) {
+  const r = Math.min(Math.abs(offset), dimension * 0.999)
+  return -((dimension / RUBBERBAND) * (r / (dimension - r)))
+}
+
+function useDrawerSwipe(side: DrawerSide, enabled: boolean) {
+  const [tracker] = React.useState(createVelocityTracker)
+  const overlayRef = React.useRef<HTMLDivElement | null>(null)
+
+  const gesture = React.useRef({
+    armed: false,
+    active: false,
+    fromBody: false,
+    pointerId: -1,
+    startX: 0,
+    startY: 0,
+    origin: 0,
+    base: 0,
+    dimension: 0,
+    offset: 0,
+    content: null as HTMLElement | null,
+    settle: 0,
+  })
 
   const { axis, sign } = SWIPE_AXIS[side]
 
-  function beginDrag(e: React.PointerEvent) {
-    armed.current = true
-    active.current = false
-    start.current = { x: e.clientX, y: e.clientY }
-    last.current = { pos: axis === "x" ? e.clientX : e.clientY, time: e.timeStamp, velocity: 0 }
-    contentEl.current = (e.currentTarget as HTMLElement).closest<HTMLElement>(
-      '[data-slot="drawer-content"]',
-    )
+  function write(closeAmount: number) {
+    const g = gesture.current
+    const el = g.content
+    if (!el) return
+    g.offset = closeAmount
+    const resolved = closeAmount < 0 ? rubberband(closeAmount, g.dimension, RUBBERBAND) : closeAmount
+    const value = resolved * sign
+    el.style.translate = axis === "x" ? `${value}px 0` : `0 ${value}px`
+    const overlay = overlayRef.current
+    if (overlay && g.dimension > 0) {
+      const progress = Math.min(1, Math.max(0, resolved / g.dimension))
+      overlay.style.opacity = String(1 - progress)
+    }
   }
 
-  function moveDrag(e: React.PointerEvent) {
-    if (!armed.current) return
+  function setPhase(phase: "dragging" | "release" | null) {
+    const targets = [gesture.current.content, overlayRef.current]
+    for (const node of targets) {
+      if (!node) continue
+      if (phase) node.dataset.swipe = phase
+      else delete node.dataset.swipe
+    }
+  }
+
+  function begin(e: React.PointerEvent<HTMLElement>, fromBody: boolean) {
+    const g = gesture.current
+    if (g.active) return
+    if (e.pointerType === "mouse" && e.button !== 0) return
+    const target = e.target as HTMLElement | null
+    if (target?.closest(NO_DRAG)) return
+    if (hasTextSelection()) return
+    if (fromBody) {
+      if (e.pointerType === "mouse") return
+      if (axis === "y" && !atCloseEdge(e.currentTarget, sign)) return
+    }
+    const content = e.currentTarget.closest<HTMLElement>('[data-slot="drawer-content"]')
+    if (!content || content.dataset.state === "closed") return
+
+    g.armed = true
+    g.active = false
+    g.fromBody = fromBody
+    g.pointerId = e.pointerId
+    g.startX = e.clientX
+    g.startY = e.clientY
+    g.content = content
+  }
+
+  function activate(e: React.PointerEvent<HTMLElement>, point: number) {
+    const g = gesture.current
+    const el = g.content
+    if (!el) return
+    window.clearTimeout(g.settle)
+    const before = el.getBoundingClientRect()
+    setPhase("dragging")
+    el.style.translate = "none"
+    const rest = el.getBoundingClientRect()
+    const live = (axis === "x" ? before.left - rest.left : before.top - rest.top) * sign
+    g.dimension = axis === "x" ? el.offsetWidth : el.offsetHeight
+    g.base = live < 0 ? unrubberband(live, g.dimension) : live
+    g.origin = point
+    g.active = true
+    tracker.reset(point, e.timeStamp)
+    e.currentTarget.setPointerCapture(e.pointerId)
+    write(g.base)
+  }
+
+  function move(e: React.PointerEvent<HTMLElement>) {
+    const g = gesture.current
+    if (!g.armed || e.pointerId !== g.pointerId) return
     const point = axis === "x" ? e.clientX : e.clientY
-    const cross = axis === "x" ? e.clientY : e.clientX
-    const delta = point - (axis === "x" ? start.current.x : start.current.y)
-    const crossDelta = cross - (axis === "x" ? start.current.y : start.current.x)
 
-    if (!active.current) {
-      if (Math.abs(delta) < SWIPE_SLOP || Math.abs(delta) <= Math.abs(crossDelta)) return
-      active.current = true
-      setDragging(true)
-      e.currentTarget.setPointerCapture(e.pointerId)
+    if (!g.active) {
+      const delta = point - (axis === "x" ? g.startX : g.startY)
+      const cross = (axis === "x" ? e.clientY : e.clientX) - (axis === "x" ? g.startY : g.startX)
+      if (Math.abs(delta) < SWIPE_SLOP) return
+      if (Math.abs(delta) <= Math.abs(cross) || (g.fromBody && axis === "y" && delta * sign < 0)) {
+        g.armed = false
+        return
+      }
+      activate(e, point)
+      return
     }
 
-    const closeAmount = delta * sign
-    const resolved = closeAmount < 0 ? closeAmount * 0.25 : closeAmount
-
-    const now = e.timeStamp
-    const dt = now - last.current.time
-    if (dt > 0) last.current.velocity = (point - last.current.pos) / dt
-    last.current = { pos: point, time: now, velocity: last.current.velocity }
-
-    setOffset(resolved * sign)
+    tracker.add(point, e.timeStamp)
+    write(g.base + (point - g.origin) * sign)
   }
 
-  function endDrag() {
-    armed.current = false
-    if (!active.current) return
-    active.current = false
+  function settleBack() {
+    const g = gesture.current
+    const el = g.content
+    setPhase("release")
+    if (el) el.style.translate = ""
+    if (overlayRef.current) overlayRef.current.style.opacity = ""
+    g.settle = window.setTimeout(() => setPhase(null), duration.fast)
+  }
 
-    const el = contentEl.current
-    const dim = el ? (axis === "x" ? el.offsetWidth : el.offsetHeight) : 0
-    const startPoint = axis === "x" ? start.current.x : start.current.y
-    const traveled = Math.max(0, (last.current.pos - startPoint) * sign)
-    const flickedOut = last.current.velocity * sign > 0.5 && traveled > 40
-    const draggedPast = dim > 0 && traveled > dim * 0.45
-
-    if (el && (flickedOut || draggedPast)) {
-      el.querySelector<HTMLElement>("[data-drawer-close]")?.click()
-    } else {
-      setDragging(false)
-      setOffset(0)
+  function dismiss() {
+    const g = gesture.current
+    const el = g.content
+    if (!el) return
+    setPhase(null)
+    if (!prefersReducedMotion()) {
+      el.style.translate = axis === "x" ? `${sign * 100}% 0` : `0 ${sign * 100}%`
     }
+    if (overlayRef.current) overlayRef.current.style.opacity = "0"
+    el.querySelector<HTMLElement>("[data-drawer-close]")?.click()
   }
 
-  if (!enabled) {
-    return { offset: 0, dragging: false, regionProps: {} as SwipeRegionProps, regionClassName: "" }
+  function end(e: React.PointerEvent<HTMLElement>, cancelled: boolean) {
+    const g = gesture.current
+    if (!g.armed || e.pointerId !== g.pointerId) return
+    g.armed = false
+    if (!g.active) return
+    g.active = false
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId)
+    }
+
+    const velocity = tracker.velocity() * sign
+    const travelled = g.offset
+    const vetoed = velocity <= -FLICK_VELOCITY
+    const shouldClose =
+      !cancelled &&
+      !vetoed &&
+      travelled > 0 &&
+      (travelled >= g.dimension * DISMISS_FRACTION || velocity >= FLICK_VELOCITY)
+
+    if (shouldClose) dismiss()
+    else settleBack()
   }
+
+  if (!enabled) return { overlayRef, swipe: null }
 
   const regionProps: SwipeRegionProps = {
-    onPointerDown: beginDrag,
-    onPointerMove: moveDrag,
-    onPointerUp: endDrag,
-    onPointerCancel: endDrag,
+    onPointerDown: (e) => begin(e, false),
+    onPointerMove: move,
+    onPointerUp: (e) => end(e, false),
+    onPointerCancel: (e) => end(e, true),
   }
-  return { offset, dragging, regionProps, regionClassName: "touch-none select-none" }
+  const bodyProps: SwipeRegionProps = {
+    onPointerDown: (e) => begin(e, true),
+    onPointerMove: move,
+    onPointerUp: (e) => end(e, false),
+    onPointerCancel: (e) => end(e, true),
+  }
+  const swipe: DrawerSwipe = {
+    regionProps,
+    regionClassName: cn("select-none", axis === "x" ? "touch-pan-y" : "touch-pan-x"),
+    bodyProps,
+    bodyClassName: axis === "x" ? "touch-pan-y" : "",
+  }
+  return { overlayRef, swipe }
 }
 
 export interface DrawerContentProps
@@ -236,7 +367,6 @@ export function DrawerContent({
   showHandle = true,
   swipeToClose = true,
   container,
-  style,
   onCloseAutoFocus,
   onPointerDownOutside,
   ...props
@@ -246,33 +376,18 @@ export function DrawerContent({
   const resolvedDensity = useDensity(density)
   const slots = drawerVariants({ side: resolvedSide, size, density: resolvedDensity, contained: !!container })
 
-  const swipe = useDrawerSwipe(resolvedSide, swipeToClose)
+  const { overlayRef, swipe } = useDrawerSwipe(resolvedSide, swipeToClose)
   const isSheet = resolvedSide === "top" || resolvedSide === "bottom"
 
-  const dragStyle =
-    SWIPE_AXIS[resolvedSide].axis === "x"
-      ? { transform: `translateX(${swipe.offset}px)` }
-      : { transform: `translateY(${swipe.offset}px)` }
-
-  const ctx: DrawerContextValue = {
-    slots,
-    side: resolvedSide,
-    swipe: swipeToClose ? { regionProps: swipe.regionProps, regionClassName: swipe.regionClassName } : null,
-  }
+  const ctx: DrawerContextValue = { slots, side: resolvedSide, swipe }
 
   return (
     <DialogPrimitive.Portal container={container}>
-      <DialogPrimitive.Overlay className={slots.overlay()} />
+      <DialogPrimitive.Overlay ref={overlayRef} data-slot="drawer-overlay" className={slots.overlay()} />
       <DialogPrimitive.Content
         data-slot="drawer-content"
         data-side={resolvedSide}
-        className={slots.content({
-          className: cn(
-            swipe.dragging ? "transition-none will-change-transform" : "transition-transform",
-            className,
-          ),
-        })}
-        style={{ ...dragStyle, ...style }}
+        className={slots.content({ className })}
         {...props}
         {...focusReturn.contentProps}
       >
@@ -284,8 +399,8 @@ export function DrawerContent({
             <div
               data-slot="drawer-handle"
               aria-hidden
-              className={cn(slots.handle(), ctx.swipe?.regionClassName)}
-              {...ctx.swipe?.regionProps}
+              className={cn(slots.handle(), swipe?.regionClassName)}
+              {...swipe?.regionProps}
             />
           )}
           <DensityProvider density={resolvedDensity}>{children}</DensityProvider>
@@ -313,9 +428,48 @@ export function DrawerHeader({ className, ...props }: React.ComponentProps<"div"
   )
 }
 
-export function DrawerBody({ className, ...props }: React.ComponentProps<"div">) {
-  const { slots } = useDrawerContext("DrawerBody")
-  return <div data-slot="drawer-body" className={slots.body({ className })} {...props} />
+export function DrawerBody({ className, ref, onScroll, ...props }: React.ComponentProps<"div">) {
+  const { slots, side, swipe } = useDrawerContext("DrawerBody")
+  const tracksEdge = !!swipe && SWIPE_AXIS[side].axis === "y"
+
+  const bodyRef = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      if (typeof ref === "function") ref(node)
+      else if (ref) ref.current = node
+      if (!node || !tracksEdge) {
+        return () => {
+          if (typeof ref === "function") ref(null)
+          else if (ref) ref.current = null
+        }
+      }
+      const sync = () => syncBodyTouchAction(node, side)
+      sync()
+      const observer = new ResizeObserver(sync)
+      observer.observe(node)
+      for (const child of Array.from(node.children)) observer.observe(child)
+      return () => {
+        observer.disconnect()
+        node.style.touchAction = ""
+        if (typeof ref === "function") ref(null)
+        else if (ref) ref.current = null
+      }
+    },
+    [ref, side, tracksEdge],
+  )
+
+  return (
+    <div
+      ref={bodyRef}
+      data-slot="drawer-body"
+      className={slots.body({ className: cn(swipe?.bodyClassName, className) })}
+      onScroll={(e) => {
+        onScroll?.(e)
+        if (tracksEdge) syncBodyTouchAction(e.currentTarget, side)
+      }}
+      {...swipe?.bodyProps}
+      {...props}
+    />
+  )
 }
 
 export function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {

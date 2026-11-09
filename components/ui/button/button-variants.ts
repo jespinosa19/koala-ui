@@ -16,7 +16,7 @@ export const buttonVariants = tv({
         "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
       neutral: "bg-foreground text-background shadow-xs hover:bg-foreground/85",
       outline:
-        "border border-border bg-transparent shadow-xs hover:bg-accent hover:text-accent-foreground",
+        "border border-input bg-transparent shadow-xs hover:bg-accent hover:text-accent-foreground",
       ghost: "hover:bg-accent hover:text-accent-foreground",
       // A ghost that steps back: muted at rest, full ink under the pointer. For the secondary
       // icon actions of a row or a card (remove, edit, more).
@@ -45,6 +45,10 @@ export const buttonVariants = tv({
       onMedia: "focus-visible:ring-white focus-visible:ring-offset-transparent",
       onInverse: "focus-visible:ring-background focus-visible:ring-offset-transparent",
     },
+    touch: {
+      true: "[&_svg:not([class*='size-'])]:size-5",
+      false: "",
+    },
   },
   compoundVariants: [
     { tone: "onMedia", variant: ["primary", "secondary", "neutral"], className: "bg-white text-neutral-950 shadow-xs hover:bg-white/90" },
@@ -61,11 +65,20 @@ export const buttonVariants = tv({
 
     { size: ["xs", "sm"], iconOnly: false, className: hitX },
     { size: ["md", "lg"], className: hitCoarse },
+
+    { touch: true, tone: "default", variant: "primary", className: "active:bg-brand/90" },
+    { touch: true, tone: "default", variant: "secondary", className: "active:bg-secondary/80" },
+    { touch: true, tone: "default", variant: "neutral", className: "active:bg-foreground/85" },
+    { touch: true, tone: "default", variant: ["outline", "ghost", "subtle"], className: "active:bg-accent active:text-accent-foreground" },
+    { touch: true, tone: "default", variant: "overlay", className: "active:bg-black/65" },
+    { touch: true, tone: "default", variant: "destructive", className: "active:bg-destructive/20" },
+    { touch: true, tone: "default", variant: "destructiveGhost", className: "active:bg-destructive/10" },
   ],
   defaultVariants: {
     variant: "primary",
     size: "md",
     iconOnly: false,
     tone: "default",
+    touch: false,
   },
 })

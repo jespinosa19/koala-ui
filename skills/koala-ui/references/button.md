@@ -114,7 +114,7 @@ A button sitting on a color band or over a photo has the wrong ground: the brand
 
 ## Sizes
 
-Three control sizes on a 4px grid - `sm` (32px), `md` (36px, the default), and `lg` (40px). The label stays `text-sm` across them; only height, padding, and the icon gap step up - so a larger button reads as the same control with more presence, not bigger text. Then `xl` (44px), the marketing CTA tier: the one step where the label grows to 16px and a glyph to 20px, because beside a 60-72px display title a 14px label reads as fine print. It is button-only (no form wants a 44px field), and a hero's CTA row imposes it by default. At the other end, `xs` (28px) is the dense-UI tier, covered below.
+Three control sizes on a 4px grid - `sm` (32px, the application default), `md` (36px, the marketing default), and `lg` (40px). The label stays `text-sm` across them; only height, padding, and the icon gap step up - so a larger button reads as the same control with more presence, not bigger text. Then `xl` (44px), the marketing CTA tier: the one step where the label grows to 16px and a glyph to 20px, because beside a 60-72px display title a 14px label reads as fine print. It is button-only (no form wants a 44px field), and a hero's CTA row imposes it by default. At the other end, `xs` (28px) is the dense-UI tier, covered below.
 
 ```tsx
 <Button size="xs">Extra small</Button>
@@ -150,9 +150,21 @@ Three control sizes on a 4px grid - `sm` (32px), `md` (36px, the default), and `
 </Button>
 ```
 
+## Application and marketing
+
+The default size follows the domain. Application UI (dashboards, settings, app screens) uses `sm` (32px) by default, level with a compact Input, and only `xs` and `sm` in product. Marketing keeps `md` (36px) and up for its CTAs. Section, Hero, Footer, Banner and Gallery declare the marketing domain for you; wrap any other landing in `DomainProvider domain="marketing"`. A Layout resets it to application, so an app screen shown inside a landing stays at `sm`.
+
+```tsx
+<Button>Save changes</Button>
+
+<DomainProvider domain="marketing">
+  <Button>Get started</Button>
+</DomainProvider>
+```
+
 ## Density
 
-Height always comes from `size`, never from density. The default button is `md` (36px) everywhere: a compact dashboard under `DensityProvider` and a comfortable landing render the same unsized button, so the product has one default. A `density` prop on the button itself still picks its default (the two below: comfortable md, compact sm), and a container that imposes a tier (InputGroup, a data-table toolbar, Form, hero actions) keeps its buttons level with the fields beside them. An explicit `size` always wins; a pseudo-element holds `xs` and `sm` at a hit target of ≥40px. See [Density](https://www.koalaui.com/docs/foundations/density.md).
+Height always comes from `size`, never from density. An unsized button takes its domain's default (`sm` in application UI, `md` in marketing) and ignores the `DensityProvider` around it. A `density` prop on the button itself still picks its default (the two below: comfortable md, compact sm), and a container that imposes a tier (InputGroup, a data-table toolbar, Form, hero actions) keeps its buttons level with the fields beside them. An explicit `size` always wins; a pseudo-element holds `xs` and `sm` at a hit target of ≥40px. See [Density](https://www.koalaui.com/docs/foundations/density.md).
 
 ```tsx
 <Button density="comfortable">Comfortable</Button>
@@ -308,7 +320,7 @@ A single `<button>` (or its child with `asChild`). Forwards all native `<button>
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | variant | "primary" \| "secondary" \| "neutral" \| "outline" \| "ghost" \| "subtle" \| "overlay" \| "destructive" \| "destructiveGhost" \| "link" | "primary" | The fill. `primary` is the brand action; `subtle` is a ghost in the muted ink, for the secondary actions of a row; `destructive` is a soft red tint, `destructiveGhost` its chrome-less twin. |
-| size | "xs" \| "sm" \| "md" \| "lg" \| "xl" | "md" | 28, 32, 36, 40 or 44px tall (xs is the dense-UI tier: row actions, a floating card's close). Unset, it follows `density`, then the container's tier, then `md`. |
+| size | "xs" \| "sm" \| "md" \| "lg" \| "xl" | "sm" \| "md" | 28, 32, 36, 40 or 44px tall (xs is the dense-UI tier: row actions, a floating card's close). Unset, it follows `density`, then the container's tier, then the domain: `sm` in application UI, `md` under a marketing `DomainProvider`. |
 | density | "comfortable" \| "compact" | - | Picks the default `size` only (compact is `sm`, comfortable is `md`). A Button ignores an ambient `DensityProvider`. |
 | iconOnly | boolean | false | A square that tracks the size, auto-wrapped in a Tooltip from `aria-label`. Warns in development without an accessible name. |
 | tone | "default" \| "onMedia" \| "onInverse" | "default" | Re-points fills and focus ring for a brand band or photo (`onMedia`, fixed white) or a `bg-foreground` band (`onInverse`). |
@@ -348,7 +360,7 @@ A primary Button with a separate trailing DropdownMenu trigger. Button appearanc
 | menuClassName | string | - | Classes for the menu content, such as a fixed width. |
 | asChild | boolean | false | Render the primary action on its child, such as a Next.js Link. |
 | variant | ButtonProps["variant"] | "primary" | Shared button appearance. |
-| size | ButtonProps["size"] | "md" | Shared button size. |
+| size | ButtonProps["size"] | "sm" \| "md" | Shared button size; unset, it follows the domain like Button. |
 | disabled | boolean | false | Disables both segments. |
 
 ## FAQ
@@ -379,7 +391,7 @@ Radix Slot expects a single child, so a sibling spinner would break it. Under as
 
 ### Why doesn't a compact app shell shrink my buttons?
 
-On purpose. The default button is md (36px) on dashboards and landings alike, so an unsized Button ignores the DensityProvider around it. Where a button has to match smaller fields, its container handles it (InputGroup, a data-table toolbar, ButtonGroup); anywhere else, set size="sm" or density="compact" on the button (or size="xs" for row actions in a dense table). A pseudo-element keeps the xs and sm hit targets at least 40px.
+It doesn't need to. In application UI an unsized Button is already sm (32px), level with a compact Input, so a DensityProvider has nothing to change; marketing surfaces (Section, Hero, Footer, Banner, Gallery or a DomainProvider domain="marketing") default to md (36px). Containers that impose a tier (InputGroup, a data-table toolbar, Form) still keep their buttons level with the fields beside them; use size="xs" for row actions in a dense table. A pseudo-element keeps the xs and sm hit targets at least 40px.
 
 ### Why is the white chip's label black and not the brand color?
 

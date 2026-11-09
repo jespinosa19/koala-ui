@@ -21,7 +21,7 @@ export const selectVariants = tv({
       "outline-none focus-visible:border-brand focus-visible:brand-ring",
       "disabled:cursor-not-allowed disabled:opacity-50",
       "aria-[invalid=true]:border-destructive aria-[invalid=true]:focus-visible:destructive-ring aria-[invalid=true]:data-[state=open]:destructive-ring",
-      "data-[placeholder]:font-normal data-[placeholder]:text-muted-foreground",
+      "data-[placeholder]:font-normal data-[placeholder]:text-placeholder",
       "[&>span]:flex [&>span]:min-w-0 [&>span]:items-center [&>span]:gap-2 [&>span]:truncate",
       "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
       "[&>span_svg]:text-muted-foreground",
@@ -58,7 +58,7 @@ export const selectVariants = tv({
     separator: "-mx-0.75 h-px bg-border",
     scrollButton: "absolute inset-x-0 z-10 flex h-7 cursor-pointer items-center justify-center text-muted-foreground",
 
-    searchValue: "flex min-w-0 flex-1 items-center gap-2 truncate text-left",
+    searchValue: "-my-0.5 flex min-w-0 flex-1 items-center gap-2 truncate py-0.5 text-left",
     search: "shrink-0 p-1",
     list: [
       "group/select-search-list p-1",

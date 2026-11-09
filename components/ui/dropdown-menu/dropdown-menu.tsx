@@ -31,7 +31,7 @@ export const dropdownMenuVariants = tv({
       "focus:bg-accent focus:text-accent-foreground",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       "[&>svg]:text-muted-foreground [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
-      "has-[[data-slot=dropdown-menu-item-description]]:items-start",
+      "has-[[data-slot=dropdown-menu-item-description]]:items-start has-[[data-slot=dropdown-menu-item-description]]:py-2.5",
     ],
     itemText: "flex min-w-0 flex-col gap-0.5",
     itemDescription: "text-sm font-normal text-pretty text-muted-foreground",

@@ -19,7 +19,7 @@ const inputVariants = tv({
     field: [
       "flex-1 min-w-0 bg-transparent outline-none",
       "autofill-clear",
-      "text-foreground placeholder:text-muted-foreground",
+      "text-foreground placeholder:text-placeholder",
       "disabled:cursor-not-allowed",
       "file:border-0 file:bg-transparent file:font-medium",
     ],
@@ -33,7 +33,7 @@ const inputVariants = tv({
     floatingField: [
       "peer size-full min-w-0 bg-transparent outline-none",
       "autofill-clear",
-      "text-foreground placeholder:text-transparent focus:placeholder:text-muted-foreground",
+      "text-foreground placeholder:text-transparent focus:placeholder:text-placeholder",
       "placeholder:transition-[color] placeholder:duration-fast placeholder:ease-out",
       "disabled:cursor-not-allowed",
     ],

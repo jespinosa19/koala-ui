@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Slot } from "radix-ui"
 
-import { useButtonSize, type Density } from "@/lib/density"
+import { useButtonSize, useTouch, type Density } from "@/lib/density"
 import { cn } from "@/lib/utils"
 import { type VariantProps } from "@/lib/tv"
 import { AnimatedLabel } from "@/components/ui/animated-label"
@@ -46,6 +46,7 @@ export function Button({
   ...props
 }: ButtonProps) {
   const Comp = asChild ? Slot.Root : "button"
+  const touch = useTouch()
 
   const isLoading = loading && !asChild
 
@@ -76,6 +77,7 @@ export function Button({
       className={buttonVariants({
         variant,
         tone,
+        touch,
         size: useButtonSize(size ?? undefined, density),
         iconOnly,
         className: cn(isStatic && "active:scale-100", isLoading && "relative", className),

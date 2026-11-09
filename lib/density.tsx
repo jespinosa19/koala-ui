@@ -4,14 +4,16 @@ import * as React from "react"
 
 export type Density = "comfortable" | "compact"
 
-const DensityContext = React.createContext<Density>("compact")
+export type SurfaceDensity = Density | "touch"
+
+const DensityContext = React.createContext<SurfaceDensity>("compact")
 DensityContext.displayName = "DensityContext"
 
 export function DensityProvider({
   density,
   children,
 }: {
-  density: Density
+  density: SurfaceDensity
   children: React.ReactNode
 }) {
   return (
@@ -23,9 +25,30 @@ export function DensityProvider({
   )
 }
 
+function toDensity(density: SurfaceDensity): Density {
+  return density === "touch" ? "comfortable" : density
+}
+
 export function useDensity(density?: Density): Density {
   const context = React.useContext(DensityContext)
-  return density ?? context
+  return density ?? toDensity(context)
+}
+
+export function useTouch(): boolean {
+  return React.useContext(DensityContext) === "touch"
+}
+
+export type Domain = "application" | "marketing"
+
+const DomainContext = React.createContext<Domain>("application")
+DomainContext.displayName = "DomainContext"
+
+export function DomainProvider({ domain, children }: { domain: Domain; children: React.ReactNode }) {
+  return <DomainContext.Provider value={domain}>{children}</DomainContext.Provider>
+}
+
+export function useDomain(): Domain {
+  return React.useContext(DomainContext)
 }
 
 export type ControlSize = "sm" | "md" | "lg"
@@ -57,18 +80,30 @@ export function useControlSizeContext(): ControlSize | null {
 }
 
 export function useControlSize(size?: ControlSize, density?: Density): ControlSize {
-  const contextDensity = React.useContext(DensityContext)
   const contextSize = React.useContext(ControlSizeContext)
+  const domain = React.useContext(DomainContext)
   if (size) return size
   if (density) return density === "compact" ? "sm" : "md"
   if (contextSize) return toControlSize(contextSize)
-  return contextDensity === "compact" ? "sm" : "md"
+  return domain === "marketing" ? "md" : "sm"
+}
+
+function resolveButtonSize(
+  size: ButtonSize | undefined,
+  density: Density | undefined,
+  contextSize: ButtonSize | null,
+  domain: Domain,
+): ButtonSize {
+  if (size) return size
+  if (density) return density === "compact" ? "sm" : "md"
+  if (contextSize) return contextSize
+  return domain === "marketing" ? "md" : "sm"
 }
 
 export function useButtonSize(size?: ButtonSize, density?: Density): ButtonSize {
   const contextSize = React.useContext(ControlSizeContext)
-  if (size) return size
-  if (density) return density === "compact" ? "sm" : "md"
-  if (contextSize) return contextSize
-  return "md"
+  const domain = React.useContext(DomainContext)
+  const touch = React.useContext(DensityContext) === "touch"
+  const resolved = resolveButtonSize(size, density, contextSize, domain)
+  return touch && resolved === "xs" ? "sm" : resolved
 }

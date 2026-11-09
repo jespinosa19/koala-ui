@@ -120,7 +120,7 @@ The `variant` prop on `ButtonGroup` is inherited by every `ButtonGroupItem` insi
 
 ## Sizes
 
-Inherits Button's sizes - `xs` (28px, for a toolbar of row actions in a dense table), `sm` (32px), `md` (36px, the default), and `lg` (40px). The marketing `xl` is not offered on a group.
+Inherits Button's sizes - `xs` (28px, for a toolbar of row actions in a dense table), `sm` (32px, the application default), `md` (36px, the marketing default), and `lg` (40px). The marketing `xl` is not offered on a group.
 
 ```tsx
 <ButtonGroup size="xs">

@@ -4,6 +4,8 @@
 
 A compact label for status, counts, and categories. Single-element like Button; status variants are soft tints derived from semantic tokens, so they re-theme everywhere.
 
+Try it yourself. This one is live, and its code is right below.
+
 ```tsx
 <Badge variant="success" dot pill>Online</Badge>
 <Badge variant="purple" pill><Lightning /> Beta</Badge>
@@ -31,6 +33,24 @@ import { Badge } from "@/components/ui/badge"
 export function Example() {
   return <Badge>New</Badge>
 }
+```
+
+## Anatomy
+
+```tsx
+import { Badge, BadgeAvatar, BadgeCount, BadgeIcon, BadgeNumber, BadgeProgress, BadgeReveal, BadgeText } from "@/components/ui/badge"
+
+<BadgeReveal>
+  <Badge>
+    <BadgeAvatar />
+    <BadgeIcon />
+    <BadgeProgress />
+    <BadgeText />
+    <BadgeCount>
+      <BadgeNumber />
+    </BadgeCount>
+  </Badge>
+</BadgeReveal>
 ```
 
 ## Playground
@@ -123,6 +143,74 @@ When the color arrives with the data (a dispatch call code with its category hex
 
 The ink is read from hex (`#rgb`, `#rrggbb`, with or without alpha) and `rgb()`; any other form (a named color, `hsl()`, a `var()`) paints fine but gets white ink, so prefer hex for solid badges. The same choice is exported as `readableInk(color)`, returning `"dark"` or `"light"`, for your own surfaces.
 
+## Appearance
+
+`variant` picks the tone, `appearance` picks how it is painted. `soft`, the default, is a tint, `surface` adds a hairline in the tone's ink, `solid` fills it, and `modern` is a neutral surface where only the leading icon or dot carries the tone. Each tone carries its own ink and solid per theme, so light and cream read as crisp as dark.
+
+```tsx
+<Badge variant="success" appearance="solid">Active</Badge>
+<Badge variant="success" appearance="surface">Active</Badge>
+<Badge variant="success" appearance="modern"><CheckCircle weight="fill" /> Ready</Badge>
+<Badge variant="info" appearance="modern"><CircleHalf weight="fill" /> Building</Badge>
+<Badge variant="warning" appearance="modern"><CircleDashed weight="bold" /> Queued</Badge>
+<Badge variant="destructive" appearance="modern"><XCircle weight="fill" /> Error</Badge>
+```
+
+## Live
+
+`pulse` turns the dot on and gives it a slow echo, for something that is happening right now. Keep it to one per view. It holds still under reduced motion.
+
+```tsx
+<Badge variant="info" pulse pill>Deploying</Badge>
+<Badge variant="success" appearance="modern" pulse pill>Live</Badge>
+```
+
+## Animated
+
+Four client parts give the badge motion that carries meaning. Each one holds still under reduced motion.
+
+### State change
+
+`BadgeText` rolls to its new string and eases the width to fit; `BadgeIcon` grows the new glyph in whenever `swap` changes. The tint crosses to the new tone on its own.
+
+```tsx
+<Badge variant={status.tone}>
+  <BadgeIcon swap={status.label}>{status.icon}</BadgeIcon>
+  <BadgeText>{status.label}</BadgeText>
+</Badge>
+```
+
+### Rolling count
+
+`BadgeNumber` turns each digit like a drum, up when the value grows and down when it shrinks; only the digits that change move.
+
+```tsx
+<Badge appearance="modern">
+  Inbox <BadgeCount><BadgeNumber value={unread} /></BadgeCount>
+</Badge>
+```
+
+### Working
+
+`sweep` passes the ink band through the label for open-ended work; `BadgeProgress` fills a ring when there is a number.
+
+```tsx
+<Badge variant="purple"><Sparkle weight="fill" /><BadgeText sweep>Generating</BadgeText></Badge>
+<Badge variant="info"><BadgeProgress value={64} /> Uploading 64%</Badge>
+```
+
+### Enter and leave
+
+`BadgeReveal` opens and closes the badge's slot in a row, so neighbours slide instead of jumping.
+
+```tsx
+{tags.map((tag) => (
+  <BadgeReveal key={tag.id} show={tag.applied}>
+    <Badge variant={tag.tone}>{tag.label}</Badge>
+  </BadgeReveal>
+))}
+```
+
 ## Sizes
 
 ```tsx
@@ -156,9 +244,27 @@ Set `pill` for fully rounded edges - pairs well with dot and icon badges.
 <Badge variant="outline"><GitBranch /> feature/auth</Badge>
 ```
 
+## Avatar and flag
+
+`BadgeAvatar` and `Flag` sit first and size to the badge, with the start padding tightened so the picture keeps an even margin.
+
+```tsx
+<Badge pill><BadgeAvatar src="/elena.webp" /> Elena Ruiz</Badge>
+<Badge appearance="modern"><Flag code="ES" /> Spain</Badge>
+```
+
+## Count
+
+`BadgeCount` nests a number at the end, tinted from the badge's own ink so it stays legible on every tone.
+
+```tsx
+<Badge appearance="modern">Inbox <BadgeCount>12</BadgeCount></Badge>
+<Badge variant="info">Open <BadgeCount>3</BadgeCount></Badge>
+```
+
 ## Dismissible
 
-Pass `onRemove` to render a trailing dismiss button. Give each a descriptive `removeLabel` for screen readers.
+Pass `onRemove` to render a trailing dismiss button. Give each a descriptive `removeLabel` for screen readers. For filters people toggle and clear, reach for Chip: it is the interactive sibling, with the same heights and tones.
 
 ```tsx
 <Badge
@@ -173,11 +279,11 @@ Pass `onRemove` to render a trailing dismiss button. Give each a descriptive `re
 
 ## As child
 
-Use `asChild` to render the badge styles on another element - e.g. a link - via Radix Slot.
+Use `asChild` to render the badge styles on another element, such as a link. As a link it gains a hover fill, a focus ring, and a trailing arrow that nudges forward.
 
 ```tsx
 <Badge asChild variant="info">
-  <a href="/changelog">What's new</a>
+  <a href="/changelog">What's new <ArrowRight /></a>
 </Badge>
 ```
 
@@ -190,13 +296,72 @@ A single `<span>` that labels a status, count or category. Forwards all native `
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | variant | "default" \| "primary" \| "secondary" \| "outline" \| "success" \| "warning" \| "info" \| "destructive" \| "purple" \| "pink" \| "teal" \| "orange" \| "overlay" \| "overlayLight" | "default" | The fill: neutral, solid, outline, a soft status tint, a categorical hue, or a dark or light glass for media. |
-| size | "sm" \| "md" \| "lg" | "md" | Padding, type and icon size. |
+| appearance | "soft" \| "surface" \| "solid" \| "modern" | "soft" | How the tone is painted: a tint (the default), a tint with a hairline in the tone's ink, a solid fill (white ink, dark on amber and on dark themes), or a neutral surface where only the leading icon or dot takes the tone. |
+| size | "sm" \| "md" \| "lg" | "md" | Fixed heights of 20, 24 and 28px, matching Chip `xs`, `sm` and the step above. Sets padding, type, corner and icon size. |
 | pill | boolean | false | Fully rounded ends. |
-| dot | boolean | - | A leading dot in the current color; the fill gives way to a hairline. Passing a boolean (even `false`) keeps the slot mounted, so flipping it animates. |
+| dot | boolean | - | A leading dot in the variant's tone; the fill gives way to a hairline. Passing a boolean (even `false`) keeps the slot mounted, so flipping it animates. |
+| pulse | boolean | - | Turns the dot on with a slow echo, for something live. Still under reduced motion. |
 | color | string | - | Any CSS color. Paints the variant's treatment from it: a soft tint for the page-ground tones, a solid fill with a computed dark or white ink for `primary` / `secondary`, the hairline for `outline`; the dot takes it as is. Ignored by the `overlay*` fills. The root gets `data-color` and, when solid, `data-ink` (`dark` \| `light`). The exported `readableInk(color)` returns that same pick. |
 | onRemove | () => void | - | Renders a trailing dismiss button that calls it. |
 | removeLabel | string | "Remove" | The accessible label of the dismiss button. Name the item ("Remove Design"). |
-| asChild | boolean | false | Renders the badge styles onto its single child (Radix Slot), such as a link. Ignores `dot` and `onRemove`. |
+| asChild | boolean | false | Renders the badge styles onto its single child (Radix Slot), such as a link. Ignores `dot` and `onRemove`. A link gets a hover fill, a focus ring and a nudging trailing arrow. |
+
+### BadgeAvatar
+
+A picture placed first inside the badge, sized to it. Forwards all native `<img>` props; `alt` defaults to empty since the label names the person.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| src | string | - | The image URL. |
+
+### BadgeCount
+
+A number nested at the end of the badge, tinted from its ink. Forwards all native `<span>` props.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| children | ReactNode | - | The count. |
+
+### BadgeText
+
+Client. A label that rolls to its new string and eases the badge width to fit. Forwards native `<span>` props.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| children | string | - | The label. Changing it plays the roll. |
+| sweep | boolean | - | Passes the ink band through the label, for open-ended work. |
+
+### BadgeIcon
+
+Client. Wraps the leading glyph so it is sized and toned like a direct icon, and grows the new one in on swap.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| swap | string | - | Any key for the current glyph; changing it plays the swap. |
+
+### BadgeNumber
+
+Client. A number whose digits roll like drums when it changes. Labelled with its value for assistive tech.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| value | number | - | A non-negative integer. |
+
+### BadgeProgress
+
+Client. A ring that fills to the value, sized and toned like a leading icon. Exposes progressbar semantics.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| value | number | - | 0 to 100. |
+
+### BadgeReveal
+
+Client. Wraps a badge in a row and opens or closes its slot, so neighbours slide. Hidden and inert while closed.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| show | boolean | - | Whether the badge is in the row. |
 
 ## FAQ
 
@@ -232,7 +397,7 @@ Yes. Every variant, including the categorical hues, derives from semantic tokens
 
 `npx koalaui-cli@latest add badge` writes `components/ui/badge/`. Import from `@/components/ui/badge`:
 
-- Components and helpers: `Badge`, `badgeVariants`, `readableInk`
-- Types: `BadgeProps`
+- Components and helpers: `Badge`, `BadgeAvatar`, `BadgeCount`, `badgeVariants`, `BadgeIcon`, `BadgeNumber`, `BadgeProgress`, `BadgeReveal`, `BadgeText`, `readableInk`
+- Types: `BadgeProps`, `BadgeAvatarProps`, `BadgeIconProps`, `BadgeNumberProps`, `BadgeProgressProps`, `BadgeRevealProps`, `BadgeTextProps`
 - Koala lib helpers it uses: `tv`, `utils`
 - npm packages: `koala-icons`, `radix-ui`

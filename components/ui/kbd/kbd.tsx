@@ -22,7 +22,7 @@ export const kbdVariants = tv({
         "[[data-slot=tooltip][data-variant=text]_&]:bg-background/15 [[data-slot=tooltip][data-variant=text]_&]:text-background/80",
       ],
       outline: [
-        "border-border bg-transparent text-muted-foreground",
+        "border-input bg-transparent text-muted-foreground",
         "[[data-slot=tooltip][data-variant=text]_&]:border-background/25 [[data-slot=tooltip][data-variant=text]_&]:text-background/80",
       ],
       solid: [

@@ -4,6 +4,7 @@ import * as React from "react"
 
 import { DensityProvider, useDensity } from "@/lib/density"
 import { createContext } from "@/lib/create-context"
+import { createVelocityTracker, project, rubberband, type VelocityTracker } from "@/lib/gesture"
 import { tv, type VariantProps } from "@/lib/tv"
 import { cn } from "@/lib/utils"
 
@@ -20,7 +21,6 @@ export interface SheetInsets {
 
 const DETENTS: SheetDetent[] = ["peek", "half", "full"]
 const DRAG_SLOP = 6
-const PROJECTION = 220
 const FULL_GAP = 56
 
 export const sheetVariants = tv({
@@ -131,6 +131,11 @@ export function Sheet({
   const titleId = React.useId()
 
   const [root, setRoot] = React.useState<HTMLElement | null>(null)
+  const rootRef = React.useRef<HTMLElement | null>(null)
+  const attachRoot = React.useCallback((node: HTMLElement | null) => {
+    rootRef.current = node
+    setRoot(node)
+  }, [])
   const canvas = root?.parentElement ?? null
   const subscribe = React.useCallback(
     (onChange: () => void) => {
@@ -166,32 +171,52 @@ export function Sheet({
     full,
   }
 
-  const [dragHeight, setDragHeight] = React.useState<number | null>(null)
-  const gestureRef = React.useRef<{ y: number; h: number; lastY: number; lastT: number; v: number; now: number; active: boolean } | null>(null)
+  const insetRef = React.useRef(onInsetChange)
+  React.useEffect(() => {
+    insetRef.current = onInsetChange
+  })
+
+  const gestureRef = React.useRef<{ y: number; h: number; now: number; active: boolean; tracker: VelocityTracker } | null>(null)
   const draggedRef = React.useRef(false)
-  const visible = layout === "bottom" ? (dragHeight ?? heights[detent]) : 0
+  const visible = layout === "bottom" ? heights[detent] : 0
+
+  function writeHeight(height: number) {
+    if (rootRef.current) rootRef.current.style.height = `${height}px`
+    insetRef.current?.({ top: 0, right: 0, bottom: height, left: 0 })
+  }
 
   function beginDrag(e: React.PointerEvent) {
+    if (e.button !== 0) return
     draggedRef.current = false
-    gestureRef.current = { y: e.clientY, h: visible, lastY: e.clientY, lastT: e.timeStamp, v: 0, now: visible, active: false }
+    const tracker = createVelocityTracker()
+    tracker.reset(-e.clientY, e.timeStamp)
+    gestureRef.current = { y: e.clientY, h: visible, now: visible, active: false, tracker }
   }
 
   function moveDrag(e: React.PointerEvent) {
     const g = gestureRef.current
     if (!g) return
+    if (e.buttons === 0) {
+      endDrag()
+      return
+    }
     const dy = e.clientY - g.y
     if (!g.active) {
       if (Math.abs(dy) < DRAG_SLOP) return
       g.active = true
+      g.h = (rootRef.current?.getBoundingClientRect().height ?? visible) + dy
       e.currentTarget.setPointerCapture(e.pointerId)
+      rootRef.current?.setAttribute("data-dragging", "")
     }
-    const dt = e.timeStamp - g.lastT
-    if (dt > 0) g.v = (g.lastY - e.clientY) / dt
-    g.lastY = e.clientY
-    g.lastT = e.timeStamp
+    g.tracker.add(-e.clientY, e.timeStamp)
     const raw = g.h - dy
-    g.now = raw < heights.peek ? heights.peek - (heights.peek - raw) * 0.3 : Math.min(heights.full, raw)
-    setDragHeight(g.now)
+    g.now =
+      raw < heights.peek
+        ? heights.peek - rubberband(heights.peek - raw, heights.peek)
+        : raw > heights.full
+          ? heights.full + rubberband(raw - heights.full, FULL_GAP)
+          : raw
+    writeHeight(g.now)
   }
 
   function endDrag() {
@@ -199,7 +224,7 @@ export function Sheet({
     gestureRef.current = null
     if (!g?.active) return
     draggedRef.current = true
-    const target = g.now + g.v * PROJECTION
+    const target = g.now + project(g.tracker.velocity())
     let best: SheetDetent = detent
     let nearest = Infinity
     for (const d of DETENTS) {
@@ -209,7 +234,8 @@ export function Sheet({
         best = d
       }
     }
-    setDragHeight(null)
+    rootRef.current?.removeAttribute("data-dragging")
+    writeHeight(heights[best])
     setDetent(best)
   }
 
@@ -221,10 +247,6 @@ export function Sheet({
         }
       : null
 
-  const insetRef = React.useRef(onInsetChange)
-  React.useEffect(() => {
-    insetRef.current = onInsetChange
-  })
   React.useEffect(() => {
     if (!root || !layout) return
     let insets: SheetInsets = { top: 0, right: 0, bottom: 0, left: 0 }
@@ -252,11 +274,10 @@ export function Sheet({
 
   return (
     <aside
-      ref={setRoot}
+      ref={attachRoot}
       data-slot="sheet"
       data-layout={layout ?? undefined}
       data-detent={layout === "bottom" ? detent : undefined}
-      data-dragging={dragHeight != null ? "" : undefined}
       data-side={resolvedSide}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabel ? ariaLabelledBy : (ariaLabelledBy ?? titleId)}

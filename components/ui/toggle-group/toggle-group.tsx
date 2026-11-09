@@ -9,7 +9,7 @@ import { useButtonSize } from "@/lib/density"
 import { tv, type VariantProps } from "@/lib/tv"
 import { hitY } from "@/lib/hit-area"
 import { toggleItemBase } from "@/components/ui/toggle"
-import { Tooltip, type TooltipProps } from "@/components/ui/tooltip/tooltip"
+import { Tooltip, TooltipGroup, type TooltipProps } from "@/components/ui/tooltip/tooltip"
 
 declare const process: { env: { NODE_ENV?: string } }
 
@@ -72,7 +72,7 @@ export const toggleGroupVariants = tv({
     {
       variant: "segmented",
       className: {
-        root: "rounded-[calc(var(--button-radius,var(--button-corner))+0.125rem)] p-0.5",
+        root: "h-fit rounded-[calc(var(--button-radius,var(--button-corner))+0.125rem)] p-0.5",
         thumb: "rounded-[var(--button-radius,var(--button-corner))]",
       },
     },
@@ -174,7 +174,7 @@ export function ToggleGroup({ className, size, variant, children, ref, ...props 
             <span className={slots.thumbSurface()} />
           </span>
         )}
-        {children}
+        <TooltipGroup>{children}</TooltipGroup>
       </ToggleGroupPrimitive.Root>
     </ToggleGroupProvider>
   )

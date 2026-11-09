@@ -425,5 +425,5 @@ Wrap your pages in `DrawerNav` with a `defaultView`, give each page a `DrawerVie
 
 - Components and helpers: `Drawer`, `DrawerTrigger`, `DrawerClose`, `DrawerContent`, `DrawerHeader`, `DrawerBody`, `DrawerFooter`, `DrawerTitle`, `DrawerDescription`, `DrawerNav`, `DrawerView`, `DrawerNavTrigger`, `DrawerNavBack`, `useDrawerNav`, `drawerVariants`
 - Types: `DrawerSide`, `DrawerContentProps`, `DrawerNavProps`, `DrawerViewProps`, `DrawerNavTriggerProps`, `DrawerNavBackProps`
-- Koala lib helpers it uses: `create-context`, `density`, `focus-return`, `hit-area`, `tv`, `utils`
+- Koala lib helpers it uses: `create-context`, `density`, `focus-return`, `gesture`, `hit-area`, `motion`, `tv`, `utils`
 - npm packages: `koala-icons`, `radix-ui`

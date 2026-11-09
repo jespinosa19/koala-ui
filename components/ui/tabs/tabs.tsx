@@ -65,7 +65,7 @@ export const tabsVariants = tv({
       segmented: {
         list: "inline-grid grid-flow-col auto-cols-[minmax(max-content,1fr)] gap-0 bg-muted dark:bg-foreground/6 data-[orientation=vertical]:grid-flow-row",
         trigger: [
-          "h-7 px-3",
+          "px-3",
           "after:absolute after:inset-y-1.5 after:left-0 after:w-px after:bg-border after:content-['']",
           "after:transition-opacity after:duration-fast after:ease-out",
           "data-[state=active]:after:opacity-0 [[data-state=active]+&]:after:opacity-0",
@@ -120,21 +120,22 @@ export const tabsVariants = tv({
     },
   },
   compoundVariants: [
-    { variant: "pill", density: "comfortable", className: { list: "rounded-pill p-1", trigger: "rounded-pill", indicator: "rounded-pill" } },
-    { variant: "pill", density: "compact", className: { list: "rounded-pill p-0.5", trigger: "rounded-pill", indicator: "rounded-pill" } },
-    { variant: "segmented", density: "comfortable", className: { list: "rounded-[calc(var(--radius-sm)+var(--spacing))] p-1", trigger: "rounded-sm", indicator: "rounded-sm" } },
-    { variant: "segmented", density: "compact", className: { list: "rounded-[calc(var(--radius-sm)+var(--spacing)*0.5)] p-0.5", trigger: "rounded-sm", indicator: "rounded-sm" } },
+    {
+      variant: ["pill", "segmented"],
+      className: { list: "[--button-corner:var(--radius-md)]", trigger: "h-[calc(var(--spacing-control-sm)-0.25rem)] rounded-[var(--button-radius,var(--button-corner))]", indicator: "rounded-[var(--button-radius,var(--button-corner))]" },
+    },
+    { variant: ["pill", "segmented"], density: "comfortable", className: { list: "rounded-[calc(var(--button-radius,var(--button-corner))+var(--spacing))] p-1" } },
+    { variant: ["pill", "segmented"], density: "compact", className: { list: "rounded-[calc(var(--button-radius,var(--button-corner))+var(--spacing)*0.5)] p-0.5" } },
     {
       variant: ["pill", "folder", "segmented"],
       className: {
         trigger: [
           "data-[orientation=horizontal]:has-[>[data-slot=badge]:last-child]:pe-0.75",
-          "data-[orientation=horizontal]:[&>[data-slot=badge]:last-child]:my-0.75 data-[orientation=horizontal]:[&>[data-slot=badge]:last-child]:self-stretch data-[orientation=horizontal]:[&>[data-slot=badge]:last-child]:py-0",
+          "data-[orientation=horizontal]:[&>[data-slot=badge]:last-child]:my-0.75 data-[orientation=horizontal]:[&>[data-slot=badge]:last-child]:self-stretch data-[orientation=horizontal]:[&>[data-slot=badge]:last-child]:py-0 data-[orientation=horizontal]:[&>[data-slot=badge]:last-child]:h-auto",
         ],
       },
     },
-    { variant: "pill", className: { trigger: "data-[orientation=horizontal]:[&>[data-slot=badge]:last-child]:rounded-pill" } },
-    { variant: "segmented", className: { trigger: "data-[orientation=horizontal]:[&>[data-slot=badge]:last-child]:rounded-[calc(var(--radius-sm)-var(--spacing)*0.75)]" } },
+    { variant: ["pill", "segmented"], className: { trigger: "data-[orientation=horizontal]:[&>[data-slot=badge]:last-child]:rounded-[calc(var(--button-radius,var(--button-corner))-var(--spacing)*0.75)]" } },
     { variant: "folder", density: "comfortable", className: { trigger: "data-[orientation=horizontal]:[&>[data-slot=badge]:last-child]:rounded-[calc(var(--radius-md)-var(--spacing)*0.75)]" } },
     { variant: "folder", density: "compact", className: { trigger: "data-[orientation=horizontal]:[&>[data-slot=badge]:last-child]:rounded-[calc(var(--radius-sm)-var(--spacing)*0.75)]" } },
     { variant: "line", className: { trigger: "rounded-none" } },

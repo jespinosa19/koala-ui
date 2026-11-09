@@ -282,7 +282,7 @@ import { Tooltip, TooltipGroup } from "@/components/ui/tooltip"
 </TooltipGroup>
 ```
 
-The `delay` and `offset` props on individual `Tooltip`s inside a group are ignored - set them once on `TooltipGroup`.
+The `delay` and `offset` props on individual `Tooltip`s inside a group are ignored: set them once on `TooltipGroup`. A tooltip that sets its own `variant`, `interactive` or `open` stays out of the group and works on its own.
 
 ## Around an icon-only Button
 
@@ -550,16 +550,16 @@ A hint on hover and keyboard focus, built on Tippy.js in headless mode (the docu
 | --- | --- | --- | --- |
 | content* | ReactNode | - | The bubble's contents: a label, a label plus a glyph, or the graph parts below. |
 | children | ReactElement | - | The trigger: a single element that forwards its `ref` to a DOM node. Optional only with `anchor`. |
-| variant | "text" \| "graph" | "text" | `text` is the inverted one-line chip; `graph` is the left-aligned popover card for multi-line data. Ignored inside a `TooltipGroup`. |
+| variant | "text" \| "graph" | "text" | `text` is the inverted one-line chip; `graph` is the left-aligned popover card for multi-line data. Inside a `TooltipGroup`, a different variant from the group's keeps this tooltip out of the group. |
 | placement | Placement | "top" | Tippy placement: `top`, `right`, `bottom`, `left`, each with `-start` or `-end`, or `auto`. |
 | delay | number \| [number, number] | [150, 0] | Hover intent in ms, `[open, close]` or one number for both. Ignored inside a group. |
 | offset | [number, number] | [0, 6] | `[skidding, distance]` from the trigger in px. Ignored inside a group. |
-| interactive | boolean | false | Keeps the bubble open while the pointer is over it, for a single link. Ignored inside a group. |
+| interactive | boolean | false | Keeps the bubble open while the pointer is over it, for a single link. Keeps this tooltip out of a group. |
 | trigger | string | "mouseenter focus" | Space-separated events that open it. Focus opens it only when it is keyboard focus; pass `"mouseenter"` to drop focus hints. |
 | hideOnClick | boolean | true | Whether clicking the trigger hides it. Pass `false` for a toggle whose label changes on click. |
-| open | boolean | - | Controlled visibility. Setting it switches the trigger events off; with `anchor` it defaults to `true`. |
+| open | boolean | - | Controlled visibility. Setting it switches the trigger events off and keeps this tooltip out of a group; with `anchor` it defaults to `true`. |
 | anchor | { x: number; y: number; width?: number; height?: number } | - | Hangs the bubble on a point or box in viewport coordinates instead of `children` (a map pin, a chart point). Moving it re-positions the open bubble. |
-| disabled | boolean | false | Keeps the tooltip from showing. Ignored inside a group. |
+| disabled | boolean | false | Keeps the tooltip from showing, inside a group too. |
 
 | Data attribute | Description |
 | --- | --- |
@@ -573,7 +573,7 @@ A hint on hover and keyboard focus, built on Tippy.js in headless mode (the docu
 
 ### TooltipGroup
 
-Shares one bubble across the `Tooltip`s inside it, so it glides from trigger to trigger (a Tippy singleton). Each child keeps its own `content`, `placement` and `trigger`; the rest is set here. Renders no element.
+Shares one bubble across the `Tooltip`s inside it, so it glides from trigger to trigger (a Tippy singleton). Each child keeps its own `content`, `placement`, `trigger` and `hideOnClick`; the rest is set here. A child with its own `variant`, `interactive` or `open` stays standalone, and a group nested in another of the same variant joins it. Renders no element.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |

@@ -18,7 +18,7 @@ const textareaVariants = tv({
     ],
     field: [
       "w-full resize-none bg-transparent outline-none",
-      "text-foreground placeholder:text-muted-foreground",
+      "text-foreground placeholder:text-placeholder",
       "disabled:cursor-not-allowed",
       "autofill-clear",
     ],
@@ -37,8 +37,8 @@ const textareaVariants = tv({
   variants: {
     size: {
       sm: {
-        field: "min-h-16 px-2.5 py-2 text-sm pointer-coarse:text-base",
-        footer: "px-2.5 pb-2 text-xs",
+        field: "min-h-16 px-3 py-2 text-sm pointer-coarse:text-base",
+        footer: "px-3 pb-2 text-xs",
         count: "text-xs",
       },
       md: {

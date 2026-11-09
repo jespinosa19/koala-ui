@@ -219,4 +219,4 @@ In `SheetFooter`. It is pinned to the sheet's bottom edge, which on a bottom she
 
 - Components and helpers: `Sheet`, `SheetHandle`, `SheetHeader`, `SheetTitle`, `SheetDescription`, `SheetBody`, `SheetFooter`, `useSheet`, `sheetVariants`
 - Types: `SheetProps`, `SheetHandleProps`, `SheetDetent`, `SheetLayout`, `SheetSide`, `SheetInsets`
-- Koala lib helpers it uses: `create-context`, `density`, `tv`, `utils`
+- Koala lib helpers it uses: `create-context`, `density`, `gesture`, `tv`, `utils`

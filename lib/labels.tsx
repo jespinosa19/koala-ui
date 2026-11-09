@@ -2,6 +2,8 @@
 
 import * as React from "react"
 
+import type { AgentStatus } from "@/lib/agent"
+
 export const defaultLabels = {
   close: "Close",
   delete: "Delete",
@@ -52,6 +54,26 @@ export const defaultLabels = {
   rotateRight: "Rotate right",
   fullScreen: "Full screen",
   exitFullScreen: "Exit full screen",
+  soldOut: "Sold out",
+  inOrder: (count: number) => `${count} in the order`,
+  required: "Required",
+  optional: "Optional",
+  chooseRule: (min: number, max: number) =>
+    max === 1 ? "Choose 1" : min > 0 && min === max ? `Choose ${min}` : min > 0 ? `Choose ${min} to ${max}` : `Up to ${max}`,
+  addToOrder: "Add to order",
+  without: "Without",
+  agentStatus: {
+    working: "Running",
+    waiting: "Needs you",
+    idle: "Idle",
+    done: "Done",
+    failed: "Failed",
+    cancelled: "Cancelled",
+  } as Record<AgentStatus, string>,
+  agentStatusCount: (status: AgentStatus, count: number): string =>
+    status === "working" ? "running" : status === "waiting" ? (count === 1 ? "needs you" : "need you") : status,
+  agents: (count: number): string => (count === 1 ? "agent" : "agents"),
+  retry: "Retry",
 }
 
 export type Labels = typeof defaultLabels

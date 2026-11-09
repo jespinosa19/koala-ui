@@ -357,6 +357,62 @@ const [rating, setRating] = React.useState("")
 </DialogContent>
 ```
 
+## Rating
+
+A star [Rating](https://www.koalaui.com/docs/components/rating.md) that asks for nothing else until it is used. Picking a score opens a comment field below the stars, and its label follows the score: what went wrong for a low one, what you liked for a high one. Submit stays disabled until there is a score; the comment is optional.
+
+```tsx
+const SCORES = ["Terrible", "Poor", "Okay", "Good", "Excellent"]
+
+const [score, setScore] = React.useState(0)
+const [note, setNote] = React.useState("")
+const rated = score > 0
+
+<Dialog>
+  <DialogTrigger asChild>
+    <Button variant="outline">Rate your experience</Button>
+  </DialogTrigger>
+  <DialogContent size="sm">
+    <DialogHeader>
+      <DialogTitle>How was your experience?</DialogTitle>
+      <DialogDescription>Your rating helps us improve Koala.</DialogDescription>
+    </DialogHeader>
+
+    <div className="flex flex-col">
+      <div className="flex items-center gap-3">
+        <Rating size="lg" value={score} onValueChange={setScore} aria-label="Your rating" />
+        <span aria-live="polite" className="text-sm font-medium text-muted-foreground">
+          {rated ? SCORES[score - 1] : null}
+        </span>
+      </div>
+
+      <div
+        data-open={rated ? "" : undefined}
+        inert={!rated}
+        className="-mx-1 grid grid-rows-[0fr] opacity-0 -translate-y-1 transition-[grid-template-rows,opacity,translate] duration-base ease-out data-open:grid-rows-[1fr] data-open:opacity-100 data-open:translate-y-0"
+      >
+        <div className="min-h-0 overflow-hidden">
+          <div className="grid gap-2 px-1 pt-4 pb-1">
+            <TextareaLabel htmlFor="rating-note">
+              {score <= 2 ? "What went wrong?" : score === 3 ? "What could be better?" : "What did you like?"}
+            </TextareaLabel>
+            <TextareaRoot resize="none">
+              <TextareaField id="rating-note" placeholder="Leave a comment (optional)" rows={3}
+                maxLength={500} showCount value={note} onChange={(e) => setNote(e.target.value)} />
+            </TextareaRoot>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <DialogFooter>
+      <DialogClose asChild><Button variant="ghost">Not now</Button></DialogClose>
+      <DialogClose asChild><Button disabled={!rated}>Submit</Button></DialogClose>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+```
+
 ## Two-factor (2FA)
 
 A verification flow: a live [QR Code](https://www.koalaui.com/docs/components/qr-code.md) on a nested surface (so it takes a **concentric** radius one step inside the dialog) above an [OTP Input](https://www.koalaui.com/docs/components/otp-input.md). `Verify` enables only once all six digits are in.

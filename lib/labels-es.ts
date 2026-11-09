@@ -50,4 +50,31 @@ export const labelsEs: Labels = {
   rotateRight: "Girar a la derecha",
   fullScreen: "Pantalla completa",
   exitFullScreen: "Salir de pantalla completa",
+  soldOut: "Agotado",
+  inOrder: (count) => `${count} en el pedido`,
+  required: "Obligatorio",
+  optional: "Opcional",
+  chooseRule: (min, max) =>
+    max === 1 ? "Elige 1" : min > 0 && min === max ? `Elige ${min}` : min > 0 ? `Elige de ${min} a ${max}` : `Hasta ${max}`,
+  addToOrder: "Añadir al pedido",
+  without: "Sin",
+  agentStatus: {
+    working: "En curso",
+    waiting: "Te necesita",
+    idle: "En espera",
+    done: "Hecho",
+    failed: "Fallido",
+    cancelled: "Cancelado",
+  },
+  agentStatusCount: (status, count) => {
+    const plural = count === 1 ? "" : "s"
+    if (status === "working") return "en curso"
+    if (status === "waiting") return count === 1 ? "te necesita" : "te necesitan"
+    if (status === "idle") return "en espera"
+    if (status === "done") return `hecho${plural}`
+    if (status === "failed") return `fallido${plural}`
+    return `cancelado${plural}`
+  },
+  agents: (count) => (count === 1 ? "agente" : "agentes"),
+  retry: "Reintentar",
 }

@@ -144,7 +144,8 @@ function TooltipBubble({
 }
 
 type RegisterTrigger = (instance: Instance) => () => void
-const TooltipGroupContext = React.createContext<RegisterTrigger | null>(null)
+type TooltipGroupValue = { register: RegisterTrigger; variant: "text" | "graph" }
+const TooltipGroupContext = React.createContext<TooltipGroupValue | null>(null)
 
 type CoveredBy = (el: Element) => boolean
 const TooltipTriggerContext = React.createContext<CoveredBy | null>(null)
@@ -192,8 +193,14 @@ export function Tooltip({
   auto,
   className,
 }: TooltipProps) {
-  const register = React.useContext(TooltipGroupContext)
+  const group = React.useContext(TooltipGroupContext)
   const coveredBy = React.useContext(TooltipTriggerContext)
+  const joinsGroup =
+    group != null &&
+    !interactive &&
+    !disabled &&
+    open === undefined &&
+    (variant === undefined || variant === group.variant)
 
   if (anchor) {
     return (
@@ -210,13 +217,14 @@ export function Tooltip({
   }
   if (!children) return null
 
-  if (register) {
+  if (joinsGroup) {
     return (
       <GroupTooltip
-        register={register}
+        register={group.register}
         content={content}
         placement={placement}
         trigger={trigger}
+        hideOnClick={hideOnClick}
         auto={auto}
         coveredBy={coveredBy}
       >
@@ -475,6 +483,7 @@ function GroupTooltip({
   children,
   placement = "top",
   trigger,
+  hideOnClick,
   auto,
   coveredBy,
 }: {
@@ -483,6 +492,7 @@ function GroupTooltip({
   children: React.ReactElement
   placement?: Props["placement"]
   trigger?: string
+  hideOnClick?: Props["hideOnClick"]
   auto?: boolean
   coveredBy: CoveredBy | null
 }) {
@@ -515,6 +525,7 @@ function GroupTooltip({
       content: content as unknown as Content,
       placement,
       trigger: trigger ?? "mouseenter focus",
+      hideOnClick: hideOnClick ?? true,
       getReferenceClientRect: () => {
         if (triggerEl.isConnected || !lastRect) lastRect = triggerEl.getBoundingClientRect()
         return lastRect
@@ -535,8 +546,9 @@ function GroupTooltip({
       content: content as unknown as Content,
       placement,
       trigger: trigger ?? "mouseenter focus",
+      hideOnClick: hideOnClick ?? true,
     })
-  }, [content, placement, trigger])
+  }, [content, placement, trigger, hideOnClick])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const triggerNode = React.cloneElement(children as React.ReactElement<any>, { ref: triggerRefCallback })
@@ -556,7 +568,20 @@ export interface TooltipGroupProps {
   className?: string
 }
 
-export function TooltipGroup({
+export function TooltipGroup(props: TooltipGroupProps) {
+  const parent = React.useContext(TooltipGroupContext)
+  const { children, variant, delay, offset, disabled, className } = props
+  const joinsParent =
+    parent != null &&
+    (variant ?? "text") === parent.variant &&
+    delay === undefined &&
+    offset === undefined &&
+    !disabled &&
+    className === undefined
+  return joinsParent ? children : <TooltipGroupRoot {...props} />
+}
+
+function TooltipGroupRoot({
   children,
   variant,
   delay = [150, 200],
@@ -605,7 +630,7 @@ export function TooltipGroup({
       onHidden() {
         activeRef.current = null
       },
-      overrides: ["placement", "getReferenceClientRect"],
+      overrides: ["placement", "getReferenceClientRect", "hideOnClick"],
       delay: delay as Props["delay"],
       offset: offset as [number, number],
       appendTo: mountPoint,
@@ -639,8 +664,10 @@ export function TooltipGroup({
     else s.enable()
   }, [delay, offset, disabled])
 
+  const group = React.useMemo<TooltipGroupValue>(() => ({ register, variant: variant ?? "text" }), [register, variant])
+
   return (
-    <TooltipGroupContext.Provider value={register}>
+    <TooltipGroupContext.Provider value={group}>
       {children}
       {container &&
         createPortal(

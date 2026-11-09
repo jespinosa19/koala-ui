@@ -266,9 +266,9 @@
   --tactile-stroke: color-mix(in oklab, var(--foreground) 10%, transparent);
   --input: var(--tactile-stroke);
 
-  /* How far a field's fill moves toward the ink to rise off its ground: 0 on light grounds, where a
-     field is already the lightest thing on the page. */
-  --tactile-fill: 0%;
+  /* How far a field's fill moves toward the ink to rise off its ground: a faint 3% on light
+     grounds, now that no shadow lifts the field. */
+  --tactile-fill: 3%;
   /* How far a bordered dialog footer moves toward the ink: the tray the actions rest on. */
   --tactile-footer-fill: 0%;
 
@@ -278,15 +278,13 @@
   --tactile-object: 0 0 0 1px var(--tactile-stroke), var(--tactile-lift);
   /* A track, a tray or a pressed control: the stroke stays, the lift goes. */
   --tactile-flat: inset 0 0 0 1px var(--tactile-stroke);
-  /* A field sits lower than a key: on a light ground the key's lift made it look like a button, so
-     a field only breathes a wide, faint shadow. The dark themes give it the full lift back, since
-     there the shadow barely shows and the fill does the rising. */
-  --tactile-field-lift: 0 1px 3px 0 oklch(0 0 0 / 0.04);
+  /* Fields and keys carry no shadow: the stroke and the fill do the rising. */
+  --tactile-field-lift: none;
 
   /* Every `shadow-xs` control in the library (Select trigger, Checkbox, filled and outline Buttons)
-     already asks for a lift, so they all turn tactile from this one token. The larger steps keep the
-     theme's own values, so a popover or dialog stays a floating sheet rather than a slab. */
-  --shadow-xs: var(--tactile-lift);
+     drops its shadow here. The larger steps keep the theme's own values, so a popover or dialog
+     stays a floating sheet rather than a slab. */
+  --shadow-xs: 0 0 #0000;
 }
 
 :root[data-concept="tactile"]:is(.dark, .moonlight),
@@ -296,7 +294,39 @@
   --tactile-fill: 6%;
   --tactile-footer-fill: 4%;
   --tactile-drop: oklch(0 0 0 / 0.35);
-  --tactile-field-lift: var(--tactile-lift);
+}
+
+/* A light or cream scope inside a dark page (a preview, a pinned band) takes the light values back,
+   or it inherits the dark fill and stroke from the root. */
+[data-concept="tactile"] :is(.dark, .moonlight) :is(.light, .cream),
+:root[data-concept="tactile"]:is(.dark, .moonlight) :is(.light, .cream) {
+  --tactile-stroke: color-mix(in oklab, var(--foreground) 10%, transparent);
+  --tactile-fill: 3%;
+  --tactile-footer-fill: 0%;
+  --tactile-drop: oklch(0 0 0 / 0.08);
+}
+
+/* Theme scopes declare their own `--shadow-xs` and focus ring; inside tactile the shadow stays off
+   and the ring stays ink at every depth. */
+:root[data-concept="tactile"],
+[data-concept="tactile"],
+[data-concept="tactile"] :is(.light, .dark, .cream, .moonlight),
+:root[data-concept="tactile"]:is(.light, .dark, .cream, .moonlight) {
+  --shadow-xs: 0 0 #0000;
+  --ring-brand: color-mix(in oklab, var(--foreground) 10%, transparent);
+  --tactile-focus: color-mix(in oklab, var(--foreground) 35%, transparent);
+}
+
+/*
+ * Focus is ink, not accent: the field's border and every focus-visible ring turn grey.
+ * Overrules: `focus-within:border-brand` on fields and `focus-visible:ring-brand` on controls.
+ */
+[data-concept="tactile"] :is([data-slot="input-root"], [data-slot="textarea-root"]):focus-within:not([aria-invalid="true"]),
+[data-concept="tactile"] :is([data-slot="select-trigger"], [data-slot="native-select-field"]):focus-visible:not([aria-invalid="true"]) {
+  border-color: var(--tactile-focus);
+}
+[data-concept="tactile"] :focus-visible:not([aria-invalid="true"]) {
+  --tw-ring-color: var(--tactile-focus);
 }
 
 /* ─── Tactile · personality (unlayered, see the header) ──────────────────────── */
@@ -336,15 +366,14 @@
 
 /*
  * Keys. Every filled Button variant carries `shadow-xs` (ghost, subtle, destructiveGhost and link
- * don't, and stay flat), so the lift already arrives through the token; what a borderless key is
- * missing is its stroke, so it takes the ring. Bordered keys (outline, overlay) keep their border
- * as the stroke and only the token's lift.
+ * don't, and stay flat). No key casts a shadow; what a borderless key is missing is its stroke, so
+ * it takes a 1px ring. Bordered keys (outline, overlay) keep their border as the stroke.
  * Overrules: `shadow-xs` on borderless filled Buttons.
  * Coupling: reads Tailwind classes of components/ui/button/button-variants.ts (no data-variant on
  * the DOM); renaming `shadow-xs` or `border` there silently drops the stroke.
  */
 [data-concept="tactile"] [data-slot="button"][class~="shadow-xs"]:not([class~="border"], :focus-visible, :disabled, [aria-disabled="true"]) {
-  box-shadow: var(--tactile-object);
+  box-shadow: 0 0 0 1px var(--tactile-stroke);
 }
 /* On a dark ground `bg-background` is darker than the groove the handle rides in, so it read as a
  * hole; it fills one step toward the ink instead, the way a field rises.
@@ -380,11 +409,11 @@
  * Tracks and trays are flat: a stroke, no lift, so what rides in them is the only thing that rises.
  * The accent fill still carries on/off (a checked switch keeps `bg-primary`).
  * Overrules: the flat `bg-input` switch track and `bg-muted` tab list (no stroke), and the shadow the
- * segmented ToggleGroup draws on its tray. A `bg-transparent` tab list is no tray, so it keeps no stroke.
+ * segmented ToggleGroup draws on its tray. A `bg-transparent` or vertical tab list is no tray, so it keeps no stroke.
  */
 [data-concept="tactile"] [data-slot="switch"]:not(:focus-visible),
 [data-concept="tactile"] [data-slot="slider-track"],
-[data-concept="tactile"] [data-slot="tabs-list"]:not(.bg-transparent):has(> [data-slot="tabs-indicator"].bg-background),
+[data-concept="tactile"] [data-slot="tabs-list"]:not(.bg-transparent, [data-orientation="vertical"]):has(> [data-slot="tabs-indicator"].bg-background),
 [data-concept="tactile"] [data-slot="toggle-group"][data-thumb] {
   box-shadow: var(--tactile-flat);
 }
@@ -399,7 +428,7 @@
 [data-concept="tactile"] [data-slot="switch-thumb"],
 [data-concept="tactile"] [data-slot="switch-indicator"] > span,
 [data-concept="tactile"] [data-slot="slider-thumb"]:not(:focus-visible),
-[data-concept="tactile"] [data-slot="tabs-indicator"].bg-background,
+[data-concept="tactile"] [data-slot="tabs-list"]:not([data-orientation="vertical"]) > [data-slot="tabs-indicator"].bg-background,
 [data-concept="tactile"] [data-slot="toggle-group-indicator"] > span,
 [data-concept="tactile"] [data-slot="toggle-group"][data-thumb="off"] [data-slot="toggle-group-item"][data-state="on"]:not(:focus-visible),
 [data-concept="tactile"] [data-slot="tab-strip-item"][data-active="true"]:not([data-dragging], :focus-visible) {
@@ -435,14 +464,70 @@
 }
 
 /*
+ * The sheet is machined too: one step tighter than the house dialog at each density (16px
+ * comfortable, 12px compact), a 12px rhythm between its parts, and the close key tucked into the
+ * corner on the title's centre line. Everything that bleeds to the edge reads `--dialog-inset`.
+ * Overrules: `p-5 gap-4` / `p-4 gap-3` on DialogContent, the `-mx-* px-*` bleed of DialogBody and
+ * DialogStepper, and the `top-* right-*` of the close key.
+ * Coupling: reads the `[--dialog-inset:*]` class of the density in components/ui/dialog/dialog.tsx
+ * (inline demos paint the slots without data-slot); `size="media"` is `p-0` and keeps its frame.
+ */
+[data-concept="tactile"] [class~="[--dialog-inset:--spacing(5)]"] {
+  --dialog-inset: calc(var(--spacing) * 4);
+  row-gap: calc(var(--spacing) * 3);
+}
+[data-concept="tactile"] [class~="[--dialog-inset:--spacing(4)]"] {
+  --dialog-inset: calc(var(--spacing) * 3);
+  row-gap: calc(var(--spacing) * 2);
+}
+[data-concept="tactile"] :is([class~="[--dialog-inset:--spacing(5)]"], [class~="[--dialog-inset:--spacing(4)]"]):not([class~="p-0"]) {
+  padding: var(--dialog-inset);
+}
+@media (max-width: 39.99rem) {
+  [data-concept="tactile"] :is([class~="[--dialog-inset:--spacing(5)]"], [class~="[--dialog-inset:--spacing(4)]"]):not([class~="p-0"])[class~="max-sm:rounded-b-none"] {
+    padding-bottom: calc(var(--dialog-inset) + env(safe-area-inset-bottom));
+  }
+}
+[data-concept="tactile"] :is([class~="[--dialog-inset:--spacing(5)]"], [class~="[--dialog-inset:--spacing(4)]"]) > :is([data-slot="dialog-body"], [class~="scroll-py-10"], [data-slot="dialog-stepper"]:not([class~="mx-0"])) {
+  margin-inline: calc(var(--dialog-inset) * -1);
+  padding-inline: var(--dialog-inset);
+}
+[data-concept="tactile"] :is([class~="[--dialog-inset:--spacing(5)]"], [class~="[--dialog-inset:--spacing(4)]"]):not([class~="p-0"]) > [class~="absolute"]:is([class~="top-4.5"], [class~="top-3.5"]) {
+  top: calc(var(--dialog-inset) - var(--spacing) * 0.5);
+  right: calc(var(--dialog-inset) - var(--spacing));
+}
+
+/*
+ * The header reads as one block: the title sets solid at 20px so its leading stops padding the
+ * gaps, the mark sits 8px over it, and the last line of text clears the tray's hairline by about what the
+ * sheet's top edge clears the mark, so the header is centred in the space above the tray.
+ * Overrules: `leading-6` on DialogTitle and `-mb-2` on DialogIcon (comfortable).
+ * Coupling: reads those classes of components/ui/dialog/dialog.tsx.
+ */
+[data-concept="tactile"] [class~="[--dialog-inset:--spacing(5)]"] > div > [class~="leading-6"][class~="tracking-tight"] {
+  line-height: calc(var(--spacing) * 5);
+}
+[data-concept="tactile"] [class~="[--dialog-inset:--spacing(5)]"] > [class~="-mb-2"] {
+  margin-bottom: calc(var(--spacing) * -1);
+}
+
+/* With no mark above it, the first line is the 20px title, so the close key rises to its centre. */
+[data-concept="tactile"] [class~="[--dialog-inset:--spacing(5)]"]:not([class~="p-0"]):not(:has(> [class~="-mb-2"])) > [class~="absolute"]:is([class~="top-4.5"], [class~="top-3.5"]) {
+  top: calc(var(--dialog-inset) - var(--spacing));
+}
+
+/*
  * A bordered dialog footer is the tray the actions rest on: in the dark themes it fills a step
  * toward the ink, so it reads a shade brighter than the sheet above its hairline. It repaints
- * `--surface` so a control inside sits on the tray, and rounds its bottom corners inside the
- * sheet's 1px border.
- * Overrules: the transparent footer of `DialogFooter bordered`.
+ * `--surface` so a control inside sits on the tray, bleeds to the sheet's edges from
+ * `--dialog-inset` with a 12px band above and below the keys, and rounds its bottom corners inside
+ * the sheet's 1px border.
+ * Overrules: the transparent footer and the `-mx-* px-* py-*` of `DialogFooter bordered`.
  */
 [data-concept="tactile"] [data-slot="dialog-footer"].border-t {
   --surface: color-mix(in oklab, var(--popover), var(--foreground) var(--tactile-footer-fill));
+  margin: calc(var(--spacing) * 1) calc(var(--dialog-inset) * -1) calc(var(--dialog-inset) * -1);
+  padding: calc(var(--spacing) * 3) var(--dialog-inset);
   background-color: var(--surface);
   border-bottom-left-radius: calc(var(--radius-xl) - 1px);
   border-bottom-right-radius: calc(var(--radius-xl) - 1px);
@@ -457,7 +542,7 @@
 [data-concept="tactile"] :is(.dark, .moonlight) [data-slot="dialog-footer"] {
   --surface: color-mix(in oklab, var(--popover), var(--foreground) var(--tactile-footer-fill));
   margin: calc(var(--spacing) * 1) calc(var(--dialog-inset) * -1) calc(var(--dialog-inset) * -1);
-  padding: calc(var(--dialog-inset) - var(--spacing)) var(--dialog-inset);
+  padding: calc(var(--spacing) * 3) var(--dialog-inset);
   border-top: 1px solid var(--border);
   background-color: var(--surface);
   border-bottom-left-radius: calc(var(--radius-xl) - 1px);
@@ -466,10 +551,10 @@
 
 /* Forced colors drop shadows, so keys, trays and thumbs fall back to real borders. */
 @media (forced-colors: active) {
-  [data-concept="tactile"] :is([data-slot="button"][class~="shadow-xs"], [data-slot="switch"], [data-slot="slider-track"], [data-slot="tabs-list"], [data-slot="toggle-group"][data-thumb]) {
+  [data-concept="tactile"] :is([data-slot="button"][class~="shadow-xs"], [data-slot="switch"], [data-slot="slider-track"], [data-slot="tabs-list"]:not([data-orientation="vertical"]), [data-slot="toggle-group"][data-thumb]) {
     border: 1px solid ButtonText;
   }
-  [data-concept="tactile"] :is([data-slot="switch-thumb"], [data-slot="slider-thumb"], [data-slot="tabs-indicator"].bg-background, [data-slot="toggle-group-indicator"] > span, [data-slot="tab-strip-item"][data-active="true"]) {
+  [data-concept="tactile"] :is([data-slot="switch-thumb"], [data-slot="slider-thumb"], [data-slot="tabs-list"]:not([data-orientation="vertical"]) > [data-slot="tabs-indicator"].bg-background, [data-slot="toggle-group-indicator"] > span, [data-slot="tab-strip-item"][data-active="true"]) {
     border: 1px solid Highlight;
   }
 }
@@ -507,6 +592,7 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+  --color-placeholder: var(--placeholder);
   /* Reading ink: long-form copy (a section lede, a testimonial, a FAQ answer, a card description),
      one step darker than --muted-foreground, which stays the ink for META (captions, roles, dates,
      placeholders, icons). Muted body copy read as washed out beside a heading; see FOUNDATIONS.md. */
@@ -2013,25 +2099,6 @@
 }
 
 /*
- * Typing: the assistant "is typing" dots in a Chat MessageTyping. Three dots share one
- * keyframe (a soft fade + rise), staggered per dot below so the bounce ripples left→right.
- * An ambient infinite loop, so its timing lives here in the token layer (like shimmer),
- * not inline in the component. Backed by the --ease-in-out motion token.
- */
-@keyframes typing {
-  0%,
-  60%,
-  100% {
-    opacity: 0.35;
-    transform: translateY(0);
-  }
-  30% {
-    opacity: 1;
-    transform: translateY(-25%);
-  }
-}
-
-/*
  * Generation reveal: how far down a generated picture has come in, as a percentage. A registered
  * custom property rather than a plain one, for one reason — a registered percentage INTERPOLATES,
  * so the mask that wipes the image in and the lit edge riding its front can both be transitioned
@@ -2129,12 +2196,15 @@
   --primary-foreground: oklch(0.985 0 0);
   /* Strokes and quiet fills are ink at low alpha, so they read on any ground (the page, a muted
      band, a card) instead of fading into one close to their own grey. Each alpha lands on the
-     old solid grey over --background (--secondary/--accent 0.97, --border/--input 0.922). --muted
-     stays opaque: it is a ground and a color-mix base (FOUNDATIONS.md, "Alpha strokes, opaque grounds"). */
+     old solid grey over --background (--secondary/--accent 0.97, --input 0.922). --border is the
+     divider and sits BELOW --edge, the contour (docs/LIGHT-THEME-STUDY.md). --muted stays opaque:
+     it is a ground and a color-mix base (FOUNDATIONS.md, "Alpha strokes, opaque grounds"). */
   --secondary: oklch(0.145 0 0 / 4.1%);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
+  /* #666, 5.7:1 on white. */
+  --muted-foreground: oklch(0.51 0 0);
+  --placeholder: oklch(0.563 0 0);
   /* neutral-600 (#525252), 7.8:1 on white: between the ink and the meta grey. */
   --body: oklch(0.439 0 0);
   --accent: oklch(0.145 0 0 / 4.1%);
@@ -2147,12 +2217,27 @@
   --success: oklch(0.723 0.219 149.579); /* green-500 */
   --warning: oklch(0.769 0.188 70.08); /* amber-500 */
   --info: oklch(0.685 0.169 237.323); /* sky-500 */
-  /* Darker text counterparts (see @theme): pull each status hue toward black so soft-badge
-     text reads at ~green-700/amber-700 weight on its /10 tint. Amber needs the strongest pull. */
-  --success-strong: color-mix(in oklch, var(--success), black 30%);
-  --warning-strong: color-mix(in oklch, var(--warning), black 42%);
-  --info-strong: color-mix(in oklch, var(--info), black 30%);
-  --destructive-strong: color-mix(in oklch, var(--destructive), black 22%);
+  /* Ink on a tint (see @theme): each hue taken down to ~L 0.47 with its chroma kept, the 700 step
+     of a Tailwind ramp. Mixing with black instead greyed it into olive and mud on white and cream.
+     Amber turns toward orange as it darkens, like amber-700. */
+  --success-strong: oklch(0.5 0.14 150);
+  --warning-strong: oklch(0.5 0.13 55);
+  --info-strong: oklch(0.49 0.12 240);
+  --destructive-strong: oklch(0.5 0.19 27);
+  --purple-strong: oklch(0.45 0.2 310);
+  --pink-strong: oklch(0.47 0.19 350);
+  --teal-strong: oklch(0.42 0.1 192);
+  --orange-strong: oklch(0.48 0.15 45);
+  /* Solid fills that hold white ink at AA. Green, sky and red are too light at their base, so
+     they step down; amber stays bright and takes dark ink instead. */
+  --success-solid: oklch(0.53 0.15 150);
+  --warning-solid: var(--warning);
+  --info-solid: oklch(0.55 0.14 240);
+  --destructive-solid: oklch(0.53 0.21 27);
+  --purple-solid: var(--purple);
+  --pink-solid: var(--pink);
+  --teal-solid: var(--teal);
+  --orange-solid: var(--orange);
   /* Hyperlink color: the text color. The accent only colors buttons and focus rings, so a link
      reads as a link by its underline, not by a hue. */
   --link: var(--foreground);
@@ -2183,10 +2268,13 @@
   --syntax-tag: oklch(0.56 0.22 25);
   --syntax-attribute: oklch(0.54 0.14 205);
   --syntax-punctuation: oklch(0.5 0.04 260);
-  --border: oklch(0.145 0 0 / 10.6%);
-  /* Half-strength stroke for large surfaces: softens toward the surface beneath. */
-  --border-soft: color-mix(in oklch, var(--border) 50%, transparent);
-  --edge: color-mix(in oklch, var(--border) 70%, transparent);
+  /* Divider: rows, a footer's rule, a stats strip. Lighter than the contour it sits inside. */
+  --border: oklch(0.145 0 0 / 6%);
+  /* Soft stroke for large floating surfaces (Popover, Dialog, Sheet, Drawer). */
+  --border-soft: oklch(0.145 0 0 / 5.3%);
+  /* Contour of an in-flow container, carried together with the shadow-xs lift. */
+  --edge: oklch(0.145 0 0 / 8%);
+  /* Control stroke: fields and outline controls, the WCAG 1.4.11 boundary. */
   --input: oklch(0.145 0 0 / 10.6%);
   /* --ring: the neutral edge a control takes on hover (`hover:border-ring/50`). Not a focus color:
    * keyboard focus rings are `ring-brand` (docs/FOUNDATIONS.md, "Focus rings"). */
@@ -2198,8 +2286,9 @@
    * are orthogonal axes: any accent works under any of the four themes.
    */
   --brand: oklch(0.648 0.222 34.2);
-  /* Focus ring derives from the accent: same hue at 10% opacity. Set --brand, get this free. */
-  --ring-brand: color-mix(in oklch, var(--brand) 10%, transparent);
+  /* Field focus halo derives from the accent, stronger on dark themes. Set --brand, get this free. */
+  --ring-brand: color-mix(in oklch, var(--brand) 16%, transparent);
+  --ring-destructive: color-mix(in oklch, var(--destructive) 20%, transparent);
   /* Brand ink: the accent pulled toward black, for brand-colored TEXT on a light page ground (a
      tinted vote chip, syntax highlighting). Contrast is symmetric, so a raw --brand label on white
      is the same 3.6:1 as white on the brand fill; this step clears 4.5:1 on white for all eight
@@ -2216,7 +2305,8 @@
   /* The single radius knob. 1rem (16px) anchors the lg step; the quarter-step scale above
      keeps every rounded-* utility on the 4px grid as this value re-rounds the whole system. */
   --radius: 1rem;
-  --shadow-xs: 0 1px 2px oklch(0 0 0 / 0.05);
+  /* Two layers: a tight contact line and a soft ambient falloff. */
+  --shadow-xs: 0 1px 1px oklch(0 0 0 / 0.04), 0 2px 4px -1px oklch(0 0 0 / 0.05);
   --shadow-sm: 0 1px 3px oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1);
   --shadow-md: 0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px oklch(0 0 0 / 0.1), 0 4px 6px -4px oklch(0 0 0 / 0.1);
@@ -2258,17 +2348,19 @@
   --secondary: oklch(0.35 0.07 78 / 5.4%);
   --secondary-foreground: oklch(0.24 0.014 75);
   --muted: oklch(0.952 0.015 85);
-  --muted-foreground: oklch(0.53 0.019 75);
+  --muted-foreground: oklch(0.485 0.019 75);
+  --placeholder: oklch(0.55 0.017 75);
   --body: oklch(0.43 0.017 75);
   --accent: oklch(0.35 0.07 78 / 5.4%);
   --accent-foreground: oklch(0.24 0.014 75);
-  --border: oklch(0.35 0.07 78 / 14.3%);
-  --border-soft: color-mix(in oklch, var(--border) 50%, transparent);
-  --edge: color-mix(in oklch, var(--border) 70%, transparent);
+  /* Same ladder as light, scaled to the warm ink: divider below contour, controls strongest. */
+  --border: oklch(0.35 0.07 78 / 8.1%);
+  --border-soft: oklch(0.35 0.07 78 / 7.2%);
+  --edge: oklch(0.35 0.07 78 / 10.8%);
   --input: oklch(0.35 0.07 78 / 14.3%);
   --ring: oklch(0.715 0.02 85);
   /* Warm the shadow ink too: neutral black cast over a toned ground reads grey and muddies it. */
-  --shadow-xs: 0 1px 2px oklch(0.25 0.03 70 / 0.06);
+  --shadow-xs: 0 1px 1px oklch(0.25 0.03 70 / 0.05), 0 2px 4px -1px oklch(0.25 0.03 70 / 0.06);
   --shadow-sm: 0 1px 3px oklch(0.25 0.03 70 / 0.11), 0 1px 2px -1px oklch(0.25 0.03 70 / 0.11);
   --shadow-md: 0 4px 6px -1px oklch(0.25 0.03 70 / 0.11), 0 2px 4px -2px oklch(0.25 0.03 70 / 0.11);
   --shadow-lg: 0 10px 15px -3px oklch(0.25 0.03 70 / 0.11), 0 4px 6px -4px oklch(0.25 0.03 70 / 0.11);
@@ -2289,6 +2381,7 @@
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
   --muted-foreground: oklch(0.708 0 0);
+  --placeholder: oklch(0.58 0 0);
   --body: oklch(0.83 0 0);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
@@ -2301,6 +2394,18 @@
   --warning-strong: var(--warning);
   --info-strong: var(--info);
   --destructive-strong: var(--destructive);
+  --purple-strong: var(--purple);
+  --pink-strong: var(--pink);
+  --teal-strong: var(--teal);
+  --orange-strong: var(--orange);
+  --success-solid: var(--success);
+  --warning-solid: var(--warning);
+  --info-solid: var(--info);
+  --destructive-solid: var(--destructive);
+  --purple-solid: var(--purple);
+  --pink-solid: var(--pink);
+  --teal-solid: var(--teal);
+  --orange-solid: var(--orange);
   --link: var(--foreground);
   --purple: oklch(0.78 0.16 310);
   --pink: oklch(0.8 0.17 350);
@@ -2319,7 +2424,10 @@
   --edge: var(--border);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
-  /* --brand / --ring-brand are accent tokens (theme-agnostic): see :root and "Accent presets". */
+  /* --brand is theme-agnostic. The halo is not: a faint mix of the accent over a near-black ground
+     reads as grey beside the brand border, so a dark theme mixes it stronger to keep one hue. */
+  --ring-brand: color-mix(in oklch, var(--brand) 30%, transparent);
+  --ring-destructive: color-mix(in oklch, var(--destructive) 35%, transparent);
   --shadow-xs: 0 1px 2px oklch(0 0 0 / 0.25);
   --shadow-sm: 0 1px 3px oklch(0 0 0 / 0.35), 0 1px 2px -1px oklch(0 0 0 / 0.3);
   --shadow-md: 0 4px 6px -1px oklch(0 0 0 / 0.4), 0 2px 4px -2px oklch(0 0 0 / 0.3);
@@ -2352,6 +2460,7 @@
   --secondary-foreground: oklch(0.97 0.006 265);
   --muted: oklch(0.27 0.026 265);
   --muted-foreground: oklch(0.71 0.022 265);
+  --placeholder: oklch(0.58 0.02 265);
   --body: oklch(0.83 0.018 265);
   --accent: oklch(0.285 0.028 265);
   --accent-foreground: oklch(0.97 0.006 265);
@@ -2364,6 +2473,18 @@
   --warning-strong: var(--warning);
   --info-strong: var(--info);
   --destructive-strong: var(--destructive);
+  --purple-strong: var(--purple);
+  --pink-strong: var(--pink);
+  --teal-strong: var(--teal);
+  --orange-strong: var(--orange);
+  --success-solid: var(--success);
+  --warning-solid: var(--warning);
+  --info-solid: var(--info);
+  --destructive-solid: var(--destructive);
+  --purple-solid: var(--purple);
+  --pink-solid: var(--pink);
+  --teal-solid: var(--teal);
+  --orange-solid: var(--orange);
   --link: var(--foreground);
   --purple: oklch(0.78 0.17 308);
   --pink: oklch(0.8 0.18 348);
@@ -2382,7 +2503,10 @@
   --edge: var(--border);
   --input: oklch(0.85 0.03 265 / 16%);
   --ring: oklch(0.55 0.07 264);
-  /* --brand / --ring-brand are accent tokens (theme-agnostic): see :root and "Accent presets". */
+  /* --brand is theme-agnostic. The halo is not: a faint mix of the accent over a near-black ground
+     reads as grey beside the brand border, so a dark theme mixes it stronger to keep one hue. */
+  --ring-brand: color-mix(in oklch, var(--brand) 30%, transparent);
+  --ring-destructive: color-mix(in oklch, var(--destructive) 35%, transparent);
   --shadow-xs: 0 1px 2px oklch(0.1 0.04 265 / 0.35);
   --shadow-sm: 0 1px 3px oklch(0.1 0.04 265 / 0.45), 0 1px 2px -1px oklch(0.1 0.04 265 / 0.35);
   --shadow-md: 0 4px 6px -1px oklch(0.1 0.04 265 / 0.5), 0 2px 4px -2px oklch(0.1 0.04 265 / 0.4);
@@ -2646,14 +2770,51 @@
   --brand-foreground: oklch(0.205 0 0);
 }
 
+/* ─── Touch: the floor surface ────────────────────────────────────────────────
+ * `<DensityProvider density="touch">` is the density of a till, a kitchen screen or a kiosk:
+ * hands in a hurry, gloves, a screen read from a step away. It is a SURFACE density, not an
+ * instance one: components read it as `comfortable` spacing (useDensity) and the scope below
+ * retunes the shared ladders, so every control that resolves `h-control-*` and every `text-xs`
+ * / `text-sm` grows with no per-component prop. 48px is the smallest control (sm, the app
+ * default; xs is floored to sm), 64px (lg) is the primary action of a screen.
+ * ──────────────────────────────────────────────────────────────────────────── */
+[data-density="touch"] {
+  --spacing-control-sm: 3rem;
+  --spacing-control-md: 3.5rem;
+  --spacing-control-lg: 4rem;
+  --spacing-control-xl: 4.5rem;
+  --text-xs: 0.875rem;
+  --text-xs--line-height: calc(1.25 / 0.875);
+  --text-sm: 1rem;
+  --text-sm--line-height: 1.5;
+}
+
+/* ─── High contrast: any theme, under strong light ────────────────────────────
+ * `data-contrast="high"` on the root (or any subtree) is an axis of its own beside theme and accent:
+ * a kitchen under fluorescent tubes, a terrace at noon, a greasy screen. Theme-agnostic, it
+ * pulls each theme's secondary inks and lines toward that theme's own foreground, so cream stays
+ * warm and moonlight stays blue. Re-declared on every theme root below it, so a pinned dark band
+ * resolves against its own ink. */
+[data-contrast="high"],
+[data-contrast="high"] :is(.light, .cream, .dark, .moonlight) {
+  --body: var(--foreground);
+  --muted-foreground: color-mix(in oklch, var(--foreground) 84%, var(--background));
+  --placeholder: var(--muted-foreground);
+  --border: color-mix(in oklch, var(--foreground) 24%, transparent);
+  --input: color-mix(in oklch, var(--foreground) 42%, transparent);
+  --ring: var(--foreground);
+  --hairline: 1px;
+}
+
+
 /* ─── Ring: the canonical accent halo ─────────────────────────────────────────
  * One definition for the soft ring shared across the system instead of repeating the
  * box-shadow at every call site: form controls on focus (Input/Textarea/Select/OTP/
  * Date Picker/Input Group/editors) and the featured Pricing tier. A 3px halo hugging
  * the border with NO gap (not a ring-offset), derived from the accent tokens, so it
  * re-themes and re-accents for free:
- *   - `brand-ring`       : the accent at 10% (--ring-brand). The default focus/emphasis ring.
- *   - `destructive-ring` : the error counterpart at 20%, for invalid controls.
+ *   - `brand-ring`       : the accent at 16%, 30% on dark themes (--ring-brand). The default focus/emphasis ring.
+ *   - `destructive-ring` : the error counterpart (--ring-destructive), for invalid controls.
  * Each is a single `box-shadow`, so don't pair it with a Tailwind `shadow-*` on the SAME
  * element (both write box-shadow); keep them in mutually exclusive states. The two are a
  * conflict group in lib/utils.ts, so the error ring still overrides the brand ring via
@@ -2663,7 +2824,7 @@
   box-shadow: 0 0 0 3px var(--ring-brand);
 }
 @utility destructive-ring {
-  box-shadow: 0 0 0 3px color-mix(in oklch, var(--destructive) 20%, transparent);
+  box-shadow: 0 0 0 3px var(--ring-destructive);
 }
 
 /* ─── Autofill: the browser fills a field, the field keeps its tokens ─────────
@@ -2738,6 +2899,52 @@
   }
   @media (prefers-reduced-motion: reduce) {
     mask-image: none;
+  }
+}
+
+/* Badge motion: a changing label rolls (the old word leaves up, the new one rises in, both through
+ * a light blur) and a swapped glyph grows in from a quarter. Plain cuts under reduced motion. */
+@keyframes badge-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.6em);
+    filter: blur(2px);
+  }
+}
+
+@keyframes badge-out {
+  to {
+    opacity: 0;
+    transform: translateY(-0.6em);
+    filter: blur(2px);
+  }
+}
+
+@keyframes badge-glyph {
+  from {
+    opacity: 0;
+    scale: 0.25;
+    filter: blur(2px);
+  }
+}
+
+@utility animate-badge-in {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: badge-in var(--duration-base) var(--ease-out) both;
+  }
+}
+
+@utility animate-badge-out {
+  animation: badge-out var(--duration-base) var(--ease-out) forwards;
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    visibility: hidden;
+  }
+}
+
+@utility animate-badge-glyph {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: badge-glyph var(--duration-base) var(--ease-out) both;
   }
 }
 
@@ -3825,6 +4032,9 @@
   }
   html {
     @apply font-sans;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
   /* The check draw is decorative: honor reduced-motion by showing the full stroke instantly. */
   @media (prefers-reduced-motion: reduce) {
@@ -3843,17 +4053,6 @@
       display: none;
     }
   }
-  /* Typing dots: one shared keyframe, staggered per dot so the bounce ripples left→right.
-   * Decorative, so honor reduced-motion by holding them static. */
-  [data-slot="message-typing-dot"] {
-    animation: typing 1.4s var(--ease-in-out) infinite;
-  }
-  [data-slot="message-typing-dot"]:nth-child(2) {
-    animation-delay: 0.2s;
-  }
-  [data-slot="message-typing-dot"]:nth-child(3) {
-    animation-delay: 0.4s;
-  }
   /* Hero cursors are pure decoration: under reduced motion they hold still where they are placed
    * and the click ripple never shows. Backs up the part's own motion-reduce classes. */
   @media (prefers-reduced-motion: reduce) {
@@ -3862,11 +4061,6 @@
     }
     [data-slot="hero-cursor-ping"] {
       display: none;
-    }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    [data-slot="message-typing-dot"] {
-      animation: none;
     }
   }
   /* polish: balanced headings, no orphans in body copy. */
