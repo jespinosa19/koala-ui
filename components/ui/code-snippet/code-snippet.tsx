@@ -192,6 +192,11 @@ export const codeSnippetVariants = tv({
       },
       band: { header: "border-b border-border/70" },
     },
+    // Long lines fold instead of scrolling sideways: a prompt or a sentence, not code with a shape.
+    wrap: {
+      true: { pre: "overflow-x-visible", code: "min-w-0", line: "whitespace-pre-wrap break-words" },
+      false: {},
+    },
     density: {
       comfortable: {
         header: "px-4 py-2.5",
@@ -281,6 +286,8 @@ export interface CodeSnippetProps
   diff?: { added?: number[]; removed?: number[] }
   collapsible?: boolean
   collapsedHeight?: number
+  /** Fold long lines instead of scrolling sideways: for a prompt or prose, not shaped code. */
+  wrap?: boolean
 }
 
 export function CodeSnippet({
@@ -296,6 +303,7 @@ export function CodeSnippet({
   collapsible = false,
   collapsedHeight = 320,
   density,
+  wrap = false,
   className,
   ...props
 }: CodeSnippetProps) {
@@ -307,6 +315,7 @@ export function CodeSnippet({
   const slots = codeSnippetVariants({
     density: useDensity(density),
     chrome: !showHeader ? "none" : inset ? "inset" : "band",
+    wrap,
   })
   const grammar = builtinGrammar(lang, code)
   const session = grammar === "console"

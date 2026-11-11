@@ -272,6 +272,7 @@ A highlighted, copyable code block with a copy button on hover. Forwards native 
 | diff | { added?: number[]; removed?: number[] } | - | Lines marked by gutter number: a tinted band and gutter bar, announced as Added or Removed. |
 | collapsible | boolean | false | Clamps a long listing behind Show more / Show less, once it overflows. |
 | collapsedHeight | number | 320 | The clamped height in px. |
+| wrap | boolean | false | Folds long lines instead of scrolling sideways: for a prompt or prose, not shaped code. |
 | density | "comfortable" \| "compact" | "compact" | Padding only. Falls back to the nearest `DensityProvider`. |
 
 | Data attribute | Description |

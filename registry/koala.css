@@ -2328,12 +2328,13 @@
    * keyboard focus rings are `ring-brand` (docs/FOUNDATIONS.md, "Focus rings"). */
   --ring: oklch(0.708 0 0);
   /*
-   * Accent: the single knob. This is the DEFAULT accent (#F84416, "orange"); switch the
-   * whole accent palette by setting `data-accent="…"` on <html> (see "Accent presets" below).
-   * Themes (dark/moonlight) deliberately DON'T redefine --brand, so accent and theme
-   * are orthogonal axes: any accent works under any of the four themes.
+   * Accent: the single knob. This is the DEFAULT accent ("lime": lime-600 #65A30D on the light
+   * themes, lime-400 #A3E635 on the dark ones, see "Accent presets"); switch the whole accent
+   * palette by setting `data-accent="…"` on <html> (see "Accent presets" below).
+   * The themes themselves never redefine --brand: lime follows the theme through the accent
+   * rules below, so accent and theme stay orthogonal axes under any of the four themes.
    */
-  --brand: oklch(0.648 0.222 34.2);
+  --brand: oklch(0.648 0.2 131.684); /* lime-600, #65A30D: the light themes (dark: see presets) */
   /* Field focus halo derives from the accent, stronger on dark themes. Set --brand, get this free. */
   --ring-brand: color-mix(in oklch, var(--brand) 16%, transparent);
   --ring-destructive: color-mix(in oklch, var(--destructive) 20%, transparent);
@@ -2345,11 +2346,11 @@
      Theme-agnostic like --brand, so no theme redefines it. */
   --brand-strong: color-mix(in oklch, var(--brand), black 24%);
   /* Brand foreground: the ink that sits ON a brand fill (a primary Button label, a Radio dot, a
-     selected day, a brand Banner). White for every mid-lightness accent; a light accent (lime)
-     swaps in a dark ink from its preset. Theme-agnostic like --brand. On `bg-brand`, write
+     selected day, a brand Banner). The default lime is a light accent, so its ink is dark; every
+     mid-lightness preset swaps white back in (see "Accent presets"). Theme-agnostic like --brand. On `bg-brand`, write
      `text-brand-foreground`, never `text-white`, or a light accent loses its labels. The one
      exception is the Checkbox / Checklist tick, drawn in its `--surface` (docs/FOUNDATIONS.md). */
-  --brand-foreground: oklch(1 0 0);
+  --brand-foreground: oklch(0.274 0.072 132.109); /* lime-950: lime is light, so its ink is dark */
   /* The single radius knob. 1rem (16px) anchors the lg step; the quarter-step scale above
      keeps every rounded-* utility on the 4px grid as this value re-rounds the whole system. */
   --radius: 1rem;
@@ -2778,14 +2779,20 @@
  * vivid, accessible lightness (~L 0.6) so each reads well on light AND dark surfaces and holds
  * white text on its fill.
  *
- * Lime is the one LIGHT accent, so it is the one preset that follows the theme. On the light
- * themes it is lime-600, deep enough to hold as text on white (3.1:1, the ground the default
- * orange stands on at 3.6:1), so every `text-brand` in the system still reads and --brand-strong
- * keeps deriving; on the dark themes it is the vivid lime-400. Its fill always carries lime-950
- * (--brand-foreground), never white, and its link is pulled to 25% black (~5:1 on white).
+ * Lime is the DEFAULT (since 2026-11-11; orange before) and the one LIGHT accent, so it is the
+ * one that follows the theme. On the light themes it is lime-600, deep enough to hold as text on
+ * white (3.1:1), so every `text-brand` in the system still reads and --brand-strong keeps
+ * deriving; on the dark themes it is the vivid lime-400. Its fill always carries lime-950
+ * (--brand-foreground), never white. With no `data-accent` the :root values below are lime, and
+ * the dark-theme rule covers `:root:not([data-accent])` too.
  * To add an accent: append a preset here and a name to ACCENTS in components/accent-provider.tsx.
  * ──────────────────────────────────────────────────────────────────────────── */
-[data-accent="orange"] { --brand: oklch(0.648 0.222 34.2); } /* #F84416, default */
+/* The mid-lightness presets hold white labels; :root's ink is lime's dark one. */
+:is(
+  [data-accent="orange"], [data-accent="red"], [data-accent="amber"], [data-accent="green"],
+  [data-accent="teal"], [data-accent="blue"], [data-accent="violet"], [data-accent="pink"]
+) { --brand-foreground: oklch(1 0 0); }
+[data-accent="orange"] { --brand: oklch(0.648 0.222 34.2); } /* #F84416, the default until 2026-11-11 */
 [data-accent="red"]    { --brand: oklch(0.585 0.222 27); }
 [data-accent="amber"]  { --brand: oklch(0.705 0.165 70); }
 [data-accent="green"]  { --brand: oklch(0.62 0.17 150); }
@@ -2798,10 +2805,12 @@
   --brand-foreground: oklch(0.274 0.072 132.109); /* lime-950 */
 }
 /* The dark themes: on the page, on any nested dark band, and on a swatch that sets its own
-   accent inside a dark page. */
+   accent inside a dark page. The `:root:not([data-accent])` pair is the default lime. */
 [data-accent="lime"]:is(.dark, .moonlight),
 [data-accent="lime"] :is(.dark, .moonlight),
-:is(.dark, .moonlight) [data-accent="lime"] {
+:is(.dark, .moonlight) [data-accent="lime"],
+:root:not([data-accent]):is(.dark, .moonlight),
+:root:not([data-accent]) :is(.dark, .moonlight) {
   --brand: oklch(0.841 0.238 128.85); /* lime-400, #A3E635 */
 }
 /* White is the monochrome accent, so it also follows the theme: near-white on the dark themes,

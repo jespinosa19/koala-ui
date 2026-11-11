@@ -14,8 +14,8 @@ needs it. There is no `koala-ui` package to import from.
 1. Check what is installed: `koala.json` at the project root and the folders in `components/ui/`.
 2. Read the reference of every component you are about to use, `references/<name>.md` in this
    skill (the index is at the end). It is that component's docs page: parts, variants, sizes,
-   examples, FAQ, and its exact exports. A Pro component has no reference: read its source in
-   `components/ui/<name>/`.
+   examples, FAQ, and its exact exports. A Pro component has one too when a license was active
+   on the machine as the skill was installed; without it, read its source in `components/ui/<name>/`.
 3. Missing a component? Install it instead of writing a look-alike: `npx koalaui-cli@latest add <name>`.
    A Pro one needs a license (see Free and Pro).
 4. Compose Koala parts. Plain Tailwind is for the layout between components (flex, grid, gap,
@@ -155,8 +155,9 @@ Colors are semantic roles backed by CSS variables, so one class is right in ever
 
 ## Finding the docs
 
-- This skill: `references/<name>.md` for each free component, generated from its docs page. A Pro
-  component's docs page (API and usage) is at its URL plus `.md`.
+- This skill: `references/<name>.md` for each free component, generated from its docs page, and
+  for each Pro component when the skill was installed with a license. Otherwise a Pro component's
+  docs page (API and usage, without the examples) is at its URL plus `.md`.
 - Any docs page as markdown: its URL plus `.md`, for example
   `https://www.koalaui.com/docs/components/button.md` or
   `https://www.koalaui.com/docs/foundations/colors.md`.
@@ -219,8 +220,9 @@ Colors are semantic roles backed by CSS variables, so one class is right in ever
 
 ## Pro components
 
-These come with Koala UI Pro. With a license, `add` installs them like any other; without one,
-tell the user the component is Pro instead of rebuilding it.
+These come with Koala UI Pro. With a license, `add` installs them like any other, and
+`npx koalaui-cli@latest skill` writes a reference for each into `references/`; without one, tell
+the user the component is Pro instead of rebuilding it.
 
 <!-- pro:start -->
 - Activity Feed (`activity-feed`)
@@ -338,6 +340,7 @@ tell the user the component is Pro instead of rebuilding it.
 - Rich Text Editor (`rich-text-editor`)
 - Rule Builder (`rule-builder`)
 - Rule Cascade (`rule-cascade`)
+- Save Bar (`save-bar`)
 - Section (`section`)
 - Section Header (`section-header`)
 - Settings Form (`settings-form`)
@@ -353,6 +356,7 @@ tell the user the component is Pro instead of rebuilding it.
 - Table (`table`)
 - Table of Contents (`table-of-contents`)
 - Tablet Frame (`tablet-frame`)
+- Tags Input (`tags-input`)
 - Team Member (`team-member`)
 - Terminal (`terminal`)
 - Testimonials (`testimonials`)

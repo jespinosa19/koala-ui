@@ -195,6 +195,39 @@ A wide action (a period switch, a select) leaves the title a sliver of room on a
 <Card className="w-full max-w-md">…the same header…</Card>
 ```
 
+## Dashboard widget
+
+A dashboard widget is a Card, not a component of its own. `CardTitle` names it, `CardDescription` carries the figure or the period, `CardAction` holds the control that changes it (a segmented period switch, a Select, a legend or a menu), and `CardContent` holds the body: a [Chart](https://www.koalaui.com/docs/components/chart.md), an [ActivityFeed](https://www.koalaui.com/docs/components/activity-feed.md) or a list. `CardFooter` closes it with a way to see more. Not every block on a dashboard needs a box: a [StatGroup](https://www.koalaui.com/docs/components/stat.md), a [Ranking](https://www.koalaui.com/docs/components/ranking.md) and a [DataTable](https://www.koalaui.com/docs/components/data-table.md) bring their own header and sit straight on the sheet.
+
+```tsx
+<Card>
+  <CardHeader>
+    <CardTitle>Revenue</CardTitle>
+    <CardDescription className="tabular-nums">$179,400 · last 30 days</CardDescription>
+    <CardAction wrap="narrow">
+      <ToggleGroup type="single" variant="segmented" size="sm" value={period} onValueChange={setPeriod} aria-label="Period">
+        <ToggleGroupItem value="7d">7d</ToggleGroupItem>
+        <ToggleGroupItem value="30d">30d</ToggleGroupItem>
+        <ToggleGroupItem value="12m">12m</ToggleGroupItem>
+      </ToggleGroup>
+    </CardAction>
+  </CardHeader>
+  <CardContent>
+    <Chart data={rows} index="at" config={config} className="h-56">
+      <ChartGrid />
+      <ChartYAxis tickFormatter={usdK} />
+      <ChartArea dataKey="revenue" />
+      <ChartLine dataKey="revenue" markEnd />
+      <ChartXAxis />
+      <ChartTooltip />
+    </Chart>
+  </CardContent>
+  <CardFooter>
+    <Button variant="outline" size="sm">View report</Button>
+  </CardFooter>
+</Card>
+```
+
 ## API reference
 
 ### Card
@@ -261,6 +294,10 @@ Wrap it in CardAction inside CardHeader. The header is a grid that switches to t
 ### How do I move the action under the title on a phone?
 
 Pass wrap="narrow" on CardAction. Once the card header is under 24rem the action drops below the title and description, flush left; wider, it goes back to the top-right. The header measures itself with a container query, so the switch follows the card's width, not the screen's. The card then takes its width from the layout (a grid track, w-full or a max-w), not from its header's content.
+
+### Is there a Widget component for dashboards?
+
+No, on purpose: a widget is a Card. CardHeader with CardTitle, CardDescription and a CardAction for the period switch or menu, CardContent for the chart or feed, CardFooter for the link to more. A second component with the same parts would only make you choose between two names. KPI bands, rankings and data tables bring their own headers and sit on the page without a card.
 
 ### Can I truncate the description to one line?
 

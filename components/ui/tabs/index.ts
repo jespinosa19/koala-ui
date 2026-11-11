@@ -6,8 +6,12 @@ export {
   TabsTriggerLabel,
   TabsContent,
   TabsPanels,
+  TabNav,
+  TabNavLink,
   tabsVariants,
   type TabsProps,
   type TabsTriggerProps,
   type TabsTriggerIconProps,
+  type TabNavProps,
+  type TabNavLinkProps,
 } from "./tabs"

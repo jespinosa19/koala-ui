@@ -96,6 +96,19 @@ export interface AvatarFallbackProps
   maxInitials?: number
 }
 
+const segmenter = typeof Intl !== "undefined" && "Segmenter" in Intl ? new Intl.Segmenter(undefined, { granularity: "grapheme" }) : null
+
+function firstGraphemes(text: string, count: number) {
+  if (!segmenter) return Array.from(text).slice(0, count).join("")
+  let out = ""
+  let taken = 0
+  for (const { segment } of segmenter.segment(text)) {
+    if (taken++ >= count) break
+    out += segment
+  }
+  return out
+}
+
 export function AvatarFallback({
   className,
   maxInitials,
@@ -104,7 +117,8 @@ export function AvatarFallback({
 }: AvatarFallbackProps) {
   const { slots, size } = useAvatarContext("AvatarFallback")
   const cap = maxInitials ?? (size === "xs" || size === "sm" ? 1 : 2)
-  const content = typeof children === "string" ? children.slice(0, cap) : children
+  // Initials are cut by grapheme, never by UTF-16 unit, so an emoji or an accented letter stays whole.
+  const content = typeof children === "string" ? firstGraphemes(children, cap) : children
   return (
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"

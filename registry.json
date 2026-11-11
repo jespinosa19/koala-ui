@@ -26,7 +26,7 @@
       "utils",
       "tv"
     ],
-    "hash": "103ec71659c09c9f"
+    "hash": "bf9da3f863a291bf"
   },
   "items": [
     {
@@ -439,7 +439,7 @@
         "components/ui/artifact/artifact.tsx",
         "components/ui/artifact/index.ts"
       ],
-      "hash": "273756ce4069bee0"
+      "hash": "b1cf8d777bc7e53e"
     },
     {
       "name": "attachments",
@@ -649,7 +649,7 @@
         "components/ui/avatar/avatar.tsx",
         "components/ui/avatar/index.ts"
       ],
-      "hash": "9d1527814cc500cf"
+      "hash": "0fbd6890418544a0"
     },
     {
       "name": "avatar-group",
@@ -692,7 +692,7 @@
         "components/ui/badge/color.ts",
         "components/ui/badge/index.ts"
       ],
-      "hash": "76f8e1a72bf03405"
+      "hash": "730e01fa8eddb614"
     },
     {
       "name": "badge-group",
@@ -857,6 +857,90 @@
         "components/ui/bento/index.ts"
       ],
       "hash": "b0192d17d906174d"
+    },
+    {
+      "name": "billing-invoices",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Billing Invoices",
+      "dependencies": {
+        "koala-icons": "^0.1.1"
+      },
+      "registryDependencies": [
+        "animated-label",
+        "animated-number",
+        "avatar",
+        "badge",
+        "breadcrumb",
+        "button",
+        "data-table",
+        "description-list",
+        "dialog",
+        "dropdown-menu",
+        "field",
+        "flag",
+        "form",
+        "input",
+        "layout",
+        "payment-form",
+        "select",
+        "sidebar",
+        "tabs",
+        "toast"
+      ],
+      "libDependencies": [
+        "koala-mark",
+        "motion",
+        "utils"
+      ],
+      "files": [
+        "components/pages/billing-invoices/billing-invoices.tsx",
+        "components/pages/billing-invoices/index.ts"
+      ],
+      "hash": "6dc1250caca4393a"
+    },
+    {
+      "name": "billing-plan",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Billing Plan",
+      "dependencies": {
+        "koala-icons": "^0.1.1"
+      },
+      "registryDependencies": [
+        "alert",
+        "animated-label",
+        "animated-number",
+        "avatar",
+        "badge",
+        "breadcrumb",
+        "button",
+        "description-list",
+        "dialog",
+        "dropdown-menu",
+        "field",
+        "layout",
+        "meter",
+        "number-field",
+        "pricing",
+        "sidebar",
+        "stat",
+        "tabs",
+        "toast",
+        "toggle-group"
+      ],
+      "libDependencies": [
+        "koala-mark",
+        "motion",
+        "utils"
+      ],
+      "files": [
+        "components/pages/billing-plan/billing-plan.tsx",
+        "components/pages/billing-plan/index.ts"
+      ],
+      "hash": "6b13b91786071c84"
     },
     {
       "name": "blog-post-1",
@@ -1179,6 +1263,91 @@
         "components/ui/button-group/index.ts"
       ],
       "hash": "b92a26c51aa8019b"
+    },
+    {
+      "name": "calendar-month",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Calendar Month",
+      "dependencies": {
+        "koala-icons": "^0.1.1"
+      },
+      "registryDependencies": [
+        "avatar",
+        "avatar-group",
+        "badge",
+        "breadcrumb",
+        "button",
+        "checkbox",
+        "date-picker",
+        "dialog",
+        "dot",
+        "dropdown-menu",
+        "empty-state",
+        "event-calendar",
+        "field",
+        "input",
+        "layout",
+        "list",
+        "select",
+        "sidebar",
+        "switch"
+      ],
+      "libDependencies": [
+        "koala-mark",
+        "utils"
+      ],
+      "files": [
+        "components/pages/calendar-month/calendar-month.tsx",
+        "components/pages/calendar-month/data.ts",
+        "components/pages/calendar-month/index.ts",
+        "components/pages/calendar-month/new-event-dialog.tsx"
+      ],
+      "hash": "45b19fe2150b51ad"
+    },
+    {
+      "name": "calendar-week",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Calendar Week",
+      "dependencies": {
+        "koala-icons": "^0.1.1"
+      },
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "breadcrumb",
+        "button",
+        "date-picker",
+        "dialog",
+        "dot",
+        "drawer",
+        "dropdown-menu",
+        "empty-state",
+        "event-calendar",
+        "field",
+        "input",
+        "layout",
+        "link",
+        "list",
+        "select",
+        "sidebar",
+        "switch",
+        "toggle-group"
+      ],
+      "libDependencies": [
+        "koala-mark",
+        "utils"
+      ],
+      "files": [
+        "components/pages/calendar-week/calendar-week.tsx",
+        "components/pages/calendar-week/data.ts",
+        "components/pages/calendar-week/index.ts",
+        "components/pages/calendar-week/new-event-dialog.tsx"
+      ],
+      "hash": "15f2e6abff3b660f"
     },
     {
       "name": "card",
@@ -2116,7 +2285,7 @@
         "components/ui/code-snippet/code-snippet.tsx",
         "components/ui/code-snippet/index.ts"
       ],
-      "hash": "8876c5902ead0b53"
+      "hash": "0f23784f20eb9b97"
     },
     {
       "name": "collapsible",
@@ -3330,7 +3499,7 @@
         "components/pages/dashboard-cameras/dashboard-cameras.tsx",
         "components/pages/dashboard-cameras/index.ts"
       ],
-      "hash": "4c6d4bc6710bf37b"
+      "hash": "d0cc3a9a46fc85fe"
     },
     {
       "name": "dashboard-company",
@@ -3638,7 +3807,7 @@
         "components/pages/dashboard-overview/dashboard-overview.tsx",
         "components/pages/dashboard-overview/index.ts"
       ],
-      "hash": "13eb8db1ada72eb0"
+      "hash": "3a17502b59f2bc5b"
     },
     {
       "name": "dashboard-performance",
@@ -3873,7 +4042,7 @@
         "components/ui/data-table/data-table.tsx",
         "components/ui/data-table/index.ts"
       ],
-      "hash": "9bd3f0c7db117bdf"
+      "hash": "625a5a35242cb36d"
     },
     {
       "name": "date-picker",
@@ -4554,7 +4723,7 @@
         "components/ui/event-calendar/event-calendar.tsx",
         "components/ui/event-calendar/index.ts"
       ],
-      "hash": "d59a4a7d32028e19"
+      "hash": "2646f51d4baaac02"
     },
     {
       "name": "event-card",
@@ -4582,7 +4751,7 @@
         "components/ui/event-card/event-card.tsx",
         "components/ui/event-card/index.ts"
       ],
-      "hash": "831ea87cc5d336a7"
+      "hash": "d499d3fdedb49078"
     },
     {
       "name": "expandable-search",
@@ -5775,8 +5944,7 @@
         "hit-area",
         "labels",
         "motion",
-        "tv",
-        "utils"
+        "tv"
       ],
       "files": [
         "components/ui/file-preview/file-preview-pdf.tsx",
@@ -5784,7 +5952,7 @@
         "components/ui/file-preview/index.ts",
         "components/ui/file-preview/shared.ts"
       ],
-      "hash": "4560e56ede4f1011"
+      "hash": "df423326ad0f0fba"
     },
     {
       "name": "file-upload",
@@ -5812,6 +5980,93 @@
         "components/ui/file-upload/index.ts"
       ],
       "hash": "f38ac0917057ef65"
+    },
+    {
+      "name": "files-browser",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Files Browser",
+      "dependencies": {
+        "koala-icons": "^0.1.1"
+      },
+      "registryDependencies": [
+        "animated-number",
+        "avatar",
+        "avatar-group",
+        "badge",
+        "breadcrumb",
+        "button",
+        "card",
+        "chart",
+        "data-table",
+        "dialog",
+        "dropdown-menu",
+        "empty-state",
+        "file-icon",
+        "file-preview",
+        "file-upload",
+        "input",
+        "layout",
+        "popover",
+        "scroll-area",
+        "sidebar",
+        "stat",
+        "toast",
+        "toggle-group",
+        "toolbar"
+      ],
+      "libDependencies": [
+        "koala-mark",
+        "utils"
+      ],
+      "files": [
+        "components/pages/files-browser/files-browser.tsx",
+        "components/pages/files-browser/index.ts"
+      ],
+      "hash": "c516c80b2c582f8a"
+    },
+    {
+      "name": "files-preview",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Files Preview",
+      "dependencies": {
+        "koala-icons": "^0.1.1"
+      },
+      "registryDependencies": [
+        "activity-feed",
+        "avatar",
+        "avatar-group",
+        "badge",
+        "button",
+        "description-list",
+        "dialog",
+        "drawer",
+        "dropdown-menu",
+        "field",
+        "file-icon",
+        "file-preview",
+        "input",
+        "layout",
+        "list",
+        "select",
+        "sidebar",
+        "tabs",
+        "textarea",
+        "toast",
+        "toolbar"
+      ],
+      "libDependencies": [
+        "koala-mark",
+        "utils"
+      ],
+      "files": [
+        "components/pages/files-preview/files-preview.tsx",
+        "components/pages/files-preview/index.ts"
+      ],
+      "hash": "174c9a7168c2f81f"
     },
     {
       "name": "fit-box",
@@ -5870,7 +6125,7 @@
         "components/ui/flight-card/flight-card.tsx",
         "components/ui/flight-card/index.ts"
       ],
-      "hash": "675451e7b4061fb0"
+      "hash": "f39dcc56fad003e4"
     },
     {
       "name": "floating-window",
@@ -6364,7 +6619,7 @@
         "components/ui/generative-ui/index.ts",
         "components/ui/generative-ui/schema.ts"
       ],
-      "hash": "2fd59418e20bdf0f"
+      "hash": "b60602c2659474af"
     },
     {
       "name": "gesture",
@@ -7448,6 +7703,83 @@
       "hash": "8e2add6f5a1f361d"
     },
     {
+      "name": "integration-detail",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Integration Detail",
+      "dependencies": {
+        "koala-icons": "^0.1.1"
+      },
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "breadcrumb",
+        "button",
+        "checklist",
+        "data-table",
+        "description-list",
+        "dialog",
+        "dot",
+        "dropdown-menu",
+        "empty-state",
+        "layout",
+        "list",
+        "save-bar",
+        "select",
+        "sidebar",
+        "stat",
+        "switch",
+        "tabs",
+        "toast"
+      ],
+      "libDependencies": [
+        "brand-logos",
+        "koala-mark",
+        "utils"
+      ],
+      "files": [
+        "components/pages/integration-detail/index.ts",
+        "components/pages/integration-detail/integration-detail.tsx"
+      ],
+      "hash": "9ca56e3124cd32fc"
+    },
+    {
+      "name": "integrations-directory",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Integrations Directory",
+      "dependencies": {
+        "koala-icons": "^0.1.1"
+      },
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "breadcrumb",
+        "button",
+        "card",
+        "dropdown-menu",
+        "empty-state",
+        "input",
+        "layout",
+        "sidebar",
+        "switch",
+        "tabs",
+        "toast"
+      ],
+      "libDependencies": [
+        "koala-mark",
+        "utils"
+      ],
+      "files": [
+        "components/pages/integrations-directory/index.ts",
+        "components/pages/integrations-directory/integrations-directory.tsx",
+        "components/pages/integrations-directory/logos.tsx"
+      ],
+      "hash": "48000413e0763729"
+    },
+    {
       "name": "integrations-section-1",
       "type": "section",
       "tier": "pro",
@@ -7621,7 +7953,7 @@
       "files": [
         "lib/labels.tsx"
       ],
-      "hash": "b5e36a42bda1a494"
+      "hash": "e9dc0adf3d98d0de"
     },
     {
       "name": "labels-es",
@@ -7637,7 +7969,7 @@
       "files": [
         "lib/labels-es.ts"
       ],
-      "hash": "89056d52045285de"
+      "hash": "b2eb38f2e1a4111c"
     },
     {
       "name": "layout",
@@ -7665,7 +7997,7 @@
         "components/ui/layout/index.ts",
         "components/ui/layout/layout.tsx"
       ],
-      "hash": "1e8317fc58b1f0e3"
+      "hash": "4388767358f8b003"
     },
     {
       "name": "legal-section-1",
@@ -7858,7 +8190,7 @@
         "components/sections/manifesto-section-1/index.ts",
         "components/sections/manifesto-section-1/manifesto-section-1.tsx"
       ],
-      "hash": "4acfa2445053cc5b"
+      "hash": "af6646e76645aebc"
     },
     {
       "name": "map",
@@ -8510,7 +8842,7 @@
         "components/ui/order-tracker/index.ts",
         "components/ui/order-tracker/order-tracker.tsx"
       ],
-      "hash": "ed33563a5dbe3bd7"
+      "hash": "1868b0cb70a90461"
     },
     {
       "name": "otp-input",
@@ -8530,7 +8862,7 @@
         "components/ui/otp-input/index.ts",
         "components/ui/otp-input/otp-input.tsx"
       ],
-      "hash": "4ce598ced5c65327"
+      "hash": "2048879b2475be8a"
     },
     {
       "name": "pagination",
@@ -8626,7 +8958,7 @@
         "components/ui/payment-form/index.ts",
         "components/ui/payment-form/payment-form.tsx"
       ],
-      "hash": "13605b3baffdd95d"
+      "hash": "d2efda5d3a5c2f50"
     },
     {
       "name": "phone-submenu",
@@ -8721,7 +9053,7 @@
         "components/ui/place-card/index.ts",
         "components/ui/place-card/place-card.tsx"
       ],
-      "hash": "8fd55859e35302d8"
+      "hash": "aa7232c63d405962"
     },
     {
       "name": "placeholder-logos",
@@ -8767,7 +9099,7 @@
         "components/ui/plan/index.ts",
         "components/ui/plan/plan.tsx"
       ],
-      "hash": "e1fd0860287be46d"
+      "hash": "74ff3daa18aa2fe7"
     },
     {
       "name": "popover",
@@ -9174,7 +9506,7 @@
         "components/ui/product-card/index.ts",
         "components/ui/product-card/product-card.tsx"
       ],
-      "hash": "4ec659e9a8c1dc22"
+      "hash": "261f995b70e8ff8f"
     },
     {
       "name": "product-carousel",
@@ -9385,6 +9717,88 @@
         "components/ui/progress/progress.tsx"
       ],
       "hash": "106a6c67b9b08fd3"
+    },
+    {
+      "name": "project-detail",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Project Detail",
+      "dependencies": {
+        "koala-icons": "^0.1.1"
+      },
+      "registryDependencies": [
+        "activity-feed",
+        "animated-number",
+        "avatar",
+        "avatar-group",
+        "badge",
+        "breadcrumb",
+        "button",
+        "checklist",
+        "description-list",
+        "dropdown-menu",
+        "file-card",
+        "input",
+        "kbd",
+        "layout",
+        "progress",
+        "sidebar",
+        "stepper",
+        "tabs",
+        "textarea"
+      ],
+      "libDependencies": [
+        "koala-mark",
+        "utils"
+      ],
+      "files": [
+        "components/pages/project-detail/index.ts",
+        "components/pages/project-detail/project-detail.tsx"
+      ],
+      "hash": "7a33bcaddab4b3d7"
+    },
+    {
+      "name": "projects-list",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Projects List",
+      "dependencies": {
+        "koala-icons": "^0.1.1"
+      },
+      "registryDependencies": [
+        "avatar",
+        "avatar-group",
+        "badge",
+        "breadcrumb",
+        "button",
+        "card",
+        "data-table",
+        "date-picker",
+        "dialog",
+        "dropdown-menu",
+        "emoji-picker",
+        "empty-state",
+        "field",
+        "form",
+        "input",
+        "layout",
+        "progress",
+        "select",
+        "sidebar",
+        "textarea",
+        "toggle-group"
+      ],
+      "libDependencies": [
+        "koala-mark",
+        "utils"
+      ],
+      "files": [
+        "components/pages/projects-list/index.ts",
+        "components/pages/projects-list/projects-list.tsx"
+      ],
+      "hash": "4777548bea6bee43"
     },
     {
       "name": "promo-card",
@@ -9777,6 +10191,25 @@
       "hash": "5e2ff347a32521fa"
     },
     {
+      "name": "save-bar",
+      "type": "component",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Save Bar",
+      "dependencies": {},
+      "registryDependencies": [],
+      "libDependencies": [
+        "create-context",
+        "labels",
+        "tv"
+      ],
+      "files": [
+        "components/ui/save-bar/index.ts",
+        "components/ui/save-bar/save-bar.tsx"
+      ],
+      "hash": "3ef15f843424aeab"
+    },
+    {
       "name": "scroll-area",
       "type": "component",
       "tier": "free",
@@ -9912,6 +10345,45 @@
       "hash": "52ef338bbfb6e978"
     },
     {
+      "name": "settings-account",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Settings Account",
+      "dependencies": {
+        "koala-icons": "^0.1.1"
+      },
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "breadcrumb",
+        "button",
+        "dialog",
+        "divider",
+        "dropdown-menu",
+        "field",
+        "flag",
+        "input",
+        "layout",
+        "save-bar",
+        "select",
+        "sidebar",
+        "tabs",
+        "textarea",
+        "toast"
+      ],
+      "libDependencies": [
+        "koala-mark",
+        "utils"
+      ],
+      "files": [
+        "components/pages/settings-account/index.ts",
+        "components/pages/settings-account/settings-account.tsx",
+        "components/pages/settings-account/settings-shell.tsx"
+      ],
+      "hash": "80420714555d18f5"
+    },
+    {
       "name": "settings-form",
       "type": "component",
       "tier": "pro",
@@ -9937,6 +10409,87 @@
         "components/ui/settings-form/settings-form.tsx"
       ],
       "hash": "d4c1ae6c689c29c9"
+    },
+    {
+      "name": "settings-notifications",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Settings Notifications",
+      "dependencies": {
+        "koala-icons": "^0.1.1"
+      },
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "breadcrumb",
+        "button",
+        "checkbox",
+        "dropdown-menu",
+        "field",
+        "layout",
+        "list",
+        "radio-group",
+        "save-bar",
+        "select",
+        "sidebar",
+        "switch",
+        "table",
+        "tabs",
+        "toast",
+        "toggle-group"
+      ],
+      "libDependencies": [
+        "koala-mark",
+        "utils"
+      ],
+      "files": [
+        "components/pages/settings-notifications/index.ts",
+        "components/pages/settings-notifications/settings-notifications.tsx",
+        "components/pages/settings-notifications/settings-shell.tsx"
+      ],
+      "hash": "414db3a0506c6019"
+    },
+    {
+      "name": "settings-security",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Settings Security",
+      "dependencies": {
+        "koala-icons": "^0.1.1"
+      },
+      "registryDependencies": [
+        "avatar",
+        "badge",
+        "breadcrumb",
+        "button",
+        "dialog",
+        "dropdown-menu",
+        "empty-state",
+        "field",
+        "input",
+        "layout",
+        "list",
+        "otp-input",
+        "password-strength",
+        "qr-code",
+        "select",
+        "sidebar",
+        "table",
+        "tabs",
+        "toast"
+      ],
+      "libDependencies": [
+        "koala-mark",
+        "utils"
+      ],
+      "files": [
+        "components/pages/settings-security/index.ts",
+        "components/pages/settings-security/settings-security.tsx",
+        "components/pages/settings-security/settings-shell.tsx"
+      ],
+      "hash": "0d712ea70a2dfd24"
     },
     {
       "name": "sheet",
@@ -10043,7 +10596,7 @@
         "components/ui/sidebar/sidebar-tree.tsx",
         "components/ui/sidebar/sidebar.tsx"
       ],
-      "hash": "9baf05dc986dc82f"
+      "hash": "eaf7a3074d8c866f"
     },
     {
       "name": "signature",
@@ -10103,7 +10656,7 @@
         "components/ui/skeleton/index.ts",
         "components/ui/skeleton/skeleton.tsx"
       ],
-      "hash": "48e339c6d22c2b49"
+      "hash": "ee1be85778de35b4"
     },
     {
       "name": "slider",
@@ -10301,7 +10854,7 @@
         "components/ui/stat/index.ts",
         "components/ui/stat/stat.tsx"
       ],
-      "hash": "12fa4458508f4ef1"
+      "hash": "eef010dbe5416782"
     },
     {
       "name": "stats-section-1",
@@ -10920,7 +11473,7 @@
         "components/ui/table/index.ts",
         "components/ui/table/table.tsx"
       ],
-      "hash": "fb89ac07337bfeb9"
+      "hash": "3c5260ccf0f9c850"
     },
     {
       "name": "table-of-contents",
@@ -10984,7 +11537,31 @@
         "components/ui/tabs/index.ts",
         "components/ui/tabs/tabs.tsx"
       ],
-      "hash": "4cfb99d82fd3d378"
+      "hash": "27996ecedfacc9dc"
+    },
+    {
+      "name": "tags-input",
+      "type": "component",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Tags Input",
+      "dependencies": {},
+      "registryDependencies": [
+        "chip",
+        "input"
+      ],
+      "libDependencies": [
+        "density",
+        "field-context",
+        "labels",
+        "motion",
+        "tv"
+      ],
+      "files": [
+        "components/ui/tags-input/index.ts",
+        "components/ui/tags-input/tags-input.tsx"
+      ],
+      "hash": "eac1181fc28c5430"
     },
     {
       "name": "tasks-board",
@@ -11022,7 +11599,7 @@
         "components/pages/tasks-board/tasks-board.tsx",
         "components/pages/tasks-board/use-board-drag.ts"
       ],
-      "hash": "e7335787f1c9f8d3"
+      "hash": "f7f2e4973757adb6"
     },
     {
       "name": "tasks-kanban",
@@ -11057,7 +11634,7 @@
         "components/pages/tasks-kanban/tasks-kanban.tsx",
         "components/pages/tasks-kanban/use-kanban-drag.ts"
       ],
-      "hash": "354cc260d9948249"
+      "hash": "41f4d53f9ecb9c81"
     },
     {
       "name": "team-member",
@@ -11082,6 +11659,87 @@
         "components/ui/team-member/team-member.tsx"
       ],
       "hash": "6d64ce736b4c4b59"
+    },
+    {
+      "name": "team-member-profile",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Team Member Profile",
+      "dependencies": {
+        "koala-icons": "^0.1.1"
+      },
+      "registryDependencies": [
+        "activity-feed",
+        "avatar",
+        "avatar-group",
+        "badge",
+        "breadcrumb",
+        "button",
+        "description-list",
+        "dialog",
+        "dropdown-menu",
+        "layout",
+        "list",
+        "progress",
+        "select",
+        "sidebar",
+        "stat",
+        "switch",
+        "table",
+        "tabs",
+        "toast",
+        "toggle-group"
+      ],
+      "libDependencies": [
+        "koala-mark",
+        "utils"
+      ],
+      "files": [
+        "components/pages/team-member-profile/index.ts",
+        "components/pages/team-member-profile/team-member-profile.tsx"
+      ],
+      "hash": "f74c23389bd0c545"
+    },
+    {
+      "name": "team-members",
+      "type": "page",
+      "tier": "pro",
+      "repo": "jespinosa19/koala-ui-pro",
+      "title": "Team Members",
+      "dependencies": {
+        "koala-icons": "^0.1.1"
+      },
+      "registryDependencies": [
+        "animated-number",
+        "avatar",
+        "avatar-group",
+        "badge",
+        "breadcrumb",
+        "button",
+        "data-table",
+        "dialog",
+        "dropdown-menu",
+        "field",
+        "form",
+        "layout",
+        "progress",
+        "select",
+        "sidebar",
+        "stat",
+        "tabs",
+        "tags-input",
+        "toast"
+      ],
+      "libDependencies": [
+        "koala-mark",
+        "utils"
+      ],
+      "files": [
+        "components/pages/team-members/index.ts",
+        "components/pages/team-members/team-members.tsx"
+      ],
+      "hash": "9231db0a88b47b11"
     },
     {
       "name": "team-section-1",
@@ -11922,7 +12580,7 @@
         "components/ui/weather-card/index.ts",
         "components/ui/weather-card/weather-card.tsx"
       ],
-      "hash": "c5e72d9c4b295806"
+      "hash": "855ee60e42a95100"
     }
   ]
 }

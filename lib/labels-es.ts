@@ -77,4 +77,12 @@ export const labelsEs: Labels = {
   },
   agents: (count) => (count === 1 ? "agente" : "agentes"),
   retry: "Reintentar",
+  tags: "Etiquetas",
+  removeTag: (tag) => `Quitar ${tag}`,
+  invalidTag: "no válido",
+  tagAdded: (tags) => (tags.length === 1 ? `${tags[0]} añadido` : `${tags.length} añadidos`),
+  tagRemoved: (tag) => `${tag} quitado`,
+  tagRejected: (tag, reason) =>
+    reason === "duplicate" ? `${tag} ya está en la lista` : reason === "max" ? `Límite alcanzado, ${tag} no se ha añadido` : `${tag} no se ha añadido`,
+  unsavedChanges: "Cambios sin guardar",
 }

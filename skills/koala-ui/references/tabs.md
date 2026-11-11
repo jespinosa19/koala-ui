@@ -264,6 +264,25 @@ It is opt-in because it clips, which is exactly what makes the reveal read as on
 </Tabs>
 ```
 
+## Navigation
+
+When each tab is its own page, like the sections of a settings area, the row is navigation, not tabs: links with `aria-current="page"` inside a `<nav>` landmark, with no tabpanel to point at. `TabNav` and `TabNavLink` draw exactly the line tabs, scroll the same way on narrow screens and bring the current link into view. Mark the current page with `active`, and pass `asChild` to render your router's link.
+
+```tsx
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+
+const pathname = usePathname()
+
+<TabNav aria-label="Settings">
+  {areas.map((area) => (
+    <TabNavLink key={area.href} asChild active={pathname === area.href}>
+      <Link href={area.href}>{area.label}</Link>
+    </TabNavLink>
+  ))}
+</TabNav>
+```
+
 ## API reference
 
 ### Tabs
@@ -349,6 +368,32 @@ One panel, Radix `Tabs.Content`; fades up when it becomes active. Forwards all R
 | data-state | `"active"` or `"inactive"`. |
 | data-orientation | `"horizontal"` or `"vertical"`. |
 
+### TabNav
+
+A row of links that looks like a `TabsList`, for navigation between pages: a `<nav>` landmark with the same recipe, sliding indicator and overflow scroll, and no Radix Tabs underneath. On mount and on every change it scrolls the current link into view. Forwards all native `<nav>` props; give it an `aria-label`.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| variant | "line" \| "folder" \| "pill" \| "segmented" \| "chip" | "line" | The same looks as `Tabs`; `line` is the one for page navigation. |
+| density | "comfortable" \| "compact" | "compact" | As on `Tabs`. Falls back to the nearest `DensityProvider`. |
+
+| Data attribute | Description |
+| --- | --- |
+| data-orientation | Always `"horizontal"`. |
+
+### TabNavLink
+
+One link, an `<a>` styled as a `TabsTrigger`. Each link is its own tab stop, as links are. Forwards all native `<a>` props.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| active | boolean | false | Marks the current page: sets `aria-current="page"` and moves the indicator under it. |
+| asChild | boolean | false | Merge onto your own link, such as Next.js `Link`. |
+
+| Data attribute | Description |
+| --- | --- |
+| data-state | `"active"` or `"inactive"`, from `active`. |
+
 ### tabsVariants
 
 The `tv` recipe behind every part, for styling a rail of your own to match.
@@ -387,7 +432,7 @@ Drop a Koala icon as a child of `TabsTrigger` alongside the label. The recipe al
 
 `npx koalaui-cli@latest add tabs` writes `components/ui/tabs/`. Import from `@/components/ui/tabs`:
 
-- Components and helpers: `Tabs`, `TabsList`, `TabsTrigger`, `TabsTriggerIcon`, `TabsTriggerLabel`, `TabsContent`, `TabsPanels`, `tabsVariants`
-- Types: `TabsProps`, `TabsTriggerProps`, `TabsTriggerIconProps`
+- Components and helpers: `Tabs`, `TabsList`, `TabsTrigger`, `TabsTriggerIcon`, `TabsTriggerLabel`, `TabsContent`, `TabsPanels`, `TabNav`, `TabNavLink`, `tabsVariants`
+- Types: `TabsProps`, `TabsTriggerProps`, `TabsTriggerIconProps`, `TabNavProps`, `TabNavLinkProps`
 - Koala lib helpers it uses: `create-context`, `density`, `hit-area`, `morph`, `tv`, `utils`
 - npm packages: `koala-icons`, `radix-ui`

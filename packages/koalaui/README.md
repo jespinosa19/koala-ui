@@ -22,7 +22,7 @@ npx koalaui-cli@latest add button card dialog
 npx koalaui-cli@latest list
 ```
 
-`init` works out whether the project is Next.js or Vite and finds the stylesheet that imports Tailwind. It writes the tokens to `koala.css` and imports them from that stylesheet, and installs `lib/utils.ts`, `lib/tv.ts` and `components/theme-provider.tsx`. It warns about anything in your stylesheet that would override the themes (its own `--background`, `--radius` or dark variant).
+`init` works out whether the project is Next.js, TanStack Start, React Router, Astro or plain Vite, and finds the stylesheet that imports Tailwind wherever it lives. It writes the tokens to `koala.css` and imports them from that stylesheet, and installs `lib/utils.ts`, `lib/tv.ts` and `components/theme-provider.tsx`. It warns about anything in your stylesheet that would override the themes (its own `--background`, `--radius` or dark variant).
 
 ### Next.js
 
@@ -55,7 +55,15 @@ createRoot(document.getElementById("root")!).render(
 )
 ```
 
-A single-theme app pins it: `<ThemeProvider forcedTheme="dark">`. The `@/*` alias has to be declared for TypeScript (`"@/*": ["./src/*"]` in `tsconfig.json` and `tsconfig.app.json`) and for Vite (`resolve.alias`).
+A single-theme app pins it: `<ThemeProvider forcedTheme="dark">`. `init` adds the `@/*` alias to a tsconfig that is plain JSON; one with comments (create-vite's) gets the line to add by hand, in `tsconfig.json` and `tsconfig.app.json`, and Vite needs it too (`resolve.alias`).
+
+### TanStack Start, React Router and Astro
+
+The fonts and tokens are wired like in Vite, into the stylesheet each generator writes (`src/styles.css`, `app/app.css`, `src/styles/global.css`), and the `@/*` alias is added for you; their Vite configs already read it. A React Router app keeps Koala's files under `app/`, beside its own code. What is left is the theme provider:
+
+- **TanStack Start**: around `{children}` in `RootDocument` (`src/routes/__root.tsx`), with `suppressHydrationWarning` on `<html>`.
+- **React Router**: around `{children}` in `Layout` (`app/root.tsx`), with `suppressHydrationWarning` on `<html>`.
+- **Astro**: inside each React island, since islands share no React root. Import the stylesheet from your layout's frontmatter if no page does yet; `init` says when.
 
 ### Coming from shadcn/ui
 
@@ -84,6 +92,8 @@ Coding agents write better Koala code when they read Koala's rules and docs inst
 npx koalaui-cli@latest skill                         # writes .claude/skills/koala-ui/
 npx koalaui-cli@latest skill --dir docs/koala-skill  # or anywhere else
 ```
+
+With a license activated on the machine, `skill` also writes a reference for every Pro component, examples included, fetched with your seat like Pro source. They are licensed to you: keep them out of a public repo. Run `skill` again after `login` to add them.
 
 Claude Code loads project skills from `.claude/skills/`, so a new session picks it up. For Cursor, Codex and other agents, add a line to your `AGENTS.md` (or a Cursor rule) telling the agent to read `.claude/skills/koala-ui/SKILL.md` before writing UI. Run `skill` again after an update to refresh it: it replaces the folder's files and removes references a newer skill no longer has.
 
@@ -160,4 +170,4 @@ Store both as CI secrets; the CLI reads them from the environment. `whoami --ci`
 
 ## Requirements
 
-React 19, Tailwind CSS v4, and a project that resolves the `@/*` path alias. Next.js and Vite are set up automatically; any other React setup works through the stylesheet that imports Tailwind. The package manager is auto-detected (npm / pnpm / yarn / bun) from your lockfile.
+React 19, Tailwind CSS v4, and a project that resolves the `@/*` path alias. Next.js, TanStack Start, React Router, Astro and Vite are set up automatically; any other React setup works through the stylesheet that imports Tailwind. The package manager is auto-detected (npm / pnpm / yarn / bun) from your lockfile.

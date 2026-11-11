@@ -56,7 +56,7 @@ Pass `lines` with `variant="text"` to render a paragraph-shaped block. The last 
 
 ## Animation
 
-`pulse` (the default) breathes opacity; `shimmer` sweeps a highlight driven by the `--animate-shimmer` motion token; and `none` holds a static placeholder. All three stop under `prefers-reduced-motion`.
+`shimmer` (the default) sweeps a highlight driven by the `--animate-shimmer` motion token; `pulse` breathes opacity; and `none` holds a static placeholder. All three stop under `prefers-reduced-motion`.
 
 ```tsx
 <Skeleton animation="pulse" className="h-10 w-28" />
@@ -91,7 +91,7 @@ A decorative `aria-hidden` placeholder; set `aria-busy` on the loading region in
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | variant | "rectangle" \| "circle" \| "text" | "rectangle" | Shape: a rounded block, an aspect-square circle sized by one `size-*`, or a full-width line one `1lh` tall. |
-| animation | "pulse" \| "shimmer" \| "none" | "pulse" | Opacity breathe, a swept highlight on the `--animate-shimmer` token, or static. Both animations stop under `prefers-reduced-motion`. |
+| animation | "pulse" \| "shimmer" \| "none" | "shimmer" | Opacity breathe, a swept highlight on the `--animate-shimmer` token, or static. Both animations stop under `prefers-reduced-motion`. |
 | lines | number | - | With `variant="text"`, stacks this many lines (the last at 60% width); `className` then styles the group. Ignored for other variants and for `lines <= 1`. |
 
 ## FAQ
@@ -110,7 +110,7 @@ Pass `lines` together with `variant="text"` to stack that many lines, with the l
 
 ### Which animation should I pick, and does it respect reduced motion?
 
-`pulse` (the default) breathes opacity, `shimmer` sweeps a highlight via the `--animate-shimmer` token, and `none` holds static. All three stop automatically under `prefers-reduced-motion`.
+`shimmer` (the default) sweeps a highlight via the `--animate-shimmer` token, `pulse` breathes opacity, and `none` holds static. All three stop automatically under `prefers-reduced-motion`.
 
 ### How do I keep skeletons quiet for screen readers?
 

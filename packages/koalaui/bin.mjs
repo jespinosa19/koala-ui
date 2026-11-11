@@ -37,16 +37,19 @@ import { execFileSync, execSync } from "node:child_process"
 import {
   ACCOUNT_URL,
   FONT_PACKAGES,
+  FRAMEWORK_LABELS,
   MAX_PATHS,
   PURCHASE_URL,
   SITE,
   STYLESHEET_CANDIDATES,
-  TAILWIND_IMPORT,
   VERSION,
+  VITE_CONFIGS,
+  addPathAlias,
   assetUrl,
   chunk,
   describeHttpError,
   detectFramework,
+  findTailwindStylesheet,
   importSpecifier,
   installCommand,
   isCi,
@@ -64,7 +67,9 @@ import {
   selfCommand,
   sha,
   shadcnStylesheet,
+  sourceRoot,
   validateDepSpec,
+  viteReadsTsconfigPaths,
   wireCss,
   writeConfig,
 } from "./lib.mjs"
@@ -344,14 +349,15 @@ function makeRegistry(opts) {
 
 // ── target path resolution (handles src/ layouts) ────────────────────────────
 function makeWriter(root, overwrite) {
-  const useSrc =
-    existsSync(join(root, "src")) && !existsSync(join(root, "app")) && !existsSync(join(root, "components"))
+  // The source root: src/ in a src/ layout, app/ in a React Router app, else the project root.
+  const base = sourceRoot(inspectProject(root).framework, (p) => existsSync(join(root, p)))
+  const useSrc = base !== ""
   const written = []
   const skipped = []
   const same = []
   // Every path comes from the registry, fetched over the network: resolveInside refuses anything
   // that would land outside the project's app/components/lib folders.
-  const resolve = (target) => resolveInside(useSrc ? join(root, "src") : root, target)
+  const resolve = (target) => resolveInside(base ? join(root, base) : root, target)
   /** The file as it sits in the project, or null. */
   function read(target) {
     const abs = resolve(target)
@@ -382,8 +388,8 @@ function makeWriter(root, overwrite) {
   /** Written now or already identical: either way the file on disk is exactly the registry's. */
   const matches = (target) => written.includes(target) || same.includes(target)
   /** A registry target as it sits in the project, from the root: `src/…` in a src/ layout. */
-  const fromRoot = (target) => (useSrc ? `src/${target}` : target)
-  return { read, write, matches, fromRoot, written, skipped, same, useSrc }
+  const fromRoot = (target) => (base ? `${base}/${target}` : target)
+  return { read, write, matches, fromRoot, written, skipped, same, useSrc, base }
 }
 
 // ── the project: its framework and its global stylesheet ─────────────────────────
@@ -413,15 +419,20 @@ function inspectProject(root) {
 
 /**
  * The stylesheet that imports Tailwind: the one components.json names, else the first usual
- * location that holds the import. A Next project whose globals.css lost the import still gets it
+ * location that holds the import, else any stylesheet under src/, app/ or styles/ that does. A Next project whose globals.css lost the import still gets it
  * wired, as before; anywhere else a stylesheet without Tailwind is not assumed to be the global one.
  */
 function findStylesheet(root, project) {
   const candidates = [...new Set([...(project.shadcnCss ? [project.shadcnCss] : []), ...STYLESHEET_CANDIDATES])]
-  for (const path of candidates) {
-    const css = readProject(root, path)
-    if (css != null && TAILWIND_IMPORT.test(css)) return path
+  const list = (dir) => {
+    try {
+      return readdirSync(join(root, ...dir.split("/")), { withFileTypes: true }).map((e) => ({ name: e.name, dir: e.isDirectory() }))
+    } catch {
+      return []
+    }
   }
+  const found = findTailwindStylesheet(candidates, (p) => readProject(root, p), list)
+  if (found) return found
   return ["app/globals.css", "src/app/globals.css"].find((p) => readProject(root, p) != null) ?? null
 }
 
@@ -546,8 +557,8 @@ function resolveItems(m, names) {
   return resolved
 }
 function reportWrites(w) {
-  for (const t of w.written) ok(`wrote ${c.dim(t)}`)
-  for (const t of w.skipped) warn(`exists, skipped ${c.dim(t)} ${c.dim("(use --overwrite)")}`)
+  for (const t of w.written) ok(`wrote ${c.dim(w.fromRoot(t))}`)
+  for (const t of w.skipped) warn(`exists, skipped ${c.dim(w.fromRoot(t))} ${c.dim("(use --overwrite)")}`)
 }
 
 // ── global stylesheet wiring ──────────────────────────────────────────────────
@@ -590,9 +601,93 @@ const ENTRY_SNIPPET = `
       </StrictMode>
     )`
 
-const VITE_ALIAS_SNIPPET = `
+const viteAliasSnippet = (base) => `
     // vite.config.ts
-    resolve: { alias: { "@": path.resolve(__dirname, "./src") } }`
+    resolve: { alias: { "@": path.resolve(__dirname, "./${base}") } }`
+
+// An SSR root layout renders <html> itself: next-themes sets the theme class on it before React
+// hydrates, so it carries suppressHydrationWarning.
+const rootLayoutSnippet = (fn) => `
+    import { ThemeProvider } from "@/components/theme-provider"
+
+    // in ${fn}
+    <html lang="en" suppressHydrationWarning>
+      <head>...</head>
+      <body>
+        <ThemeProvider>{children}</ThemeProvider>
+        ...
+      </body>
+    </html>`
+
+// Each Astro island is its own React root, so each brings its own provider.
+const ISLAND_SNIPPET = `
+    import { ThemeProvider } from "@/components/theme-provider"
+    import { Button } from "@/components/ui/button"
+
+    export function Hero() {
+      return (
+        <ThemeProvider>
+          <Button>Get started</Button>
+        </ThemeProvider>
+      )
+    }
+
+    // in a page or layout: <Hero client:load />`
+
+/** The theme step of init's next steps, per framework. */
+const THEME_STEPS = {
+  next: { title: "Wire the fonts and the theme in your root layout", file: (b) => (b ? `${b}/app/layout.tsx` : "app/layout.tsx"), snippet: LAYOUT_SNIPPET },
+  "tanstack-start": { title: "Wrap the root route in the theme provider", file: () => "src/routes/__root.tsx", snippet: rootLayoutSnippet("RootDocument") },
+  "react-router": { title: "Wrap the root layout in the theme provider", file: () => "app/root.tsx", snippet: rootLayoutSnippet("Layout") },
+  astro: { title: "Wrap each React island in the theme provider", file: () => "islands share no React root", snippet: ISLAND_SNIPPET },
+  vite: { title: "Wrap your app in the theme provider", file: () => "src/main.tsx", snippet: ENTRY_SNIPPET },
+  react: { title: "Wrap your app in the theme provider", file: () => "your entry file", snippet: ENTRY_SNIPPET },
+}
+
+/**
+ * Add the `@/*` alias every component imports through, when no tsconfig has it yet. Each tsconfig
+ * that is plain JSON gets it (a Vite app declares it in tsconfig.json and tsconfig.app.json); one
+ * with comments is left to the user, with the line to add.
+ * @param {string} root
+ * @param {string} base  the source root
+ * @returns {{ status: "present" | "added" | "manual" | "none", edited: string[] }}
+ */
+/**
+ * Whether any page, layout or component under src/ imports the stylesheet. Astro's minimal starter
+ * creates the Tailwind stylesheet without importing it anywhere, so wiring koala.css into it would
+ * change nothing on screen until a layout imports it.
+ * @param {string} root
+ * @param {string} stylesheet  from the root
+ */
+function stylesheetImported(root, stylesheet) {
+  const name = stylesheet.split("/").pop() ?? stylesheet
+  let files = []
+  try {
+    files = readdirSync(join(root, "src"), { recursive: true, encoding: "utf8" })
+  } catch {
+    return true
+  }
+  return files
+    .filter((f) => /\.(astro|[cm]?[jt]sx?|mdx)$/.test(f) && !/(^|[\\/])node_modules[\\/]/.test(f))
+    .some((f) => (readProject(root, `src/${f.replace(/\\/g, "/")}`) ?? "").includes(name))
+}
+
+function wireAlias(root, base) {
+  const files = ["tsconfig.json", "tsconfig.app.json"].filter((p) => readProject(root, p) != null)
+  if (!files.length) return { status: "none", edited: [] }
+  if (files.some((p) => (readProject(root, p) ?? "").includes('"@/*"'))) return { status: "present", edited: [] }
+  const edited = []
+  let failed = false
+  for (const p of files) {
+    const next = addPathAlias(readProject(root, p) ?? "", base)
+    if (next == null) failed = true
+    else {
+      writeFileSync(join(root, p), next)
+      edited.push(p)
+    }
+  }
+  return { status: failed && !edited.length ? "manual" : "added", edited }
+}
 
 const MIGRATION_URL = `${SITE}/docs/migrating-from-shadcn`
 
@@ -651,17 +746,20 @@ async function cmdInit(reg, opts) {
 
   const koalaPath = w.fromRoot(unit.files.find((f) => f.to.endsWith("koala.css"))?.to ?? "app/koala.css")
   const css = wireStylesheet(root, stylesheet, koalaPath, fonts)
+  const alias = wireAlias(root, w.base)
   reportWrites(w)
+  for (const file of alias.edited) ok(`added the ${c.cyan('"@/*"')} alias to ${c.dim(file)}`)
   saveManifest(root, manifest)
   ok(`recorded ${c.dim(MANIFEST)}`)
 
   if (opts.install) installDeps(root, deps)
   else info(`skipped install - deps: ${Object.keys(deps).join(" ")}`)
 
+  const fw = project.framework
   log()
   ok("init complete")
-  if (w.useSrc) info("detected a src/ layout - files were written under src/")
-  if (project.framework === "vite") info("detected a Vite project")
+  if (fw !== "react") info(`detected ${FRAMEWORK_LABELS[fw]}`)
+  if (w.base) info(`files were written under ${w.base}/`)
   if (shadcnUtils && w.written.includes(UTILS)) info(`replaced shadcn's ${w.fromRoot(UTILS)} with Koala's: the same ${c.cyan("cn")}, plus the merge config ${c.cyan("tv")} reads`)
   if (w.skipped.includes(UTILS))
     warn(
@@ -679,28 +777,28 @@ async function cmdInit(reg, opts) {
     log(`  ${step++}. In your global stylesheet, right after ${c.cyan('@import "tailwindcss";')}, import koala.css:`)
     log(`     ${c.cyan(`@import "<path to ${koalaPath}>";`)} ${c.dim("(relative to the stylesheet)")}`)
   }
-  if (project.framework === "next") {
-    log(`  ${step++}. Wire the fonts and the theme in your root layout ${c.dim("(app/layout.tsx)")}:`)
-    log(c.dim(LAYOUT_SNIPPET))
-  } else {
-    log(`  ${step++}. Wrap your app in the theme provider ${c.dim(`(${project.framework === "vite" ? "src/main.tsx" : "your entry file"})`)}:`)
-    log(c.dim(ENTRY_SNIPPET))
-    log(c.dim(`    For a single-theme app, pin it: <ThemeProvider forcedTheme="dark">`))
-    if (!fonts)
-      log(
-        `  ${step++}. Load Inter and DM Sans ${c.dim("(e.g. @fontsource-variable/inter and @fontsource-variable/dm-sans/opsz.css)")} and set ${c.cyan("--font-sans")} / ${c.cyan("--font-heading")} on :root.`
-      )
+  if (fw === "astro" && css.target && !stylesheetImported(root, css.target)) {
+    log(`  ${step++}. Import ${css.target} in your layout's frontmatter, or no page loads the styles:`)
+    log(c.dim(`\n    ---\n    import "${importSpecifier("src/layouts/Layout.astro", css.target)}"\n    ---`))
   }
-  const tsconfig = ["tsconfig.json", "tsconfig.app.json"].map((p) => readProject(root, p) ?? "").join("\n")
-  if (!tsconfig.includes('"@/*"'))
+  const theme = THEME_STEPS[fw]
+  log(`  ${step++}. ${theme.title} ${c.dim(`(${theme.file(w.base)})`)}:`)
+  log(c.dim(theme.snippet))
+  if (fw !== "next") log(c.dim(`    For a single-theme app, pin it: <ThemeProvider forcedTheme="dark">`))
+  if (fw !== "next" && !fonts)
     log(
-      `  ${step++}. Add the ${c.cyan('"@/*"')} path alias to your tsconfig ${c.dim(`("paths": { "@/*": ["./${w.useSrc ? "src/" : ""}*"] })`)}; every component imports through it.`
+      `  ${step++}. Load Inter and DM Sans ${c.dim("(e.g. @fontsource-variable/inter and @fontsource-variable/dm-sans/opsz.css)")} and set ${c.cyan("--font-sans")} / ${c.cyan("--font-heading")} on :root.`
     )
-  if (project.framework === "vite") {
-    const viteConfig = ["vite.config.ts", "vite.config.mts", "vite.config.js", "vite.config.mjs"].map((p) => readProject(root, p) ?? "").join("\n")
-    if (!/alias[\s\S]*["']@["']/.test(viteConfig)) {
+  if (alias.status === "manual" || alias.status === "none")
+    log(
+      `  ${step++}. Add the ${c.cyan('"@/*"')} path alias to your tsconfig ${c.dim(`("paths": { "@/*": ["./${w.base ? `${w.base}/` : ""}*"] })`)}; every component imports through it.`
+    )
+  // Astro resolves tsconfig paths itself; a Vite config does only when it says so.
+  if (fw !== "next" && fw !== "astro") {
+    const viteConfig = VITE_CONFIGS.map((p) => readProject(root, p) ?? "").join("\n")
+    if (viteConfig.trim() && !/alias[\s\S]*["']@["']/.test(viteConfig) && !viteReadsTsconfigPaths(viteConfig)) {
       log(`  ${step++}. Teach Vite the same alias:`)
-      log(c.dim(VITE_ALIAS_SNIPPET))
+      log(c.dim(viteAliasSnippet(w.base || ".")))
     }
   }
   if (project.shadcn)
@@ -767,7 +865,7 @@ async function cmdAdd(reg, opts) {
 
   log()
   ok(`added ${names.join(", ")}`)
-  if (w.useSrc) info("detected a src/ layout - files were written under src/")
+  if (w.base) info(`files were written under ${w.base}/`)
   if (w.skipped.length) info(`already installed? ${c.cyan(cli("update"))} brings files up to date without touching your edits`)
   const nextOnly = items.filter((i) => i.frameworks?.includes("next")).map((i) => i.name)
   if (nextOnly.length && inspectProject(root).framework !== "next")
@@ -898,6 +996,61 @@ async function cmdTemplate(reg, opts) {
 const SKILL_MANIFEST = "skills/koala-ui.json"
 const SKILL_DEFAULT_DIR = ".claude/skills/koala-ui"
 const SKILL_FILE = /^(SKILL\.md|references\/[a-z0-9][a-z0-9-]*\.md)$/
+/** Pro references per request to /cli-skill (the server takes up to 40). */
+const SKILL_PRO_BATCH = 40
+
+/**
+ * The Pro components' skill references, by name, from the entitlement API's /cli-skill: their docs
+ * pages with the examples as code, so an agent can plan with a Pro component before installing it.
+ * Only for a license with this machine's seat. Anything short of that, or any failure, leaves the
+ * free skill as it is and says why: the free skill is still a complete install. Null when there is
+ * no license to ask with; undefined when asking failed, so the references already on disk stay.
+ */
+async function proSkillReferences(opts, freeFiles) {
+  const cfg = loadConfig()
+  const license = resolveLicense(opts, cfg)
+  const instanceId = resolveInstance(opts, cfg, license)
+  if (!license) {
+    info(`Pro component references come with a license ${c.dim(`(${cli("login <key>")}, then run skill again)`)}`)
+    return null
+  }
+  if (!instanceId) {
+    warn(`skipping the Pro references: this machine has no activated seat ${c.dim(`(${cli("login <key>")})`)}`)
+    return null
+  }
+  const api = resolveApi(opts)
+  const ask = async (extra) => {
+    let res
+    try {
+      res = await request(`${api}/cli-skill`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ key: license, instanceId, ...extra }),
+      })
+    } catch {
+      throw new Error(`could not reach ${api}`)
+    }
+    const body = await readBody(res)
+    if (!res.ok || !body) throw new Error(body?.error || describeHttpError(res.status, body, res.headers.get("retry-after"), "skill"))
+    return body
+  }
+  try {
+    const index = await ask({})
+    // A name that would collide with a free reference or escape the folder is never written.
+    const names = (Array.isArray(index.names) ? index.names : []).filter(
+      (name) => typeof name === "string" && SKILL_FILE.test(`references/${name}.md`) && !freeFiles.includes(`references/${name}.md`),
+    )
+    const out = {}
+    for (const batch of chunk(names, SKILL_PRO_BATCH)) {
+      const { files } = await ask({ names: batch })
+      for (const name of batch) if (typeof files?.[name] === "string") out[name] = files[name]
+    }
+    return out
+  } catch (error) {
+    warn(`skipping the Pro references: ${error instanceof Error ? error.message : String(error)} ${c.dim("(the ones already here are kept)")}`)
+    return undefined
+  }
+}
 
 async function cmdSkill(reg, opts) {
   const root = opts.cwd
@@ -917,13 +1070,20 @@ async function cmdSkill(reg, opts) {
     fail("the registry's skill manifest lists files outside a skill (SKILL.md and references/*.md only)")
 
   const contents = await Promise.all(files.map((f) => reg.freeFile(`${base}/${f}`)))
+  // The Pro components' references, when this machine has an activated license (null otherwise).
+  // A local checkout (--registry, dev) asks only when it is pointed at an API on purpose.
+  const local = opts.registry && !opts.api && !process.env.KOALAUI_API
+  const pro = local ? null : await proSkillReferences(opts, files)
+  const proFiles = pro ? Object.keys(pro).map((name) => `references/${name}.md`) : []
+  const proFailed = pro === undefined
 
   // References an older skill had and this one does not: gone, so the agent never reads a stale one.
+  // That includes Pro references left by a license this machine no longer has.
   const removed = []
   const refs = join(target, "references")
-  if (existsSync(refs)) {
+  if (existsSync(refs) && !proFailed) {
     for (const name of readdirSync(refs)) {
-      if (name.endsWith(".md") && !files.includes(`references/${name}`)) {
+      if (name.endsWith(".md") && !files.includes(`references/${name}`) && !proFiles.includes(`references/${name}`)) {
         rmSync(join(refs, name))
         removed.push(name)
       }
@@ -934,9 +1094,14 @@ async function cmdSkill(reg, opts) {
     mkdirSync(dirname(abs), { recursive: true })
     writeFileSync(abs, contents[i])
   })
+  if (pro) {
+    mkdirSync(refs, { recursive: true })
+    for (const [name, markdown] of Object.entries(pro)) writeFileSync(join(refs, `${name}.md`), markdown)
+  }
 
   const shown = (opts.dir || SKILL_DEFAULT_DIR).replace(/\\/g, "/").replace(/\/+$/, "")
   ok(`wrote ${c.dim(`${shown}/SKILL.md`)} and ${files.length - 1} component references`)
+  if (pro) ok(`added ${proFiles.length} Pro component references ${c.dim("(licensed: keep them out of a public repo)")}`)
   if (removed.length) info(`removed ${removed.length} reference${removed.length === 1 ? "" : "s"} the new skill no longer has`)
 
   log(`\n${c.bold("Next steps:")}`)

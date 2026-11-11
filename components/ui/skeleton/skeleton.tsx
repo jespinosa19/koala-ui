@@ -26,7 +26,7 @@ export const skeletonVariants = tv({
   },
   defaultVariants: {
     variant: "rectangle",
-    animation: "pulse",
+    animation: "shimmer",
   },
 })
 

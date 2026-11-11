@@ -174,14 +174,14 @@ export function Badge({
 
   if (asChild) {
     return (
-      <Slot.Root data-slot="badge" data-size={size ?? "md"} className={classes} style={colorStyle} {...colorProps} {...props}>
+      <Slot.Root data-slot="badge" data-size={size ?? "md"} data-variant={variant ?? "default"} className={classes} style={colorStyle} {...colorProps} {...props}>
         {children}
       </Slot.Root>
     )
   }
 
   return (
-    <span data-slot="badge" data-size={size ?? "md"} className={classes} style={colorStyle} {...colorProps} {...props}>
+    <span data-slot="badge" data-size={size ?? "md"} data-variant={variant ?? "default"} className={classes} style={colorStyle} {...colorProps} {...props}>
       {dotSlot && <BadgeDot on={!!(dot || pulse)} pulse={pulse} size={size} />}
       {dotSlot ? (
         <span data-slot="badge-label" className="transition-colors duration-fast ease-out">

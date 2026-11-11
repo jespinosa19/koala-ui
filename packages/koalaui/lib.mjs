@@ -9,7 +9,7 @@ import { dirname, isAbsolute, join, normalize as normalizePath, posix, sep } fro
 import { homedir } from "node:os"
 
 /** Sent to the API as X-Koalaui-Cli. test/cli/smoke.test.ts pins it to package.json. */
-export const VERSION = "0.8.0"
+export const VERSION = "0.10.0"
 // The public site. Every buyer-facing URL hangs off this one constant. 0.6.0 and earlier point
 // at koala-ui.vercel.app, which stays attached to the project, so old installs keep working.
 export const SITE = "https://www.koalaui.com"
@@ -108,29 +108,53 @@ export function assetUrl(base, path) {
 
 // ── the project being installed into ────────────────────────────────────────────
 const NEXT_CONFIGS = ["next.config.js", "next.config.mjs", "next.config.ts", "next.config.cjs"]
-const VITE_CONFIGS = ["vite.config.js", "vite.config.mjs", "vite.config.ts", "vite.config.cjs", "vite.config.mts", "vite.config.cts"]
+export const VITE_CONFIGS = ["vite.config.ts", "vite.config.mts", "vite.config.js", "vite.config.mjs", "vite.config.cjs", "vite.config.cts"]
+const ASTRO_CONFIGS = ["astro.config.mjs", "astro.config.ts", "astro.config.js", "astro.config.mts", "astro.config.cjs"]
+const REACT_ROUTER_CONFIGS = ["react-router.config.ts", "react-router.config.js", "react-router.config.mjs"]
+
+/** @typedef {"next" | "tanstack-start" | "react-router" | "astro" | "vite" | "react"} Framework */
 
 /**
  * Which kind of React project this is. Next is checked first: a Next app often carries Vite as a
- * test dependency (Vitest), never the other way round.
+ * test dependency (Vitest), never the other way round. TanStack Start, React Router (framework
+ * mode) and Astro all build on Vite, so they are told apart before plain Vite: each keeps its root
+ * layout somewhere else.
  * @param {(path: string) => boolean} has  whether a file exists at the project root
  * @param {Record<string, string>} [deps]  the project's dependencies and devDependencies
- * @returns {"next" | "vite" | "react"}
+ * @returns {Framework}
  */
 export function detectFramework(has, deps = {}) {
   if (NEXT_CONFIGS.some(has) || deps.next) return "next"
+  if (deps["@tanstack/react-start"]) return "tanstack-start"
+  if (REACT_ROUTER_CONFIGS.some(has) || deps["@react-router/dev"]) return "react-router"
+  if (ASTRO_CONFIGS.some(has) || deps.astro) return "astro"
   if (VITE_CONFIGS.some(has) || deps.vite) return "vite"
   return "react"
 }
 
+/** How each framework reads in init's report. */
+export const FRAMEWORK_LABELS = /** @type {Record<Framework, string>} */ ({
+  next: "Next.js",
+  "tanstack-start": "TanStack Start",
+  "react-router": "React Router",
+  astro: "Astro",
+  vite: "Vite",
+  react: "React",
+})
+
 /**
  * Where a project's global stylesheet usually lives, from the project root: Next's app router
- * first, then the Vite and create-react-app spellings, then the pages router.
+ * first, then each generator's own spelling (Vite, TanStack Start, React Router, Astro,
+ * create-react-app), then the pages router. A stylesheet anywhere else is still found by
+ * findTailwindStylesheet, which scans the source folders for the Tailwind import.
  */
 export const STYLESHEET_CANDIDATES = [
   "app/globals.css",
   "src/app/globals.css",
   "src/index.css",
+  "src/styles.css",
+  "app/app.css",
+  "src/styles/global.css",
   "src/styles/globals.css",
   "src/styles/index.css",
   "src/globals.css",
@@ -138,6 +162,46 @@ export const STYLESHEET_CANDIDATES = [
   "src/App.css",
   "styles/globals.css",
 ]
+
+/** Folders a global stylesheet is searched in, and those never descended into. */
+const STYLESHEET_ROOTS = ["src", "app", "styles"]
+const SKIP_DIRS = new Set(["node_modules", ".git", ".next", "dist", "build", "out", ".output", ".astro", ".react-router", ".tanstack", ".vercel", "public"])
+
+/**
+ * The stylesheet that imports Tailwind, from the project root: the first candidate that holds the
+ * import, else the shallowest .css file under src/, app/ or styles/ that does. Pure over two
+ * callbacks so it can be tested without a disk.
+ * @param {string[]} candidates  paths to try first, in order
+ * @param {(path: string) => string | null} read  a file's contents, or null
+ * @param {(dir: string) => { name: string, dir: boolean }[]} list  a folder's entries
+ * @param {number} [depth]  how deep the scan goes below each root
+ * @returns {string | null}
+ */
+export function findTailwindStylesheet(candidates, read, list, depth = 4) {
+  for (const path of candidates) {
+    const css = read(path)
+    if (css != null && TAILWIND_IMPORT.test(css)) return path
+  }
+  // Breadth first, so src/styles.css wins over src/routes/blog/styles.css.
+  let level = STYLESHEET_ROOTS.slice()
+  for (let d = 0; d <= depth && level.length; d++) {
+    const next = []
+    for (const dir of level) {
+      const entries = list(dir).slice().sort((a, b) => a.name.localeCompare(b.name))
+      for (const e of entries) {
+        const path = `${dir}/${e.name}`
+        if (e.dir) {
+          if (!SKIP_DIRS.has(e.name) && !e.name.startsWith(".")) next.push(path)
+        } else if (e.name.endsWith(".css") && !e.name.endsWith("koala.css")) {
+          const css = read(path)
+          if (css != null && TAILWIND_IMPORT.test(css)) return path
+        }
+      }
+    }
+    level = next
+  }
+  return null
+}
 
 export const TAILWIND_IMPORT = /^@import\s+["']tailwindcss["'][^;\r\n]*;[^\r\n]*$/m
 
@@ -165,12 +229,61 @@ export function shadcnStylesheet(json) {
  * Where koala.css goes, as a registry target (relative to the project, or to its src/). Beside a
  * stylesheet that lives in app/, as a Next project expects it; in styles/ everywhere else, since a
  * Vite src/ root is not somewhere an item may write.
+ * React Router's app/ is its source root, not Next's app router, so its koala.css goes to styles/.
  * @param {string | null} stylesheet  the global stylesheet, from the project root
- * @param {"next" | "vite" | "react"} framework
+ * @param {Framework} framework
  */
 export function koalaCssTarget(stylesheet, framework) {
+  if (framework === "react-router") return "styles/koala.css"
   if (stylesheet ? /^(src\/)?app\//.test(stylesheet) : framework === "next") return "app/koala.css"
   return "styles/koala.css"
+}
+
+/**
+ * The folder items are written into, from the project root: "src" for a src/ layout, "app" for a
+ * React Router app (its `~/` source root), "" for the root. An earlier install that wrote to the
+ * root (components/ or lib/ already there) keeps the root, so koala.json still matches.
+ * @param {Framework} framework
+ * @param {(path: string) => boolean} has  whether a folder exists at the project root
+ */
+export function sourceRoot(framework, has) {
+  if (framework === "react-router" && has("app") && !has("components") && !has("lib")) return "app"
+  if (has("src") && !has("app") && !has("components")) return "src"
+  return ""
+}
+
+/**
+ * The tsconfig with the `@/*` alias added, or null when it cannot be edited safely: not plain JSON
+ * (comments, trailing commas), or `@/*` already there. TypeScript resolves `paths` against the
+ * tsconfig itself, so no baseUrl is needed.
+ * @param {string} json  the tsconfig's contents
+ * @param {string} base  the source root, "" | "src" | "app"
+ * @returns {string | null}
+ */
+export function addPathAlias(json, base) {
+  let cfg
+  try {
+    cfg = JSON.parse(json)
+  } catch {
+    return null
+  }
+  if (!cfg || typeof cfg !== "object" || Array.isArray(cfg)) return null
+  const options = cfg.compilerOptions && typeof cfg.compilerOptions === "object" ? cfg.compilerOptions : {}
+  const paths = options.paths && typeof options.paths === "object" ? options.paths : {}
+  if (paths["@/*"]) return null
+  cfg.compilerOptions = { ...options, paths: { ...paths, "@/*": [`./${base ? `${base}/` : ""}*`] } }
+  const eol = json.includes("\r\n") ? "\r\n" : "\n"
+  const indent = /^[ \t]+/m.exec(json)?.[0] ?? "  "
+  return JSON.stringify(cfg, null, indent).replace(/\n/g, eol) + eol
+}
+
+/**
+ * True when Vite already resolves tsconfig paths: Vite's own `resolve.tsconfigPaths` (what the
+ * TanStack Start and React Router generators write) or the vite-tsconfig-paths plugin.
+ * @param {string} config  the vite config's source
+ */
+export function viteReadsTsconfigPaths(config) {
+  return /tsconfigPaths\s*:\s*true/.test(config) || /vite-tsconfig-paths/.test(config)
 }
 
 /**
@@ -210,6 +323,10 @@ export function stylesheetConflicts(css) {
     out.push("sets its own --background/--foreground (on :root or .dark)")
   if (/(?::root|\.dark)\s*\{[^}]*--radius\s*:/.test(css)) out.push("sets its own --radius")
   if (/^@custom-variant\s+dark\b/m.test(css)) out.push("declares its own dark variant (koala.css covers .dark and .moonlight)")
+  // The React Router starter paints the page itself: `html, body { @apply bg-white dark:bg-gray-950 }`.
+  // shadcn's `body { @apply bg-background }` reads the token, so it is left alone.
+  if (/(?:^|[\s,}])(?:html|body)\b[^{]*\{[^}]*@apply[^;}]*(?:^|[\s:])bg-(?!background\b)/m.test(css))
+    out.push("paints its own page background on html/body")
   return out
 }
 

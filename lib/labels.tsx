@@ -74,6 +74,14 @@ export const defaultLabels = {
     status === "working" ? "running" : status === "waiting" ? (count === 1 ? "needs you" : "need you") : status,
   agents: (count: number): string => (count === 1 ? "agent" : "agents"),
   retry: "Retry",
+  tags: "Tags",
+  removeTag: (tag: string) => `Remove ${tag}`,
+  invalidTag: "invalid",
+  tagAdded: (tags: string[]) => (tags.length === 1 ? `${tags[0]} added` : `${tags.length} added`),
+  tagRemoved: (tag: string) => `${tag} removed`,
+  tagRejected: (tag: string, reason: "invalid" | "duplicate" | "max") =>
+    reason === "duplicate" ? `${tag} is already in the list` : reason === "max" ? `Limit reached, ${tag} not added` : `${tag} not added`,
+  unsavedChanges: "Unsaved changes",
 }
 
 export type Labels = typeof defaultLabels

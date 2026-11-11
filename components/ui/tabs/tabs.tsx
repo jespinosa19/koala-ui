@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Tabs as TabsPrimitive } from "radix-ui"
+import { Slot, Tabs as TabsPrimitive } from "radix-ui"
 import { CheckCircle } from "koala-icons"
 
 import { createContext } from "@/lib/create-context"
@@ -165,7 +165,7 @@ const [TabsProvider, useTabsContext] = createContext<{
 }>("Tabs")
 
 function useActiveIndicator(
-  listRef: React.RefObject<HTMLDivElement | null>,
+  listRef: React.RefObject<HTMLElement | null>,
   variant: TabsVariant,
 ) {
   const [style, setStyle] = React.useState<React.CSSProperties>()
@@ -241,7 +241,7 @@ export function Tabs({ className, variant: variantProp, density, collapse, orien
 export function TabsList({ className, children, ...props }: React.ComponentProps<typeof TabsPrimitive.List>) {
   const { slots, variant } = useTabsContext("Tabs.List")
   const listRef = React.useRef<HTMLDivElement>(null)
-  const { style, ready, animate } = useActiveIndicator(listRef, variant)
+  const indicator = useActiveIndicator(listRef, variant)
 
   return (
     <TabsPrimitive.List
@@ -250,19 +250,90 @@ export function TabsList({ className, children, ...props }: React.ComponentProps
       className={slots.list({ className })}
       {...props}
     >
-      <span
-        aria-hidden
-        data-slot="tabs-indicator"
-        className={cn(
-          slots.indicator(),
-          ready ? "opacity-100" : "opacity-0",
-          animate &&
-            "transition-[transform,width,height] duration-base ease-out motion-reduce:transition-none",
-        )}
-        style={style}
-      />
+      <TabsIndicator slots={slots} {...indicator} />
       {children}
     </TabsPrimitive.List>
+  )
+}
+
+function TabsIndicator({ slots, style, ready, animate }: { slots: TabsSlots } & ReturnType<typeof useActiveIndicator>) {
+  return (
+    <span
+      aria-hidden
+      data-slot="tabs-indicator"
+      className={cn(
+        slots.indicator(),
+        ready ? "opacity-100" : "opacity-0",
+        animate && "transition-[transform,width,height] duration-base ease-out motion-reduce:transition-none",
+      )}
+      style={style}
+    />
+  )
+}
+
+function useRevealActive(listRef: React.RefObject<HTMLElement | null>) {
+  const shown = React.useRef<Element | null>(null)
+
+  React.useLayoutEffect(() => {
+    const list = listRef.current
+    const active = list?.querySelector<HTMLElement>('[data-state="active"]')
+    if (!list || !active || active === shown.current) return
+    const first = shown.current === null
+    shown.current = active
+    const start = active.offsetLeft
+    const end = start + active.offsetWidth
+    if (start >= list.scrollLeft && end <= list.scrollLeft + list.clientWidth) return
+    list.scrollTo({ left: start - (list.clientWidth - active.offsetWidth) / 2, behavior: first ? "instant" : "smooth" })
+  })
+}
+
+export interface TabNavProps
+  extends React.ComponentProps<"nav">,
+    Pick<VariantProps<typeof tabsVariants>, "variant" | "density"> {}
+
+export function TabNav({ className, variant, density, ref, children, ...props }: TabNavProps) {
+  const resolved = variant ?? "line"
+  const slots = tabsVariants({ variant: resolved, density: useDensity(density) })
+  const listRef = React.useRef<HTMLElement | null>(null)
+  const indicator = useActiveIndicator(listRef, resolved)
+  useRevealActive(listRef)
+
+  const setRef = React.useCallback(
+    (node: HTMLElement | null) => {
+      listRef.current = node
+      if (typeof ref === "function") ref(node)
+      else if (ref) ref.current = node
+    },
+    [ref],
+  )
+
+  return (
+    <TabsProvider slots={slots} variant={resolved}>
+      <nav ref={setRef} data-slot="tab-nav" data-orientation="horizontal" className={slots.list({ className })} {...props}>
+        <TabsIndicator slots={slots} {...indicator} />
+        {children}
+      </nav>
+    </TabsProvider>
+  )
+}
+
+export interface TabNavLinkProps extends React.ComponentProps<"a"> {
+  active?: boolean
+  asChild?: boolean
+}
+
+export function TabNavLink({ className, active = false, asChild = false, ...props }: TabNavLinkProps) {
+  const { slots } = useTabsContext("TabNavLink")
+  const Comp = asChild ? Slot.Root : "a"
+  return (
+    <Comp
+      data-slot="tab-nav-link"
+      data-state={active ? "active" : "inactive"}
+      data-orientation="horizontal"
+      aria-current={active ? "page" : undefined}
+      className={slots.trigger({ className })}
+      {...props}
+    />
   )
 }
 
